@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadastro de oficina - Vai Rodar</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#075cff;--blue2:#0094ff;--text:#101827;--muted:#667085;--line:#dce5f1;--card:#fff;--bottom:#fbfcff;--bg:#f4f7fb}
+body{min-height:100vh;background:linear-gradient(135deg,#edf2f8,#f8fafc 52%,#e9eff7);font-family:Inter,Arial,sans-serif;color:var(--text);padding:28px}
+.wrap{width:min(980px,100%);margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}
+.brand img{width:38px;height:38px;border-radius:9px}
+.brand span span{color:var(--blue)}
+.back-home{height:36px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--blue);padding:0 14px;font-size:12px;font-weight:800;cursor:pointer}
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:16px}
+.hero h1{font-size:30px;line-height:1.05;letter-spacing:-.5px}
+.hero p{color:var(--muted);font-size:13px;line-height:1.45;margin-top:7px;max-width:620px}
+.workshop-register-form{display:grid;gap:14px;border:1px solid var(--line);border-radius:18px;background:var(--card);padding:18px;box-shadow:0 18px 45px rgba(15,23,42,.08)}
+.register-section{display:grid;gap:9px;padding-top:14px;border-top:1px solid var(--line)}
+.register-section:first-child{padding-top:0;border-top:0}
+.register-section h3{font-size:14px;font-weight:850}
+.register-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.register-field{display:grid;gap:6px}
+.register-field label{color:var(--muted);font-size:10px;font-weight:850;text-transform:uppercase}
+.register-field input,.register-field select{height:40px;border:1px solid var(--line);border-radius:11px;background:var(--bottom);color:var(--text);padding:0 11px;font-size:12px;outline:none}
+.location-input-wrap{position:relative}
+.location-input-wrap input{width:100%;padding-right:46px}
+.inline-location{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;border-radius:9px;background:rgba(7,92,255,.1);color:var(--blue);display:grid;place-items:center;cursor:pointer}
+.inline-location svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.register-chips{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.register-mode{grid-template-columns:repeat(3,1fr)}
+.register-chip{position:relative}
+.register-chip input{position:absolute;opacity:0}
+.register-chip span{display:block;border:1px solid var(--line);border-radius:11px;background:var(--bottom);color:var(--text);padding:10px;font-size:12px;font-weight:760;cursor:pointer}
+.register-chip input:checked+span{border-color:var(--blue);background:rgba(7,92,255,.08);color:var(--blue)}
+.custom-schedule{display:none;gap:7px}
+.custom-schedule.show{display:grid}
+.custom-day{display:grid;grid-template-columns:1fr 100px 100px;gap:7px;align-items:center}
+.custom-day span{font-size:12px;font-weight:800}
+.custom-day select{height:34px;border:1px solid var(--line);border-radius:9px;background:var(--bottom);font-size:11px;padding:0 8px}
+.register-submit{height:44px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-size:13px;font-weight:850;cursor:pointer}
+.form-error{display:none;color:#dc2626;font-size:11px;font-weight:750}
+.form-error.show{display:block}
+.success{display:none;border:1px solid rgba(22,163,74,.22);border-radius:12px;background:rgba(22,163,74,.08);color:#15803d;padding:12px;font-size:12px;font-weight:800}
+.success.show{display:block}
+@media(max-width:620px){body{padding:18px}.topbar,.hero{align-items:flex-start;flex-direction:column}.hero h1{font-size:25px}.register-grid,.register-mode,.register-chips{grid-template-columns:1fr}.custom-day{grid-template-columns:1fr 1fr}.custom-day span{grid-column:1 / -1}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="topbar">
+    <div class="brand"><img src="assets/vai_rodar_logo_transparent.png" alt="VR"><span>Vai <span>Rodar</span></span></div>
+    <button class="back-home" type="button">Vista isolada do cadastro</button>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>Cadastre sua oficina</h1>
+      <p>Esta é a visualização isolada do formulário de cadastro de oficinas. Aqui podemos modificar campos, textos e ordem sem mexer no restante da página.</p>
+    </div>
+  </section>
+
+  <form class="workshop-register-form" id="workshopRegisterForm" novalidate>
+    <section class="register-section">
+      <h3>Dados do negócio</h3>
+      <div class="register-field">
+        <label>Nome da oficina ou empresa</label>
+        <input id="registerBusiness" placeholder="Ex.: Oficina São Lucas">
+      </div>
+    </section>
+
+    <section class="register-section">
+      <h3>Contato</h3>
+      <div class="register-grid">
+        <div class="register-field"><label>Nome do responsável</label><input id="registerOwner" placeholder="Nome e sobrenome"></div>
+        <div class="register-field"><label>WhatsApp</label><input id="registerPhone" placeholder="+55 11 99999-9999"></div>
+      </div>
+      <div class="register-field"><label>E-mail opcional</label><input id="registerEmail" type="email" placeholder="contato@oficina.com"></div>
+    </section>
+
+    <section class="register-section">
+      <h3>Localização e atendimento</h3>
+      <div class="register-grid">
+        <div class="register-field"><label>Estado</label><select id="registerState"><option>SP</option><option>RJ</option><option>MG</option><option>PR</option><option>RS</option><option>SC</option></select></div>
+        <div class="register-field"><label>Cidade</label><input id="registerCity" placeholder="Ex.: São Paulo"></div>
+      </div>
+      <div class="register-field">
+        <label>Endereço exato</label>
+        <div class="location-input-wrap">
+          <input id="registerAddress" placeholder="Ex.: Av. Paulista, 1000">
+          <button class="inline-location" id="registerUseLocation" type="button" aria-label="Usar localização">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="register-field"><label>Como atende?</label></div>
+      <div class="register-chips register-mode">
+        <label class="register-chip"><input type="radio" name="registerMode" checked><span>Na oficina</span></label>
+        <label class="register-chip"><input type="radio" name="registerMode"><span>A domicílio</span></label>
+        <label class="register-chip"><input type="radio" name="registerMode"><span>Ambos</span></label>
+      </div>
+    </section>
+
+    <section class="register-section">
+      <h3>Serviços principais</h3>
+      <div class="register-chips" id="registerServices"></div>
+    </section>
+
+    <section class="register-section">
+      <h3>Horário de atendimento</h3>
+      <div class="register-field">
+        <label>Dias de atendimento</label>
+        <select id="registerDays"><option>Segunda a sexta</option><option>Segunda a sábado</option><option>Todos os dias</option><option>Personalizado</option></select>
+      </div>
+      <div class="register-grid" id="simpleRegisterSchedule">
+        <div class="register-field"><label>Horário de abertura</label><select id="registerOpen"></select></div>
+        <div class="register-field"><label>Horário de fechamento</label><select id="registerClose"></select></div>
+      </div>
+      <div class="custom-schedule" id="customRegisterSchedule"></div>
+    </section>
+
+    <button class="register-submit" type="submit">Garantir meu acesso antecipado</button>
+    <div class="form-error" id="registerError">Complete os campos obrigatórios e selecione pelo menos um serviço.</div>
+    <div class="success" id="registerSuccess">Cadastro recebido para esta demo.</div>
+  </form>
+</main>
+
+<script>
+const allowedCategories=[
+  "Revisão geral / Manutenção preventiva",
+  "Troca de óleo e filtros",
+  "Freios e suspensão",
+  "Motor e transmissão",
+  "Elétrica automotiva",
+  "Ar-condicionado",
+  "Funilaria e pintura",
+  "Pneus e alinhamento",
+  "Diagnóstico computadorizado",
+  "Vidros e acessórios",
+  "Blindagem"
+];
+const registerServices=document.getElementById("registerServices");
+const registerOpen=document.getElementById("registerOpen");
+const registerClose=document.getElementById("registerClose");
+const registerDays=document.getElementById("registerDays");
+const simpleRegisterSchedule=document.getElementById("simpleRegisterSchedule");
+const customRegisterSchedule=document.getElementById("customRegisterSchedule");
+const registerUseLocation=document.getElementById("registerUseLocation");
+const registerCity=document.getElementById("registerCity");
+const registerAddress=document.getElementById("registerAddress");
+const workshopRegisterForm=document.getElementById("workshopRegisterForm");
+const registerBusiness=document.getElementById("registerBusiness");
+const registerOwner=document.getElementById("registerOwner");
+const registerPhone=document.getElementById("registerPhone");
+const registerError=document.getElementById("registerError");
+const registerSuccess=document.getElementById("registerSuccess");
+
+function workshopTimeOptions(){
+  let html="";
+  for(let hour=6;hour<=22;hour++){
+    for(let minute=0;minute<60;minute+=30){
+      if(hour===22&&minute>0) continue;
+      const time=`${String(hour).padStart(2,"0")}:${String(minute).padStart(2,"0")}`;
+      html+=`<option>${time}</option>`;
+    }
+  }
+  return html;
+}
+function setupWorkshopRegister(){
+  registerServices.innerHTML=allowedCategories.map((service)=>`<label class="register-chip"><input type="checkbox" value="${service}"><span>${service}</span></label>`).join("");
+  registerOpen.innerHTML=workshopTimeOptions();
+  registerClose.innerHTML=workshopTimeOptions();
+  registerOpen.value="08:00";
+  registerClose.value="18:00";
+  customRegisterSchedule.innerHTML=["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"].map((day)=>`<div class="custom-day"><span>${day}</span><select>${workshopTimeOptions()}</select><select>${workshopTimeOptions()}</select></div>`).join("");
+  customRegisterSchedule.querySelectorAll(".custom-day").forEach((row)=>{
+    row.querySelectorAll("select")[0].value="08:00";
+    row.querySelectorAll("select")[1].value="18:00";
+  });
+}
+registerDays.addEventListener("change",()=>{
+  const custom=registerDays.value==="Personalizado";
+  simpleRegisterSchedule.style.display=custom?"none":"grid";
+  customRegisterSchedule.classList.toggle("show",custom);
+});
+registerUseLocation.addEventListener("click",()=>{
+  registerAddress.value="Av. Paulista, 1000, Bela Vista, São Paulo";
+  registerCity.value="São Paulo";
+});
+workshopRegisterForm.addEventListener("submit",(event)=>{
+  event.preventDefault();
+  const valid=registerBusiness.value.trim()&&registerOwner.value.trim()&&registerPhone.value.trim()&&registerCity.value.trim()&&registerAddress.value.trim()&&registerServices.querySelectorAll("input:checked").length;
+  registerError.classList.toggle("show",!valid);
+  registerSuccess.classList.toggle("show",!!valid);
+});
+setupWorkshopRegister();
+</script>
+</body>
+</html>

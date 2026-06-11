@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Vai Rodar - Apresentação para investidores</title>
+<style>
+@page{size:A4 landscape;margin:0}
+*{box-sizing:border-box}
+:root{--blue:#075cff;--blue2:#0094ff;--ink:#111827;--muted:#627087;--line:#dce5f1;--soft:#f5f8fc;--green:#16a34a;--red:#dc2626;--yellow:#f4b400}
+html,body{margin:0;background:#e9eff7;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+.page{position:relative;width:297mm;height:210mm;overflow:hidden;background:#fff;padding:15mm 17mm 13mm;page-break-after:always}
+.page:last-child{page-break-after:auto}.page.dark{background:#07101e;color:#fff}.page.soft{background:var(--soft)}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8mm}.brand{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800}.brand img{width:33px;height:33px;border-radius:8px}.brand b{color:var(--blue)}
+.tag{border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:var(--blue);font-size:10px;font-weight:800}.dark .tag{border-color:#27436f;color:#8eb6ff}
+h1{font-size:38px;line-height:1.03;margin:0 0 12px;max-width:780px}h2{font-size:27px;line-height:1.08;margin:0 0 9px}h3{font-size:15px;line-height:1.2;margin:0 0 7px}p{font-size:13px;line-height:1.45;margin:0;color:var(--muted)}.dark p{color:#b7c8de}.lead{font-size:17px;max-width:720px}
+.eyebrow{color:var(--blue);font-size:11px;font-weight:800;text-transform:uppercase;margin-bottom:8px}.dark .eyebrow{color:#75a7ff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12mm}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:7mm}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:5mm}
+.card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px}.soft .card{background:#fff}.dark .card{background:#0e1b2f;border-color:#233a5f}.card p{font-size:11px}.card strong{display:block;margin-bottom:5px;font-size:13px}
+.icon{width:30px;height:30px;display:grid;place-items:center;margin-bottom:8px;border-radius:9px;background:#e8f0ff;color:var(--blue);font-size:15px;font-weight:900}.icon.red{background:#fee2e2;color:var(--red)}.icon.green{background:#dcfce7;color:var(--green)}.icon.yellow{background:#fff3cd;color:#a16207}
+.hero{display:grid;grid-template-columns:1.22fr .78fr;gap:15mm;align-items:center;height:165mm}.hero-copy{padding-bottom:8mm}.hero-image{display:flex;justify-content:center;height:173mm}.hero-image img{height:100%;object-fit:contain;filter:drop-shadow(0 18px 22px rgba(0,0,0,.22))}
+.stat-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.pill{border:1px solid #cfe0ff;border-radius:999px;background:#f5f9ff;color:var(--blue);padding:7px 10px;font-size:10px;font-weight:800}.dark .pill{border-color:#27436f;background:#10203a;color:#8eb6ff}
+.footer{position:absolute;bottom:7mm;left:17mm;right:17mm;display:flex;align-items:center;justify-content:space-between;color:#8a98aa;font-size:9px}.footer b{color:var(--blue)}
+.quote{border-left:5px solid var(--blue);padding:6px 0 6px 14px;font-size:21px;line-height:1.22;font-weight:800;max-width:820px}.quote small{display:block;margin-top:10px;color:var(--muted);font-size:11px;font-weight:600;line-height:1.4}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12mm}.step{position:relative;border:1px solid var(--line);border-radius:12px;background:#fff;padding:11px}.step:not(:last-child):after{content:"";position:absolute;right:-10px;top:34px;width:11px;border-top:2px solid var(--blue)}.step b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:10px;margin-bottom:8px}.step strong{display:block;font-size:12px;margin-bottom:5px}.step p{font-size:10px}
+.phone-pair{display:flex;gap:8px;align-items:center;justify-content:center;height:145mm}.phone-pair img{height:100%;object-fit:contain;filter:drop-shadow(0 14px 18px rgba(0,0,0,.16))}
+.ui{border:1px solid #cfdcec;border-radius:16px;background:#fff;padding:12px;box-shadow:0 10px 26px rgba(40,75,130,.08)}.ui.darkui{background:#0a1220;border-color:#244066}.search{display:flex;align-items:center;gap:9px;border:1px solid var(--blue);border-radius:12px;padding:10px;margin-bottom:8px}.send{margin-left:auto;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:#fff;font-size:13px}.chiprow{display:flex;flex-wrap:wrap;gap:5px}.chip{border:1px solid #bfd4ff;border-radius:999px;padding:5px 7px;color:var(--blue);font-size:9px;font-weight:800}.field{border:1px solid var(--line);border-radius:9px;padding:8px;margin-top:6px;color:#8290a4;font-size:9px}.primary{border-radius:9px;background:var(--blue);color:#fff;padding:9px;text-align:center;margin-top:8px;font-size:10px;font-weight:800}
+.workshop{display:grid;grid-template-columns:52px 1fr auto;gap:9px;border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:6px}.workshop img{width:52px;height:46px;border-radius:7px;object-fit:cover}.workshop h4{margin:0 0 4px;font-size:10px}.workshop p{font-size:8.5px}.score{color:var(--blue);font-size:10px;font-weight:800}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-left:5px}
+.module-list{display:grid;gap:8px}.module{display:grid;grid-template-columns:36px 1fr;gap:9px;align-items:start}.module .icon{margin:0}.module p{font-size:11px}
+.photo{width:100%;height:100%;object-fit:cover;border-radius:14px}.photo-card{height:130mm;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+.promo{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}.promo img{width:100%;height:28mm;object-fit:cover}.promo div{padding:8px}.promo small{color:var(--blue);font-size:8px;font-weight:800}.promo strong{display:block;font-size:10px;margin:4px 0}.promo p{font-size:8.5px}
+.road{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px}.road .card{min-height:95px}.num{font-size:27px;font-weight:900;color:var(--blue);line-height:1}.note{border:1px solid #cfe0ff;border-radius:10px;background:#f5f9ff;padding:9px;color:#50627c;font-size:10px;line-height:1.4}.dark .note{background:#10203a;border-color:#27436f;color:#b7c8de}
+.big-ai{display:grid;place-items:center;width:54mm;height:54mm;margin:auto;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-size:34px;font-weight:900;box-shadow:0 18px 42px rgba(7,92,255,.32)}
+.logo-wall{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px}.logo-wall img{height:22px;max-width:105px}
+.mini-phone{height:148mm;text-align:center}.mini-phone img{height:100%;object-fit:contain;filter:drop-shadow(0 12px 18px rgba(0,0,0,.14))}
+.final{display:grid;place-items:center;text-align:center;height:175mm}.final img{width:68px;height:68px;border-radius:16px;margin-bottom:14px}.final p{max-width:700px;font-size:16px}.final h1{margin-left:auto;margin-right:auto}
+</style>
+</head>
+<body>
+
+<section class="page dark">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">Apresentação para investidores · rascunho</span></div>
+  <div class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">Mobilidade · Serviços automotivos · IA</div>
+      <h1>Menos indecisão.<br>Mais soluções para quem precisa rodar.</h1>
+      <p class="lead">Vai Rodar conecta motoristas, oficinas e negócios automotivos em uma experiência simples, guiada por inteligência artificial.</p>
+      <div class="stat-row"><span class="pill">Seleção inteligente</span><span class="pill">Propostas online</span><span class="pill">Reservas</span><span class="pill">Ecossistema automotivo</span></div>
+    </div>
+    <div class="hero-image"><img src="assets/app-dark.png"></div>
+  </div>
+  <div class="footer"><span>Vai Rodar</span><span>01</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">O problema</span></div>
+  <div class="eyebrow">Uma jornada fragmentada</div>
+  <h2>Quando o carro apresenta um problema, o motorista enfrenta decisões demais.</h2>
+  <p class="lead">Ele precisa entender o sintoma, encontrar a categoria correta, comparar oficinas, avaliar confiança, consultar disponibilidade e negociar preço. Tudo isso sem saber exatamente por onde começar.</p>
+  <div class="grid3" style="margin-top:14mm">
+    <div class="card"><div class="icon">?</div><strong>Baixa clareza técnica</strong><p>O motorista sabe descrever o ruído ou o sintoma, mas não necessariamente o serviço de que precisa.</p></div>
+    <div class="card"><div class="icon">≡</div><strong>Oferta dispersa</strong><p>Oficinas, peças, atendimento emergencial e promoções vivem em canais diferentes.</p></div>
+    <div class="card"><div class="icon">↔</div><strong>Comparação difícil</strong><p>A escolha depende de localização, avaliações, agenda, preço e confiança.</p></div>
+  </div>
+  <div class="quote" style="margin-top:16mm">A abundância de alternativas pode paralisar a decisão.
+    <small>A paradoja da escolha: quando há opções demais e pouca orientação, o usuário tende a adiar, abandonar ou decidir com insegurança.</small>
+  </div>
+  <div class="footer"><span>Vai Rodar · O problema</span><span>02</span></div>
+</section>
+
+<section class="page soft">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">Tese de produto</span></div>
+  <div class="grid2" style="align-items:center;height:158mm">
+    <div>
+      <div class="eyebrow">O diferencial central</div>
+      <h2>A IA funciona como um seletor inteligente.</h2>
+      <p class="lead">Em vez de obrigar o usuário a navegar por dezenas de categorias, a experiência começa com uma conversa simples: “meu carro faz barulho ao girar”.</p>
+      <div class="module-list" style="margin-top:12mm">
+        <div class="module"><div class="icon">1</div><div><strong>Entende a intenção</strong><p>Interpreta o texto livre, o sintoma, a localização e o contexto.</p></div></div>
+        <div class="module"><div class="icon">2</div><div><strong>Reduz a complexidade</strong><p>Sugere categorias relevantes e solicita apenas os dados necessários.</p></div></div>
+        <div class="module"><div class="icon">3</div><div><strong>Direciona para a ação</strong><p>Converte a necessidade em propostas, oficinas, peças ou atendimento imediato.</p></div></div>
+      </div>
+    </div>
+    <div><div class="big-ai">IA</div><p style="text-align:center;margin-top:12px">Uma camada de orientação para todo o ecossistema.</p></div>
+  </div>
+  <div class="footer"><span>Vai Rodar · IA como seletor inteligente</span><span>03</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">Jornada principal</span></div>
+  <div class="eyebrow">Do problema à solução</div><h2>Uma porta de entrada simples para diferentes necessidades.</h2>
+  <div class="flow">
+    <div class="step"><b>1</b><strong>Descrever</strong><p>O motorista escreve em linguagem natural.</p></div>
+    <div class="step"><b>2</b><strong>Interpretar</strong><p>A IA identifica categorias e intenção.</p></div>
+    <div class="step"><b>3</b><strong>Completar</strong><p>Placa, localização e imagens opcionais.</p></div>
+    <div class="step"><b>4</b><strong>Conectar</strong><p>Oficinas, peças, propostas ou emergência.</p></div>
+    <div class="step"><b>5</b><strong>Resolver</strong><p>Mensagem, reserva ou compra imediata.</p></div>
+  </div>
+  <div class="grid2" style="margin-top:15mm">
+    <div class="ui"><div class="search"><img src="assets/vr-logo.png" style="width:25px;height:25px;border-radius:6px"><div><strong style="font-size:11px">Como podemos te ajudar hoje?</strong><p style="font-size:9px">Descreva o problema do seu carro.</p></div><div class="send">➤</div></div><div class="field">Meu carro faz barulho ao girar e a direção está pesada.</div><div class="chiprow" style="margin-top:8px"><span class="chip">Freios e suspensão</span><span class="chip">Pneus e alinhamento</span><span class="chip">Revisão geral</span></div></div>
+    <div class="note"><strong>Keycut de navegação:</strong><br>O assistente no home resume a proposta de valor da plataforma. Ele não é apenas um chat: é um atalho para tudo o que a experiência oferece.</div>
+  </div>
+  <div class="footer"><span>Vai Rodar · Jornada principal</span><span>04</span></div>
+</section>
+
+<section class="page soft">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">01 · Enviar proposta</span></div>
+  <div class="grid2">
+    <div>
+      <div class="eyebrow">Cotação online orientada</div><h2>Enviar uma solicitação completa para várias oficinas.</h2>
+      <p>O usuário descreve o problema. A IA identifica categorias, pede placa, localização e permite anexar fotos opcionais. A informação chega mais organizada às oficinas.</p>
+      <div class="module-list" style="margin-top:10mm">
+        <div class="module"><div class="icon">✦</div><div><strong>Categorias sugeridas pela IA</strong><p>Evita que o motorista precise conhecer termos técnicos.</p></div></div>
+        <div class="module"><div class="icon">▣</div><div><strong>Dados objetivos</strong><p>Placa e localização aumentam a precisão do pedido.</p></div></div>
+        <div class="module"><div class="icon">✓</div><div><strong>Confirmação clara</strong><p>Após uma análise breve, a proposta é enviada para oficinas próximas.</p></div></div>
+      </div>
+    </div>
+    <div class="ui">
+      <h3>Enviar proposta</h3><p>Conte o problema do seu carro.</p>
+      <div class="field">Meu carro faz barulho ao frear.</div>
+      <div class="chiprow" style="margin-top:8px"><span class="chip">Freios e suspensão</span><span class="chip">Revisão geral</span></div>
+      <div class="field">Placa: ABC1D23</div><div class="field">Localização: Butantã, São Paulo</div><div class="field">Fotos opcionais</div>
+      <div class="primary">Enviar proposta</div>
+      <div class="note" style="margin-top:8px"><strong>Proposta enviada</strong><br>Sua proposta foi enviada para oficinas próximas.</div>
+    </div>
+  </div>
+  <div class="footer"><span>Vai Rodar · Enviar proposta</span><span>05</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">02 · Buscar oficinas</span></div>
+  <div class="eyebrow">Busca específica</div><h2>Escolher uma oficina com filtros, IA e transparência.</h2>
+  <p class="lead">Para quem já sabe o que procura, a plataforma mostra oficinas ordenadas por avaliação e permite filtrar por localização, categoria e disponibilidade.</p>
+  <div class="grid2" style="margin-top:10mm">
+    <div class="ui">
+      <div class="field">Buscar por bairro, categoria ou problema...</div>
+      <div class="chiprow" style="margin:8px 0"><span class="chip">Butantã</span><span class="chip">Aberto agora</span><span class="chip">Pneus</span><span class="chip">4.8+</span></div>
+      <div class="workshop"><img src="assets/opaleiros-sc.jpg"><div><h4>Butantã Pneus Express <span class="dot"></span></h4><p>Av. Vital Brasil, 890 · Pneus e alinhamento</p></div><span class="score">★ 4.9</span></div>
+      <div class="workshop"><img src="assets/opaleiros-sc.jpg"><div><h4>Auto Center Vital Brasil <span class="dot"></span></h4><p>Rua Camargo, 221 · Freios e suspensão</p></div><span class="score">★ 4.8</span></div>
+    </div>
+    <div class="module-list">
+      <div class="module"><div class="icon">⌖</div><div><strong>Filtros úteis</strong><p>Endereço, aberto agora, categoria e melhores avaliações.</p></div></div>
+      <div class="module"><div class="icon">☏</div><div><strong>Ações diretas</strong><p>Enviar mensagem, chamar e visualizar mais informações.</p></div></div>
+      <div class="module"><div class="icon">◷</div><div><strong>Reservas</strong><p>Horários organizados, serviços oferecidos e agendamento online.</p></div></div>
+    </div>
+  </div>
+  <div class="footer"><span>Vai Rodar · Buscar oficinas</span><span>06</span></div>
+</section>
+
+<section class="page soft">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">03 · Peças</span></div>
+  <div class="grid2">
+    <div>
+      <div class="eyebrow">Buscar peças</div><h2>Encontrar vendedores compatíveis com o veículo.</h2>
+      <p class="lead">O motorista descreve a peça e informa a placa. A experiência exibe os dados do carro e mostra lojas que possivelmente possuem o item.</p>
+      <div class="stat-row"><span class="pill">Busca em texto livre</span><span class="pill">Placa brasileira</span><span class="pill">Dados do veículo</span><span class="pill">Mensagem para várias lojas</span></div>
+    </div>
+    <div class="ui">
+      <h3>Buscar peças</h3><div class="field">Pastilha de freio dianteira</div><div class="field">ABC1D23</div>
+      <div class="grid4" style="gap:5px;margin-top:7px"><div class="card"><p>Marca</p><strong>VW</strong></div><div class="card"><p>Modelo</p><strong>T-Cross</strong></div><div class="card"><p>Ano</p><strong>2021</strong></div><div class="card"><p>Cor</p><strong>Prata</strong></div></div>
+      <div class="workshop"><img src="assets/opaleiros-sc.jpg"><div><h4>Auto Peças Vital Brasil</h4><p>Peças originais e alternativas · estoque provável</p></div></div>
+      <div class="primary">Enviar mensagem para selecionadas</div>
+    </div>
+  </div>
+  <div class="footer"><span>Vai Rodar · Buscar peças</span><span>07</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">04 · Reservas</span></div>
+  <div class="eyebrow">Da descoberta à agenda</div><h2>Reservar um atendimento dentro da mesma experiência.</h2>
+  <div class="grid3" style="margin-top:12mm">
+    <div class="card"><div class="icon">1</div><strong>Visualizar detalhes</strong><p>Horários por dia, serviços oferecidos, avaliação e contato da oficina.</p></div>
+    <div class="card"><div class="icon">2</div><strong>Agendar reserva</strong><p>Serviço, detalhes, data pelo calendário e horário disponível.</p></div>
+    <div class="card"><div class="icon">3</div><strong>Acompanhar status</strong><p>Reservas confirmadas, pendentes e anteriores em um único painel.</p></div>
+  </div>
+  <div class="grid2" style="margin-top:12mm">
+    <div class="ui"><h3>Agendar reserva</h3><div class="field">Serviço: Pneus e alinhamento</div><div class="field">Detalhes do atendimento</div><div class="grid2" style="gap:5px"><div class="field">Data: 08/06/2026</div><div class="field">Horário: 10:30</div></div><div class="primary">Enviar reserva</div></div>
+    <div class="ui"><h3>Reservas</h3><div class="workshop"><div><h4>Butantã Pneus Express</h4><p>Pneus e alinhamento · 05/06/2026 às 10:30</p></div><span class="chip">Confirmada</span></div><div class="workshop"><div><h4>Auto Center Vital Brasil</h4><p>Freios e suspensão · 08/06/2026 às 14:00</p></div><span class="chip">Pendente</span></div></div>
+  </div>
+  <div class="footer"><span>Vai Rodar · Reservas</span><span>08</span></div>
+</section>
+
+<section class="page dark">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">05 · Emergência</span></div>
+  <div class="grid2" style="align-items:center">
+    <div>
+      <div class="eyebrow">Atendimento imediato</div><h2>Serviços de emergência com menos etapas.</h2>
+      <p class="lead">Quando o problema é urgente, o motorista escolhe o serviço, informa localização e placa, visualiza um preço estimado e pode comprar imediatamente.</p>
+      <div class="grid2" style="gap:8px;margin-top:12mm">
+        <div class="card"><div class="icon red">⚡</div><strong>Ponte de bateria</strong><p>Partida auxiliar no local.</p></div>
+        <div class="card"><div class="icon red">↗</div><strong>Guincho</strong><p>Remoção para oficina próxima.</p></div>
+        <div class="card"><div class="icon red">◎</div><strong>Troca de pneu</strong><p>Socorro para estepe ou pneu furado.</p></div>
+        <div class="card"><div class="icon red">⌁</div><strong>Outros serviços</strong><p>Chaveiro e combustível emergencial.</p></div>
+      </div>
+    </div>
+    <div class="mini-phone"><img src="assets/app-dark.png"></div>
+  </div>
+  <div class="footer"><span>Vai Rodar · Emergência</span><span>09</span></div>
+</section>
+
+<section class="page soft">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">06 · Compra e venda</span></div>
+  <div class="eyebrow">Marketplace automotivo</div><h2>Uma camada adicional de relacionamento com o motorista.</h2>
+  <div class="grid3" style="margin-top:12mm">
+    <div class="card"><div class="icon">⌕</div><strong>Comprar carros</strong><p>Busca inteligente e filtros por marca, modelo, ano, cor, estado, quilometragem e endereço. O usuário envia mensagem ou proposta.</p></div>
+    <div class="card"><div class="icon">+</div><strong>Venda assistida</strong><p>Placa, dados do veículo, quilometragem, descrição, fotos, localização e preço. Publicação gratuita ou destaque.</p></div>
+    <div class="card"><div class="icon">R$</div><strong>Avaliação rápida</strong><p>Estimativa ilustrativa com faixa de mercado e valor justo sugerido após análise simulada por IA.</p></div>
+  </div>
+  <div class="note" style="margin-top:12mm"><strong>Potencial estratégico:</strong> ampliar a frequência de uso. O relacionamento deixa de acontecer apenas quando existe um problema mecânico.</div>
+  <div class="footer"><span>Vai Rodar · Compra e venda de carros</span><span>10</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">07 · Conteúdo comercial</span></div>
+  <div class="eyebrow">Promoções, eventos e oportunidades</div><h2>Conteúdo para trazer recorrência e descoberta.</h2>
+  <p>O protótipo diferencia três origens: promoções de empresas maiores, eventos automotivos e ofertas semanais publicadas por oficinas.</p>
+  <div class="grid3" style="margin-top:10mm">
+    <div class="promo"><img src="assets/pirelli-logo.svg" style="padding:24px;background:#111"><div><small>Promoções</small><strong>Grandes marcas e empresas</strong><p>Pneus, lubrificantes, baterias e acessórios.</p></div></div>
+    <div class="promo"><img src="assets/opaleiros-sc.jpg"><div><small>Eventos automotivos</small><strong>Encontro Opaleiros Santa Catarina</strong><p>Comunidade, clássicos e cultura automotiva.</p></div></div>
+    <div class="promo"><img src="assets/opaleiros-sc.jpg"><div><small>Ofertas da semana</small><strong>Publicações de oficinas</strong><p>Revisões, alinhamento, freios e serviços locais.</p></div></div>
+  </div>
+  <div class="logo-wall"><img src="assets/pirelli-logo.svg"><img src="assets/goodyear-logo.svg"><img src="assets/yokohama-logo.svg"></div>
+  <div class="note" style="margin-top:11mm">No protótipo, os conteúdos comerciais são demonstrativos. O modelo final deve trabalhar com parceiros, oficinas verificadas e regras claras de publicação.</div>
+  <div class="footer"><span>Vai Rodar · Promoções e eventos</span><span>11</span></div>
+</section>
+
+<section class="page soft">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">08 · Relacionamento</span></div>
+  <div class="eyebrow">A experiência continua depois do clique</div><h2>Mensagens, notificações, cotações e conta em um único lugar.</h2>
+  <div class="grid4" style="margin-top:14mm">
+    <div class="card"><div class="icon">✉</div><strong>Mensagens</strong><p>Conversas no estilo WhatsApp com oficinas e lojas.</p></div>
+    <div class="card"><div class="icon">R$</div><strong>Minhas cotações</strong><p>Histórico de pedidos e propostas recebidas.</p></div>
+    <div class="card"><div class="icon">◷</div><strong>Reservas</strong><p>Agendamentos atuais, anteriores e gestão de alterações.</p></div>
+    <div class="card"><div class="icon">♟</div><strong>Minha conta</strong><p>Dados pessoais, contato e placa do carro.</p></div>
+  </div>
+  <div class="quote" style="margin-top:19mm">O produto não termina na descoberta: ele acompanha a decisão.
+    <small>Essa continuidade cria confiança, melhora a conversão e abre espaço para retenção.</small>
+  </div>
+  <div class="footer"><span>Vai Rodar · Relacionamento</span><span>12</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">09 · Lado da oferta</span></div>
+  <div class="grid2">
+    <div>
+      <div class="eyebrow">Cadastro de oficinas</div><h2>Uma proposta de valor para negócios automotivos locais.</h2>
+      <p class="lead">A oficina pode cadastrar seus dados, serviços, localização, modalidade de atendimento e horários. A plataforma organiza a demanda e aproxima clientes relevantes.</p>
+      <div class="stat-row"><span class="pill">Leads mais completos</span><span class="pill">Agenda</span><span class="pill">Mensagens</span><span class="pill">Propostas</span></div>
+    </div>
+    <div class="ui">
+      <h3>Cadastre sua oficina</h3><div class="field">Nome da oficina ou empresa</div><div class="field">Nome do responsável · WhatsApp</div><div class="field">Cidade · endereço exato</div><div class="field">Serviços principais</div><div class="field">Dias e horários de atendimento</div><div class="primary">Garantir acesso antecipado</div>
+    </div>
+  </div>
+  <div class="note" style="margin-top:13mm"><strong>Hipótese:</strong> quanto melhor estruturada a solicitação recebida pela oficina, menor o atrito comercial e maior a chance de resposta útil para o motorista.</div>
+  <div class="footer"><span>Vai Rodar · Cadastro de oficinas</span><span>13</span></div>
+</section>
+
+<section class="page dark">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">Hipóteses comerciais · validar</span></div>
+  <div class="eyebrow">Possíveis linhas de negócio</div><h2>Um ecossistema com múltiplas formas de captura de valor.</h2>
+  <p class="lead">As linhas abaixo são hipóteses para teste. O modelo deve ser validado com motoristas, oficinas e parceiros.</p>
+  <div class="grid3" style="margin-top:11mm">
+    <div class="card"><div class="icon green">1</div><strong>Planos para oficinas</strong><p>Assinatura para presença qualificada, agenda, mensagens e ferramentas comerciais.</p></div>
+    <div class="card"><div class="icon green">2</div><strong>Leads e conversões</strong><p>Receita associada a propostas, reservas ou serviços concluídos.</p></div>
+    <div class="card"><div class="icon green">3</div><strong>Destaque e mídia</strong><p>Promoções de marcas, campanhas segmentadas e anúncios em destaque.</p></div>
+    <div class="card"><div class="icon green">4</div><strong>Emergência</strong><p>Margem ou comissão sobre serviços urgentes comprados na plataforma.</p></div>
+    <div class="card"><div class="icon green">5</div><strong>Marketplace</strong><p>Destaques e oportunidades em peças, compra e venda de carros.</p></div>
+    <div class="card"><div class="icon green">6</div><strong>Dados de demanda</strong><p>Inteligência agregada para entender necessidades por categoria e região.</p></div>
+  </div>
+  <div class="footer"><span>Vai Rodar · Hipóteses comerciais</span><span>14</span></div>
+</section>
+
+<section class="page soft">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">Próximos passos</span></div>
+  <div class="eyebrow">Da demonstração à validação</div><h2>Transformar o protótipo em uma operação testável.</h2>
+  <div class="road">
+    <div class="card"><div class="num">01</div><strong>Validar o problema</strong><p>Entrevistas com motoristas e oficinas para mapear fricções e linguagem real.</p></div>
+    <div class="card"><div class="num">02</div><strong>Priorizar o MVP</strong><p>IA de triagem, propostas, busca de oficinas, mensagens e reservas.</p></div>
+    <div class="card"><div class="num">03</div><strong>Testar uma região</strong><p>Operação piloto com oficinas selecionadas e acompanhamento próximo.</p></div>
+    <div class="card"><div class="num">04</div><strong>Medir e ajustar</strong><p>Conversão, tempo de resposta, satisfação, recorrência e qualidade dos leads.</p></div>
+  </div>
+  <div class="grid2" style="margin-top:15mm">
+    <div class="note"><strong>Pergunta central do MVP:</strong><br>A orientação por IA aumenta a confiança do motorista e melhora a qualidade da conexão com a oficina?</div>
+    <div class="note"><strong>Foco operacional:</strong><br>Começar com categorias de maior demanda e uma oferta local suficientemente boa.</div>
+  </div>
+  <div class="footer"><span>Vai Rodar · Próximos passos</span><span>15</span></div>
+</section>
+
+<section class="page dark">
+  <div class="top"><div class="brand"><img src="assets/vr-logo.png"><span>Vai <b>Rodar</b></span></div><span class="tag">Obrigado</span></div>
+  <div class="final">
+    <div>
+      <img src="assets/vr-logo.png">
+      <h1>Vai Rodar</h1>
+      <p>Uma experiência automotiva guiada por IA para transformar incerteza em decisões simples, conexões úteis e soluções concretas.</p>
+      <div class="stat-row" style="justify-content:center"><span class="pill">vai-rodar.netlify.app</span><span class="pill">Protótipo navegável</span><span class="pill">Documento para revisão</span></div>
+    </div>
+  </div>
+  <div class="footer"><span>Vai Rodar · Apresentação para investidores</span><span>16</span></div>
+</section>
+
+</body>
+</html>
