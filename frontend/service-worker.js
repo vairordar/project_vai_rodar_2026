@@ -1,17 +1,20 @@
-const CACHE_NAME = 'vai-rodar-v1';
+const CACHE_NAME = 'vai-rodar-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/assets/vai_rodar_logo_transparent.png',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap'
+  '/assets/icon-192x192.png',
+  '/assets/icon-512x512.png'
 ];
 
 // Install: pré-cacheia os assets estáticos
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(STATIC_ASSETS);
+      return Promise.all(
+        STATIC_ASSETS.map(asset => cache.add(asset).catch(() => null))
+      );
     }).then(() => self.skipWaiting())
   );
 });

@@ -3913,4 +3913,30 @@ overlay.addEventListener("click",()=>{
   }
   if(carActionPopup.classList.contains("open")){closeCarPopup();return;}
   if(visibilityPopup.classList.contains("open")){visibilityPopup.classList.remove("open");overlay.classList.remove("open");return;}
-  if(registerSuccessPopup.classList.contains("open")){finishWorkshopR
+  if(registerSuccessPopup.classList.contains("open")){finishWorkshopRegister();return;}
+  if(workshopDemoPopup.classList.contains("open")){closeWorkshopDemo();return;}
+  if(evaluationPopup.classList.contains("open")){closeEvaluationPopup(false);return;}
+  if(reservationPopup.classList.contains("open")){closeReservationPopup();return;}
+  if(reservationPickerPopup.classList.contains("open")){closeReservationPicker();return;}
+  if(reservationSuccessPopup.classList.contains("open")){closeReservationSuccess();return;}
+  closeMenu();
+  closeEmergency();
+  closeAccount();
+  closeMessages();
+  closeQuotes();
+  closeNotifications();
+  closeReservations();
+});
+document.getElementById("closeMenu").addEventListener("click",closeMenu);
+
+// Registro do Service Worker (PWA). Funciona em HTTPS/localhost, nao em file://.
+if('serviceWorker' in navigator && window.location.protocol !== 'file:'){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg=>console.log('[SW] Registrado:',reg.scope))
+      .catch(err=>console.warn('[SW] Falha:',err));
+  });
+}
+</script>
+</body>
+</html>
