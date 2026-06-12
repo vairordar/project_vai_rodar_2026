@@ -1715,7 +1715,7 @@ body.theme-dark{
               <div class="registered-vehicles" id="registeredVehicles"></div>
             </div>
             <div class="vehicle-summary menu-vehicle" id="homeVehicle">
-              <div><small>Marca</small><strong>Volkswagen</strong></div><div><small>Modelo</small><strong>T-Cross Comfortline</strong></div><div><small>Ano</small><strong>2021</strong></div><div><small>Cor</small><strong>Prata</strong></div>
+              <div><small>Marca</small><strong>Volkswagen</strong></div><div><small>Modelo</small><strong>T-Cross Comfortline</strong></div><div><small>Ano</small><strong>2021</strong></div><div><small>Valor FIPE</small><strong>—</strong></div>
             </div>
           </div>
           <div class="flow-block proposal-only">
@@ -1877,7 +1877,7 @@ body.theme-dark{
           <div><small>Marca</small><strong id="vehicleBrand">Volkswagen</strong></div>
           <div><small>Modelo</small><strong id="vehicleModel">T-Cross Comfortline</strong></div>
           <div><small>Ano</small><strong id="vehicleYear">2021</strong></div>
-          <div><small>Cor</small><strong id="vehicleColor">Prata</strong></div>
+          <div><small>Valor FIPE</small><strong id="vehicleFipe">—</strong></div>
         </div>
         <div class="parts-results" id="partsResults">
           <h3>Vendedores com possível disponibilidade</h3>
@@ -1927,7 +1927,7 @@ body.theme-dark{
                 <div><small>Marca</small><strong>Volkswagen</strong></div>
                 <div><small>Modelo</small><strong>T-Cross Comfortline</strong></div>
                 <div><small>Ano</small><strong>2021</strong></div>
-                <div><small>Cor</small><strong>Prata</strong></div>
+                <div><small>Valor FIPE</small><strong>—</strong></div>
               </div>
             </div>
             <div class="flow-block">
@@ -1988,7 +1988,7 @@ body.theme-dark{
         <div class="sell-form">
           <label>Placa do carro</label><div class="plate-picker-field"><input id="sellPlate" placeholder="ABC1D23" maxlength="7"><div class="registered-vehicles" id="sellRegisteredVehicles"></div></div>
           <div class="vehicle-summary sell-vehicle" id="sellVehicle">
-            <div><small>Marca</small><strong>Volkswagen</strong></div><div><small>Modelo</small><strong>T-Cross Comfortline</strong></div><div><small>Ano</small><strong>2021</strong></div><div><small>Cor</small><strong>Prata</strong></div>
+            <div><small>Marca</small><strong>Volkswagen</strong></div><div><small>Modelo</small><strong>T-Cross Comfortline</strong></div><div><small>Ano</small><strong>2021</strong></div><div><small>Valor FIPE</small><strong>—</strong></div>
           </div>
           <div class="sell-form-grid">
             <div><label>Preço</label><input id="sellPrice" placeholder="R$ 95.000"></div>
@@ -2010,7 +2010,7 @@ body.theme-dark{
         <div class="sell-form">
           <label>Placa do carro</label><div class="plate-picker-field"><input id="evaluationPlate" placeholder="ABC1D23" maxlength="7"><div class="registered-vehicles" id="evaluationRegisteredVehicles"></div></div>
           <div class="vehicle-summary sell-vehicle" id="evaluationVehicle">
-            <div><small>Marca</small><strong>Volkswagen</strong></div><div><small>Modelo</small><strong>T-Cross Comfortline</strong></div><div><small>Ano</small><strong>2021</strong></div><div><small>Cor</small><strong>Prata</strong></div>
+            <div><small>Marca</small><strong>Volkswagen</strong></div><div><small>Modelo</small><strong>T-Cross Comfortline</strong></div><div><small>Ano</small><strong>2021</strong></div><div><small>Valor FIPE</small><strong>—</strong></div>
           </div>
           <label>Quilometragem</label><input id="evaluationMileage" placeholder="Ex.: 54.000 km">
           <label>Descrição do carro</label><textarea id="evaluationDescription" placeholder="Conte quantos donos o carro teve, estado de conservação, revisões, acessórios e outros detalhes importantes."></textarea>
@@ -2888,7 +2888,7 @@ function closeMenuProposalView(){
 let proposalConfirmationTimer=null;
 function currentVehicleFromPlate(){
   const plate=plateInput.value.trim().toUpperCase();
-  return plateCache[plate]||userVehicles.find((vehicle)=>vehicle.plate===plate)||{plate,brand:"—",model:"—",year:"—",color:"—"};
+  return plateCache[plate]||userVehicles.find((vehicle)=>vehicle.plate===plate)||{plate,brand:"—",model:"—",year:"—",color:"—",valueFipe:"—"};
 }
 function proposalOriginalText(){
   return assistantConversation[0]?.user||problemBubble.textContent||"Solicitação criada pelo assistente Vai Rodar.";
@@ -2920,7 +2920,7 @@ function openProposalConfirmation(){
     <p>Confira as informações antes de enviar.</p>
     <div class="proposal-review">
       <div class="proposal-review-item"><small>Pedido inicial</small><p>${escapeHTML(original)}</p></div>
-      <div class="proposal-review-item"><small>Veículo</small><strong>${escapeHTML(vehicle.plate)}</strong><p>${escapeHTML(`${vehicle.brand} ${vehicle.model} · ${vehicle.year} · ${vehicle.color}`)}</p></div>
+      <div class="proposal-review-item"><small>Veículo</small><strong>${escapeHTML(vehicle.plate)}</strong><p>${escapeHTML(vehicleDescription(vehicle))}</p></div>
       ${descriptionBlock}
       <label class="proposal-review-item"><small>Endereço ou localização</small><div class="location-input-wrap"><input id="proposalReviewAddress" value="${escapeHTML(address)}" placeholder="Rua, número, bairro"><button class="inline-location" id="proposalReviewLocation" type="button" aria-label="Usar localização"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button></div></label>
       <label class="image-upload">Adicionar fotos opcional<input id="proposalReviewPhotos" type="file" accept="image/*" multiple hidden></label>
@@ -2957,7 +2957,7 @@ function sendReviewedProposal(){
 }
 function vehicleFromAnyPlate(plateValue){
   const plate=plateValue.trim().toUpperCase();
-  return plateCache[plate]||userVehicles.find((vehicle)=>vehicle.plate===plate)||{plate,brand:"—",model:"—",year:"—",color:"—"};
+  return plateCache[plate]||userVehicles.find((vehicle)=>vehicle.plate===plate)||{plate,brand:"—",model:"—",year:"—",color:"—",valueFipe:"—"};
 }
 function openPartsReviewPopup(){
   const selected=partsList.querySelectorAll(".parts-check:checked").length;
@@ -2972,7 +2972,7 @@ function openPartsReviewPopup(){
     <p>Confira os dados que serão enviados às lojas selecionadas.</p>
     <div class="proposal-review">
       <div class="proposal-review-item"><small>Peça solicitada</small><p>${escapeHTML(query)}</p></div>
-      <div class="proposal-review-item"><small>Veículo</small><strong>${escapeHTML(vehicle.plate)}</strong><p>${escapeHTML(`${vehicle.brand} ${vehicle.model} · ${vehicle.year} · ${vehicle.color}`)}</p></div>
+      <div class="proposal-review-item"><small>Veículo</small><strong>${escapeHTML(vehicle.plate)}</strong><p>${escapeHTML(vehicleDescription(vehicle))}</p></div>
       <label class="proposal-review-item"><small>Descrição para enviar</small><textarea id="proposalReviewDescription" placeholder="Inclua medida, marca preferida, lado, quantidade ou urgência. Para pneus, use algo como 205/55 R16.">${escapeHTML(query)}</textarea></label>
       <label class="proposal-review-item"><small>Endereço ou localização</small><div class="location-input-wrap"><input id="proposalReviewAddress" placeholder="Bairro, cidade ou endereço"><button class="inline-location" id="proposalReviewLocation" type="button" aria-label="Usar localização"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button></div></label>
       <label class="image-upload">Adicionar fotos opcional<input id="proposalReviewPhotos" type="file" accept="image/*" multiple hidden></label>
@@ -3449,7 +3449,11 @@ function isAssistantNegative(text){
   return /^(nao|não|no|n|agora nao|agora não|prefiro nao|prefiro não)\b/.test(value);
 }
 function vehicleSummaryHTML(vehicle){
-  return `<div><small>Marca</small><strong>${vehicle.brand}</strong></div><div><small>Modelo</small><strong>${vehicle.model}</strong></div><div><small>Ano</small><strong>${vehicle.year}</strong></div><div><small>Cor</small><strong>${vehicle.color}</strong></div>`;
+  return `<div><small>Marca</small><strong>${vehicle.brand}</strong></div><div><small>Modelo</small><strong>${vehicle.model}</strong></div><div><small>Ano</small><strong>${vehicle.year}</strong></div><div><small>Valor FIPE</small><strong>${vehicle.valueFipe||"—"}</strong></div>`;
+}
+function vehicleDescription(vehicle){
+  const fipe=vehicle.valueFipe&&vehicle.valueFipe!=="—"?` · FIPE ${vehicle.valueFipe}`:"";
+  return `${vehicle.brand} ${vehicle.model} · ${vehicle.year}${fipe}`;
 }
 function vehicleSummaryLoadingHTML(){
   return `<div style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:10px;padding:4px 0">Consultando placa...</div>`;
@@ -3463,15 +3467,20 @@ async function lookupPlate(plateValue){
   const saved=userVehicles.find((vehicle)=>vehicle.plate===plate);
   if(saved){plateCache[plate]=saved;return saved;}
   try{
-    const res=await fetch(`/.netlify/functions/consulta-placa?placa=${encodeURIComponent(plate)}`);
+    const res=await fetch("/.netlify/functions/consultar-fipe",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({placa:plate})
+    });
     if(!res.ok) throw new Error("status "+res.status);
     const data=await res.json();
-    if(data.error) throw new Error(data.error);
-    plateCache[plate]=data;
-    return data;
+    if(data.error||data.success===false) throw new Error(data.error||"Erro ao consultar FIPE");
+    const vehicle=data.vehicle||data;
+    plateCache[plate]=vehicle;
+    return vehicle;
   }catch(err){
     console.warn("[Placa] Fallback:",err.message);
-    const fallback={plate,brand:"—",model:"—",year:"—",color:"—"};
+    const fallback={plate,brand:"—",model:"—",year:"—",color:"—",valueFipe:"—"};
     plateCache[plate]=fallback;
     return fallback;
   }
