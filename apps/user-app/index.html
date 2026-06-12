@@ -360,26 +360,28 @@ h1{
 }
 .ai-action.secondary{border:1px solid var(--blue);background:var(--button-bg);color:var(--blue);box-shadow:none}
 .plate-picker-field{position:relative;min-width:0}
-.plate-picker-field input{width:100%;padding-right:96px}
-.registered-vehicles{position:absolute;right:5px;top:50%;transform:translateY(-50%);z-index:12}
+.plate-picker-field input{width:100%;padding-right:86px}
+.registered-vehicles{position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:12}
 .registered-vehicle-toggle{
   width:auto;
-  height:28px;
+  min-width:64px;
+  height:34px;
   border:0;
-  border-radius:999px;
-  background:rgba(7,92,255,.08);
+  border-radius:18px;
+  background:#eef5ff;
   color:var(--blue);
-  padding:0 9px;
+  padding:0 10px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:center;
   gap:5px;
-  text-align:left;
   cursor:pointer;
+  white-space:nowrap;
 }
-.registered-vehicle-toggle b{display:block;font-size:8px;line-height:1;font-weight:850}
+.registered-vehicle-toggle svg{width:15px;height:15px;fill:currentColor;flex:0 0 auto}
+.registered-vehicle-toggle b{display:block;font-size:8.5px;line-height:1;font-weight:850}
 .registered-vehicle-toggle small{display:none}
-.registered-vehicle-toggle span:last-child{color:var(--blue);font-size:8px;font-weight:900;white-space:nowrap}
+.registered-vehicle-toggle span:last-child{display:none}
 .registered-vehicle-options{display:none;position:absolute;right:0;top:34px;width:min(260px,calc(100vw - 42px));gap:6px;padding:7px;border:1px solid var(--input-border);border-radius:13px;background:var(--card);box-shadow:var(--card-shadow);z-index:40}
 .registered-vehicles.open .registered-vehicle-options{display:grid}
 .registered-vehicle{
@@ -400,6 +402,7 @@ h1{
 .registered-vehicle small{display:block;color:var(--muted);font-size:8px;margin-top:2px}
 .registered-vehicle span{color:var(--blue);font-size:8px;font-weight:800;white-space:nowrap}
 .registered-vehicle.active{border-color:var(--blue);background:rgba(7,92,255,.06)}
+.registered-empty{padding:9px 10px;color:var(--muted);font-size:9px;line-height:1.35;text-align:left}
 .ai-chip{
   min-height:32px;
   border:1.2px solid var(--blue);
@@ -1234,7 +1237,7 @@ h1{
 .account-head p{color:var(--muted);font-size:10px;line-height:1.4;margin-top:5px}
 .account-close{width:30px;height:30px;border:0;border-radius:50%;background:var(--button-bg);color:var(--text);font-size:18px;cursor:pointer}
 .account-form{display:grid;gap:8px}
-.account-form input{height:40px;border:1px solid var(--input-border);border-radius:12px;background:var(--bottom);color:var(--text);padding:0 12px;font-size:11px;outline:none}
+.account-form input,.account-section input{height:40px;border:1px solid var(--input-border);border-radius:12px;background:var(--bottom);color:var(--text);padding:0 12px;font-size:11px;outline:none;min-width:0}
 .account-form input::placeholder{color:var(--placeholder)}
 .create-account{height:40px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-size:12px;font-weight:800;cursor:pointer}
 .account-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--muted);font-size:9px;font-weight:700;text-transform:uppercase}
@@ -1253,6 +1256,17 @@ h1{
 .account-user-info strong{display:block;font-size:13px;color:var(--headline);font-weight:780;line-height:1.2}
 .account-user-info p{font-size:9px;color:var(--muted);margin-top:3px}
 .account-signout{width:100%;height:40px;border:1px solid var(--input-border);border-radius:12px;background:transparent;color:var(--text);font-size:11px;font-weight:700;cursor:pointer;margin-top:8px}
+.account-section{display:grid;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.account-section-title{font-size:9px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.02em}
+.account-inline{display:grid;grid-template-columns:1fr auto;gap:8px}
+.account-mini-btn{height:40px;border:1px solid var(--blue);border-radius:12px;background:var(--button-bg);color:var(--blue);font-size:10px;font-weight:800;cursor:pointer;padding:0 12px}
+.account-mini-btn.solid{background:var(--blue);color:#fff;border-color:var(--blue)}
+.account-plates{display:grid;gap:7px}
+.account-plate-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:1px solid var(--input-border);border-radius:12px;background:var(--bottom)}
+.account-plate-row b{font-size:11px;color:var(--headline)}
+.account-plate-row small{display:block;font-size:8px;color:var(--muted);margin-top:2px}
+.account-plate-row button{border:0;background:transparent;color:#dc2626;font-size:9px;font-weight:850;cursor:pointer}
+.account-empty{color:var(--muted);font-size:9px;line-height:1.35}
 .drawer-panel{
   position:absolute;
   left:18px;
@@ -1593,7 +1607,9 @@ body.theme-dark{
   .office-detail.show{grid-template-columns:1fr}
   .office-detail-actions{grid-column:1}
   .office-actions{grid-template-columns:1fr}
-  .parts-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 40px}
+  .parts-form{grid-template-columns:minmax(0,1fr) 40px}
+  .parts-form>input:first-child{grid-column:1 / -1}
+  .parts-form>.plate-picker-field{grid-column:1}
   .vehicle-summary{grid-template-columns:1fr 1fr}
   .vehicle-summary div:nth-child(2){border-right:0}
   .parts-card{grid-template-columns:18px 62px 1fr}
@@ -1651,6 +1667,10 @@ body.theme-dark{
           <button class="desktop-top-tool emergency" id="topEmergencyBtn">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v5"/><path d="M12 18h.01"/></svg>
             Emergência
+          </button>
+          <button class="desktop-top-tool" id="topAccountBtn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg>
+            <span id="topAccountLabel">Criar conta</span>
           </button>
           <button class="desktop-top-tool" id="topNotificationsBtn">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
@@ -1719,11 +1739,11 @@ body.theme-dark{
           <div class="flow-block proposal-only">
             <div class="flow-label">Qual é a placa do seu carro? <small>obrigatório</small></div>
             <div class="plate-picker-field">
-              <input class="flow-input" id="plateInput" placeholder="ABC1D23" maxlength="7" pattern="([A-Za-z]{3}[0-9][A-Za-z][0-9]{2}|[A-Za-z]{3}[0-9]{4})" required>
+              <input class="flow-input" id="plateInput" placeholder="Digite sua placa" maxlength="7" pattern="([A-Za-z]{3}[0-9][A-Za-z][0-9]{2}|[A-Za-z]{3}[0-9]{4})" required>
               <div class="registered-vehicles" id="registeredVehicles"></div>
             </div>
             <div class="vehicle-summary menu-vehicle" id="homeVehicle">
-              <div><small>Marca</small><strong>Volkswagen</strong></div><div><small>Modelo</small><strong>T-Cross Comfortline</strong></div><div><small>Ano</small><strong>2021</strong></div><div><small>Valor FIPE</small><strong>—</strong></div>
+              <div><small>Marca</small><strong>—</strong></div><div><small>Modelo</small><strong>—</strong></div><div><small>Ano</small><strong>—</strong></div><div><small>Valor FIPE</small><strong>—</strong></div>
             </div>
           </div>
           <div class="flow-block proposal-only">
@@ -1875,16 +1895,16 @@ body.theme-dark{
         </div>
         <div class="parts-form">
           <input id="partsQuery" placeholder="Ex.: pastilha de freio dianteira">
-          <div class="plate-picker-field"><input id="partsPlate" placeholder="Placa ABC1D23" maxlength="7"><div class="registered-vehicles" id="partsRegisteredVehicles"></div></div>
+          <div class="plate-picker-field"><input id="partsPlate" placeholder="Digite sua placa" maxlength="7"><div class="registered-vehicles" id="partsRegisteredVehicles"></div></div>
           <button id="partsSearchBtn" aria-label="Buscar peças">
             <svg viewBox="0 0 24 24"><path d="M21.7 3.4 3.6 10.8c-1.2.5-1.1 2.2.1 2.5l6.4 1.6 1.6 6.3c.3 1.2 2 1.3 2.5.2l7.4-18.1c.3-.8-.4-1.5-1.2-1.2ZM11 14l7.2-7.2-4.7 11.5-1.1-4.4L8 12.8 19.5 8.1 12.3 15.3 11 14Z"/></svg>
           </button>
         </div>
         <div class="parts-error" id="partsError">Informe a peça e uma placa no formato ABC1D23 ou ABC1234.</div>
         <div class="vehicle-summary" id="vehicleSummary">
-          <div><small>Marca</small><strong id="vehicleBrand">Volkswagen</strong></div>
-          <div><small>Modelo</small><strong id="vehicleModel">T-Cross Comfortline</strong></div>
-          <div><small>Ano</small><strong id="vehicleYear">2021</strong></div>
+          <div><small>Marca</small><strong id="vehicleBrand">—</strong></div>
+          <div><small>Modelo</small><strong id="vehicleModel">—</strong></div>
+          <div><small>Ano</small><strong id="vehicleYear">—</strong></div>
           <div><small>Valor FIPE</small><strong id="vehicleFipe">—</strong></div>
         </div>
         <div class="parts-results" id="partsResults">
@@ -1928,13 +1948,13 @@ body.theme-dark{
             <div class="flow-block">
               <div class="flow-label">Qual é a placa do seu carro? <small>obrigatório</small></div>
               <div class="plate-picker-field">
-                <input class="flow-input" id="menuProposalPlate" placeholder="ABC1D23" maxlength="7">
+                <input class="flow-input" id="menuProposalPlate" placeholder="Digite sua placa" maxlength="7">
                 <div class="registered-vehicles" id="menuProposalRegisteredVehicles"></div>
               </div>
               <div class="vehicle-summary menu-vehicle" id="menuProposalVehicle">
-                <div><small>Marca</small><strong>Volkswagen</strong></div>
-                <div><small>Modelo</small><strong>T-Cross Comfortline</strong></div>
-                <div><small>Ano</small><strong>2021</strong></div>
+                <div><small>Marca</small><strong>—</strong></div>
+                <div><small>Modelo</small><strong>—</strong></div>
+                <div><small>Ano</small><strong>—</strong></div>
                 <div><small>Valor FIPE</small><strong>—</strong></div>
               </div>
             </div>
@@ -1994,9 +2014,9 @@ body.theme-dark{
           <button class="back-home" id="sellBackHome">Voltar ao início</button>
         </div>
         <div class="sell-form">
-          <label>Placa do carro</label><div class="plate-picker-field"><input id="sellPlate" placeholder="ABC1D23" maxlength="7"><div class="registered-vehicles" id="sellRegisteredVehicles"></div></div>
+          <label>Placa do carro</label><div class="plate-picker-field"><input id="sellPlate" placeholder="Digite sua placa" maxlength="7"><div class="registered-vehicles" id="sellRegisteredVehicles"></div></div>
           <div class="vehicle-summary sell-vehicle" id="sellVehicle">
-            <div><small>Marca</small><strong>Volkswagen</strong></div><div><small>Modelo</small><strong>T-Cross Comfortline</strong></div><div><small>Ano</small><strong>2021</strong></div><div><small>Valor FIPE</small><strong>—</strong></div>
+            <div><small>Marca</small><strong>—</strong></div><div><small>Modelo</small><strong>—</strong></div><div><small>Ano</small><strong>—</strong></div><div><small>Valor FIPE</small><strong>—</strong></div>
           </div>
           <div class="sell-form-grid">
             <div><label>Preço</label><input id="sellPrice" placeholder="R$ 95.000"></div>
@@ -2016,9 +2036,9 @@ body.theme-dark{
           <button class="back-home" id="evaluationBackHome">Voltar ao início</button>
         </div>
         <div class="sell-form">
-          <label>Placa do carro</label><div class="plate-picker-field"><input id="evaluationPlate" placeholder="ABC1D23" maxlength="7"><div class="registered-vehicles" id="evaluationRegisteredVehicles"></div></div>
+          <label>Placa do carro</label><div class="plate-picker-field"><input id="evaluationPlate" placeholder="Digite sua placa" maxlength="7"><div class="registered-vehicles" id="evaluationRegisteredVehicles"></div></div>
           <div class="vehicle-summary sell-vehicle" id="evaluationVehicle">
-            <div><small>Marca</small><strong>Volkswagen</strong></div><div><small>Modelo</small><strong>T-Cross Comfortline</strong></div><div><small>Ano</small><strong>2021</strong></div><div><small>Valor FIPE</small><strong>—</strong></div>
+            <div><small>Marca</small><strong>—</strong></div><div><small>Modelo</small><strong>—</strong></div><div><small>Ano</small><strong>—</strong></div><div><small>Valor FIPE</small><strong>—</strong></div>
           </div>
           <label>Quilometragem</label><input id="evaluationMileage" placeholder="Ex.: 54.000 km">
           <label>Descrição do carro</label><textarea id="evaluationDescription" placeholder="Conte quantos donos o carro teve, estado de conservação, revisões, acessórios e outros detalhes importantes."></textarea>
@@ -2120,7 +2140,7 @@ body.theme-dark{
         <div class="emergency-selected" id="emergencySelected">Serviço selecionado</div>
         <div class="emergency-fields">
           <div class="location-input-wrap"><input id="emergencyAddress" placeholder="Digite sua localização ou endereço"><button class="inline-location" id="emergencyUseLocation" type="button" aria-label="Usar localização atual"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button></div>
-          <div class="plate-picker-field"><input id="emergencyPlate" placeholder="Placa ABC1D23" maxlength="7"><div class="registered-vehicles" id="emergencyRegisteredVehicles"></div></div>
+          <div class="plate-picker-field"><input id="emergencyPlate" placeholder="Digite sua placa" maxlength="7"><div class="registered-vehicles" id="emergencyRegisteredVehicles"></div></div>
         </div>
         <div class="emergency-price" id="emergencyPrice">
           <div><small>Preço estimado</small><strong id="emergencyPriceValue">R$ 0</strong></div>
@@ -2143,7 +2163,7 @@ body.theme-dark{
           <input id="accountPhone" placeholder="Telefone com DDD" autocomplete="tel" inputmode="tel">
           <input id="accountEmail" placeholder="E-mail" autocomplete="email" type="email" required>
           <input id="accountPassword" placeholder="Senha (mín. 6 caracteres)" type="password" autocomplete="new-password" required>
-          <input id="accountPlate" placeholder="Placa do carro: ABC1D23" maxlength="7">
+          <input id="accountPlate" placeholder="Placa do carro" maxlength="7">
           <button class="create-account" type="submit" id="accountSubmitBtn">Criar conta</button>
         </form>
         <p class="account-toggle"><span id="accountToggleText">Já tem conta?</span> <button type="button" id="accountToggleBtn">Entrar</button></p>
@@ -2160,6 +2180,27 @@ body.theme-dark{
           <div>
             <strong id="accountUserName">—</strong>
             <p id="accountUserEmail">—</p>
+          </div>
+        </div>
+        <div class="account-section">
+          <div class="account-section-title">Dados da conta</div>
+          <input id="accountProfileName" placeholder="Nome completo" autocomplete="name">
+          <input id="accountProfilePhone" placeholder="Telefone com DDD" autocomplete="tel" inputmode="tel">
+          <button class="account-mini-btn solid" id="accountSaveProfile" type="button">Salvar dados</button>
+        </div>
+        <div class="account-section">
+          <div class="account-section-title">Minhas placas</div>
+          <div class="account-plates" id="accountPlatesList"></div>
+          <div class="account-inline">
+            <input id="accountNewPlate" placeholder="Adicionar placa" maxlength="7">
+            <button class="account-mini-btn" id="accountAddPlate" type="button">Adicionar</button>
+          </div>
+        </div>
+        <div class="account-section">
+          <div class="account-section-title">Senha</div>
+          <div class="account-inline">
+            <input id="accountNewPassword" placeholder="Nova senha" type="password" autocomplete="new-password">
+            <button class="account-mini-btn" id="accountUpdatePassword" type="button">Alterar</button>
           </div>
         </div>
         <button class="account-signout" id="accountSignOut" type="button">Sair da conta</button>
@@ -2379,6 +2420,8 @@ const emergencyPrice=document.getElementById("emergencyPrice");
 const emergencyPriceValue=document.getElementById("emergencyPriceValue");
 const buyEmergency=document.getElementById("buyEmergency");
 const emergencyStatus=document.getElementById("emergencyStatus");
+const topAccountBtn=document.getElementById("topAccountBtn");
+const topAccountLabel=document.getElementById("topAccountLabel");
 const mobileAccountBtn=document.getElementById("mobileAccountBtn");
 const menuAccountBtn=document.getElementById("menuAccountBtn");
 const accountPanel=document.getElementById("accountPanel");
@@ -2398,6 +2441,14 @@ const accountSignOut=document.getElementById("accountSignOut");
 const accountAvatar=document.getElementById("accountAvatar");
 const accountUserName=document.getElementById("accountUserName");
 const accountUserEmail=document.getElementById("accountUserEmail");
+const accountProfileName=document.getElementById("accountProfileName");
+const accountProfilePhone=document.getElementById("accountProfilePhone");
+const accountSaveProfile=document.getElementById("accountSaveProfile");
+const accountPlatesList=document.getElementById("accountPlatesList");
+const accountNewPlate=document.getElementById("accountNewPlate");
+const accountAddPlate=document.getElementById("accountAddPlate");
+const accountNewPassword=document.getElementById("accountNewPassword");
+const accountUpdatePassword=document.getElementById("accountUpdatePassword");
 const accountPanelTitle=document.getElementById("accountPanelTitle");
 const accountPanelSubtitle=document.getElementById("accountPanelSubtitle");
 const accountLoggedOut=document.getElementById("accountLoggedOut");
@@ -2552,10 +2603,7 @@ let activeReservationOffice=null;
 let assistantConversation=[];
 let assistantLatestContext="";
 let assistantLastIntentType="serviceQuote";
-const userVehicles=[
-  {plate:"ABC1D23",brand:"Volkswagen",model:"T-Cross Comfortline",year:"2021",color:"Prata"},
-  {plate:"DEF4G56",brand:"Chevrolet",model:"Onix LTZ",year:"2020",color:"Branco"}
-];
+let userVehicles=[];
 const plateCache={};
 const workshops=[
   {name:"Butantã Pneus Express",rating:"4.8",distance:"1,2 km",meta:"Pneus, alinhamento e balanceamento. Atende hoje.",detail:"Trabalha com troca de pneus, calibragem, rodízio, alinhamento 3D e orçamento por WhatsApp."},
@@ -2612,7 +2660,7 @@ const workshopQuotes=[
 const notifications=[
   {type:"quote",icon:"R$",title:"Auto Center Vital Brasil enviou uma proposta de R$ 690.",detail:"Revisão de freios e troca das pastilhas dianteiras.",time:"Agora"},
   {type:"message",icon:"✉",title:"Butantã Pneus Express enviou uma mensagem.",detail:"Temos disponibilidade para atendimento hoje às 15h.",time:"12 min"},
-  {type:"car",icon:"✓",title:"Seu carro de placa ABC1D23 foi cadastrado com sucesso.",detail:"Volkswagen T-Cross Comfortline 2021 · Prata",time:"Hoje, 09:20"},
+  {type:"car",icon:"✓",title:"Seu veículo foi cadastrado com sucesso.",detail:"A placa da sua conta já pode ser usada nas solicitações.",time:"Hoje, 09:20"},
   {type:"quote",icon:"R$",title:"Oficina São Remo Car enviou uma proposta de R$ 540.",detail:"Inspeção dos discos e troca das pastilhas dianteiras.",time:"Ontem"},
   {type:"message",icon:"✉",title:"Oeste Car Parts respondeu sua busca por peças.",detail:"Encontramos a pastilha compatível com seu veículo.",time:"Ontem"}
 ];
@@ -3166,6 +3214,52 @@ function setAccountStatus(message,success=false){
   accountStatus.textContent=message;
   accountStatus.classList.toggle("success",success);
 }
+function normalizeVehicle(vehicle){
+  if(!vehicle) return null;
+  const plate=String(vehicle.plate||vehicle.placa||"").trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
+  if(!isValidPlateFormat(plate)) return null;
+  return {
+    plate,
+    brand:vehicle.brand||vehicle.marca||"—",
+    model:vehicle.model||vehicle.modelo||"—",
+    year:vehicle.year||vehicle.ano||"—",
+    color:vehicle.color||vehicle.cor||"—",
+    valueFipe:vehicle.valueFipe||vehicle.valor_fipe||vehicle.valorFipe||vehicle.value||"—"
+  };
+}
+function vehiclesFromMeta(meta={}){
+  const vehicles=Array.isArray(meta.vehicles)?meta.vehicles:[];
+  const normalized=vehicles.map(normalizeVehicle).filter(Boolean);
+  const single=normalizeVehicle({plate:meta.plate,brand:meta.brand,model:meta.model,year:meta.year,color:meta.color,valueFipe:meta.valueFipe});
+  if(single&&!normalized.some((vehicle)=>vehicle.plate===single.plate)) normalized.unshift(single);
+  return normalized;
+}
+function renderAccountPlates(){
+  if(!accountPlatesList) return;
+  if(!userVehicles.length){
+    accountPlatesList.innerHTML='<div class="account-empty">Ainda não há placas cadastradas. Adicione sua placa para usar em cotações, peças e avaliações.</div>';
+    return;
+  }
+  accountPlatesList.innerHTML=userVehicles.map((vehicle,index)=>`
+    <div class="account-plate-row">
+      <div><b>${vehicle.plate}</b><small>${vehicle.brand} ${vehicle.model} · ${vehicle.year}</small></div>
+      <button type="button" data-remove-plate="${index}">Remover</button>
+    </div>
+  `).join("");
+}
+function renderAllRegisteredPlatePickers(){
+  [registeredVehicles,partsRegisteredVehicles,menuProposalRegisteredVehicles,sellRegisteredVehicles,evaluationRegisteredVehicles,emergencyRegisteredVehicles]
+    .forEach((container)=>renderRegisteredPlatePicker(container));
+}
+async function saveUserProfileMeta(extraMeta={},successMessage="Dados atualizados."){
+  if(!sb||!currentUser) return;
+  const currentMeta=currentUser.user_metadata||{};
+  const nextMeta={...currentMeta,...extraMeta};
+  const {data,error}=await sb.auth.updateUser({data:nextMeta});
+  if(error) throw error;
+  setLoggedIn(data?.user||{...currentUser,user_metadata:nextMeta});
+  setAccountStatus(successMessage,true);
+}
 function setLoggedIn(user){
   currentUser=user||null;
   accountLoggedOut.style.display=currentUser?"none":"block";
@@ -3173,13 +3267,24 @@ function setLoggedIn(user){
   if(currentUser){
     const meta=currentUser.user_metadata||{};
     const name=meta.full_name||meta.name||currentUser.email?.split("@")[0]||"Motorista";
+    topAccountLabel.textContent="Conta";
+    userVehicles=vehiclesFromMeta(meta);
+    userVehicles.forEach((vehicle)=>{plateCache[vehicle.plate]=vehicle;});
     accountPanelTitle.textContent="Sua conta";
     accountPanelSubtitle.textContent="Você está conectado ao Vai Rodar.";
     accountUserName.textContent=name;
     accountUserEmail.textContent=currentUser.email||"Conta conectada";
+    accountProfileName.value=meta.full_name||meta.name||"";
+    accountProfilePhone.value=meta.phone||"";
     accountAvatar.textContent=name.trim().charAt(0).toUpperCase()||"V";
+    renderAccountPlates();
+    renderAllRegisteredPlatePickers();
     return;
   }
+  topAccountLabel.textContent="Criar conta";
+  userVehicles=[];
+  renderAccountPlates();
+  renderAllRegisteredPlatePickers();
   setAuthMode(isSignUpMode);
 }
 async function initAuth(){
@@ -3572,9 +3677,14 @@ async function lookupPlate(plateValue){
 function renderRegisteredPlatePicker(container){
   if(!container) return;
   container.classList.remove("open");
+  if(!userVehicles.length){
+    container.innerHTML="";
+    return;
+  }
   container.innerHTML=`
     <button class="registered-vehicle-toggle" type="button">
-      <span><b>Minhas placas</b><small>Mostrar veículos da minha conta</small></span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM5.4 6 4 12v4h16v-4l-1.4-6A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.9 2Zm1.9 0h9.4l1 4H6.3l1-4Z"/></svg>
+      <span><b>Placas</b><small>Mostrar veículos da minha conta</small></span>
       <span>Ver</span>
     </button>
     <div class="registered-vehicle-options">
@@ -3595,7 +3705,7 @@ function selectRegisteredPlate(container,input,summary,index,afterSelect){
   container.querySelectorAll(".registered-vehicle").forEach((button)=>button.classList.toggle("active",button.dataset.index===String(index)));
   container.classList.remove("open");
   const toggle=container.querySelector(".registered-vehicle-toggle");
-  if(toggle) toggle.innerHTML=`<span><b>${vehicle.plate}</b><small>${vehicle.brand} ${vehicle.model}</small></span><span>Trocar</span>`;
+  if(toggle) toggle.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM5.4 6 4 12v4h16v-4l-1.4-6A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.9 2Zm1.9 0h9.4l1 4H6.3l1-4Z"/></svg><span><b>${vehicle.plate}</b><small>${vehicle.brand} ${vehicle.model}</small></span><span>Trocar</span>`;
   input.value=vehicle.plate;
   input.classList.remove("invalid");
   if(summary){
@@ -3924,6 +4034,7 @@ bindBenefitCard(weeklyOffersCard,"weekly");
 topEmergencyBtn.addEventListener("click",openEmergency);
 mobileEmergencyBtn.addEventListener("click",openEmergency);
 emergencyClose.addEventListener("click",closeEmergency);
+topAccountBtn.addEventListener("click",openAccount);
 mobileAccountBtn.addEventListener("click",openAccount);
 menuAccountBtn.addEventListener("click",openAccount);
 accountClose.addEventListener("click",closeAccount);
@@ -4022,6 +4133,7 @@ workshopRegisterForm.addEventListener("submit",(event)=>{
 });
 registerSuccessClose.addEventListener("click",finishWorkshopRegister);
 accountPlate.addEventListener("input",()=>accountPlate.value=accountPlate.value.toUpperCase());
+accountNewPlate.addEventListener("input",()=>accountNewPlate.value=accountNewPlate.value.toUpperCase());
 accountToggleBtn.addEventListener("click",()=>setAuthMode(!isSignUpMode));
 accountForm.addEventListener("submit",async(event)=>{
   event.preventDefault();
@@ -4055,7 +4167,8 @@ accountForm.addEventListener("submit",async(event)=>{
           data:{
             full_name:accountName.value.trim(),
             phone:accountPhone.value.trim(),
-            plate:accountPlate.value.trim().toUpperCase()
+            plate:accountPlate.value.trim().toUpperCase(),
+            vehicles:[{plate:accountPlate.value.trim().toUpperCase(),brand:"—",model:"—",year:"—",color:"—",valueFipe:"—"}]
           }
         }
       });
@@ -4095,6 +4208,83 @@ accountSignOut.addEventListener("click",async()=>{
   await sb.auth.signOut();
   setLoggedIn(null);
   setAccountStatus("Sessão encerrada.",true);
+});
+accountSaveProfile.addEventListener("click",async()=>{
+  if(!currentUser) return;
+  try{
+    await saveUserProfileMeta({
+      full_name:accountProfileName.value.trim(),
+      phone:accountProfilePhone.value.trim(),
+      vehicles:userVehicles
+    },"Dados da conta atualizados.");
+  }catch(error){
+    setAccountStatus(error.message||"Não foi possível salvar os dados.");
+  }
+});
+accountAddPlate.addEventListener("click",async()=>{
+  if(!currentUser) return;
+  const plate=accountNewPlate.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
+  if(!isValidPlateFormat(plate)){
+    setAccountStatus("Informe uma placa no formato ABC1D23 ou ABC1234.");
+    return;
+  }
+  if(userVehicles.some((vehicle)=>vehicle.plate===plate)){
+    setAccountStatus("Essa placa já está na sua conta.");
+    return;
+  }
+  accountAddPlate.disabled=true;
+  accountAddPlate.textContent="Buscando...";
+  try{
+    let vehicle=await lookupPlate(plate);
+    if(!vehicle) vehicle={plate,brand:"—",model:"—",year:"—",color:"—",valueFipe:"—"};
+    userVehicles=[...userVehicles,normalizeVehicle(vehicle)].filter(Boolean);
+    accountNewPlate.value="";
+    await saveUserProfileMeta({vehicles:userVehicles},"Placa adicionada.");
+  }catch(error){
+    const vehicle={plate,brand:"—",model:"—",year:"—",color:"—",valueFipe:"—"};
+    userVehicles=[...userVehicles,vehicle];
+    accountNewPlate.value="";
+    try{
+      await saveUserProfileMeta({vehicles:userVehicles},"Placa adicionada. Complete os dados depois se necessário.");
+    }catch(saveError){
+      setAccountStatus(saveError.message||"Não foi possível adicionar a placa.");
+    }
+  }finally{
+    accountAddPlate.disabled=false;
+    accountAddPlate.textContent="Adicionar";
+  }
+});
+accountPlatesList.addEventListener("click",async(event)=>{
+  const button=event.target.closest("[data-remove-plate]");
+  if(!button||!currentUser) return;
+  const index=Number(button.dataset.removePlate);
+  userVehicles=userVehicles.filter((_vehicle,vehicleIndex)=>vehicleIndex!==index);
+  try{
+    await saveUserProfileMeta({vehicles:userVehicles},"Placa removida.");
+  }catch(error){
+    setAccountStatus(error.message||"Não foi possível remover a placa.");
+  }
+});
+accountUpdatePassword.addEventListener("click",async()=>{
+  if(!sb||!currentUser) return;
+  const password=accountNewPassword.value.trim();
+  if(password.length<6){
+    setAccountStatus("A nova senha precisa ter pelo menos 6 caracteres.");
+    return;
+  }
+  accountUpdatePassword.disabled=true;
+  accountUpdatePassword.textContent="Salvando...";
+  try{
+    const {error}=await sb.auth.updateUser({password});
+    if(error) throw error;
+    accountNewPassword.value="";
+    setAccountStatus("Senha atualizada.",true);
+  }catch(error){
+    setAccountStatus(error.message||"Não foi possível alterar a senha.");
+  }finally{
+    accountUpdatePassword.disabled=false;
+    accountUpdatePassword.textContent="Alterar";
+  }
 });
 emergencyUseLocation.addEventListener("click",()=>{
   emergencyAddress.value="Butantã, São Paulo";
