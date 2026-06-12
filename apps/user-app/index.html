@@ -3578,7 +3578,69 @@ function handleAssistantIntent(intent){
   if(intent==="offers"){openBenefitsView("promotions");return;}
   startAssistantQuoteWithAnalysis();
 }
-function expandAssistant(sourceInput=problemInput){
+// ─── Diagnóstico IA via Netlify Function ────────────────────
+async function callAIDiagnose(message,conversation){
+  try{
+    const res=await fetch("/.netlify/functions/ai-diagnose",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message,conversation}),
+    });
+    if(!res.ok) throw new Error("status "+res.status);
+    return await res.json();
+  }catch(err){
+    console.warn("[AI] Fallback local:",err.message);
+    return null; // usa fallback local
+  }
+}
+
+function applyAssistantIntent(intent,text,contextText,sourceInput){
+  if(assistantConversation.length===0){
+    problemBubble.textContent=text;
+    const validCategories=Array.isArray(intent.categories)?intent.categories.filter(n=>allowedCategories.includes(n)):[];
+    categoryChips.innerHTML=validCategories.length
+      ? validCategories.map(n=>`<button class="ai-chip">${categoryIcons[n]||categoryIcons.default}<span>${n}</span></button>`).join("")
+      : assistantCategoriesHTML(contextText);
+    assistantActionBlock.dataset.context=contextText;
+    assistantIntentTitle.textContent=intent.title;
+    assistantIntentText.textContent=intent.text;
+    startOnlineQuote.textContent=intent.action;
+    startOnlineQuote.dataset.intent=intent.type||intent.intent||"serviceQuote";
+  }else{
+    renderAssistantExtraTurn(text,{
+      type:intent.type||intent.intent||"serviceQuote",
+      title:intent.title,
+      text:intent.text,
+      action:intent.action,
+    },contextText);
+  }
+  assistantLastIntentType=intent.type||intent.intent||"serviceQuote";
+  assistantConversation.push({user:text,intent:assistantLastIntentType,assistant:intent.text});
+  proposalBtn.textContent=assistantLastIntentType==="partQuote"?"Enviar solicitação de peça":"Enviar solicitação a oficinas";
+  assistantCard.classList.add("expanded","chat-mode","intent-ready");
+  assistantCard.classList.remove("form-open","quote-active");
+  if(sourceInput) sourceInput.value="";
+  screenShell.classList.add("flow-active");
+  setTimeout(()=>{
+    appScroller.scrollTo({top:assistantCard.offsetTop-10,behavior:"smooth"});
+    if(chatFollowInput) chatFollowInput.focus();
+  },40);
+}
+
+function showAssistantLoading(text){
+  problemBubble.textContent=text;
+  categoryChips.innerHTML="";
+  assistantIntentTitle.textContent="Analisando...";
+  assistantIntentText.textContent="A IA está lendo seu problema.";
+  startOnlineQuote.textContent="Aguarde";
+  assistantCard.classList.add("expanded","chat-mode","analyzing-message");
+}
+
+function hideAssistantLoading(){
+  assistantCard.classList.remove("analyzing-message");
+}
+
+async function expandAssistant(sourceInput=problemInput){
   const text=sourceInput.value.trim();
   if(!text){
     sourceInput.classList.add("invalid");
@@ -3606,31 +3668,19 @@ function expandAssistant(sourceInput=problemInput){
   }
   const contextText=assistantContextFor(text);
   assistantLatestContext=contextText;
-  const intent=detectAssistantIntent(contextText);
-  if(assistantConversation.length===0){
-    problemBubble.textContent=text;
-    categoryChips.innerHTML="";
-    assistantActionBlock.dataset.context=contextText;
-    assistantIntentTitle.textContent=intent.title;
-    assistantIntentText.textContent=intent.text;
-    startOnlineQuote.textContent=intent.action;
-    startOnlineQuote.dataset.intent=intent.type;
-  }else{
-    renderAssistantExtraTurn(text,intent,contextText);
-  }
-  assistantLastIntentType=intent.type;
-  assistantConversation.push({user:text,intent:intent.type});
-  proposalBtn.textContent=intent.type==="partQuote"?"Enviar solicitação de peça":"Enviar solicitação a oficinas";
-  assistantCard.classList.add("expanded");
-  assistantCard.classList.add("chat-mode");
-  assistantCard.classList.add("intent-ready");
-  assistantCard.classList.remove("form-open","quote-active");
+  // Mostrar loading mientras llama a la IA
+  if(assistantConversation.length===0) showAssistantLoading(text);
   sourceInput.value="";
-  screenShell.classList.add("flow-active");
-  setTimeout(()=>{
-    appScroller.scrollTo({top:assistantCard.offsetTop-10,behavior:"smooth"});
-    if(chatFollowInput) chatFollowInput.focus();
-  },40);
+  // Llamada a OpenAI via Netlify Function
+  const aiResult=await callAIDiagnose(contextText,
+    assistantConversation.map(t=>({user:t.user,assistant:t.assistant||""}))
+  );
+  hideAssistantLoading();
+  // Usa resultado de la IA o fallback local
+  const intent=aiResult
+    ? {type:aiResult.intent,title:aiResult.title,text:aiResult.text,categories:aiResult.categories,action:aiResult.action}
+    : detectAssistantIntent(contextText);
+  applyAssistantIntent(intent,text,contextText,null);
 }
 bindRegisteredPlatePicker(partsRegisteredVehicles,partsPlate,vehicleSummary);
 bindRegisteredPlatePicker(menuProposalRegisteredVehicles,menuProposalPlate,menuProposalVehicle);
