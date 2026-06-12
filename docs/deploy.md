@@ -1,54 +1,66 @@
-# Vai Rodar - Deploys
+# Vai Rodar - Deploys y carpetas oficiales
 
-Este repositorio tiene mas de un frontend. Para evitar confusiones, estas son las carpetas oficiales:
+Este repo tiene mas de un frontend. Cada sitio Netlify debe apuntar a su carpeta oficial.
 
 ## 1. App usuario
 
-- Carpeta oficial: `frontend-app`
-- Archivo principal: `frontend-app/index.html`
-- Netlify: sitio principal de la app Vai Rodar
-- Publish directory en Netlify: `frontend-app`
+- Carpeta oficial: `apps/user-app`
+- Archivo principal: `apps/user-app/index.html`
+- Contiene: app movil del usuario, assets, PWA, manifest y service worker
+- Publish directory en Netlify: `apps/user-app`
 - Build command: vacio
 
-Aqui viven tambien la PWA:
+PWA:
 
-- `frontend-app/manifest.json`
-- `frontend-app/service-worker.js`
-- `frontend-app/assets/icon-*.png`
+- `apps/user-app/manifest.json`
+- `apps/user-app/service-worker.js`
+- `apps/user-app/assets/icon-*.png`
 
-## 2. Registro de talleres
+## 2. Cadastro actual de talleres
 
-- Carpeta oficial: `frontend-workshop-register`
-- Archivo principal: `frontend-workshop-register/index.html`
-- Netlify: link separado para cadastro de oficinas
-- Publish directory en Netlify: `frontend-workshop-register`
+- Carpeta oficial: `apps/workshop-register-standalone`
+- Archivo principal: `apps/workshop-register-standalone/index.html`
+- Contiene: formulario publico actual de registro/cadastro de talleres
+- Backend actual: `integrations/google-apps-script/Code.gs`
+- Publish directory en Netlify: `apps/workshop-register-standalone`
 - Build command: vacio
 
-Este es el unico HTML que se debe subir o editar para el registro publico de talleres.
+Este flujo es standalone por ahora. Existe para captar talleres antes de integrar todo a la app principal.
 
-## 3. Prototipos
+## 3. Cadastro futuro integrado
 
-- Carpeta: `prototypes`
-- Uso: historico, pruebas visuales y referencias
-- No usar como publish directory de Netlify
-- No editar como fuente oficial salvo que se quiera guardar una prueba puntual
+Cuando exista base de datos real en la app, el cadastro de talleres debe integrarse en:
+
+- `apps/user-app`
+
+En ese momento el boton "Cadastre sua Oficina" dejara de mandar a un link externo y abrira un flujo interno.
+
+Hasta ese cambio, no duplicar ni reconstruir el formulario dentro de `apps/user-app`.
 
 ## 4. Backoffice futuro
 
-- Backoffice talleres: `frontend-backoffice-workshop`
-- Backoffice admin Vai Rodar: `frontend-backoffice-admin`
+- Backoffice talleres: `apps/workshop-backoffice`
+- Backoffice admin Vai Rodar: `apps/admin-backoffice`
 - Estado actual: carpetas preparadas, sin interfaz oficial todavia
 
-## 5. Backend
+## 5. Backend e integraciones
 
-- Apps Script: `backend/google-apps-script/Code.gs`
-- Supabase futuro: `backend/src`
+- Apps Script temporal: `integrations/google-apps-script/Code.gs`
+- Supabase/backend futuro: `backend/supabase`
 
-## Regla de trabajo
+## 6. Carpetas no productivas
 
-Antes de editar, confirmar que se esta trabajando en la carpeta correcta:
+- `prototypes`: pruebas visuales e historico. No usar como publish directory.
+- `exports`: artefactos antiguos, zips y capturas. No usar como fuente oficial.
+- `archive`: material legado.
 
-- App usuario: `frontend-app`
-- Cadastro oficinas: `frontend-workshop-register`
-- Backoffice talleres: `frontend-backoffice-workshop`
-- Backoffice admin: `frontend-backoffice-admin`
+## Regla estable
+
+No renombrar carpetas oficiales sin decision explicita del equipo:
+
+- `apps/user-app`
+- `apps/workshop-register-standalone`
+- `apps/workshop-backoffice`
+- `apps/admin-backoffice`
+- `integrations/google-apps-script`
+- `backend/supabase`
