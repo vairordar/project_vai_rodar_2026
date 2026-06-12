@@ -1,15 +1,19 @@
 /**
- * Proxy seguro para consultar datos basicos de vehiculo por placa.
+ * consulta-placa.js — Netlify Function
+ * Proxy seguro para API Brasil (gateway.apibrasil.io)
  *
  * GET /.netlify/functions/consulta-placa?placa=ABC1D23
+ * Returns: { plate, brand, model, year, color, fuel, city, state }
  *
- * Variables de entorno:
- * - PLACA_API_KEY: chave da FIPE API (fipeapi.com.br)
+ * Variáveis de ambiente no Netlify:
+ *   PLACA_BEARER_TOKEN  →  BearerToken da API Brasil
+ *   PLACA_DEVICE_TOKEN  →  DeviceToken da API Brasil
  */
 
 const https = require('https');
 
-const PLATE_API_KEY = process.env.PLACA_API_KEY || process.env.PLACA_API_KEY_VR;
+const BEARER_TOKEN = process.env.PLACA_BEARER_TOKEN;
+const DEVICE_TOKEN = process.env.PLACA_DEVICE_TOKEN;
 
 function jsonResponse(statusCode, body) {
   return {
@@ -32,15 +36,20 @@ function isValidPlate(plate) {
   return /^[A-Z]{3}[0-9][A-Z][0-9]{2}$/.test(plate) || /^[A-Z]{3}[0-9]{4}$/.test(plate);
 }
 
-function fetchPlate(plate, apiKey) {
+function fetchPlate(plate, bearerToken, deviceToken) {
   return new Promise((resolve, reject) => {
-    const path = `/placas/${encodeURIComponent(plate)}?key=${encodeURIComponent(apiKey)}`;
+    const body = JSON.stringify({ placa: plate });
     const req = https.request(
       {
-        hostname: 'placas.fipeapi.com.br',
-        path,
-        method: 'GET',
-        headers: { Accept: 'application/json' },
+        hostname: 'gateway.apibrasil.io',
+        path: '/api/v2/vehicles/dados',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${bearerToken}`,
+          DeviceToken: deviceToken,
+          'Content-Length': Buffer.byteLength(body),
+        },
       },
       (res) => {
         let data = '';
@@ -56,7 +65,7 @@ function fetchPlate(plate, apiKey) {
             }
             resolve(parsed);
           } catch {
-            reject(new Error('Resposta invalida da API de placas'));
+            reject(new Error('Resposta inválida da API Brasil'));
           }
         });
       }
@@ -66,6 +75,7 @@ function fetchPlate(plate, apiKey) {
     req.setTimeout(10000, () => {
       req.destroy(new Error('Consulta de placa timeout'));
     });
+    req.write(body);
     req.end();
   });
 }
@@ -75,28 +85,31 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'GET') return jsonResponse(405, { error: 'Method Not Allowed' });
 
   const plate = normalizePlate(event.queryStringParameters?.placa);
-  if (!isValidPlate(plate)) return jsonResponse(400, { error: 'Placa invalida.' });
-  if (!PLATE_API_KEY) return jsonResponse(500, { error: 'PLACA_API_KEY não configurada no Netlify.' });
+  if (!isValidPlate(plate)) return jsonResponse(400, { error: 'Placa inválida.' });
+
+  if (!BEARER_TOKEN || !DEVICE_TOKEN) {
+    return jsonResponse(500, { error: 'PLACA_BEARER_TOKEN ou PLACA_DEVICE_TOKEN não configurados no Netlify.' });
+  }
 
   try {
-    const raw = await fetchPlate(plate, PLATE_API_KEY);
+    const raw = await fetchPlate(plate, BEARER_TOKEN, DEVICE_TOKEN);
 
-    if (raw.error || (raw.message && !raw.marca)) {
+    if (raw.error || !raw.MARCA) {
       return jsonResponse(404, { error: raw.error || raw.message || 'Placa não encontrada.' });
     }
 
     return jsonResponse(200, {
       plate,
-      brand: raw.marca || '—',
-      model: raw.modelo || '—',
-      year: raw.anoModelo || raw.anoFabricacao || '—',
-      color: raw.cor || '—',
-      fuel: raw.combustivel || '—',
-      city: raw.municipio || '',
-      state: raw.uf || '',
+      brand: raw.MARCA || '—',
+      model: raw.MODELO || '—',
+      year: raw.ano || raw.ANO_MODELO || '—',
+      color: raw.COR || '—',
+      fuel: raw.COMBUSTIVEL || '—',
+      city: raw.MUNICIPIO || '',
+      state: raw.UF || '',
     });
   } catch (err) {
     console.error('[consulta-placa] Erro:', err.message);
-    return jsonResponse(502, { error: 'Erro ao consultar placa.', details: err.message });
+    return jsonResponse(502, { error: 'Erro ao consultar placa.' });
   }
 };
