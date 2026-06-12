@@ -67,7 +67,7 @@ function api(request) {
 }
 
 function addWorkshop(workshop) {
-  if (!workshop.nomeNegocio || !workshop.responsavel || !workshop.whatsapp || !workshop.estado || !workshop.cidade || !workshop.endereco || !workshop.servicos || !workshop.horarioPersonalizado) {
+  if (!workshop.nomeNegocio || !workshop.responsavel || !workshop.whatsapp || !workshop.cep || !workshop.estado || !workshop.cidade || !workshop.bairro || !workshop.endereco || !workshop.numero || !workshop.servicos || !workshop.horarioPersonalizado) {
     return { ok: false, error: "Faltam dados obrigatórios" };
   }
   if (!workshop.semCnpj && !/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/.test(String(workshop.cnpj || ""))) {
@@ -90,9 +90,13 @@ function addWorkshop(workshop) {
     "Responsável": workshop.responsavel,
     "WhatsApp": workshop.whatsapp,
     "E-mail": workshop.email || "",
+    "CEP": workshop.cep,
     "Estado": workshop.estado,
     "Cidade": workshop.cidade,
+    "Bairro": workshop.bairro,
     "Endereço da Oficina": workshop.endereco,
+    "Número": workshop.numero,
+    "Complemento": workshop.complemento || "",
     "Forma de Atendimento": workshop.formaAtendimento || "Na oficina",
     "Serviços": workshop.servicos,
     "Dias de Atendimento": workshop.diasAtendimento || "Personalizado",
@@ -158,9 +162,13 @@ function getWorkshopHeaders() {
     "Responsável",
     "WhatsApp",
     "E-mail",
+    "CEP",
     "Estado",
     "Cidade",
+    "Bairro",
     "Endereço da Oficina",
+    "Número",
+    "Complemento",
     "Forma de Atendimento",
     "Serviços",
     "Dias de Atendimento",
