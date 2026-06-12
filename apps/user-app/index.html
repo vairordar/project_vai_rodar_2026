@@ -1246,6 +1246,13 @@ h1{
 .account-note{color:var(--muted);font-size:8.5px;line-height:1.4;text-align:center;margin-top:12px}
 .account-status{min-height:14px;margin-top:8px;color:#dc2626;font-size:9px;font-weight:700;text-align:center}
 .account-status.success{color:#16a34a}
+.account-toggle{text-align:center;font-size:9px;color:var(--muted);margin-top:8px}
+.account-toggle button{background:none;border:none;color:var(--blue);font-size:9px;font-weight:700;cursor:pointer;padding:0}
+.account-user-info{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px;border:1px solid var(--input-border);border-radius:13px}
+.account-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.account-user-info strong{display:block;font-size:13px;color:var(--headline);font-weight:780;line-height:1.2}
+.account-user-info p{font-size:9px;color:var(--muted);margin-top:3px}
+.account-signout{width:100%;height:40px;border:1px solid var(--input-border);border-radius:12px;background:transparent;color:var(--text);font-size:11px;font-weight:700;cursor:pointer;margin-top:8px}
 .drawer-panel{
   position:absolute;
   left:18px;
@@ -1625,6 +1632,7 @@ body.theme-dark{
   .location-row,.image-row{grid-template-columns:1fr}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="theme-light">
 <div class="stage">
@@ -2121,28 +2129,41 @@ body.theme-dark{
         <div class="emergency-status" id="emergencyStatus"></div>
       </div>
     </section>
-    <section class="account-panel" id="accountPanel" aria-label="Criar conta">
+    <section class="account-panel" id="accountPanel" aria-label="Conta">
       <div class="account-head">
         <div>
-          <h3>Crie sua conta</h3>
-          <p>Cadastre seus dados para conversar com oficinas, acompanhar propostas e reservar serviços.</p>
+          <h3 id="accountPanelTitle">Crie sua conta</h3>
+          <p id="accountPanelSubtitle">Cadastre seus dados para conversar com oficinas, acompanhar propostas e reservar serviços.</p>
         </div>
         <button class="account-close" id="accountClose" aria-label="Fechar">×</button>
       </div>
-      <form class="account-form" id="accountForm" novalidate>
-        <input id="accountName" placeholder="Nome completo" autocomplete="name" required>
-        <input id="accountPhone" placeholder="Telefone com DDD" autocomplete="tel" inputmode="tel" required>
-        <input id="accountEmail" placeholder="E-mail" autocomplete="email" type="email" required>
-        <input id="accountPlate" placeholder="Placa do carro: ABC1D23" maxlength="7" required>
-        <button class="create-account" type="submit">Criar conta</button>
-      </form>
-      <div class="account-divider">ou continue com</div>
-      <div class="social-account">
-        <button type="button" data-provider="Google"><span class="social-mark">G</span>Continuar com Google</button>
-        <button class="apple" type="button" data-provider="Apple"><span class="social-mark">●</span>Continuar com Apple</button>
+      <div id="accountLoggedOut">
+        <form class="account-form" id="accountForm" novalidate>
+          <input id="accountName" placeholder="Nome completo" autocomplete="name">
+          <input id="accountPhone" placeholder="Telefone com DDD" autocomplete="tel" inputmode="tel">
+          <input id="accountEmail" placeholder="E-mail" autocomplete="email" type="email" required>
+          <input id="accountPassword" placeholder="Senha (mín. 6 caracteres)" type="password" autocomplete="new-password" required>
+          <input id="accountPlate" placeholder="Placa do carro: ABC1D23" maxlength="7">
+          <button class="create-account" type="submit" id="accountSubmitBtn">Criar conta</button>
+        </form>
+        <p class="account-toggle"><span id="accountToggleText">Já tem conta?</span> <button type="button" id="accountToggleBtn">Entrar</button></p>
+        <div class="account-divider">ou continue com</div>
+        <div class="social-account">
+          <button type="button" id="accountGoogleBtn"><span class="social-mark">G</span>Continuar com Google</button>
+        </div>
+        <p class="account-note">Ao continuar, você aceita os termos de uso e a política de privacidade do Vai Rodar.</p>
+        <div class="account-status" id="accountStatus"></div>
       </div>
-      <p class="account-note">Ao continuar, você aceita os termos de uso e a política de privacidade do Vai Rodar.</p>
-      <div class="account-status" id="accountStatus"></div>
+      <div id="accountLoggedIn" style="display:none">
+        <div class="account-user-info">
+          <div class="account-avatar" id="accountAvatar">?</div>
+          <div>
+            <strong id="accountUserName">—</strong>
+            <p id="accountUserEmail">—</p>
+          </div>
+        </div>
+        <button class="account-signout" id="accountSignOut" type="button">Sair da conta</button>
+      </div>
     </section>
     <section class="drawer-panel" id="messagesPanel" aria-label="Mensagens">
       <div class="drawer-head">
@@ -2366,8 +2387,26 @@ const accountForm=document.getElementById("accountForm");
 const accountName=document.getElementById("accountName");
 const accountPhone=document.getElementById("accountPhone");
 const accountEmail=document.getElementById("accountEmail");
+const accountPassword=document.getElementById("accountPassword");
 const accountPlate=document.getElementById("accountPlate");
 const accountStatus=document.getElementById("accountStatus");
+const accountSubmitBtn=document.getElementById("accountSubmitBtn");
+const accountToggleText=document.getElementById("accountToggleText");
+const accountToggleBtn=document.getElementById("accountToggleBtn");
+const accountGoogleBtn=document.getElementById("accountGoogleBtn");
+const accountSignOut=document.getElementById("accountSignOut");
+const accountAvatar=document.getElementById("accountAvatar");
+const accountUserName=document.getElementById("accountUserName");
+const accountUserEmail=document.getElementById("accountUserEmail");
+const accountPanelTitle=document.getElementById("accountPanelTitle");
+const accountPanelSubtitle=document.getElementById("accountPanelSubtitle");
+const accountLoggedOut=document.getElementById("accountLoggedOut");
+const accountLoggedIn=document.getElementById("accountLoggedIn");
+const SUPABASE_URL="https://glyooliyoclxkkzffdiw.supabase.co";
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdseW9vbGl5b2NseGtremZmZGl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyODcxNzAsImV4cCI6MjA5Njg2MzE3MH0.-USQobe61N-a8GtUdGa8WjK-IxpPrAnP9KxCsJNcFRE";
+const sb=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
+let currentUser=null;
+let isSignUpMode=true;
 const partsBackHome=document.getElementById("partsBackHome");
 const partsQuery=document.getElementById("partsQuery");
 const partsPlate=document.getElementById("partsPlate");
@@ -3099,13 +3138,58 @@ function openAccount(){
   accountPanel.classList.add("open");
   accountStatus.textContent="";
   accountStatus.classList.remove("success");
-  setTimeout(()=>accountName.focus(),100);
+  if(!currentUser) setTimeout(()=>accountEmail.focus(),100);
 }
 function closeAccount(){
   accountPanel.classList.remove("open");
   accountStatus.textContent="";
   accountStatus.classList.remove("success");
   if(!sideMenu.classList.contains("open")&&!emergencyPanel.classList.contains("open")&&!messagesPanel.classList.contains("open")&&!quotesPanel.classList.contains("open")&&!notificationsPanel.classList.contains("open")) overlay.classList.remove("open");
+}
+function setAuthMode(signUp){
+  isSignUpMode=signUp;
+  accountPanelTitle.textContent=signUp?"Crie sua conta":"Entrar na conta";
+  accountPanelSubtitle.textContent=signUp
+    ?"Cadastre seus dados para conversar com oficinas, acompanhar propostas e reservar serviços."
+    :"Acesse para acompanhar propostas, mensagens e reservas no Vai Rodar.";
+  accountSubmitBtn.textContent=signUp?"Criar conta":"Entrar";
+  accountToggleText.textContent=signUp?"Já tem conta?":"Não tem conta?";
+  accountToggleBtn.textContent=signUp?"Entrar":"Criar conta";
+  accountName.style.display=signUp?"block":"none";
+  accountPhone.style.display=signUp?"block":"none";
+  accountPlate.style.display=signUp?"block":"none";
+  accountPassword.autocomplete=signUp?"new-password":"current-password";
+  accountStatus.textContent="";
+  accountStatus.classList.remove("success");
+}
+function setAccountStatus(message,success=false){
+  accountStatus.textContent=message;
+  accountStatus.classList.toggle("success",success);
+}
+function setLoggedIn(user){
+  currentUser=user||null;
+  accountLoggedOut.style.display=currentUser?"none":"block";
+  accountLoggedIn.style.display=currentUser?"block":"none";
+  if(currentUser){
+    const meta=currentUser.user_metadata||{};
+    const name=meta.full_name||meta.name||currentUser.email?.split("@")[0]||"Motorista";
+    accountPanelTitle.textContent="Sua conta";
+    accountPanelSubtitle.textContent="Você está conectado ao Vai Rodar.";
+    accountUserName.textContent=name;
+    accountUserEmail.textContent=currentUser.email||"Conta conectada";
+    accountAvatar.textContent=name.trim().charAt(0).toUpperCase()||"V";
+    return;
+  }
+  setAuthMode(isSignUpMode);
+}
+async function initAuth(){
+  if(!sb){
+    console.warn("[Supabase] SDK nao carregado.");
+    return;
+  }
+  const {data}=await sb.auth.getSession();
+  setLoggedIn(data?.session?.user||null);
+  sb.auth.onAuthStateChange((_event,session)=>setLoggedIn(session?.user||null));
 }
 function renderChats(){
   chatList.innerHTML=chats.map((chat,index)=>`
@@ -3938,21 +4022,80 @@ workshopRegisterForm.addEventListener("submit",(event)=>{
 });
 registerSuccessClose.addEventListener("click",finishWorkshopRegister);
 accountPlate.addEventListener("input",()=>accountPlate.value=accountPlate.value.toUpperCase());
-accountForm.addEventListener("submit",(event)=>{
+accountToggleBtn.addEventListener("click",()=>setAuthMode(!isSignUpMode));
+accountForm.addEventListener("submit",async(event)=>{
   event.preventDefault();
-  const plateOk=isValidPlateFormat(accountPlate.value.trim().toUpperCase());
-  const phoneOk=accountPhone.value.trim().replace(/\D/g,"").length>=10;
   const emailOk=accountEmail.validity.valid&&accountEmail.value.trim().length>0;
-  const nameOk=accountName.value.trim().length>=3;
-  accountStatus.classList.toggle("success",plateOk&&phoneOk&&emailOk&&nameOk);
-  accountStatus.textContent=plateOk&&phoneOk&&emailOk&&nameOk
-    ?"Conta criada. Bem-vindo ao Vai Rodar."
-    :"Complete os dados e use uma placa no formato ABC1D23 ou ABC1234.";
+  const passwordOk=accountPassword.value.trim().length>=6;
+  if(!sb){
+    setAccountStatus("Conexao com autenticação indisponível. Tente novamente em alguns segundos.");
+    return;
+  }
+  if(!emailOk||!passwordOk){
+    setAccountStatus("Informe um e-mail válido e senha com mínimo de 6 caracteres.");
+    return;
+  }
+  if(isSignUpMode){
+    const plateOk=isValidPlateFormat(accountPlate.value.trim().toUpperCase());
+    const phoneOk=accountPhone.value.trim().replace(/\D/g,"").length>=10;
+    const nameOk=accountName.value.trim().length>=3;
+    if(!plateOk||!phoneOk||!nameOk){
+      setAccountStatus("Complete nome, telefone e uma placa no formato ABC1D23 ou ABC1234.");
+      return;
+    }
+  }
+  accountSubmitBtn.disabled=true;
+  accountSubmitBtn.textContent=isSignUpMode?"Criando conta...":"Entrando...";
+  try{
+    if(isSignUpMode){
+      const {data,error}=await sb.auth.signUp({
+        email:accountEmail.value.trim(),
+        password:accountPassword.value.trim(),
+        options:{
+          data:{
+            full_name:accountName.value.trim(),
+            phone:accountPhone.value.trim(),
+            plate:accountPlate.value.trim().toUpperCase()
+          }
+        }
+      });
+      if(error) throw error;
+      setLoggedIn(data?.session?.user||null);
+      setAccountStatus(data?.session?"Conta criada. Bem-vindo ao Vai Rodar.":"Conta criada. Verifique seu e-mail para confirmar o acesso.",true);
+    }else{
+      const {data,error}=await sb.auth.signInWithPassword({
+        email:accountEmail.value.trim(),
+        password:accountPassword.value.trim()
+      });
+      if(error) throw error;
+      setLoggedIn(data?.user||null);
+      setAccountStatus("Login realizado. Bem-vindo de volta.",true);
+    }
+  }catch(error){
+    setAccountStatus(error.message||"Não foi possível concluir agora.");
+  }finally{
+    accountSubmitBtn.disabled=false;
+    accountSubmitBtn.textContent=isSignUpMode?"Criar conta":"Entrar";
+  }
 });
-document.querySelectorAll(".social-account button").forEach((button)=>button.addEventListener("click",()=>{
-  accountStatus.classList.add("success");
-  accountStatus.textContent=`Continuando com ${button.dataset.provider}...`;
-}));
+accountGoogleBtn.addEventListener("click",async()=>{
+  if(!sb){
+    setAccountStatus("Conexao com autenticação indisponível. Tente novamente em alguns segundos.");
+    return;
+  }
+  setAccountStatus("Abrindo Google...",true);
+  const {error}=await sb.auth.signInWithOAuth({
+    provider:"google",
+    options:{redirectTo:window.location.origin}
+  });
+  if(error) setAccountStatus(error.message||"Não foi possível abrir o Google.");
+});
+accountSignOut.addEventListener("click",async()=>{
+  if(!sb) return;
+  await sb.auth.signOut();
+  setLoggedIn(null);
+  setAccountStatus("Sessão encerrada.",true);
+});
 emergencyUseLocation.addEventListener("click",()=>{
   emergencyAddress.value="Butantã, São Paulo";
   updateEmergencyPrice();
@@ -4060,6 +4203,7 @@ overlay.addEventListener("click",()=>{
   closeReservations();
 });
 document.getElementById("closeMenu").addEventListener("click",closeMenu);
+initAuth();
 
 // Registro do Service Worker (PWA). Funciona em HTTPS/localhost, nao em file://.
 if('serviceWorker' in navigator && window.location.protocol !== 'file:'){
