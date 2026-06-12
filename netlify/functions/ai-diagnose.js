@@ -25,6 +25,7 @@ const CATEGORIES = [
 ];
 
 const INTENTS = new Set(['serviceQuote', 'partQuote', 'buy', 'sell', 'value', 'offers']);
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY_VR || process.env.OPENAI_API_KEY;
 
 const SYSTEM_PROMPT = `Você é o assistente de diagnóstico automotivo do Vai Rodar, um app brasileiro que conecta motoristas a oficinas.
 
@@ -81,7 +82,7 @@ function callOpenAI(messages) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
           'Content-Length': Buffer.byteLength(body),
         },
       },
@@ -168,8 +169,8 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  if (!process.env.OPENAI_API_KEY) {
-    return jsonResponse(500, { error: 'OPENAI_API_KEY não configurada no Netlify.' });
+  if (!OPENAI_API_KEY) {
+    return jsonResponse(500, { error: 'OPENAI_API_KEY_VR não configurada no Netlify.' });
   }
 
   let message, conversation;
