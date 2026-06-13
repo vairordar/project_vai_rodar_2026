@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vai Rodar | Backoffice Oficina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#075cff;
+  --blue2:#1482ff;
+  --bg:#eef1f5;
+  --card:#fff;
+  --card-soft:#fbfdff;
+  --line:#e6edf7;
+  --input-border:#dde4ee;
+  --text:#070b14;
+  --headline:#080b13;
+  --muted:#727b88;
+  --green:#16a34a;
+  --yellow:#a16207;
+  --red:#dc2626;
+  --bottom:#fff;
+  --shell-border:#e4e9f1;
+  --card-shadow:0 12px 30px rgba(15,23,42,.04);
+}
+body{
+  min-height:100vh;
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:#eef1f5;
+  color:var(--text);
+  display:flex;
+  justify-content:center;
+  padding:18px;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app-shell{
+  width:min(1180px,100%);
+  height:calc(100vh - 36px);
+  min-height:720px;
+  border:1px solid var(--shell-border);
+  border-radius:24px;
+  background:var(--card);
+  box-shadow:0 24px 70px rgba(15,23,42,.16);
+  overflow:hidden;
+}
+.topbar{
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:18px 28px 14px;
+  border-bottom:1px solid var(--line);
+  background:var(--card);
+}
+.brand{display:flex;align-items:center;gap:9px;color:var(--text);font-size:15px;font-weight:700}
+.brand img{width:34px;height:34px;border-radius:9px;object-fit:cover}
+.brand span{color:var(--blue)}
+.top-actions{display:flex;align-items:center;gap:8px}
+.icon-btn,.ghost-btn,.primary-btn{
+  height:34px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:800;
+}
+.icon-btn{width:auto;border:1px solid var(--input-border);background:var(--bottom);color:var(--blue);padding:0 12px}
+.ghost-btn{border:1px solid var(--blue);background:var(--bottom);color:var(--blue);padding:0 12px}
+.primary-btn{border:0;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:0 13px;box-shadow:0 8px 18px rgba(7,92,255,.18)}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);height:calc(100% - 72px)}
+.sidebar{
+  padding:16px;
+  border-right:1px solid var(--line);
+  background:var(--card-soft);
+  overflow:auto;
+}
+.shop-card{
+  display:grid;
+  grid-template-columns:36px 1fr;
+  gap:9px;
+  align-items:center;
+  padding-bottom:13px;
+  border-bottom:1px solid var(--line);
+}
+.avatar{width:36px;height:36px;border-radius:9px;background:rgba(7,92,255,.08);color:var(--blue);display:grid;place-items:center;font-size:12px;font-weight:800}
+.shop-card h1{color:var(--headline);font-size:12px;line-height:1.2}
+.shop-card p{margin-top:3px;color:var(--muted);font-size:9px;line-height:1.3}
+.nav{display:grid;gap:5px;margin-top:13px}
+.nav button{
+  height:32px;
+  border:1px solid transparent;
+  border-radius:9px;
+  background:transparent;
+  color:var(--text);
+  text-align:left;
+  padding:0 9px;
+  font-size:10.5px;
+  font-weight:700;
+}
+.nav button.active{border-color:rgba(7,92,255,.26);background:rgba(7,92,255,.06);color:var(--blue)}
+.status-panel{display:grid;gap:9px;margin-top:13px;padding-top:13px;border-top:1px solid var(--line)}
+.switch-row{display:flex;align-items:center;justify-content:space-between;color:var(--text);font-size:9.5px;font-weight:700}
+.switch{width:38px;height:21px;border:0;border-radius:999px;background:var(--green);position:relative}
+.switch:after{content:"";position:absolute;right:3px;top:3px;width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 2px 7px rgba(15,23,42,.18)}
+.content{padding:22px 28px;overflow:auto;background:var(--card)}
+.view{display:none}
+.view.active{display:block}
+.hero{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:12px;
+}
+.hero h2{color:var(--headline);font-size:26px;line-height:1.08;font-weight:750;letter-spacing:-.45px}
+.hero p{max-width:520px;color:var(--muted);font-size:11px;line-height:1.4;margin-top:6px}
+.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.metric-card{border:1px solid var(--line);border-radius:10px;background:var(--bottom);padding:9px 10px}
+.metric-card small{display:block;color:var(--muted);font-size:8px;font-weight:750;text-transform:uppercase}
+.metric-card strong{display:block;color:var(--headline);font-size:18px;line-height:1;margin-top:6px}
+.center-grid{display:grid;grid-template-columns:minmax(0,1.35fr) 300px;gap:12px;align-items:start}
+.info-stack{display:grid;gap:10px}
+.panel{
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--bottom);
+  box-shadow:none;
+  padding:12px;
+}
+.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px}
+.panel h3{color:var(--headline);font-size:13px;line-height:1.2;font-weight:760}
+.panel p{color:var(--muted);font-size:9.5px;line-height:1.4;margin-top:3px}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters button,.mini-btn{
+  height:28px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--bottom);
+  color:var(--text);
+  padding:0 9px;
+  font-size:9px;
+  font-weight:750;
+}
+.filters button.active{border-color:var(--blue);color:var(--blue);background:rgba(7,92,255,.06)}
+.list{display:grid;gap:7px}
+.request{
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--card);
+  padding:9px;
+}
+.request-top,.schedule-top{display:flex;justify-content:space-between;gap:8px}
+.request b,.schedule b,.offer b{display:block;color:var(--text);font-size:10.5px;line-height:1.25}
+.request small,.schedule small,.offer small{display:block;color:var(--muted);font-size:8.5px;line-height:1.35;margin-top:3px}
+.request p{font-size:9px;color:var(--muted);line-height:1.4;margin-top:6px}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:800;white-space:nowrap}
+.pill.new{background:#e8f0ff;color:var(--blue)}
+.pill.confirmed{background:#dcfce7;color:#15803d}
+.pill.pending{background:#fff7d6;color:var(--yellow)}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.tags span{border:1px solid var(--input-border);border-radius:999px;background:var(--bottom);color:var(--blue);padding:4px 6px;font-size:8px;font-weight:750}
+.request-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.request-actions button{height:28px;border-radius:9px;padding:0 9px;font-size:8.5px;font-weight:800}
+.quote{border:0;background:var(--blue);color:#fff}
+.reserve{border:0;background:var(--green);color:#fff}
+.message{border:1px solid var(--blue);background:var(--bottom);color:var(--blue)}
+.table-list{display:grid;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bottom)}
+.table-row{display:grid;grid-template-columns:1.1fr .85fr .8fr auto;gap:10px;align-items:center;padding:9px 10px;border-bottom:1px solid var(--line)}
+.table-row:last-child{border-bottom:0}
+.table-row.header{background:var(--card-soft);color:var(--muted);font-size:8px;font-weight:800;text-transform:uppercase}
+.table-row b{display:block;color:var(--text);font-size:10px;line-height:1.25}
+.table-row small{display:block;color:var(--muted);font-size:8.5px;margin-top:3px}
+.compact-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.compact-actions button{height:26px;border-radius:8px;padding:0 8px;font-size:8px;font-weight:800}
+.message-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:12px}
+.thread-list{display:grid;gap:7px}
+.thread{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:9px;text-align:left}
+.thread.active{border-color:rgba(7,92,255,.35);background:rgba(7,92,255,.05)}
+.chat-panel{border:1px solid var(--line);border-radius:12px;background:var(--bottom);padding:10px}
+.chat-log{display:grid;gap:7px;min-height:210px;align-content:start}
+.bubble{max-width:76%;border-radius:11px;padding:7px 8px;font-size:9px;line-height:1.4}
+.bubble.them{background:var(--card-soft);border:1px solid var(--line)}
+.bubble.me{justify-self:end;background:var(--blue);color:#fff}
+.compose-row{display:grid;grid-template-columns:1fr auto auto;gap:7px;margin-top:10px}
+.compose-row input{height:32px;border:1px solid var(--input-border);border-radius:999px;background:var(--bottom);padding:0 11px;font-size:10px;outline:none}
+.calendar-grid{display:grid;grid-template-columns:90px repeat(5,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bottom)}
+.cal-cell{min-height:58px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px;font-size:9px;color:var(--muted)}
+.cal-cell:nth-child(6n){border-right:0}
+.cal-head{min-height:34px;background:var(--card-soft);color:var(--text);font-weight:800}
+.cal-time{background:var(--card-soft);font-weight:800;color:var(--muted)}
+.cal-event{display:block;border-radius:8px;padding:5px 6px;background:rgba(7,92,255,.08);color:var(--blue);font-size:8px;font-weight:800;line-height:1.25}
+.cal-event.pending{background:#fff7d6;color:var(--yellow)}
+.cal-event.blocked{background:#f1f5f9;color:var(--muted)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.form-grid label,.field label{display:grid;gap:5px;color:var(--muted);font-size:8.5px;font-weight:800;text-transform:uppercase}
+.form-grid input,.form-grid select,.field input,.field textarea,.field select{height:32px;border:1px solid var(--input-border);border-radius:9px;background:var(--bottom);color:var(--text);padding:0 9px;font-size:10px;outline:none}
+.field textarea{height:auto;min-height:64px;padding:8px 9px;resize:vertical}
+.field{display:grid;gap:8px}
+.photo-row{display:flex;gap:7px;flex-wrap:wrap}
+.photo-thumb{width:54px;height:44px;border:1px solid var(--line);border-radius:9px;background:var(--card-soft);display:grid;place-items:center;color:var(--muted);font-size:8px;font-weight:800}
+.request-card{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px}
+.request-card-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px}
+.request-card h4{color:var(--text);font-size:11px;line-height:1.25}
+.request-card small{display:block;color:var(--muted);font-size:8.5px;line-height:1.35;margin-top:3px}
+.vehicle-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
+.vehicle-grid div{border:1px solid var(--line);border-radius:8px;background:var(--bottom);padding:6px}
+.vehicle-grid small{margin:0 0 3px;text-transform:uppercase;font-size:7px;font-weight:800}
+.vehicle-grid b{display:block;color:var(--text);font-size:8.5px;line-height:1.2}
+.request-description{color:var(--muted);font-size:9px;line-height:1.4;margin-top:8px}
+.modal{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:rgba(0,0,0,.38);
+  opacity:0;
+  pointer-events:none;
+  transition:.18s;
+  z-index:30;
+}
+.modal.open{opacity:1;pointer-events:all}
+.modal-panel{width:min(390px,calc(100% - 28px));border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:0 28px 70px rgba(0,0,0,.24);padding:14px}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.modal-head h3{font-size:15px;color:var(--headline)}
+.modal-head p{color:var(--muted);font-size:9.5px;line-height:1.4;margin-top:3px}
+.modal-close{width:28px;height:28px;border:1px solid var(--line);border-radius:50%;background:var(--bottom);color:var(--text);font-size:16px}
+.schedule{border:1px solid var(--line);border-radius:10px;padding:9px;background:var(--card)}
+.schedule-actions{display:flex;gap:6px;margin-top:7px}
+.schedule-actions button{height:26px;border-radius:8px;padding:0 8px;font-size:8px;font-weight:800}
+.confirm{border:0;background:var(--green);color:#fff}
+.reschedule{border:1px solid var(--yellow);background:#fff8e1;color:var(--yellow)}
+.profile-list{display:grid;gap:6px;list-style:none}
+.profile-list li{display:grid;grid-template-columns:17px 1fr;gap:7px;align-items:start;color:var(--text);font-size:9px;line-height:1.35}
+.profile-list span{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;background:rgba(22,163,74,.12);color:var(--green);font-size:9px;font-weight:900}
+.profile-list+.list{margin-top:8px}
+.offer{display:grid;grid-template-columns:50px 1fr;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:7px;background:var(--card)}
+.offer img{width:50px;height:42px;border-radius:8px;object-fit:cover}
+.compose{
+  display:grid;
+  gap:7px;
+}
+.compose input,.compose textarea,.compose select{
+  width:100%;
+  border:1px solid var(--input-border);
+  border-radius:9px;
+  background:var(--bottom);
+  color:var(--text);
+  padding:0 9px;
+  font-size:10px;
+  outline:none;
+}
+.compose input,.compose select{height:32px}
+.compose textarea{min-height:58px;padding:8px 9px;resize:vertical}
+.toast{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  max-width:300px;
+  border:1px solid rgba(22,163,74,.3);
+  border-radius:12px;
+  background:#fff;
+  color:var(--text);
+  box-shadow:0 18px 45px rgba(15,23,42,.16);
+  padding:10px 12px;
+  font-size:11px;
+  font-weight:800;
+  opacity:0;
+  transform:translateY(10px);
+  pointer-events:none;
+  transition:.2s;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:900px){
+  body{padding:0;background:var(--card)}
+  .app-shell{width:100%;height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none}
+  .topbar{height:auto;align-items:flex-start;flex-direction:column;padding:16px}
+  .top-actions{width:100%;display:grid;grid-template-columns:1fr}
+  .layout{grid-template-columns:1fr}
+  .sidebar{border-right:0;border-bottom:1px solid var(--line)}
+  .nav{grid-template-columns:1fr 1fr}
+  .content{padding:16px}
+  .hero{flex-direction:column}
+  .hero h2{font-size:25px}
+  .center-grid{grid-template-columns:1fr}
+  .message-layout{grid-template-columns:1fr}
+  .table-row{grid-template-columns:1fr}
+  .calendar-grid{grid-template-columns:70px repeat(5,160px);overflow:auto}
+  .form-grid{grid-template-columns:1fr}
+  .metric-row{grid-template-columns:1fr 1fr}
+  .request-actions{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .top-actions{grid-template-columns:1fr}
+  .nav{grid-template-columns:1fr}
+  .metric-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar">
+      <div>Vai <span>Rodar</span> · Backoffice</div>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <section class="shop-card">
+        <div class="avatar">BV</div>
+        <div>
+          <h1>Auto Center Vital Brasil</h1>
+          <p>Butantã · 4.8 avaliação · aberto agora</p>
+        </div>
+      </section>
+      <nav class="nav" aria-label="Backoffice">
+        <button class="active" type="button" data-view="requests">Solicitações</button>
+        <button type="button" data-view="messages">Mensagens</button>
+        <button type="button" data-view="agenda">Agenda</button>
+        <button type="button" data-view="reservations">Reservas</button>
+        <button type="button" data-view="profile">Perfil público</button>
+        <button type="button" data-view="offers">Ofertas</button>
+      </nav>
+      <section class="status-panel">
+        <div class="switch-row"><span>Receber pedidos</span><button class="switch" type="button" aria-label="Receber pedidos"></button></div>
+        <div class="switch-row"><span>Aberto no app</span><button class="switch" type="button" aria-label="Aberto no app"></button></div>
+      </section>
+    </aside>
+    <main class="content" aria-label="Conteúdo principal">
+      <section class="view active" id="view-requests" aria-label="Solicitações">
+        <div class="hero"><div><h2>Solicitações</h2><p>Propostas formais enviadas pelo usuário. Ao confirmar, viram reserva e ocupam a agenda.</p></div></div>
+        <div class="center-grid">
+          <section class="panel">
+            <div class="panel-head"><div><h3>Solicitações recebidas</h3><p>Cotações formais, incluindo as convertidas desde mensagens.</p></div><div class="filters"><button class="active request-filter" data-filter="Pendiente" type="button">Pendentes</button><button class="request-filter" data-filter="Confirmada" type="button">Confirmadas</button></div></div>
+            <div class="table-list" id="requestList"></div>
+          </section>
+          <aside class="info-stack">
+            <section class="panel" id="requestDetail"><div class="panel-head"><div><h3>Detalhe</h3><p>Selecione uma solicitação para ver proposta e dados.</p></div></div></section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-messages" aria-label="Mensagens">
+        <div class="hero"><div><h2>Mensagens</h2><p>Preguntas y contactos directos. Cualquier conversación puede convertirse en solicitud formal.</p></div></div>
+        <div class="message-layout">
+          <section class="panel"><div class="panel-head"><div><h3>Conversas</h3><p>Contactos no formales desde todas las oficinas y perfil público.</p></div></div><div class="thread-list" id="threadList"></div></section>
+          <section class="chat-panel"><div class="panel-head"><div><h3 id="chatTitle">Conversa</h3><p id="chatMeta"></p></div><button class="ghost-btn" id="convertMessageBtn" type="button">Converter em solicitação</button></div><div class="chat-log" id="chatLog"></div><div class="compose-row"><input id="chatInput" placeholder="Responder..."><button class="ghost-btn" id="chatSend" type="button">Enviar</button><button class="primary-btn" id="chatConvertSmall" type="button">Formalizar</button></div></section>
+        </div>
+      </section>
+
+      <section class="view" id="view-agenda" aria-label="Agenda">
+        <div class="hero"><div><h2>Agenda</h2><p>Calendario operativo: reservas confirmadas, pendientes, bloqueos y reservas manuales.</p></div><div class="top-actions"><button class="ghost-btn" id="blockTimeBtn" type="button">Bloquear horário</button><button class="primary-btn" id="manualReservationBtn" type="button">Reserva manual</button></div></div>
+        <section class="panel"><div class="panel-head"><div><h3>Semana</h3><p>Clique em uma reserva para solicitar reagendamento ao usuário.</p></div></div><div class="calendar-grid" id="calendarGrid"></div></section>
+      </section>
+
+      <section class="view" id="view-reservations" aria-label="Reservas">
+        <div class="hero"><div><h2>Reservas</h2><p>Solicitações confirmadas. Incluye usuario, vehículo, categoría, fotos y propuesta enviada.</p></div></div>
+        <div class="center-grid">
+          <section class="panel"><div class="panel-head"><div><h3>Todas as reservas</h3><p>Confirmadas, por reagendar, finalizadas o canceladas.</p></div></div><div class="table-list" id="reservationList"></div></section>
+          <aside class="info-stack"><section class="panel" id="reservationDetail"><div class="panel-head"><div><h3>Detalle reserva</h3><p>Seleccione una reserva.</p></div></div></section></aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-profile" aria-label="Perfil público">
+        <div class="hero"><div><h2>Perfil público</h2><p>Así se muestra la oficina en búsqueda, filtros y detalle. Ajuste datos, horarios, servicios, logo y fotos.</p></div></div>
+        <div class="center-grid">
+          <section class="panel">
+            <div class="panel-head"><div><h3>Datos editables</h3><p>Información pública del taller.</p></div><button class="primary-btn" id="saveProfileBtn" type="button">Salvar</button></div>
+            <div class="form-grid">
+              <label>Nombre<input value="Auto Center Vital Brasil"></label>
+              <label>WhatsApp<input value="+55 11 99999-9999"></label>
+              <label>Dirección<input value="Rua Camargo, 221 - Butantã"></label>
+              <label>Atención<select><option>Na oficina</option><option>A domicílio</option><option>Ambos</option></select></label>
+              <label>Horario apertura<input value="08:00"></label>
+              <label>Horario cierre<input value="18:00"></label>
+            </div>
+            <div class="field" style="margin-top:8px"><label>Descripción<textarea>Especialista en freios, suspensão, pneus e manutenção preventiva.</textarea></label></div>
+          </section>
+          <aside class="info-stack">
+            <section class="panel"><div class="panel-head"><div><h3>Servicios</h3><p>Categorías visibles.</p></div></div><div class="tags"><span>Freios e suspensão</span><span>Pneus e alinhamento</span><span>Revisão geral</span></div></section>
+            <section class="panel"><div class="panel-head"><div><h3>Logo e fotos</h3><p>Recursos visuales del perfil.</p></div></div><div class="photo-row"><div class="photo-thumb">Logo</div><div class="photo-thumb">Foto 1</div><div class="photo-thumb">Foto 2</div><div class="photo-thumb">+</div></div></section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-offers" aria-label="Ofertas">
+        <div class="hero"><div><h2>Ofertas</h2><p>Cree promociones por categoría, fecha y foto. Vea actuales, vencidas y métricas.</p></div></div>
+        <div class="center-grid">
+          <section class="panel">
+            <div class="panel-head"><div><h3>Crear oferta</h3><p>Publicación visible en ofertas y promociones.</p></div></div>
+            <div class="form-grid">
+              <label>Categoría<select id="offerCategory"><option>Pneus</option><option>Freios</option><option>Revisão</option><option>Elétrica</option></select></label>
+              <label>Título<input id="offerTitle" placeholder="Ex.: Revisão de freios"></label>
+              <label>Desde<input id="offerStart" type="date"></label>
+              <label>Hasta<input id="offerEnd" type="date"></label>
+            </div>
+            <div class="field" style="margin-top:8px"><label>Foto<input id="offerPhoto" type="file" accept="image/*"></label><label>Descripción<textarea id="offerDescription" placeholder="Condición promocional..."></textarea></label><button class="primary-btn" id="createOfferBtn" type="button">Crear oferta</button></div>
+          </section>
+          <aside class="info-stack">
+            <section class="panel"><div class="panel-head"><div><h3>Ofertas actuales</h3><p>Clicks, contactos y ventas/reservas.</p></div></div><div class="table-list" id="activeOffers"></div></section>
+            <section class="panel"><div class="panel-head"><div><h3>Vencidas</h3><p>Histórico de promociones.</p></div></div><div class="table-list" id="expiredOffers"></div></section>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast">Ação registrada.</div>
+<section class="modal" id="proposalModal" aria-label="Enviar proposta">
+  <form class="modal-panel" id="proposalForm">
+    <div class="modal-head">
+      <div><h3>Enviar proposta</h3><p id="proposalModalText">Complete preço e resposta para o usuário.</p></div>
+      <button class="modal-close" id="proposalModalClose" type="button" aria-label="Fechar">×</button>
+    </div>
+    <div class="field">
+      <label>Preço<input id="proposalPrice" placeholder="Ex.: R$ 420"></label>
+      <label>Resposta ao usuário<textarea id="proposalAnswer" placeholder="Explique o diagnóstico, prazo e disponibilidade..."></textarea></label>
+      <button class="primary-btn" type="submit">Enviar proposta</button>
+    </div>
+  </form>
+</section>
+<script>
+const toast=document.getElementById("toast");
+const requestList=document.getElementById("requestList");
+const requestDetail=document.getElementById("requestDetail");
+const proposalModal=document.getElementById("proposalModal");
+const proposalForm=document.getElementById("proposalForm");
+const proposalModalText=document.getElementById("proposalModalText");
+const proposalModalClose=document.getElementById("proposalModalClose");
+const proposalPrice=document.getElementById("proposalPrice");
+const proposalAnswer=document.getElementById("proposalAnswer");
+const threadList=document.getElementById("threadList");
+const chatTitle=document.getElementById("chatTitle");
+const chatMeta=document.getElementById("chatMeta");
+const chatLog=document.getElementById("chatLog");
+const chatInput=document.getElementById("chatInput");
+const calendarGrid=document.getElementById("calendarGrid");
+const reservationList=document.getElementById("reservationList");
+const reservationDetail=document.getElementById("reservationDetail");
+const activeOffers=document.getElementById("activeOffers");
+const expiredOffers=document.getElementById("expiredOffers");
+const offerCategory=document.getElementById("offerCategory");
+const offerTitle=document.getElementById("offerTitle");
+let activeThread=0;
+let activeRequest=0;
+let activeReservation=0;
+let requestFilter="Pendiente";
+let activeProposalIndex=0;
+const requests=[
+  {id:"S-1024",source:"Cotação IA",client:"Mariana Alves",vehicle:{brand:"Volkswagen",model:"T-Cross",year:"2021",color:"Prata",plate:"ABC1D23"},category:"Freios e suspensão",description:"Meu carro faz um ruído ao frear em baixa velocidade, principalmente chegando em semáforo.",photos:2,status:"Pendente",group:"Pendiente",proposal:"",messages:[]},
+  {id:"S-1025",source:"Cotação múltipla",client:"Rafael Lima",vehicle:{brand:"Honda",model:"Civic",year:"2019",color:"Preto",plate:"DEF4G56"},category:"Pneus e alinhamento",description:"Preciso trocar pneus 205/55 R16 e fazer alinhamento. Quero saber disponibilidade para amanhã.",photos:0,status:"Pendente",group:"Pendiente",proposal:"",messages:[["them","Vocês trabalham com Pirelli?"]]},
+  {id:"S-1026",source:"Cotação IA",client:"Carla Nunes",vehicle:{brand:"Chevrolet",model:"Onix",year:"2020",color:"Branco",plate:"GHI7J89"},category:"Elétrica automotiva",description:"A luz da bateria acendeu no painel e o carro demora para ligar.",photos:1,status:"Pendente",group:"Pendiente",proposal:"",messages:[]},
+  {id:"S-1027",source:"Cotação IA",client:"João Pereira",vehicle:{brand:"Fiat",model:"Argo",year:"2022",color:"Cinza",plate:"JKL2M34"},category:"Revisão geral",description:"Quero uma revisão antes de viajar, incluindo óleo, filtros e checagem geral.",photos:0,status:"Pendente",group:"Pendiente",proposal:"",messages:[]},
+  {id:"S-1028",source:"Mensagem convertida",client:"Ana Costa",vehicle:{brand:"Hyundai",model:"HB20",year:"2018",color:"Vermelho",plate:"NOP5Q67"},category:"Freios e suspensão",description:"Sinto o volante vibrar e o carro puxa para a direita em velocidade alta.",photos:1,status:"Pendente",group:"Pendiente",proposal:"",messages:[["them","Consigo levar hoje no fim da tarde?"],["me","Podemos avaliar e enviar uma proposta formal."]]},
+  {id:"S-1019",source:"Cotação IA",client:"Bruno Martins",vehicle:{brand:"Toyota",model:"Corolla",year:"2021",color:"Azul",plate:"RST8U90"},category:"Revisão geral",description:"Revisão de 40 mil km com troca de óleo.",photos:0,status:"Confirmada",group:"Confirmada",proposal:"R$ 520 · revisão completa · confirmado para quinta 09:30.",messages:[["them","Pode confirmar quinta 09:30?"],["me","Sim, proposta confirmada."]] }
+];
+const threads=[
+  {client:"Ana Costa",vehicle:"Onix 2020",meta:"Pergunta desde Todas as oficinas",converted:false,messages:[["them","Vocês fazem diagnóstico de bateria hoje?"],["me","Sim, podemos verificar na oficina."]]},
+  {client:"Bruno Martins",vehicle:"Gol 2018",meta:"Mensaje directo al perfil",converted:false,messages:[["them","Quanto sai revisão básica?"],["me","Depende dos itens. Posso formalizar uma proposta."]]}
+];
+const reservations=[
+  {id:"R-220",client:"João Pereira",phone:"+55 11 98888-1111",vehicle:"Fiat Argo 2022",category:"Revisão geral",description:"Revisão antes de viagem.",photos:1,date:"Segunda 09:30",status:"Confirmada",proposal:"R$ 380 · revisão preventiva com checklist."},
+  {id:"R-221",client:"Mariana Alves",phone:"+55 11 97777-2222",vehicle:"Volkswagen T-Cross 2021",category:"Freios e suspensão",description:"Ruído ao frear em baixa velocidade.",photos:2,date:"Terça 10:30",status:"Por confirmar",proposal:"R$ 420 · revisão de pastilhas e discos."}
+];
+const offers=[
+  {title:"Revisão de freios",category:"Freios",status:"Atual",clicks:42,contacts:9,sales:3},
+  {title:"Alinhamento completo",category:"Pneus",status:"Vencida",clicks:81,contacts:14,sales:5}
+];
+function showToast(text){
+  toast.textContent=text;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer=setTimeout(()=>toast.classList.remove("show"),1800);
+}
+function setView(view){
+  document.querySelectorAll(".view").forEach((item)=>item.classList.remove("active"));
+  document.getElementById(`view-${view}`).classList.add("active");
+  document.querySelectorAll(".nav button").forEach((item)=>item.classList.toggle("active",item.dataset.view===view));
+}
+function vehicleLabel(vehicle){
+  if(typeof vehicle==="string") return vehicle;
+  return `${vehicle.brand} ${vehicle.model} ${vehicle.year}`;
+}
+function vehicleCells(vehicle){
+  if(typeof vehicle==="string") return `<div><small>Auto</small><b>${vehicle}</b></div>`;
+  return `
+    <div><small>Marca</small><b>${vehicle.brand}</b></div>
+    <div><small>Modelo</small><b>${vehicle.model}</b></div>
+    <div><small>Ano</small><b>${vehicle.year}</b></div>
+    <div><small>Cor</small><b>${vehicle.color}</b></div>
+    <div><small>Placa</small><b>${vehicle.plate}</b></div>
+  `;
+}
+function renderRequests(){
+  const visible=requests.map((item,index)=>({...item,index})).filter((item)=>item.group===requestFilter);
+  requestList.innerHTML=visible.map((item)=>`
+    <article class="request-card">
+      <div class="request-card-head">
+        <div><h4>${item.client}</h4><small>${item.id} · ${item.source}</small></div>
+        <span class="pill ${item.group==="Confirmada"?"confirmed":"pending"}">${item.status}</span>
+      </div>
+      <div class="vehicle-grid">${vehicleCells(item.vehicle)}</div>
+      <p class="request-description">${item.description}</p>
+      <div class="tags"><span>${item.category}</span><span>IA compatível com serviços do taller</span></div>
+      <div class="request-actions">
+        ${item.group==="Confirmada"
+          ?`<button class="ghost-btn select-request" data-index="${item.index}" type="button">Ver informações</button>`
+          :`<button class="primary-btn open-proposal" data-index="${item.index}" type="button">Enviar proposta</button><button class="ghost-btn select-request" data-index="${item.index}" type="button">Ver</button>`}
+      </div>
+    </article>
+  `).join("")||'<div class="request-card"><small>Nenhuma solicitação neste filtro.</small></div>';
+  const first=visible[0]?.index??0;
+  activeRequest=requests[activeRequest]?.group===requestFilter?activeRequest:first;
+  renderRequestDetail(activeRequest);
+}
+function renderRequestDetail(index){
+  const item=requests[index]||requests[0];
+  if(!item) return;
+  const messages=item.messages?.length?item.messages.map(([who,text])=>`<div class="bubble ${who}">${text}</div>`).join(""):'<small>Sem mensagens compartilhadas.</small>';
+  requestDetail.innerHTML=`<div class="panel-head"><div><h3>${item.client}</h3><p>${item.id} · ${item.status}</p></div></div>
+    <div class="field">
+      <label>Vehículo<input value="${vehicleLabel(item.vehicle)}" readonly></label>
+      <label>Categoría<input value="${item.category}" readonly></label>
+      <label>Descripción<textarea readonly>${item.description}</textarea></label>
+      <label>Propuesta enviada<textarea readonly>${item.proposal||"Ainda não enviada."}</textarea></label>
+      <div class="photo-row">${Array.from({length:item.photos||1},(_,i)=>`<div class="photo-thumb">${item.photos?`Foto ${i+1}`:"Sin foto"}</div>`).join("")}</div>
+      <div class="chat-log">${messages}</div>
+      ${item.group==="Confirmada"?'<small>Solicitud confirmada. La reserva ya está disponible en Agenda y Reservas.</small>':`<button class="primary-btn open-proposal" data-index="${index}" type="button">Enviar proposta</button>`}
+    </div>`;
+}
+function renderThreads(){
+  threadList.innerHTML=threads.map((thread,index)=>`<button class="thread ${index===activeThread?"active":""}" data-index="${index}" type="button"><b>${thread.client}</b><small>${thread.vehicle}<br>${thread.meta}${thread.converted?" · Convertida":""}</small></button>`).join("");
+  const thread=threads[activeThread];
+  chatTitle.textContent=thread.client;
+  chatMeta.textContent=`${thread.vehicle} · ${thread.meta}`;
+  chatLog.innerHTML=thread.messages.map(([who,text])=>`<div class="bubble ${who}">${text}</div>`).join("");
+}
+function convertThread(){
+  const thread=threads[activeThread];
+  const id=`S-${1030+requests.length}`;
+  requests.unshift({id,source:"Mensagem convertida",client:thread.client,vehicle:thread.vehicle,category:"A definir",description:thread.messages.at(-1)[1],photos:0,status:"Pendente",group:"Pendiente",proposal:"",messages:[[ "them", thread.messages.at(-1)[1] ]]});
+  thread.converted=true;
+  thread.messages.push(["me",`Conversa convertida em solicitação formal ${id}.`]);
+  activeRequest=0;
+  requestFilter="Pendiente";
+  document.querySelectorAll(".request-filter").forEach((button)=>button.classList.toggle("active",button.dataset.filter===requestFilter));
+  renderThreads();renderRequests();showToast("Mensagem convertida em solicitação.");
+}
+function renderCalendar(){
+  const days=["Seg","Ter","Qua","Qui","Sex"];
+  const times=["08:00","09:30","11:00","14:00","16:00"];
+  calendarGrid.innerHTML='<div class="cal-cell cal-head"></div>'+days.map((day)=>`<div class="cal-cell cal-head">${day}</div>`).join("")+
+    times.map((time,row)=>`<div class="cal-cell cal-time">${time}</div>${days.map((day,col)=>{
+      const reservation=reservations[(row+col)%reservations.length];
+      const event=row===1&&col===1?`<button class="cal-event pending calendar-reservation" data-index="1" type="button">${reservation.client}<br>Por confirmar</button>`:row===0&&col===0?`<button class="cal-event calendar-reservation" data-index="0" type="button">${reservations[0].client}<br>Confirmada</button>`:row===3&&col===3?'<span class="cal-event blocked">Bloqueado</span>':"";
+      return `<div class="cal-cell">${event}</div>`;
+    }).join("")}`).join("");
+}
+function renderReservations(){
+  reservationList.innerHTML='<div class="table-row header"><span>Reserva</span><span>Vehículo</span><span>Estado</span><span>Acciones</span></div>'+reservations.map((item,index)=>`
+    <div class="table-row">
+      <div><b>${item.client}</b><small>${item.id} · ${item.date}</small></div>
+      <div><b>${item.vehicle}</b><small>${item.category}</small></div>
+      <div><span class="pill ${item.status==="Confirmada"?"confirmed":"pending"}">${item.status}</span></div>
+      <div class="compact-actions"><button class="ghost-btn select-reservation" data-index="${index}" type="button">Ver</button><button class="ghost-btn reschedule-reservation" data-index="${index}" type="button">Modificar</button></div>
+    </div>
+  `).join("");
+  renderReservationDetail(activeReservation);
+}
+function renderReservationDetail(index){
+  const item=reservations[index]||reservations[0];
+  if(!item) return;
+  reservationDetail.innerHTML=`<div class="panel-head"><div><h3>${item.client}</h3><p>${item.id} · ${item.status}</p></div></div>
+    <div class="field">
+      <label>Contacto<input value="${item.phone}" readonly></label>
+      <label>Vehículo<input value="${item.vehicle}" readonly></label>
+      <label>Categoría<input value="${item.category}" readonly></label>
+      <label>Descripción<textarea readonly>${item.description}</textarea></label>
+      <label>Propuesta enviada<textarea readonly>${item.proposal}</textarea></label>
+      <div class="photo-row">${Array.from({length:item.photos||1},(_,i)=>`<div class="photo-thumb">${item.photos?`Foto ${i+1}`:"Sin foto"}</div>`).join("")}</div>
+      <div class="compact-actions"><button class="ghost-btn reschedule-reservation" data-index="${index}" type="button">Modificar</button><button class="ghost-btn cancel-reservation" data-index="${index}" type="button">Cancelar</button><button class="primary-btn finish-reservation" data-index="${index}" type="button">Finalizar / calificar</button></div>
+    </div>`;
+}
+function renderOffers(){
+  activeOffers.innerHTML=offers.filter((offer)=>offer.status==="Atual").map((offer)=>`<div class="table-row"><div><b>${offer.title}</b><small>${offer.category}</small></div><div><b>${offer.clicks}</b><small>Clicks</small></div><div><b>${offer.contacts}</b><small>Contactos</small></div><div><b>${offer.sales}</b><small>Ventas</small></div></div>`).join("");
+  expiredOffers.innerHTML=offers.filter((offer)=>offer.status==="Vencida").map((offer)=>`<div class="table-row"><div><b>${offer.title}</b><small>${offer.category}</small></div><div><b>${offer.clicks}</b><small>Clicks</small></div><div><b>${offer.contacts}</b><small>Contactos</small></div><div><b>${offer.sales}</b><small>Ventas</small></div></div>`).join("");
+}
+function confirmRequest(index){
+  const item=requests[index];
+  item.status="Confirmada";
+  item.group="Confirmada";
+  reservations.unshift({id:`R-${230+reservations.length}`,client:item.client,phone:"+55 11 90000-0000",vehicle:vehicleLabel(item.vehicle),category:item.category,description:item.description,photos:item.photos,date:"Próxima vaga 10:30",status:"Confirmada",proposal:item.proposal||"Propuesta enviada por el taller."});
+  activeReservation=0;
+  renderRequests();renderReservations();renderCalendar();showToast("Solicitud confirmada y agendada.");
+}
+function openProposal(index){
+  activeProposalIndex=index;
+  const item=requests[index];
+  proposalModalText.textContent=`${item.client} · ${vehicleLabel(item.vehicle)}`;
+  proposalPrice.value="";
+  proposalAnswer.value=item.proposal||"";
+  proposalModal.classList.add("open");
+  setTimeout(()=>proposalPrice.focus(),80);
+}
+function closeProposal(){
+  proposalModal.classList.remove("open");
+}
+document.querySelectorAll(".nav button").forEach((button)=>button.addEventListener("click",()=>{
+  setView(button.dataset.view);
+}));
+document.querySelectorAll(".request-filter").forEach((button)=>button.addEventListener("click",()=>{
+  requestFilter=button.dataset.filter;
+  document.querySelectorAll(".request-filter").forEach((item)=>item.classList.remove("active"));
+  button.classList.add("active");
+  renderRequests();
+}));
+document.addEventListener("click",(event)=>{
+  const target=event.target.closest("button");
+  if(!target||target.closest(".nav")) return;
+  if(target.classList.contains("select-request")){activeRequest=Number(target.dataset.index);renderRequestDetail(activeRequest);return;}
+  if(target.classList.contains("open-proposal")){openProposal(Number(target.dataset.index));return;}
+  if(target.classList.contains("confirm-request")){confirmRequest(Number(target.dataset.index));return;}
+  if(target.classList.contains("thread")){activeThread=Number(target.dataset.index);renderThreads();return;}
+  if(target.id==="convertMessageBtn"||target.id==="chatConvertSmall"){convertThread();return;}
+  if(target.id==="chatSend"){const text=chatInput.value.trim();if(text){threads[activeThread].messages.push(["me",text]);chatInput.value="";renderThreads();}return;}
+  if(target.classList.contains("calendar-reservation")){setView("reservations");activeReservation=Number(target.dataset.index);renderReservations();showToast("Reserva aberta.");return;}
+  if(target.classList.contains("select-reservation")){activeReservation=Number(target.dataset.index);renderReservationDetail(activeReservation);return;}
+  if(target.classList.contains("reschedule-reservation")){reservations[Number(target.dataset.index)].status="Reagendamento pendente";renderReservations();renderCalendar();showToast("Notificação de reagendamento enviada ao usuário.");return;}
+  if(target.classList.contains("cancel-reservation")){reservations[Number(target.dataset.index)].status="Cancelada";renderReservations();showToast("Reserva cancelada.");return;}
+  if(target.classList.contains("finish-reservation")){reservations[Number(target.dataset.index)].status="Finalizada";renderReservations();showToast("Reserva finalizada. Calificação registrada.");return;}
+  if(target.id==="blockTimeBtn"){showToast("Horário bloqueado na agenda.");return;}
+  if(target.id==="manualReservationBtn"){reservations.unshift({id:`R-${240+reservations.length}`,client:"Reserva manual",phone:"-",vehicle:"A informar",category:"A definir",description:"Criada pelo taller.",photos:0,date:"Hoje 16:00",status:"Confirmada",proposal:"Reserva criada manualmente."});renderReservations();renderCalendar();showToast("Reserva manual criada.");return;}
+  if(target.id==="saveProfileBtn"){showToast("Perfil público salvo.");return;}
+  if(target.id==="createOfferBtn"){offers.unshift({title:offerTitle.value||"Nova oferta",category:offerCategory.value,status:"Atual",clicks:0,contacts:0,sales:0});renderOffers();showToast("Oferta criada.");return;}
+  if(target.classList.contains("switch")){
+    target.style.background=target.style.background==="rgb(220, 38, 38)"?"var(--green)":"var(--red)";
+    showToast("Status atualizado.");
+    return;
+  }
+  showToast("Ação registrada.");
+});
+proposalModalClose.addEventListener("click",closeProposal);
+proposalModal.addEventListener("click",(event)=>{if(event.target===proposalModal) closeProposal();});
+proposalForm.addEventListener("submit",(event)=>{
+  event.preventDefault();
+  const item=requests[activeProposalIndex];
+  item.proposal=`${proposalPrice.value.trim()||"Preço a confirmar"} · ${proposalAnswer.value.trim()||"Resposta enviada pelo taller."}`;
+  item.status="Proposta enviada";
+  item.messages=(item.messages||[]).concat([["me",`Proposta enviada: ${item.proposal}`]]);
+  closeProposal();
+  renderRequests();
+  renderRequestDetail(activeProposalIndex);
+  showToast("Proposta enviada ao usuário.");
+});
+renderRequests();renderThreads();renderCalendar();renderReservations();renderOffers();
+</script>
+</body>
+</html>
