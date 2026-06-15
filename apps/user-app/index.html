@@ -1267,6 +1267,19 @@ h1{
 .account-plate-row small{display:block;font-size:8px;color:var(--muted);margin-top:2px}
 .account-plate-row button{border:0;background:transparent;color:#dc2626;font-size:9px;font-weight:850;cursor:pointer}
 .account-empty{color:var(--muted);font-size:9px;line-height:1.35}
+.account-listings{display:grid;gap:8px}
+.account-listing-row{display:grid;gap:8px;padding:10px;border:1px solid var(--input-border);border-radius:12px;background:var(--bottom)}
+.account-listing-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.account-listing-top b{display:block;font-size:11px;color:var(--headline);line-height:1.2}
+.account-listing-top small,.account-listing-meta{display:block;font-size:8px;color:var(--muted);line-height:1.35;margin-top:2px}
+.account-listing-status{flex:0 0 auto;border-radius:999px;padding:4px 7px;background:#eef4ff;color:var(--blue);font-size:8px;font-weight:850;text-transform:uppercase;white-space:nowrap}
+.account-listing-status.sold{background:#ecfdf5;color:#047857}
+.account-listing-status.paused{background:#f3f4f6;color:#4b5563}
+.account-listing-status.rejected{background:#fef2f2;color:#dc2626}
+.account-listing-actions{display:flex;gap:6px;flex-wrap:wrap}
+.account-listing-actions button{border:1px solid var(--input-border);border-radius:999px;background:var(--card);color:var(--text);font-size:8px;font-weight:850;padding:6px 8px;cursor:pointer}
+.account-listing-actions button.danger{color:#dc2626;border-color:#fecaca;background:#fff7f7}
+.account-listing-actions button.primary{color:#fff;border-color:var(--blue);background:var(--blue)}
 .drawer-panel{
   position:absolute;
   left:18px;
@@ -1676,7 +1689,7 @@ body.theme-dark{
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
             Notificações
           </button>
-          <button class="workshop-cta" id="registerWorkshopBtn">Cadastre sua Oficina</button>
+          <button class="workshop-cta" id="registerWorkshopBtn">Oficinas mecânicas</button>
           <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">
             <span class="hamb"><i></i><i></i><i></i></span>
           </button>
@@ -2197,6 +2210,10 @@ body.theme-dark{
           </div>
         </div>
         <div class="account-section">
+          <div class="account-section-title">Meus veículos à venda</div>
+          <div class="account-listings" id="accountListingsList"></div>
+        </div>
+        <div class="account-section">
           <div class="account-section-title">Senha</div>
           <div class="account-inline">
             <input id="accountNewPassword" placeholder="Nova senha" type="password" autocomplete="new-password">
@@ -2281,11 +2298,12 @@ body.theme-dark{
     <section class="proposal-popup" id="registerSuccessPopup" aria-label="Cadastro recebido">
       <div class="proposal-popup-icon">✓</div><h3>Cadastro recebido!</h3><p>Nossa equipe vai entrar em contato pelo seu WhatsApp em até 48 horas para confirmar seu acesso antecipado.</p><button id="registerSuccessClose" type="button">Entendido</button>
     </section>
-    <section class="proposal-popup" id="workshopDemoPopup" aria-label="Cadastro de oficina">
+    <section class="proposal-popup" id="workshopDemoPopup" aria-label="Oficinas mecânicas">
       <button class="popup-close" id="workshopDemoClose" type="button" aria-label="Fechar">×</button>
-      <h3>Cadastro de oficina</h3>
-      <p>Esta página é uma demo. Para cadastrar sua oficina, acesse <strong>vairodar.netlify.app</strong> ou use os links disponíveis na bio.</p>
-      <button id="workshopDemoLink" type="button">Cadastre-se aqui</button>
+      <h3>Oficinas mecânicas</h3>
+      <p>Escolha se deseja cadastrar uma oficina/comércio ou entrar no painel.</p>
+      <button id="workshopDemoLink" type="button">Cadastrar oficina</button>
+      <button id="workshopBackofficeLink" type="button">Entrar no backoffice</button>
     </section>
     <section class="proposal-popup" id="evaluationPopup" aria-label="Análise da avaliação">
       <div class="analysis-loader" id="evaluationLoader"></div>
@@ -2445,6 +2463,7 @@ const accountProfileName=document.getElementById("accountProfileName");
 const accountProfilePhone=document.getElementById("accountProfilePhone");
 const accountSaveProfile=document.getElementById("accountSaveProfile");
 const accountPlatesList=document.getElementById("accountPlatesList");
+const accountListingsList=document.getElementById("accountListingsList");
 const accountNewPlate=document.getElementById("accountNewPlate");
 const accountAddPlate=document.getElementById("accountAddPlate");
 const accountNewPassword=document.getElementById("accountNewPassword");
@@ -2596,6 +2615,7 @@ const registerSuccessClose=document.getElementById("registerSuccessClose");
 const workshopDemoPopup=document.getElementById("workshopDemoPopup");
 const workshopDemoClose=document.getElementById("workshopDemoClose");
 const workshopDemoLink=document.getElementById("workshopDemoLink");
+const workshopBackofficeLink=document.getElementById("workshopBackofficeLink");
 let visibleOfficeCount=7;
 let selectedEmergency=null;
 let activeChatIndex=0;
@@ -2604,6 +2624,7 @@ let assistantConversation=[];
 let assistantLatestContext="";
 let assistantLastIntentType="serviceQuote";
 let userVehicles=[];
+let userVehicleListings=[];
 const plateCache={};
 const workshops=[
   {name:"Butantã Pneus Express",rating:"4.8",distance:"1,2 km",meta:"Pneus, alinhamento e balanceamento. Atende hoje.",detail:"Trabalha com troca de pneus, calibragem, rodízio, alinhamento 3D e orçamento por WhatsApp."},
@@ -3019,7 +3040,7 @@ function openProposalConfirmation(){
   document.getElementById("proposalReviewSend").addEventListener("click",sendReviewedProposal);
   document.getElementById("proposalReviewLocation").addEventListener("click",()=>{document.getElementById("proposalReviewAddress").value="Butantã, São Paulo";});
 }
-function sendReviewedProposal(){
+async function sendReviewedProposal(){
   const description=document.getElementById("proposalReviewDescription");
   const address=document.getElementById("proposalReviewAddress");
   const error=document.getElementById("proposalReviewError");
@@ -3027,18 +3048,23 @@ function sendReviewedProposal(){
   const valid=descriptionOk&&address.value.trim().length>=3;
   error.classList.toggle("show",!valid);
   if(!valid) return;
+  const isPart=assistantLastIntentType==="partQuote";
+  const vehicle=isPart?vehicleFromAnyPlate(partsPlate.value):currentVehicleFromPlate();
+  const original=isPart?partsQuery.value.trim():proposalOriginalText();
+  const finalDescription=(description?.value.trim()||original||proposalDescriptionPlaceholder()).trim();
+  const requestId=await createServiceRequestRecord({isPart,vehicle,description:finalDescription,address:address.value.trim(),original});
   proposalPopup.innerHTML=`
     <div class="analysis-loader"></div>
     <h3>Enviando solicitação...</h3>
     <p>A IA está organizando os dados para enviar com a categoria correta.</p>`;
   proposalConfirmationTimer=setTimeout(()=>{
-    const isPart=assistantLastIntentType==="partQuote";
     proposalPopup.innerHTML=`
       <div class="proposal-popup-icon">✓</div>
       <h3>Solicitação enviada</h3>
-      <p>${isPart?"Sua solicitação foi enviada para fornecedores de peças.":"Sua solicitação foi enviada para oficinas próximas."} Você receberá respostas com preço e disponibilidade.</p>
+      <p>${requestId?"Pedido registrado no Vai Rodar. ":""}${isPart?"Sua solicitação foi enviada para fornecedores de peças.":"Sua solicitação foi enviada para oficinas próximas."} Você receberá respostas com preço e disponibilidade.</p>
       <button id="proposalPopupClose" type="button">Entendido</button>`;
     document.getElementById("proposalPopupClose").addEventListener("click",closeProposalPopup);
+    if(requestId){sentQuotes.unshift({id:requestId,title:finalDescription,vehicle:vehicleDescription(vehicle),location:address.value.trim(),status:"Aguardando",className:"waiting"});renderQuotes();}
     renderNotifications();
   },1200);
 }
@@ -3186,6 +3212,7 @@ function openAccount(){
   accountPanel.classList.add("open");
   accountStatus.textContent="";
   accountStatus.classList.remove("success");
+  if(currentUser) loadUserVehicleListings();
   if(!currentUser) setTimeout(()=>accountEmail.focus(),100);
 }
 function closeAccount(){
@@ -3247,7 +3274,121 @@ function renderAccountPlates(){
     </div>
   `).join("");
 }
-function renderAllRegisteredPlatePickers(){
+function listingStatusLabel(status){
+  const labels={active:"Publicado",pending_review:"Em revisão",paused:"Pausado",sold:"Vendido",rejected:"Rejeitado"};
+  return labels[status]||"Em revisão";
+}
+function listingStatusClass(status){
+  if(status==="sold") return "sold";
+  if(status==="paused") return "paused";
+  if(status==="rejected") return "rejected";
+  return "";
+}
+function listingVehicleTitle(listing){
+  const base=[listing.brand,listing.model].filter(Boolean).join(" ").trim();
+  return base||listing.plate||"Veículo publicado";
+}
+function renderUserVehicleListings(){
+  if(!accountListingsList) return;
+  if(!currentUser){accountListingsList.innerHTML="";return;}
+  if(!userVehicleListings.length){
+    accountListingsList.innerHTML='<div class="account-empty">Você ainda não publicou veículos. Quando criar um anúncio, ele aparecerá aqui para editar, pausar, marcar como vendido ou remover.</div>';
+    return;
+  }
+  accountListingsList.innerHTML=userVehicleListings.map((listing)=>{
+    const status=listing.status||"pending_review";
+    const price=listing.price?money.format(Number(listing.price)):"Preço a combinar";
+    const meta=[listing.plate,listing.year,listing.color,listing.location].filter(Boolean).join(" · ");
+    const canReactivate=status==="paused"||status==="rejected";
+    return `
+      <div class="account-listing-row" data-listing-id="${listing.id}">
+        <div class="account-listing-top">
+          <div>
+            <b>${listingVehicleTitle(listing)}</b>
+            <small>${meta||"Dados do veículo"}</small>
+            <span class="account-listing-meta">${price}${listing.mileage?` · ${Number(listing.mileage).toLocaleString("pt-BR")} km`:""}</span>
+          </div>
+          <span class="account-listing-status ${listingStatusClass(status)}">${listingStatusLabel(status)}</span>
+        </div>
+        <div class="account-listing-actions">
+          <button type="button" data-listing-action="edit">Editar</button>
+          ${status==="sold"?"":`<button type="button" data-listing-action="sold">Vendido</button>`}
+          ${canReactivate?`<button class="primary" type="button" data-listing-action="activate">Reativar</button>`:`<button type="button" data-listing-action="pause">Pausar</button>`}
+          <button class="danger" type="button" data-listing-action="delete">Eliminar</button>
+        </div>
+      </div>`;
+  }).join("");
+}
+async function loadUserVehicleListings(){
+  if(!accountListingsList) return;
+  if(!sb||!currentUser){renderUserVehicleListings();return;}
+  accountListingsList.innerHTML='<div class="account-empty">Carregando seus anúncios...</div>';
+  try{
+    const {data,error}=await sb.from("vehicle_listings")
+      .select("id,plate,brand,model,year,color,mileage,price,location,description,status,visibility,created_at")
+      .eq("user_id",currentUser.id)
+      .order("created_at",{ascending:false});
+    if(error) throw error;
+    userVehicleListings=data||[];
+    renderUserVehicleListings();
+  }catch(error){
+    console.warn("[My vehicle listings]",error.message);
+    accountListingsList.innerHTML='<div class="account-empty">Não foi possível carregar seus anúncios agora.</div>';
+  }
+}
+async function updateUserVehicleListing(id,changes,message="Anúncio atualizado."){
+  if(!sb||!currentUser||!id) return;
+  try{
+    const {error}=await sb.from("vehicle_listings").update(changes).eq("id",id).eq("user_id",currentUser.id);
+    if(error) throw error;
+    await loadUserVehicleListings();
+    setAccountStatus(message,true);
+  }catch(error){
+    console.warn("[Update listing]",error.message);
+    setAccountStatus(error.message||"Não foi possível atualizar o anúncio.");
+  }
+}
+async function deleteUserVehicleListing(id){
+  if(!sb||!currentUser||!id) return;
+  if(!confirm("Eliminar este anúncio?")) return;
+  try{
+    const {error}=await sb.from("vehicle_listings").delete().eq("id",id).eq("user_id",currentUser.id);
+    if(error) throw error;
+    await loadUserVehicleListings();
+    setAccountStatus("Anúncio eliminado.",true);
+  }catch(error){
+    console.warn("[Delete listing]",error.message);
+    setAccountStatus(error.message||"Não foi possível eliminar o anúncio.");
+  }
+}
+async function editUserVehicleListing(id){
+  const listing=userVehicleListings.find((item)=>String(item.id)===String(id));
+  if(!listing) return;
+  const priceText=prompt("Preço anunciado",listing.price?String(listing.price):"");
+  if(priceText===null) return;
+  const locationText=prompt("Localização",listing.location||"");
+  if(locationText===null) return;
+  const descriptionText=prompt("Descrição do anúncio",listing.description||"");
+  if(descriptionText===null) return;
+  await updateUserVehicleListing(id,{
+    price:parseMoney(priceText),
+    location:locationText.trim(),
+    description:descriptionText.trim(),
+    status:"pending_review"
+  },"Anúncio enviado para revisão.");
+}
+async function handleUserVehicleListingAction(event){
+  const button=event.target.closest("[data-listing-action]");
+  if(!button||!currentUser) return;
+  const row=button.closest("[data-listing-id]");
+  const id=row?.dataset.listingId;
+  const action=button.dataset.listingAction;
+  if(action==="edit"){await editUserVehicleListing(id);return;}
+  if(action==="pause"){await updateUserVehicleListing(id,{status:"paused"},"Anúncio pausado.");return;}
+  if(action==="activate"){await updateUserVehicleListing(id,{status:"pending_review"},"Anúncio enviado para revisão.");return;}
+  if(action==="sold"){await updateUserVehicleListing(id,{status:"sold"},"Anúncio marcado como vendido.");return;}
+  if(action==="delete"){await deleteUserVehicleListing(id);}
+}function renderAllRegisteredPlatePickers(){
   [registeredVehicles,partsRegisteredVehicles,menuProposalRegisteredVehicles,sellRegisteredVehicles,evaluationRegisteredVehicles,emergencyRegisteredVehicles]
     .forEach((container)=>renderRegisteredPlatePicker(container));
 }
@@ -3278,12 +3419,16 @@ function setLoggedIn(user){
     accountProfilePhone.value=meta.phone||"";
     accountAvatar.textContent=name.trim().charAt(0).toUpperCase()||"V";
     renderAccountPlates();
+    renderUserVehicleListings();
+    loadUserVehicleListings();
     renderAllRegisteredPlatePickers();
     return;
   }
   topAccountLabel.textContent="Criar conta";
   userVehicles=[];
+  userVehicleListings=[];
   renderAccountPlates();
+  renderUserVehicleListings();
   renderAllRegisteredPlatePickers();
   setAuthMode(isSignUpMode);
 }
@@ -3433,7 +3578,157 @@ function openReservationPicker(){
   closeReservations();overlay.classList.add("open");reservationPickerPopup.classList.add("open");
 }
 function closeReservationSuccess(){reservationSuccessPopup.classList.remove("open");overlay.classList.remove("open");}
+function cleanVehicleYear(value){
+  const year=Number(String(value||"").match(/\d{4}/)?.[0]||"");
+  return year||null;
+}
+async function ensureVehicleRecord(vehicle){
+  if(!sb||!currentUser||!vehicle?.plate) return null;
+  const plate=String(vehicle.plate).trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
+  try{
+    const {data:existing,error:selectError}=await sb.from("vehicles").select("id").eq("user_id",currentUser.id).eq("plate",plate).maybeSingle();
+    if(selectError) throw selectError;
+    if(existing?.id) return existing.id;
+    const {data,error}=await sb.from("vehicles").insert({
+      user_id:currentUser.id,
+      plate,
+      brand:String(vehicle.brand||"—"),
+      model:String(vehicle.model||"—"),
+      year:cleanVehicleYear(vehicle.year),
+      color:String(vehicle.color||"—")
+    }).select("id").single();
+    if(error) throw error;
+    await loadUserVehicleListings();
+    return data?.id||null;
+  }catch(error){
+    console.warn("[Vehicle save]",error.message);
+    return null;
+  }
+}
+function proposalCategory(isPart,text){
+  if(isPart) return "Peças";
+  return inferCategories(text||"").find((name)=>allowedCategories.includes(name))||"Diagnóstico";
+}
+async function createServiceRequestRecord({isPart,vehicle,description,address,original}){
+  if(!sb||!currentUser) return null;
+  const vehicleId=await ensureVehicleRecord(vehicle);
+  const text=description||original||"Solicitação criada pelo assistente Vai Rodar.";
+  try{
+    const {data,error}=await sb.from("service_requests").insert({
+      user_id:currentUser.id,
+      vehicle_id:vehicleId,
+      title:isPart?"Cotação de peça":"Solicitação para oficinas",
+      description:text,
+      category:proposalCategory(isPart,text),
+      location:address||"",
+      request_type:isPart?"part_quote":"service",
+      target_business_type:isPart?"parts_store":"workshop",
+      part_name:isPart?original||text:null,
+      part_specs:isPart?{raw_text:text,vehicle:vehicleDescription(vehicle)}:{},
+      selected_business_ids:[]
+    }).select("id").single();
+    if(error) throw error;
+    await loadUserVehicleListings();
+    return data?.id||null;
+  }catch(error){
+    console.warn("[Service request]",error.message);
+    return null;
+  }
+}
+function parseMoney(value){
+  const numeric=String(value||"").replace(/[^\d,.-]/g,"").replace(/\./g,"").replace(",",".");
+  const amount=Number(numeric);
+  return Number.isFinite(amount)?amount:null;
+}
+function parseMileage(value){
+  const amount=Number(String(value||"").replace(/\D/g,""));
+  return Number.isFinite(amount)&&amount>0?amount:null;
+}
+async function createVehicleListingRecord(visibility){
+  if(!sb||!currentUser) return null;
+  const plate=sellPlate.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
+  const vehicle=await lookupPlate(plate).catch(()=>vehicleFromAnyPlate(plate));
+  const vehicleId=await ensureVehicleRecord(vehicle);
+  try{
+    const {data,error}=await sb.from("vehicle_listings").insert({
+      user_id:currentUser.id,
+      vehicle_id:vehicleId,
+      plate,
+      brand:vehicle.brand||null,
+      model:vehicle.model||null,
+      year:cleanVehicleYear(vehicle.year),
+      color:vehicle.color||null,
+      mileage:parseMileage(sellMileage.value),
+      price:parseMoney(sellPrice.value),
+      location:sellAddress.value.trim(),
+      description:sellDescription.value.trim(),
+      status:"pending_review",
+      visibility:visibility||"free"
+    }).select("id").single();
+    if(error) throw error;
+    await loadUserVehicleListings();
+    return data?.id||null;
+  }catch(error){
+    console.warn("[Vehicle listing]",error.message);
+    return null;
+  }
+}
+async function publishVehicleListing(visibility){
+  const listingId=await createVehicleListingRecord(visibility);
+  closeVisibilityPopup();
+  if(listingId) renderNotifications();
+}
+function reservationDateTimeISO(dateValue,timeValue){
+  if(!dateValue||!timeValue) return null;
+  const [year,month,day]=dateValue.split("-").map(Number);
+  const [hour,minute]=timeValue.split(":").map(Number);
+  return new Date(year,month-1,day,hour,minute||0,0).toISOString();
+}
+async function createReservationRecord({office,service,dateValue,timeValue,notes}){
+  if(!sb||!currentUser||!office?.id) return null;
+  const scheduledAt=reservationDateTimeISO(dateValue,timeValue);
+  if(!scheduledAt) return null;
+  try{
+    const {data,error}=await sb.from("reservations").insert({
+      user_id:currentUser.id,
+      workshop_id:office.id,
+      service_type:service,
+      scheduled_at:scheduledAt,
+      notes,
+      status:"pending"
+    }).select("id").single();
+    if(error) throw error;
+    await loadUserVehicleListings();
+    return data?.id||null;
+  }catch(error){
+    console.warn("[Reservation save]",error.message);
+    return null;
+  }
+}
+function listingToCar(row){
+  const title=[row.brand,row.model].filter(Boolean).join(" ")||"Veículo anunciado";
+  const price=row.price?Number(row.price).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}):"Preço a combinar";
+  return {id:row.id,sellerId:row.user_id,name:title,year:row.year||"-",color:row.color||"-",mileage:row.mileage?`${Number(row.mileage).toLocaleString("pt-BR")} km`:"Quilometragem não informada",location:row.location||"Brasil",price,img:"https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=420&h=280&fit=crop"};
+}
+async function loadVehicleListings(){
+  if(!sb) return;
+  try{
+    const {data,error}=await sb.from("vehicle_listings").select("id,user_id,brand,model,year,color,mileage,price,location,status,created_at").eq("status","active").order("created_at",{ascending:false}).limit(24);
+    if(error) throw error;
+    if(data&&data.length){verifiedCars.splice(0,verifiedCars.length,...data.map(listingToCar));}
+  }catch(error){console.warn("[Vehicle listings]",error.message);}
+}
+async function sendVehicleListingMessage(){
+  if(!activeCar?.id||!sb||!currentUser){closeCarPopup();return;}
+  const isOffer=carPriceOffer.style.display!=="none";
+  const message=(carPopupMessage.value.trim()||`${isOffer?"Tenho interesse e quero fazer uma proposta.":"Tenho interesse neste veículo."}${carOfferPrice.value.trim()?" Valor: "+carOfferPrice.value.trim():""}`).trim();
+  try{
+    await sb.from("vehicle_listing_messages").insert({listing_id:activeCar.id,sender_id:currentUser.id,recipient_id:activeCar.sellerId||null,message,message_type:isOffer?"offer":"message"});
+  }catch(error){console.warn("[Vehicle listing message]",error.message);}
+  closeCarPopup();
+}
 function renderCars(){
+  if(!verifiedCars.length){carsList.innerHTML='<div class="empty">Ainda não há veículos ativos publicados.</div>';return;}
   carsList.innerHTML=verifiedCars.map((car,index)=>`
     <article class="car-result">
       <img src="${car.img}" alt="">
@@ -3444,9 +3739,10 @@ function renderCars(){
   carsList.querySelectorAll(".offer-car").forEach((button)=>button.addEventListener("click",()=>openCarPopup(Number(button.dataset.index),true)));
   carsList.querySelectorAll(".message-car").forEach((button)=>button.addEventListener("click",()=>openCarPopup(Number(button.dataset.index),false)));
 }
-function openCarsView(){
+async function openCarsView(){
   goHome();
   screenShell.classList.add("cars-open");
+  await loadVehicleListings();
   renderCars();
   appScroller.scrollTo({top:0,behavior:"smooth"});
 }
@@ -4059,11 +4355,12 @@ cancelReservation.addEventListener("click",()=>{
   const current=reservations.find((item)=>item.className==="confirmed"||item.className==="pending");
   if(current){current.status="Cancelada";current.className="cancelled";renderReservations();reservationManagement.classList.remove("show");}
 });
-sendReservation.addEventListener("click",()=>{
+sendReservation.addEventListener("click",async()=>{
   const valid=reservationService.value&&reservationDetails.value.trim()&&reservationDate.value&&reservationTime.value;
   reservationError.classList.toggle("show",!valid);if(!valid)return;
+  const remoteId=await createReservationRecord({office:activeReservationOffice,service:reservationService.value,dateValue:reservationDate.value,timeValue:reservationTime.value,notes:reservationDetails.value.trim()});
   const date=reservationDate.value.split("-").reverse().join("/");
-  reservations.unshift({office:activeReservationOffice.name,service:reservationService.value,date:`${date} às ${reservationTime.value}`,status:"Pendente",className:"pending"});
+  reservations.unshift({id:remoteId,office:activeReservationOffice.name,service:reservationService.value,date:`${date} às ${reservationTime.value}`,status:"Pendente",className:"pending"});
   reservationPopup.classList.remove("open");reservationSuccessPopup.classList.add("open");
 });
 reservationSuccessClose.addEventListener("click",closeReservationSuccess);
@@ -4075,7 +4372,7 @@ quickEvaluationCard.addEventListener("click",openQuickEvaluation);
 carsBackHome.addEventListener("click",goHome);
 sellBackHome.addEventListener("click",goHome);
 evaluationBackHome.addEventListener("click",goHome);
-carsSearch.addEventListener("click",renderCars);
+carsSearch.addEventListener("click",async()=>{await loadVehicleListings();renderCars();});
 carsQuery.addEventListener("keydown",(event)=>{if(event.key==="Enter"){event.preventDefault();renderCars();}});
 sellPlate.addEventListener("input",()=>{
   sellPlate.value=sellPlate.value.toUpperCase();
@@ -4116,12 +4413,13 @@ publishCar.addEventListener("click",()=>{
   sellError.classList.toggle("show",!valid);if(!valid)return;
   overlay.classList.add("open");visibilityPopup.classList.add("open");
 });
-carPopupSend.addEventListener("click",closeCarPopup);
-publishFeatured.addEventListener("click",closeVisibilityPopup);
-publishFree.addEventListener("click",closeVisibilityPopup);
+carPopupSend.addEventListener("click",sendVehicleListingMessage);
+publishFeatured.addEventListener("click",()=>publishVehicleListing("featured"));
+publishFree.addEventListener("click",()=>publishVehicleListing("free"));
 registerWorkshopBtn.addEventListener("click",openWorkshopDemo);
 workshopDemoClose.addEventListener("click",closeWorkshopDemo);
-workshopDemoLink.addEventListener("click",()=>window.location.href="https://vairodar.netlify.app");
+workshopDemoLink.addEventListener("click",()=>window.location.href="/oficinas/cadastro/");
+workshopBackofficeLink.addEventListener("click",()=>window.location.href="/oficinas/painel/");
 registerBackHome.addEventListener("click",goHome);
 registerUseLocation.addEventListener("click",()=>{registerAddress.value="Av. Paulista, 1000, Bela Vista, São Paulo";registerCity.value="São Paulo";});
 registerDays.addEventListener("change",()=>{const custom=registerDays.value==="Personalizado";simpleRegisterSchedule.style.display=custom?"none":"grid";customRegisterSchedule.classList.toggle("show",custom);});
@@ -4254,6 +4552,7 @@ accountAddPlate.addEventListener("click",async()=>{
     accountAddPlate.textContent="Adicionar";
   }
 });
+if(accountListingsList) accountListingsList.addEventListener("click",handleUserVehicleListingAction);
 accountPlatesList.addEventListener("click",async(event)=>{
   const button=event.target.closest("[data-remove-plate]");
   if(!button||!currentUser) return;

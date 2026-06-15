@@ -1,0 +1,12 @@
+{
+  "name": "vai-rodar",
+  "version": "1.0.0",
+  "description": "Vai Rodar — plataforma automotiva brasileira",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-dist.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

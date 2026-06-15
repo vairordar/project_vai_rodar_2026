@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vai Rodar | Área de Oficinas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#075cff;
+  --blue-2:#1482ff;
+  --bg:#eef1f5;
+  --surface:#fff;
+  --line:#e5ebf4;
+  --text:#070b14;
+  --muted:#6d7684;
+  --shadow:0 24px 70px rgba(15,23,42,.14);
+}
+body{min-height:100dvh;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);display:grid;place-items:center;padding:22px}
+.card{width:min(420px,100%);background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:32px 28px;display:grid;gap:0}
+.logo{width:110px;height:auto;margin-bottom:24px}
+.badge{display:inline-block;background:rgba(7,92,255,.08);color:var(--blue);font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.5px;border-radius:999px;padding:4px 10px;margin-bottom:14px}
+h1{font-size:26px;letter-spacing:-.4px;line-height:1.15;margin-bottom:10px}
+p{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:28px}
+.actions{display:grid;gap:10px}
+.btn{height:52px;border-radius:14px;border:1px solid transparent;font:700 14px/1 "Inter",sans-serif;display:flex;align-items:center;gap:12px;padding:0 20px;cursor:pointer;transition:.15s;text-decoration:none;color:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;box-shadow:0 10px 28px rgba(7,92,255,.22)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 14px 36px rgba(7,92,255,.28)}
+.btn-secondary{background:#fff;border-color:var(--line);color:var(--text)}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue);background:rgba(7,92,255,.04)}
+.btn-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex-shrink:0}
+.btn-primary .btn-icon{background:rgba(255,255,255,.2)}
+.btn-secondary .btn-icon{background:rgba(7,92,255,.08)}
+.btn-text{display:grid;gap:2px;text-align:left}
+.btn-text span{font-size:14px;font-weight:700}
+.btn-text small{font-size:10px;font-weight:500;opacity:.7}
+.divider{height:1px;background:var(--line);margin:6px 0}
+.footer{margin-top:22px;text-align:center;font-size:10px;color:var(--muted)}
+.footer a{color:var(--blue);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <img class="logo" src="/assets/vai_rodar_logo_transparent.png" alt="Vai Rodar">
+  <span class="badge">Área de oficinas</span>
+  <h1>Sua oficina no Vai Rodar</h1>
+  <p>Receba solicitações de motoristas, gerencie reservas e impulsione seu negócio na plataforma automotiva do Brasil.</p>
+  <div class="actions">
+    <a class="btn btn-primary" href="/oficinas/cadastro/">
+      <span class="btn-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      </span>
+      <span class="btn-text">
+        <span>Cadastrar oficina</span>
+        <small>Crie sua conta e comece a receber clientes</small>
+      </span>
+    </a>
+    <a class="btn btn-secondary" href="/oficinas/painel/">
+      <span class="btn-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </span>
+      <span class="btn-text">
+        <span>Entrar no painel</span>
+        <small>Acesse sua conta e gerencie sua oficina</small>
+      </span>
+    </a>
+  </div>
+  <p class="footer">Motorista? <a href="/">Acesse o app principal</a></p>
+</div>
+</body>
+</html>

@@ -1,66 +1,52 @@
-# Vai Rodar - Deploys y carpetas oficiales
+# Vai Rodar - Deploy y carpetas oficiales
 
-Este repo tiene mas de un frontend. Cada sitio Netlify debe apuntar a su carpeta oficial.
+El repo se publica como un solo sitio Netlify con rutas limpias.
 
-## 1. App usuario
+## Configuracion Netlify
 
-- Carpeta oficial: `apps/user-app`
-- Archivo principal: `apps/user-app/index.html`
-- Contiene: app movil del usuario, assets, PWA, manifest y service worker
-- Publish directory en Netlify: `apps/user-app`
-- Build command: vacio
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Functions directory: `netlify/functions`
 
-PWA:
+`dist/` se genera automaticamente con `scripts/build-dist.js` y no es fuente oficial.
 
-- `apps/user-app/manifest.json`
-- `apps/user-app/service-worker.js`
-- `apps/user-app/assets/icon-*.png`
+## Rutas publicas
 
-## 2. Cadastro actual de talleres
+| Ruta | Fuente | Uso |
+| --- | --- | --- |
+| `/` | `apps/user-app/` | App principal usuario, PWA, chat IA, solicitudes, piezas, compra/venta autos |
+| `/oficinas` | `apps/workshop-entry/` | Entrada para negocios: cadastro o backoffice |
+| `/oficinas/cadastro` | `apps/workshop-register-supabase/` | Registro Supabase de oficinas/comercios de piezas |
+| `/oficinas/painel` | `apps/workshop-app/` | Backoffice de oficinas/comercios |
+| `/admin` | `apps/admin-backoffice/` | Backoffice interno Vai Rodar |
 
-- Carpeta oficial: `apps/workshop-register-standalone`
-- Archivo principal: `apps/workshop-register-standalone/index.html`
-- Contiene: formulario publico actual de registro/cadastro de talleres
-- Backend actual: `integrations/google-apps-script/Code.gs`
-- Publish directory en Netlify: `apps/workshop-register-standalone`
-- Build command: vacio
+## Backend y funciones
 
-Este flujo es standalone por ahora. Existe para captar talleres antes de integrar todo a la app principal.
+- `netlify/functions/ai-diagnose.js`: chatbot IA con OpenAI.
+- `netlify/functions/consultar-fipe.js`: consulta FIPE/placa via APIBrasil.
+- `netlify/functions/consulta-placa.js`: compatibilidad GET para placa, delega en FIPE.
+- `netlify/functions/admin-data.js`: lectura admin con service role.
+- `netlify/functions/admin-action.js`: acciones admin con service role.
+- `supabase/migrations/`: SQL ejecutado o pendiente de ejecutar en Supabase.
 
-## 3. Cadastro futuro integrado
+## Variables Netlify necesarias
 
-Cuando exista base de datos real en la app, el cadastro de talleres debe integrarse en:
+- `ADMIN_PASSWORD`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `OPENAI_API_KEY_VR`
+- `APIBRASIL_BEARER_TOKEN`
+- `APIBRASIL_HOMOLOG`
 
-- `apps/user-app`
+Opcional:
 
-En ese momento el boton "Cadastre sua Oficina" dejara de mandar a un link externo y abrira un flujo interno.
+- `OPENAI_MODEL`
 
-Hasta ese cambio, no duplicar ni reconstruir el formulario dentro de `apps/user-app`.
+## Carpetas no productivas
 
-## 4. Backoffice futuro
+- `prototypes/`: pruebas visuales e historico.
+- `exports/`: zips, capturas y exports antiguos.
+- `archive/`: material legado.
+- `integrations/`: integraciones legadas/temporales.
 
-- Backoffice talleres: `apps/workshop-backoffice`
-- Backoffice admin Vai Rodar: `apps/admin-backoffice`
-- Estado actual: carpetas preparadas, sin interfaz oficial todavia
-
-## 5. Backend e integraciones
-
-- Apps Script temporal: `integrations/google-apps-script/Code.gs`
-- Supabase/backend futuro: `backend/supabase`
-
-## 6. Carpetas no productivas
-
-- `prototypes`: pruebas visuales e historico. No usar como publish directory.
-- `exports`: artefactos antiguos, zips y capturas. No usar como fuente oficial.
-- `archive`: material legado.
-
-## Regla estable
-
-No renombrar carpetas oficiales sin decision explicita del equipo:
-
-- `apps/user-app`
-- `apps/workshop-register-standalone`
-- `apps/workshop-backoffice`
-- `apps/admin-backoffice`
-- `integrations/google-apps-script`
-- `backend/supabase`
+Estas carpetas no entran al build de Netlify.

@@ -9,43 +9,38 @@ No renombrar estas carpetas sin una decision explicita del equipo. Claude, Codex
 ```txt
 project_vai_rodar_2026/
   apps/
-    user-app/
-    workshop-register-standalone/
-    workshop-backoffice/
-    admin-backoffice/
+    user-app/                    # App principal del usuario y PWA
+    workshop-entry/              # Landing /oficinas
+    workshop-register-supabase/  # Cadastro de oficinas/comercios con Supabase
+    workshop-app/                # Backoffice de oficinas/comercios
+    admin-backoffice/            # Backoffice interno Vai Rodar
 
-  integrations/
-    google-apps-script/
-
-  backend/
-    supabase/
-
-  docs/
-  prototypes/
-  exports/
-  archive/
+  netlify/functions/             # Funciones serverless Netlify
+  scripts/                       # Build local/Netlify
+  supabase/migrations/           # Migraciones SQL ejecutables
+  backend/supabase/              # Schema/base historica y utilidades backend
+  integrations/                  # Integraciones legadas/temporales
+  docs/                          # Documentacion del proyecto
+  prototypes/                    # Pruebas visuales e historico, no produccion
+  exports/                       # Artefactos antiguos, no fuente oficial
+  archive/                       # Material legado
 ```
 
-## Carpetas oficiales
+## Rutas de produccion en un dominio
 
-- `apps/user-app/`: app principal del usuario. Aqui vive el frontend movil actual y la PWA.
-- `apps/workshop-register-standalone/`: cadastro publico actual de talleres/oficinas. Es temporal/standalone y usa Apps Script.
-- `apps/workshop-backoffice/`: futuro backoffice para talleres.
-- `apps/admin-backoffice/`: futuro backoffice interno Vai Rodar.
-- `integrations/google-apps-script/`: backend temporal del cadastro actual conectado a Google Sheets.
-- `backend/supabase/`: backend futuro real con schema, servicios e integraciones Supabase.
-- `docs/`: documentacion del proyecto.
-- `prototypes/`: pruebas visuales e historico. No es produccion.
-- `exports/`: zips, capturas y exports antiguos. No es fuente oficial.
-- `archive/`: material legado.
+Netlify ejecuta `npm run build`, genera `dist/` y publica estas rutas:
 
-## Regla de trabajo
+- `/`: `apps/user-app/`
+- `/oficinas`: `apps/workshop-entry/`
+- `/oficinas/cadastro`: `apps/workshop-register-supabase/`
+- `/oficinas/painel`: `apps/workshop-app/`
+- `/admin`: `apps/admin-backoffice/`
 
-El cadastro de talleres tiene dos estados:
+## Reglas de trabajo
 
-- Actual: `apps/workshop-register-standalone/`, publicado aparte y conectado a `integrations/google-apps-script/`.
-- Futuro: integrado dentro de `apps/user-app/` cuando exista base de datos real.
-
-Mientras no integremos base de datos en la app, el boton "Cadastre sua Oficina" dentro de `apps/user-app/` debe seguir enviando al link externo del cadastro standalone.
+- `dist/` es generado por build y no se debe editar como fuente principal.
+- Los cambios deben hacerse en `apps/*`, `netlify/functions/*`, `scripts/*` o `supabase/migrations/*` segun corresponda.
+- `prototypes/`, `exports/` y `archive/` no son produccion; sirven como historial y respaldo.
+- No crear nuevas carpetas para flujos existentes sin actualizar este mapa.
 
 Ver tambien `docs/deploy.md`.

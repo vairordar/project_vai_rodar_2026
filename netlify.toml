@@ -1,0 +1,57 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[functions]
+  directory = "netlify/functions"
+
+# ─── Redirects ────────────────────────────────────────────────
+# /oficinas → landing de oficinas
+[[redirects]]
+  from = "/oficinas"
+  to   = "/oficinas/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/oficinas/"
+  to   = "/oficinas/index.html"
+  status = 200
+
+# /oficinas/cadastro → registro de oficina
+[[redirects]]
+  from = "/oficinas/cadastro"
+  to   = "/oficinas/cadastro/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/oficinas/cadastro/"
+  to   = "/oficinas/cadastro/index.html"
+  status = 200
+
+# /oficinas/painel → backoffice del taller
+[[redirects]]
+  from = "/oficinas/painel"
+  to   = "/oficinas/painel/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/oficinas/painel/"
+  to   = "/oficinas/painel/index.html"
+  status = 200
+
+# /admin → admin backoffice
+[[redirects]]
+  from = "/admin"
+  to   = "/admin/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/"
+  to   = "/admin/index.html"
+  status = 200
+
+# Fallback SPA para user-app (debe ir ÚLTIMO)
+[[redirects]]
+  from = "/*"
+  to   = "/index.html"
+  status = 200

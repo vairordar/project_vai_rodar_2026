@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vai Rodar | Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#075cff;
+  --blue-2:#1482ff;
+  --bg:#eef1f5;
+  --surface:#fff;
+  --soft:#f8fafc;
+  --line:#e5ebf4;
+  --line-strong:#d8e0ec;
+  --text:#070b14;
+  --muted:#6d7684;
+  --green:#16a34a;
+  --yellow:#a16207;
+  --red:#dc2626;
+  --shadow:0 24px 70px rgba(15,23,42,.14);
+}
+body{min-height:100dvh;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}button{cursor:pointer}
+.auth{min-height:100dvh;display:grid;place-items:center;padding:22px}
+.auth-card{width:min(400px,100%);background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:24px}
+.auth-card img{width:112px;height:auto;margin-bottom:18px}
+.auth-card h1{font-size:24px;letter-spacing:-.3px;line-height:1.1}.auth-card p{font-size:12px;color:var(--muted);line-height:1.45;margin:8px 0 18px}
+.field{display:grid;gap:6px;margin-bottom:11px}.field label{font-size:10px;text-transform:uppercase;letter-spacing:.35px;font-weight:800;color:var(--muted)}
+.field input,.field select{width:100%;height:40px;border:1px solid var(--line-strong);border-radius:10px;background:var(--soft);padding:0 11px;font-size:12px;outline:none;color:var(--text)}
+.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(7,92,255,.08)}
+.btn{height:36px;border-radius:10px;border:1px solid transparent;padding:0 12px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn.primary{background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;box-shadow:0 10px 22px rgba(7,92,255,.16)}
+.btn.secondary{background:#fff;border-color:var(--line-strong);color:var(--text)}.btn.ghost{background:rgba(7,92,255,.06);border-color:rgba(7,92,255,.2);color:var(--blue)}
+.btn.danger{background:#fff1f2;border-color:#fecdd3;color:var(--red)}.btn.success{background:#ecfdf3;border-color:#bbf7d0;color:#15803d}
+.status{font-size:11px;color:var(--red);min-height:16px;text-align:center;margin-top:9px}
+.app{display:none;min-height:100dvh;padding:18px}.shell{width:min(1320px,100%);height:calc(100dvh - 36px);min-height:720px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:240px minmax(0,1fr)}
+.side{background:#fbfcfe;border-right:1px solid var(--line);padding:16px;display:flex;flex-direction:column;min-width:0}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:3px 2px 14px;border-bottom:1px solid var(--line)}.brand img{width:92px;height:auto}.brand small{font-size:9px;color:var(--muted);font-weight:800;text-transform:uppercase}
+.admin-card{padding:14px 0;border-bottom:1px solid var(--line)}.admin-card h2{font-size:13px;line-height:1.25}.admin-card p{font-size:10px;color:var(--muted);line-height:1.35;margin-top:4px}
+.nav{display:grid;gap:5px;margin-top:14px}.nav button{height:34px;border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;color:var(--text);font-size:11px;font-weight:750;padding:0 10px}.nav button.active{background:rgba(7,92,255,.07);border-color:rgba(7,92,255,.24);color:var(--blue)}
+.side-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}.mini{font-size:10px;color:var(--muted);line-height:1.35}
+.main{display:grid;grid-template-rows:66px minmax(0,1fr);min-width:0}.topbar{border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 22px;background:#fff}
+.topbar h2{font-size:18px;letter-spacing:-.2px}.topbar p{font-size:10px;color:var(--muted);margin-top:3px}.top-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.logo-clean{width:86px;height:auto;display:block}.menu-btn{display:none;width:34px;height:34px;border:0;background:transparent;align-items:center;justify-content:center;gap:4px;flex-direction:column}.menu-btn span{width:16px;height:2px;border-radius:999px;background:var(--text)}
+.backdrop{display:none;position:fixed;inset:0;background:rgba(7,11,20,.42);z-index:38;opacity:0;transition:.18s}.backdrop.open{opacity:1}
+.content{overflow:auto;padding:18px 22px;background:#fff}.view{display:none}.view.active{display:block}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:13px}.metric{border:1px solid var(--line);border-radius:12px;background:#fff;padding:11px;min-height:72px}.metric small{display:block;font-size:9px;color:var(--muted);font-weight:850;text-transform:uppercase}.metric strong{display:block;font-size:24px;line-height:1;margin-top:9px}.metric span{display:block;font-size:9px;color:var(--muted);margin-top:5px}
+.grid{display:grid;grid-template-columns:minmax(0,1.4fr) 350px;gap:13px;align-items:start}.panel{border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:11px}.panel-head h3{font-size:14px;line-height:1.2}.panel-head p{font-size:10px;color:var(--muted);line-height:1.4;margin-top:3px}
+.filters{display:flex;gap:6px;flex-wrap:wrap}.filters button{height:28px;border:1px solid var(--line-strong);border-radius:999px;background:#fff;padding:0 9px;font-size:9px;font-weight:800;color:var(--muted)}.filters button.active{border-color:var(--blue);background:rgba(7,92,255,.06);color:var(--blue)}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;font-size:10px;vertical-align:top}.table th{background:var(--soft);font-size:8.5px;text-transform:uppercase;letter-spacing:.35px;color:var(--muted);font-weight:850}.table tr:last-child td{border-bottom:0}.table b{font-size:11px}.table small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:850;white-space:nowrap}.pill.active,.pill.paid,.pill.approved{background:#dcfce7;color:#15803d}.pill.pending,.pill.trial{background:#fff7d6;color:var(--yellow)}.pill.expired,.pill.unpaid,.pill.blocked{background:#fee2e2;color:#b91c1c}.pill.info{background:#e8f0ff;color:var(--blue)}
+.list{display:grid;gap:8px}.item{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px}.item h4{font-size:12px}.item p{font-size:10px;color:var(--muted);line-height:1.45;margin-top:5px}.item-row{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.chart-bars{display:grid;gap:8px}.bar-row{display:grid;grid-template-columns:120px 1fr 48px;gap:8px;align-items:center;font-size:10px}.bar{height:8px;background:#edf2f7;border-radius:999px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(135deg,var(--blue),var(--blue-2));border-radius:999px}
+.export-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.export-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;display:grid;gap:8px}.export-card h4{font-size:12px}.export-card p{font-size:10px;color:var(--muted);line-height:1.4;min-height:42px}
+.empty{border:1px dashed var(--line-strong);border-radius:12px;padding:20px 14px;text-align:center;color:var(--muted);font-size:11px;line-height:1.45}
+.toast{position:fixed;right:22px;bottom:22px;max-width:320px;border:1px solid rgba(22,163,74,.28);border-radius:12px;background:#fff;box-shadow:0 18px 45px rgba(15,23,42,.18);padding:11px 13px;font-size:11px;font-weight:800;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:980px){
+  body{background:#fff}.app{padding:0}.shell{height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none;grid-template-columns:1fr}.side{position:fixed;left:0;top:0;bottom:0;width:min(310px,86vw);z-index:40;border-right:1px solid var(--line);box-shadow:24px 0 70px rgba(15,23,42,.22);transform:translateX(-105%);transition:.22s;overflow:auto}.side.open{transform:translateX(0)}.backdrop{display:block;pointer-events:none}.backdrop.open{pointer-events:auto}.menu-btn{display:inline-flex;flex:0 0 auto}.main{grid-template-rows:auto minmax(0,1fr)}.topbar{padding:12px 14px;position:sticky;top:0;z-index:30}.topbar h2{font-size:16px}.topbar p{max-width:48vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.content{padding:16px}.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.export-grid{grid-template-columns:1fr}.top-actions .btn.ghost{display:none}
+}
+@media(max-width:560px){.metrics{gap:6px}.metric{padding:9px;min-height:64px}.metric small{font-size:7.5px}.metric strong{font-size:20px}.logo-clean{width:74px}.panel-head{flex-direction:column}.bar-row{grid-template-columns:92px 1fr 38px}}
+</style>
+</head>
+<body>
+<section class="auth" id="authScreen">
+  <form class="auth-card" id="loginForm">
+    <img src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar">
+    <h1>Admin backoffice</h1>
+    <p>Controle comercial, dados exportaveis e auditoria da operacao Vai Rodar.</p>
+    <div class="field"><label>Senha admin</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Senha privada do admin" required></div>
+    <button class="btn primary" type="submit" style="width:100%">Entrar</button>
+    <button class="btn secondary" id="demoBtn" type="button" style="width:100%;margin-top:8px">Ver demo admin</button>
+    <div class="status" id="authStatus"></div>
+  </form>
+</section>
+
+<section class="app" id="app">
+  <div class="shell">
+    <div class="backdrop" id="drawerBackdrop"></div>
+    <aside class="side" id="side">
+      <div class="brand"><img src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar"><small>Admin</small></div>
+      <section class="admin-card">
+        <h2>Centro de controle</h2>
+        <p>Talleres, pagamentos, assinaturas, analytics e exportacao para Excel.</p>
+      </section>
+      <nav class="nav">
+        <button class="active" data-view="overview" type="button">Visao geral</button>
+        <button data-view="workshops" type="button">Oficinas</button>
+        <button data-view="subscriptions" type="button">Assinaturas</button>
+        <button data-view="payments" type="button">Pagamentos</button>
+        <button data-view="analytics" type="button">Analytics</button>
+        <button data-view="exports" type="button">Exportacoes</button>
+        <button data-view="audit" type="button">Auditoria</button>
+      </nav>
+      <div class="side-bottom">
+        <p class="mini">Base preparada para Supabase: views admin, CSV exportavel e controle de validade da membresia.</p>
+        <button class="btn secondary" id="signOutBtn" type="button">Sair</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+        <div><h2 id="pageTitle">Visao geral</h2><p id="pageSubtitle">Indicadores principais da operacao.</p></div>
+        <div class="top-actions">
+          <button class="btn ghost" id="refreshBtn" type="button">Atualizar</button>
+          <img class="logo-clean" src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar">
+        </div>
+      </header>
+
+      <section class="content">
+        <section class="view active" id="view-overview">
+          <div class="metrics">
+            <div class="metric"><small>Oficinas cadastradas</small><strong id="mWorkshops">0</strong><span id="mWorkshopsHint">0 ativas</span></div>
+            <div class="metric"><small>Pagantes</small><strong id="mPaid">0</strong><span id="mPaidHint">0 vencidas</span></div>
+            <div class="metric"><small>Solicitacoes</small><strong id="mRequests">0</strong><span>ultimos 30 dias</span></div>
+            <div class="metric"><small>Reservas</small><strong id="mReservations">0</strong><span>confirmadas</span></div>
+          </div>
+          <div class="grid">
+            <section class="panel">
+              <div class="panel-head"><div><h3>Saude comercial</h3><p>Quem paga, quem vence e onde existe oportunidade.</p></div><button class="btn secondary" data-export="subscriptions" type="button">Exportar</button></div>
+              <div class="table-wrap"><table class="table"><thead><tr><th>Oficina</th><th>Status</th><th>Plano</th><th>Inicio</th><th>Vence</th><th>Valor</th></tr></thead><tbody id="subscriptionRows"></tbody></table></div>
+            </section>
+            <aside class="panel">
+              <div class="panel-head"><div><h3>Alertas</h3><p>Pontos que exigem acao do admin.</p></div></div>
+              <div class="list" id="alertsList"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-workshops">
+          <div class="panel">
+            <div class="panel-head">
+              <div><h3>Oficinas</h3><p>Ficha completa dos talleres, dados fiscais, contato, status e visibilidade.</p></div>
+              <div class="filters"><button class="active" data-filter-workshop="all" type="button">Todas</button><button data-filter-workshop="active" type="button">Ativas</button><button data-filter-workshop="pending" type="button">Pendentes</button><button data-export="workshops" type="button">CSV</button></div>
+            </div>
+            <div class="table-wrap"><table class="table"><thead><tr><th>Oficina</th><th>Responsavel</th><th>CNPJ</th><th>Cidade</th><th>Categorias</th><th>Status</th><th>Assinatura</th></tr></thead><tbody id="workshopRows"></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-subscriptions">
+          <div class="grid">
+            <section class="panel">
+              <div class="panel-head"><div><h3>Assinaturas</h3><p>Validade da membresia: pagamento hoje, inicio no dia seguinte, duracao de 365 dias.</p></div><button class="btn secondary" data-export="subscriptions" type="button">Exportar CSV</button></div>
+              <div class="table-wrap"><table class="table"><thead><tr><th>Oficina</th><th>Status</th><th>Pago em</th><th>Inicio</th><th>Vencimento</th><th>Dias restantes</th><th>Referencia</th></tr></thead><tbody id="subscriptionDetailRows"></tbody></table></div>
+            </section>
+            <aside class="panel">
+              <div class="panel-head"><div><h3>Resumo</h3><p>Base comercial pronta para follow-up.</p></div></div>
+              <div class="list" id="subscriptionSummary"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-payments">
+          <div class="panel">
+            <div class="panel-head"><div><h3>Pagamentos</h3><p>Historico financeiro por oficina, metodo e referencia.</p></div><button class="btn secondary" data-export="payments" type="button">Exportar CSV</button></div>
+            <div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Oficina</th><th>Status</th><th>Metodo</th><th>Valor</th><th>Referencia</th><th>Notas</th></tr></thead><tbody id="paymentRows"></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-analytics">
+          <div class="metrics">
+            <div class="metric"><small>Buscas</small><strong id="mSearches">0</strong><span>termos e locais</span></div>
+            <div class="metric"><small>Chats</small><strong id="mChats">0</strong><span>conversas iniciadas</span></div>
+            <div class="metric"><small>Ofertas clicadas</small><strong id="mOfferClicks">0</strong><span>engajamento</span></div>
+            <div class="metric"><small>Conversao</small><strong id="mConversion">0%</strong><span>solicitacao para reserva</span></div>
+          </div>
+          <div class="grid">
+            <section class="panel">
+              <div class="panel-head"><div><h3>Lugares mais buscados</h3><p>Cidades, bairros e regioes com maior demanda.</p></div><button class="btn secondary" data-export="analytics-locations" type="button">CSV</button></div>
+              <div class="chart-bars" id="locationBars"></div>
+            </section>
+            <aside class="panel">
+              <div class="panel-head"><div><h3>Servicos mais usados</h3><p>Categorias que devem guiar vendas e expansao.</p></div></div>
+              <div class="chart-bars" id="serviceBars"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-exports">
+          <div class="panel">
+            <div class="panel-head"><div><h3>Exportacoes para Excel</h3><p>Arquivos CSV prontos para abrir no Excel, Google Sheets ou enviar para contador/comercial.</p></div></div>
+            <div class="export-grid" id="exportGrid"></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-audit">
+          <div class="panel">
+            <div class="panel-head"><div><h3>Auditoria</h3><p>Registro de acoes importantes: aprovacao, pagamento, edicao e bloqueio.</p></div><button class="btn secondary" data-export="audit" type="button">Exportar CSV</button></div>
+            <div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Admin</th><th>Acao</th><th>Entidade</th><th>Detalhe</th></tr></thead><tbody id="auditRows"></tbody></table></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+</section>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=(id)=>document.getElementById(id);
+const titles={
+  overview:["Visao geral","Indicadores principais da operacao."],
+  workshops:["Oficinas","Cadastro, aprovacao, visibilidade e dados fiscais."],
+  subscriptions:["Assinaturas","Validade, pagamento e vencimento da membresia."],
+  payments:["Pagamentos","Historico financeiro por oficina."],
+  analytics:["Analytics","Demanda por lugar, chat, servico e conversao."],
+  exports:["Exportacoes","Dados prontos para Excel."],
+  audit:["Auditoria","Trazabilidade das acoes administrativas."]
+};
+const state={view:"overview",workshopFilter:"all",loadedFromSupabase:false,adminPassword:sessionStorage.getItem("vr_admin_password")||""};
+const today=new Date();
+const daysBetween=(date)=>Math.ceil((new Date(date)-today)/86400000);
+const money=(value)=>Number(value||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const dateBR=(value)=>value?new Date(value).toLocaleDateString("pt-BR"):"-";
+const esc=(value)=>String(value??"").replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));
+const data={
+  workshops:[
+    {id:"w-001",name:"Auto Center Butanta",legal_name:"AC Butanta Servicos Automotivos LTDA",cnpj:"12.345.678/0001-90",responsible_name:"Rafael Oliveira",contact_phone:"+55 11 98888-2100",city:"Sao Paulo",state:"SP",neighborhood:"Butanta",categories:["Freios","Suspensao","Pneus"],approval_status:"approved",open:true,visible:true,subscription_status:"active"},
+    {id:"w-002",name:"Pneus Moema",legal_name:"Moema Pneus Comercio LTDA",cnpj:"23.456.789/0001-10",responsible_name:"Camila Santos",contact_phone:"+55 11 97777-1122",city:"Sao Paulo",state:"SP",neighborhood:"Moema",categories:["Pneus","Alinhamento"],approval_status:"approved",open:true,visible:true,subscription_status:"active"},
+    {id:"w-003",name:"Oficina Centro Curitiba",legal_name:"Centro Auto PR LTDA",cnpj:"34.567.890/0001-11",responsible_name:"Bruno Martins",contact_phone:"+55 41 96666-0987",city:"Curitiba",state:"PR",neighborhood:"Centro",categories:["Mecanica geral","Diagnostico"],approval_status:"pending",open:false,visible:false,subscription_status:"pending_payment"},
+    {id:"w-004",name:"Eletrica Vila Mariana",legal_name:"VM Eletrica Auto LTDA",cnpj:"45.678.901/0001-21",responsible_name:"Diego Ferreira",contact_phone:"+55 11 95555-2233",city:"Sao Paulo",state:"SP",neighborhood:"Vila Mariana",categories:["Eletrica","Bateria"],approval_status:"approved",open:true,visible:true,subscription_status:"expired"}
+  ],
+  subscriptions:[
+    {id:"s-001",workshop_id:"w-001",plan_name:"Anual oficina",status:"active",paid_at:"2026-06-12",starts_at:"2026-06-13",expires_at:"2027-06-13",duration_days:365,amount_paid:1190,payment_method:"Pix",payment_reference:"PIX-001-2026",notes:"Primeira anuidade"},
+    {id:"s-002",workshop_id:"w-002",plan_name:"Anual oficina",status:"active",paid_at:"2026-05-28",starts_at:"2026-05-29",expires_at:"2027-05-29",duration_days:365,amount_paid:1190,payment_method:"Cartao",payment_reference:"CARD-2231",notes:"Pago online"},
+    {id:"s-003",workshop_id:"w-003",plan_name:"Anual oficina",status:"pending_payment",paid_at:null,starts_at:null,expires_at:null,duration_days:365,amount_paid:0,payment_method:null,payment_reference:null,notes:"Aguardando pagamento"},
+    {id:"s-004",workshop_id:"w-004",plan_name:"Anual oficina",status:"expired",paid_at:"2025-05-10",starts_at:"2025-05-11",expires_at:"2026-05-11",duration_days:365,amount_paid:990,payment_method:"Pix",payment_reference:"PIX-OLD-004",notes:"Renovar"}
+  ],
+  payments:[
+    {id:"p-001",workshop_id:"w-001",paid_at:"2026-06-12",status:"paid",method:"Pix",amount:1190,reference:"PIX-001-2026",notes:"Ativar em 2026-06-13"},
+    {id:"p-002",workshop_id:"w-002",paid_at:"2026-05-28",status:"paid",method:"Cartao",amount:1190,reference:"CARD-2231",notes:"Assinatura anual"},
+    {id:"p-003",workshop_id:"w-004",paid_at:"2025-05-10",status:"paid",method:"Pix",amount:990,reference:"PIX-OLD-004",notes:"Periodo vencido"}
+  ],
+  analytics:[
+    {event_type:"search",label:"Butanta, Sao Paulo",value:184},
+    {event_type:"search",label:"Moema, Sao Paulo",value:132},
+    {event_type:"search",label:"Centro, Curitiba",value:87},
+    {event_type:"service",label:"Freios",value:216},
+    {event_type:"service",label:"Pneus",value:173},
+    {event_type:"service",label:"Bateria",value:92},
+    {event_type:"chat_started",label:"Chat IA",value:428},
+    {event_type:"offer_clicked",label:"Ofertas",value:76}
+  ],
+  service_requests:Array.from({length:72},(_,i)=>({id:"r-"+i,status:i%5===0?"confirmed":"open"})),
+  reservations:Array.from({length:19},(_,i)=>({id:"rv-"+i,status:i%4===0?"pending":"confirmed"})),
+  audit_logs:[
+    {created_at:"2026-06-15T09:40:00",admin_email:"admin@vairodar.com.br",action:"subscription_created",entity:"workshop_subscriptions",detail:"Auto Center Butanta ativado por 365 dias"},
+    {created_at:"2026-06-14T18:10:00",admin_email:"admin@vairodar.com.br",action:"workshop_approved",entity:"workshops",detail:"Pneus Moema aprovado"},
+    {created_at:"2026-06-13T11:22:00",admin_email:"admin@vairodar.com.br",action:"profile_change_reviewed",entity:"workshop_profile_change_requests",detail:"Categoria recusada: fora do cadastro inicial"}
+  ],
+  dashboard:null,
+  chat_usage:[]
+};
+function workshop(id){return data.workshops.find((item)=>item.id===id)||{}}
+function toast(message){$("toast").textContent=message;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200)}
+function showApp(){$("authScreen").style.display="none";$("app").style.display="block";renderAll()}
+function openDrawer(){$("side").classList.add("open");$("drawerBackdrop").classList.add("open")}
+function closeDrawer(){$("side").classList.remove("open");$("drawerBackdrop").classList.remove("open")}
+function setView(view){state.view=view;document.querySelectorAll(".view").forEach((el)=>el.classList.remove("active"));$("view-"+view).classList.add("active");document.querySelectorAll(".nav button").forEach((btn)=>btn.classList.toggle("active",btn.dataset.view===view));$("pageTitle").textContent=titles[view][0];$("pageSubtitle").textContent=titles[view][1];closeDrawer()}
+async function adminFetch(path, options={}){
+  if(!state.adminPassword)throw new Error("Senha admin obrigatoria.");
+  const response=await fetch(path,{
+    ...options,
+    headers:{
+      "Content-Type":"application/json",
+      "X-Admin-Password":state.adminPassword,
+      ...(options.headers||{})
+    }
+  });
+  const result=await response.json().catch(()=>({success:false,error:"Resposta invalida do servidor."}));
+  if(!response.ok||result.success===false)throw new Error(result.error||"Erro admin.");
+  return result;
+}
+async function loadAdminData(){
+  if(location.protocol==="file:"){
+    toast("Demo local: dados reais carregam quando abrir via Netlify.");
+    return false;
+  }
+  try{
+    const result=await adminFetch("/.netlify/functions/admin-data");
+    const payload=result.data||{};
+    data.workshops=(payload.workshops||data.workshops).map((w)=>({...w,categories:w.categories||w.services||[w.category].filter(Boolean)}));
+    data.dashboard=payload.dashboard||null;
+    data.subscriptions=payload.subscriptions||[];
+    data.payments=payload.payments||[];
+    const locationAnalytics=(payload.topLocations||[]).map((e)=>({event_type:"search",label:e.location_text||[e.neighborhood,e.city,e.state].filter(Boolean).join(", ")||"Local nao informado",value:Number(e.event_count||0)}));
+    const serviceAnalytics=(payload.topServices||[]).map((e)=>({event_type:"service",label:e.service_category||"Servico nao informado",value:Number(e.event_count||0)}));
+    const rawAnalytics=(payload.analyticsEvents||[]).map((e)=>({event_type:e.event_type,label:e.location_text||e.service_category||e.metadata?.label||e.event_type,value:1}));
+    data.analytics=[...locationAnalytics,...serviceAnalytics,...rawAnalytics];
+    data.chat_usage=payload.chatUsage||[];
+    data.service_requests=payload.serviceRequests||[];
+    data.reservations=payload.reservations||[];
+    data.audit_logs=payload.auditLogs||[];
+    state.loadedFromSupabase=true;
+    return true;
+  }catch(error){console.warn("[admin load]",error.message);toast(error.message||"Nao foi possivel carregar admin.");return false}
+}
+async function adminAction(action,payload){
+  const result=await adminFetch("/.netlify/functions/admin-action",{
+    method:"POST",
+    body:JSON.stringify({action,payload})
+  });
+  await loadAdminData();
+  renderAll();
+  return result;
+}
+function renderMetrics(){
+  const active=data.workshops.filter((w)=>w.approval_status==="approved"&&w.visible!==false).length;
+  const paid=data.subscriptions.filter((s)=>s.status==="active").length;
+  const expired=data.subscriptions.filter((s)=>s.status==="expired").length;
+  const summary=data.dashboard||{};
+  $("mWorkshops").textContent=summary.total_workshops??data.workshops.length;$("mWorkshopsHint").textContent=`${summary.active_workshops??active} ativas`;
+  $("mPaid").textContent=summary.paying_workshops??paid;$("mPaidHint").textContent=`${summary.expired_workshops??expired} vencidas`;
+  $("mRequests").textContent=summary.total_service_requests_30d??data.service_requests.length;
+  $("mReservations").textContent=summary.total_reservations_30d??data.reservations.filter((r)=>r.status==="confirmed").length;
+  const searches=data.analytics.filter((a)=>a.event_type==="search").reduce((sum,a)=>sum+a.value,0);
+  const chats=summary.total_chats_30d??data.analytics.filter((a)=>a.event_type==="chat_started").reduce((sum,a)=>sum+a.value,0);
+  const offers=data.analytics.filter((a)=>a.event_type==="offer_clicked").reduce((sum,a)=>sum+a.value,0);
+  const conversion=summary.request_to_reservation_conversion_30d??(data.service_requests.length?Math.round((data.reservations.filter((r)=>r.status==="confirmed").length/data.service_requests.length)*100):0);
+  $("mSearches").textContent=searches;$("mChats").textContent=chats;$("mOfferClicks").textContent=summary.total_offer_clicks_30d??offers;$("mConversion").textContent=`${conversion}%`;
+}
+function renderSubscriptions(){
+  const rows=data.subscriptions.map((sub)=>{const w=workshop(sub.workshop_id);return `<tr><td><b>${esc(w.name)}</b><small>${esc(w.city)}, ${esc(w.state)}</small></td><td><span class="pill ${esc(sub.status)}">${esc(sub.status)}</span></td><td>${esc(sub.plan_name)}</td><td>${dateBR(sub.starts_at)}</td><td>${dateBR(sub.expires_at)}</td><td>${money(sub.amount_paid)}</td></tr>`}).join("");
+  $("subscriptionRows").innerHTML=rows;$("subscriptionDetailRows").innerHTML=data.subscriptions.map((sub)=>{const w=workshop(sub.workshop_id);const days=sub.expires_at?daysBetween(sub.expires_at):null;return `<tr><td><b>${esc(w.name)}</b><small>${esc(w.cnpj)}</small></td><td><span class="pill ${esc(sub.status)}">${esc(sub.status)}</span></td><td>${dateBR(sub.paid_at)}</td><td>${dateBR(sub.starts_at)}</td><td>${dateBR(sub.expires_at)}</td><td>${days===null?"-":days}</td><td>${esc(sub.payment_reference||"-")}</td></tr>`}).join("");
+  $("subscriptionSummary").innerHTML=[
+    ["Ativas",data.subscriptions.filter((s)=>s.status==="active").length,"Oficinas liberadas para operar."],
+    ["Pendentes",data.subscriptions.filter((s)=>s.status==="pending_payment").length,"Follow-up comercial necessario."],
+    ["Vencidas",data.subscriptions.filter((s)=>s.status==="expired").length,"Bloquear ou renovar membresia."]
+  ].map((item)=>`<div class="item"><div class="item-row"><h4>${item[0]}</h4><span class="pill info">${item[1]}</span></div><p>${item[2]}</p></div>`).join("");
+}
+function renderWorkshops(){
+  const filtered=data.workshops.filter((w)=>state.workshopFilter==="all"||w.approval_status===state.workshopFilter||w.subscription_status===state.workshopFilter);
+  $("workshopRows").innerHTML=filtered.map((w)=>`<tr><td><b>${esc(w.name)}</b><small>${esc(w.legal_name||"-")}</small></td><td>${esc(w.responsible_name||"-")}<small>${esc(w.contact_phone||"-")}</small></td><td>${esc(w.cnpj||"-")}</td><td>${esc(w.neighborhood||"-")}<small>${esc(w.city||"-")} / ${esc(w.state||"-")}</small></td><td>${(w.categories||[]).map((c)=>`<span class="pill info">${esc(c)}</span>`).join(" ")}</td><td><span class="pill ${esc(w.approval_status)}">${esc(w.approval_status)}</span><small>${w.visible!==false?"Visivel":"Oculta"}</small></td><td><span class="pill ${esc(w.subscription_status)}">${esc(w.subscription_status)}</span><small style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px"><button class="btn success" data-approve="${esc(w.id)}" type="button">Aprovar</button><button class="btn danger" data-block="${esc(w.id)}" type="button">Bloquear</button><button class="btn secondary" data-pay="${esc(w.id)}" type="button">Pagamento</button></small></td></tr>`).join("");
+  $("workshopRows").querySelectorAll("[data-approve]").forEach((btn)=>btn.addEventListener("click",()=>setWorkshopStatus(btn.dataset.approve,"approved",true,true)));
+  $("workshopRows").querySelectorAll("[data-block]").forEach((btn)=>btn.addEventListener("click",()=>setWorkshopStatus(btn.dataset.block,"blocked",false,false)));
+  $("workshopRows").querySelectorAll("[data-pay]").forEach((btn)=>btn.addEventListener("click",()=>registerPayment(btn.dataset.pay)));
+}
+function renderPayments(){
+  $("paymentRows").innerHTML=data.payments.map((p)=>{const w=workshop(p.workshop_id);return `<tr><td>${dateBR(p.paid_at)}</td><td><b>${esc(w.name)}</b><small>${esc(w.cnpj)}</small></td><td><span class="pill ${esc(p.status)}">${esc(p.status)}</span></td><td>${esc(p.method)}</td><td>${money(p.amount)}</td><td>${esc(p.reference)}</td><td>${esc(p.notes||"-")}</td></tr>`}).join("");
+}
+function aggregate(type){const map=new Map();data.analytics.filter((a)=>a.event_type===type).forEach((a)=>map.set(a.label,(map.get(a.label)||0)+a.value));return [...map.entries()].sort((a,b)=>b[1]-a[1]).slice(0,6)}
+function renderBars(target,type){const items=aggregate(type);const max=Math.max(1,...items.map((item)=>item[1]));$(target).innerHTML=items.map(([label,value])=>`<div class="bar-row"><span>${esc(label)}</span><div class="bar"><span style="width:${Math.round((value/max)*100)}%"></span></div><b>${value}</b></div>`).join("")||'<div class="empty">Sem dados ainda.</div>'}
+function renderAlerts(){
+  const expired=data.subscriptions.filter((s)=>s.status==="expired").length;
+  const pending=data.workshops.filter((w)=>w.approval_status==="pending").length;
+  const due=data.subscriptions.filter((s)=>s.expires_at&&daysBetween(s.expires_at)<=30&&daysBetween(s.expires_at)>0).length;
+  $("alertsList").innerHTML=[
+    ["Oficinas pendentes",pending,"Revisar cadastro, categorias e dados fiscais."],
+    ["Assinaturas vencidas",expired,"Contatar ou bloquear visibilidade."],
+    ["Vencem em 30 dias",due,"Criar campanha de renovacao."]
+  ].map((item)=>`<div class="item"><div class="item-row"><h4>${item[0]}</h4><span class="pill ${item[1]?"pending":"active"}">${item[1]}</span></div><p>${item[2]}</p></div>`).join("");
+}
+function renderExports(){
+  const exports=[
+    ["workshops","Oficinas completas","Dados cadastrais, fiscal, cidade, status, categorias e assinatura."],
+    ["subscriptions","Assinaturas","Validade, inicio, vencimento, plano, valor e referencia de pagamento."],
+    ["payments","Pagamentos","Historico financeiro para controle e conciliacao."],
+    ["analytics-locations","Lugares buscados","Cidades, bairros e regioes mais demandadas."],
+    ["analytics-services","Servicos buscados","Categorias e servicos com maior demanda."],
+    ["audit","Auditoria","Acoes administrativas e rastreabilidade."]
+  ];
+  $("exportGrid").innerHTML=exports.map(([key,title,desc])=>`<div class="export-card"><h4>${title}</h4><p>${desc}</p><button class="btn secondary" data-export="${key}" type="button">Baixar CSV</button></div>`).join("");
+  bindExports();
+}
+function renderAudit(){
+  $("auditRows").innerHTML=data.audit_logs.map((log)=>`<tr><td>${new Date(log.created_at).toLocaleString("pt-BR")}</td><td>${esc(log.admin_email||"-")}</td><td><span class="pill info">${esc(log.action)}</span></td><td>${esc(log.entity||"-")}</td><td>${esc(log.detail||JSON.stringify(log.metadata||{}))}</td></tr>`).join("");
+}
+function rowsForExport(key){
+  if(key==="workshops")return data.workshops;
+  if(key==="subscriptions")return data.subscriptions.map((s)=>({...s,workshop_name:workshop(s.workshop_id).name,cnpj:workshop(s.workshop_id).cnpj}));
+  if(key==="payments")return data.payments.map((p)=>({...p,workshop_name:workshop(p.workshop_id).name,cnpj:workshop(p.workshop_id).cnpj}));
+  if(key==="analytics-locations")return aggregate("search").map(([location,count])=>({location,count}));
+  if(key==="analytics-services")return aggregate("service").map(([service,count])=>({service,count}));
+  if(key==="audit")return data.audit_logs;
+  return [];
+}
+function downloadCSV(key){
+  const rows=rowsForExport(key);if(!rows.length){toast("Sem dados para exportar.");return}
+  const headers=[...new Set(rows.flatMap((row)=>Object.keys(row)))];
+  const csv=[headers.join(";"),...rows.map((row)=>headers.map((h)=>`"${String(row[h]??"").replaceAll('"','""')}"`).join(";"))].join("\n");
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`vai-rodar-${key}.csv`;a.click();URL.revokeObjectURL(url);toast("CSV gerado.");
+}
+function bindExports(){document.querySelectorAll("[data-export]").forEach((btn)=>{btn.onclick=()=>downloadCSV(btn.dataset.export)})}
+function renderAll(){renderMetrics();renderSubscriptions();renderWorkshops();renderPayments();renderBars("locationBars","search");renderBars("serviceBars","service");renderAlerts();renderExports();renderAudit();bindExports()}
+async function setWorkshopStatus(workshopId,approvalStatus,visible,open){
+  if(!confirm(`Confirmar alteracao da oficina para ${approvalStatus}?`))return;
+  try{
+    await adminAction("setWorkshopVisibility",{workshop_id:workshopId,approval_status:approvalStatus,visible,open});
+    toast("Oficina atualizada.");
+  }catch(error){toast(error.message||"Nao foi possivel atualizar oficina.")}
+}
+async function registerPayment(workshopId){
+  const amount=prompt("Valor pago em BRL", "1190");
+  if(!amount)return;
+  const method=prompt("Metodo de pagamento", "Manual")||"Manual";
+  const reference=prompt("Referencia do pagamento", `ADMIN-${Date.now()}`)||`ADMIN-${Date.now()}`;
+  try{
+    await adminAction("createSubscriptionPayment",{workshop_id:workshopId,amount:Number(amount),method,reference,duration_days:365});
+    toast("Pagamento e assinatura registrados.");
+  }catch(error){toast(error.message||"Nao foi possivel registrar pagamento.")}
+}
+$("loginForm").addEventListener("submit",async(event)=>{
+  event.preventDefault();
+  $("authStatus").textContent="";
+  state.adminPassword=$("authPassword").value;
+  sessionStorage.setItem("vr_admin_password",state.adminPassword);
+  if(location.protocol==="file:"){
+    showApp();
+    toast("Demo local. Para dados reais, abrir via Netlify.");
+    return;
+  }
+  const ok=await loadAdminData();
+  if(!ok){$("authStatus").textContent="Senha invalida ou admin indisponivel.";return}
+  showApp();
+});
+$("demoBtn").addEventListener("click",()=>showApp());
+$("signOutBtn").addEventListener("click",()=>{state.adminPassword="";sessionStorage.removeItem("vr_admin_password");$("app").style.display="none";$("authScreen").style.display="grid";$("authPassword").value=""});
+$("refreshBtn").addEventListener("click",async()=>{await loadAdminData();renderAll();toast(state.loadedFromSupabase?"Dados atualizados.":"Demo atualizada.")});
+$("menuBtn").addEventListener("click",openDrawer);$("drawerBackdrop").addEventListener("click",closeDrawer);
+document.querySelectorAll(".nav button").forEach((btn)=>btn.addEventListener("click",()=>setView(btn.dataset.view)));
+document.querySelectorAll("[data-filter-workshop]").forEach((btn)=>btn.addEventListener("click",()=>{document.querySelectorAll("[data-filter-workshop]").forEach((b)=>b.classList.remove("active"));btn.classList.add("active");state.workshopFilter=btn.dataset.filterWorkshop;renderWorkshops()}));
+</script>
+</body>
+</html>

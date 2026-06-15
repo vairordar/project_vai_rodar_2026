@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vai Rodar | Painel da Oficina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#075cff;
+  --blue-2:#1482ff;
+  --bg:#eef1f5;
+  --surface:#fff;
+  --soft:#f8fafc;
+  --line:#e5ebf4;
+  --line-strong:#d8e0ec;
+  --text:#070b14;
+  --muted:#6d7684;
+  --green:#16a34a;
+  --yellow:#a16207;
+  --red:#dc2626;
+  --shadow:0 24px 70px rgba(15,23,42,.14);
+}
+body{
+  min-height:100dvh;
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.auth-screen{min-height:100dvh;display:grid;place-items:center;padding:22px}
+.auth-card{width:min(390px,100%);background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:24px}
+.auth-card h1{font-size:23px;line-height:1.1;letter-spacing:-.3px}
+.auth-card p{font-size:12px;line-height:1.45;color:var(--muted);margin:8px 0 18px}
+.field{display:grid;gap:6px;margin-bottom:11px}
+.field label{font-size:10px;text-transform:uppercase;letter-spacing:.4px;font-weight:800;color:var(--muted)}
+.field input,.field textarea,.field select{
+  width:100%;
+  min-height:38px;
+  border:1px solid var(--line-strong);
+  border-radius:10px;
+  background:var(--soft);
+  color:var(--text);
+  padding:9px 11px;
+  font-size:12px;
+  outline:none;
+}
+.field textarea{min-height:86px;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(7,92,255,.08)}
+.btn{height:36px;border-radius:10px;border:1px solid transparent;padding:0 12px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.primary{background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;box-shadow:0 10px 22px rgba(7,92,255,.18)}
+.btn.secondary{background:var(--surface);border-color:var(--line-strong);color:var(--text)}
+.btn.ghost{background:rgba(7,92,255,.06);border-color:rgba(7,92,255,.2);color:var(--blue)}
+.btn.danger{background:#fff1f2;border-color:#fecdd3;color:var(--red)}
+.btn.success{background:#ecfdf3;border-color:#bbf7d0;color:var(--green)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.status-text{font-size:11px;color:var(--red);min-height:16px;margin-top:9px;text-align:center}
+.app{display:none;min-height:100dvh;padding:18px}
+.shell{width:min(1240px,100%);height:calc(100dvh - 36px);min-height:720px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:230px minmax(0,1fr)}
+.side{background:#fbfcfe;border-right:1px solid var(--line);padding:16px;display:flex;flex-direction:column;min-width:0}
+.brand{display:flex;align-items:center;gap:9px;padding:3px 2px 14px;border-bottom:1px solid var(--line)}
+.brand b{display:block;font-size:13px;line-height:1.1}
+.brand span{display:block;font-size:9px;color:var(--muted);margin-top:3px}
+.shop-card{padding:14px 0;border-bottom:1px solid var(--line)}
+.shop-card h2{font-size:13px;line-height:1.25;margin-bottom:4px}
+.shop-card p{font-size:10px;line-height:1.35;color:var(--muted)}
+.nav{display:grid;gap:5px;margin-top:14px}
+.nav button{height:34px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--text);text-align:left;padding:0 10px;font-size:11px;font-weight:750}
+.nav button.active{background:rgba(7,92,255,.07);border-color:rgba(7,92,255,.24);color:var(--blue)}
+.side-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}
+.mini-row{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:10px;color:var(--muted)}
+.availability-switch{width:42px;height:23px;border:0;border-radius:999px;background:#cbd5e1;position:relative;transition:.18s}
+.availability-switch:after{content:"";position:absolute;left:3px;top:3px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.2);transition:.18s}
+.availability-switch.active{background:var(--green)}
+.availability-switch.active:after{left:22px}
+.capacity-card{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:10px;display:grid;gap:7px}
+.capacity-card label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:10px;color:var(--muted);font-weight:750}
+.capacity-stepper{display:flex;align-items:center;gap:6px}
+.capacity-stepper button{width:26px;height:26px;border:1px solid var(--line-strong);border-radius:8px;background:var(--soft);color:var(--blue);font-size:14px;font-weight:850}
+.capacity-stepper input{width:42px;height:26px;border:1px solid var(--line-strong);border-radius:8px;background:#fff;color:var(--text);text-align:center;font-size:11px;font-weight:850}
+.capacity-card small{color:var(--muted);font-size:8.5px;line-height:1.35}
+.capacity-status{font-size:8px;font-weight:850;border-radius:999px;padding:3px 6px;display:inline-block;margin-bottom:4px}
+.capacity-status.free{background:#dcfce7;color:#15803d}
+.capacity-status.partial{background:#e8f0ff;color:var(--blue)}
+.capacity-status.full{background:#fee2e2;color:#b91c1c}
+.main{display:grid;grid-template-rows:66px minmax(0,1fr);min-width:0}
+.topbar{border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 22px;background:var(--surface)}
+.topbar h2{font-size:18px;letter-spacing:-.2px}
+.topbar p{font-size:10px;color:var(--muted);margin-top:3px}
+.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.avatar{width:82px;height:34px;border:0;background:transparent;display:inline-flex;align-items:center;justify-content:flex-end;padding:0}
+.avatar img{max-width:82px;max-height:28px;display:block;object-fit:contain}
+.mobile-menu-btn{display:none;width:34px;height:34px;border:0;border-radius:0;background:transparent;color:var(--text);align-items:center;justify-content:center;gap:4px;flex-direction:column;padding:0}
+.mobile-menu-btn span{width:15px;height:2px;border-radius:999px;background:var(--text);display:block}
+.mobile-drawer-backdrop{display:none;position:fixed;inset:0;background:rgba(7,11,20,.42);z-index:38;opacity:0;transition:.18s}
+.mobile-drawer-backdrop.open{opacity:1}
+.content{overflow:auto;padding:20px 22px;background:var(--surface)}
+.view{display:none}.view.active{display:block}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:12px;max-width:520px}
+.metric{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:9px 10px;min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.metric small{display:block;color:var(--muted);font-size:8px;font-weight:800;text-transform:uppercase;line-height:1.25}
+.metric strong{display:block;font-size:19px;line-height:1}
+.grid{display:grid;grid-template-columns:minmax(0,1.35fr) 330px;gap:13px;align-items:start}
+.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:13px}
+.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:11px}
+.panel-head h3{font-size:14px;line-height:1.2}
+.panel-head p{font-size:10px;line-height:1.4;color:var(--muted);margin-top:3px}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters button{height:28px;border:1px solid var(--line-strong);border-radius:999px;background:var(--surface);padding:0 9px;font-size:9px;font-weight:800;color:var(--muted)}
+.filters button.active{border-color:var(--blue);color:var(--blue);background:rgba(7,92,255,.06)}
+.list{display:grid;gap:8px}
+.item{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:11px;text-align:left;width:100%}
+.item:hover{border-color:rgba(7,92,255,.35);background:#fbfdff}
+.item-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px}
+.item h4{font-size:12px;line-height:1.25}
+.item small{display:block;color:var(--muted);font-size:9px;line-height:1.35;margin-top:3px}
+.item p{font-size:10px;color:var(--muted);line-height:1.45;margin-top:7px}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:850;white-space:nowrap}
+.pill.open,.pill.pending{background:#fff7d6;color:var(--yellow)}
+.pill.active,.pill.accepted,.pill.confirmed{background:#dcfce7;color:#15803d}
+.pill.closed,.pill.declined,.pill.cancelled{background:#fee2e2;color:#b91c1c}
+.pill.info{background:#e8f0ff;color:var(--blue)}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.tags span{border:1px solid var(--line-strong);border-radius:999px;background:var(--soft);color:var(--blue);padding:4px 7px;font-size:8px;font-weight:800}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.empty{border:1px dashed var(--line-strong);border-radius:12px;padding:24px 14px;text-align:center;color:var(--muted);font-size:11px;line-height:1.45}
+.detail-block{display:grid;gap:8px}
+.detail-row{border:1px solid var(--line);border-radius:10px;background:var(--soft);padding:9px}
+.detail-row small{font-size:8px;text-transform:uppercase;font-weight:850;color:var(--muted)}
+.detail-row b,.detail-row span{display:block;font-size:11px;line-height:1.35;margin-top:3px}
+.vehicle-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.message-layout{display:grid;grid-template-columns:285px minmax(0,1fr);gap:13px}
+.thread-list{display:grid;gap:8px}
+.thread{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:10px;text-align:left}
+.thread.active{border-color:rgba(7,92,255,.35);background:rgba(7,92,255,.05)}
+.chat{height:520px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.chat-head{padding:12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.chat-head h3{font-size:13px}.chat-head p{font-size:9px;color:var(--muted);margin-top:3px}
+.chat-log{padding:12px;overflow:auto;background:#fbfcfe;display:flex;flex-direction:column;gap:7px}
+.bubble{max-width:78%;border-radius:14px;padding:8px 10px;font-size:11px;line-height:1.45}
+.bubble.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.bubble.them{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.compose{display:grid;grid-template-columns:1fr auto;padding:10px;border-top:1px solid var(--line);gap:8px;background:#fff}
+.compose input{border:1px solid var(--line-strong);border-radius:999px;padding:0 12px;font-size:11px;outline:none}
+.calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.calendar-title{font-size:15px;font-weight:850;letter-spacing:-.1px}
+.calendar-controls,.calendar-modes{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.calendar-controls select{height:36px;border:1px solid var(--line-strong);border-radius:10px;background:#fff;color:var(--text);padding:0 10px;font-size:11px;font-weight:800;outline:none}
+.calendar-modes button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.calendar-shell{border:1px solid var(--line);border-radius:14px;overflow:auto;background:#fff;max-height:calc(100dvh - 285px)}
+.agenda-grid{display:grid;min-width:760px}
+.agenda-grid.week{grid-template-columns:72px repeat(7,minmax(120px,1fr))}
+.agenda-grid.month{grid-template-columns:repeat(7,minmax(120px,1fr))}
+.cal-cell{min-height:72px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px;font-size:9px;color:var(--muted);background:#fff}
+.agenda-grid.week .cal-cell:nth-child(8n){border-right:0}
+.agenda-grid.month .cal-cell:nth-child(7n){border-right:0}
+.cal-head,.cal-time{background:var(--soft);font-weight:850;color:var(--text);min-height:36px;position:sticky;top:0;z-index:1}
+.cal-day-number{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:9px;font-weight:850;color:var(--text);margin-bottom:5px}
+.cal-day-number.today span{background:var(--blue);color:#fff;border-radius:999px;padding:3px 6px}
+.cal-outside{background:#fbfcfe;color:#a3adba}
+.event{display:block;width:100%;border:0;text-align:left;border-radius:8px;padding:6px;background:rgba(7,92,255,.08);color:var(--blue);font-size:8px;font-weight:850;line-height:1.25;margin-top:4px}
+.event.pending{background:#fff7d6;color:var(--yellow)}
+.event.blocked{background:#f1f5f9;color:var(--muted)}
+.event.confirmed{background:#dcfce7;color:#15803d}
+.offer-card{display:grid;grid-template-columns:54px 1fr;gap:9px;align-items:center}
+.offer-thumb{height:46px;border-radius:10px;background:linear-gradient(135deg,#e8f0ff,#ecfdf5);display:grid;place-items:center;color:var(--blue);font-weight:850;font-size:10px}
+.modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.42);padding:16px;z-index:50}
+.modal.open{display:grid}
+.modal-card{width:min(470px,100%);max-height:90dvh;overflow:auto;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 28px 70px rgba(0,0,0,.24);padding:16px}
+.modal-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px}
+.modal-head h3{font-size:17px}.modal-head p{font-size:10px;color:var(--muted);line-height:1.45;margin-top:4px}
+.modal-close{width:30px;height:30px;border:1px solid var(--line);border-radius:50%;background:#fff;font-size:17px}
+.day-checks{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:11px}
+.day-checks label{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:10px;padding:8px;font-size:11px;font-weight:750;color:var(--text)}
+.day-checks input{accent-color:var(--blue)}
+.toast{position:fixed;right:22px;bottom:22px;max-width:320px;border:1px solid rgba(22,163,74,.28);border-radius:12px;background:#fff;box-shadow:0 18px 45px rgba(15,23,42,.18);padding:11px 13px;font-size:11px;font-weight:800;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:960px){
+  body{background:#fff}.app{padding:0}.shell{height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none;grid-template-columns:1fr}
+  .side{position:fixed;left:0;top:0;bottom:0;width:min(310px,86vw);z-index:40;border-right:1px solid var(--line);border-bottom:0;box-shadow:24px 0 70px rgba(15,23,42,.22);transform:translateX(-105%);transition:.22s;max-height:none;overflow:auto}
+  .side.open{transform:translateX(0)}
+  .mobile-drawer-backdrop{display:block;pointer-events:none}
+  .mobile-drawer-backdrop.open{pointer-events:auto}
+  .mobile-menu-btn{display:inline-flex;flex:0 0 auto}
+  .nav{grid-template-columns:1fr}
+  .main{grid-template-rows:auto minmax(0,1fr)}.topbar{align-items:center;flex-direction:row;padding:12px 14px;position:sticky;top:0;z-index:30}
+  .topbar>div:first-child{min-width:0}.topbar h2{font-size:16px}.topbar p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw}
+  .top-actions{flex-wrap:nowrap}
+  .top-actions .btn.ghost{display:none}
+  .content{padding:16px}.metrics{grid-template-columns:repeat(2,1fr);max-width:none}.grid,.message-layout{grid-template-columns:1fr}
+  .chat{height:470px}.agenda-grid.week{grid-template-columns:64px repeat(7,140px)}.agenda-grid.month{grid-template-columns:repeat(7,130px)}.two-col,.vehicle-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){.metrics{grid-template-columns:repeat(2,1fr);gap:6px}.metric{padding:8px;min-height:54px}.metric small{font-size:7.5px}.metric strong{font-size:18px}.top-actions{justify-content:flex-end}.avatar{width:74px;height:32px}.avatar img{max-width:74px;max-height:26px}.calendar-toolbar{align-items:flex-start}.panel-head{flex-direction:column}.day-checks{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<section class="auth-screen" id="authScreen">
+  <form class="auth-card" id="loginForm">
+    <h1>Painel da oficina</h1>
+    <p>Entre com o e-mail criado no cadastro da oficina. Cada conta abre somente o painel do seu proprio taller.</p>
+    <div class="field"><label>E-mail</label><input id="authEmail" type="email" autocomplete="email" placeholder="oficina@vairodar.com.br" required></div>
+    <div class="field"><label>Senha</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Sua senha" required></div>
+    <button class="btn primary" id="loginBtn" type="submit" style="width:100%">Entrar no painel</button>
+    <button class="btn secondary" id="demoBtn" type="button" style="width:100%;margin-top:8px">Usar conta demo</button>
+    <div class="status-text" id="authStatus"></div>
+  </form>
+</section>
+
+<section class="app" id="app">
+  <div class="shell">
+    <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop"></div>
+    <aside class="side">
+      <div class="brand"><div><b>Vai Rodar</b><span>Backoffice oficina</span></div></div>
+      <section class="shop-card">
+        <h2 id="shopName">Oficina</h2>
+        <p id="shopMeta">Carregando perfil...</p>
+      </section>
+      <nav class="nav">
+        <button class="active" data-view="requests" type="button">Solicitacoes</button>
+        <button data-view="messages" type="button">Mensagens</button>
+        <button data-view="agenda" type="button">Agenda</button>
+        <button data-view="reservations" type="button">Reservas</button>
+        <button data-view="profile" type="button">Perfil publico</button>
+        <button data-view="offers" type="button">Ofertas</button>
+        <button data-view="account" type="button">Conta</button>
+      </nav>
+      <div class="side-bottom">
+        <div class="mini-row"><span id="receivingLabel">Receber pedidos</span><button class="availability-switch active" id="receivingToggle" type="button" aria-label="Receber pedidos"></button></div>
+        <div class="capacity-card">
+          <label>
+            <span>Capacidade por hora</span>
+            <span class="capacity-stepper">
+              <button id="capacityMinus" type="button" aria-label="Reduzir capacidade">-</button>
+              <input id="capacityInput" type="number" min="1" max="10" value="1" aria-label="Veiculos por hora">
+              <button id="capacityPlus" type="button" aria-label="Aumentar capacidade">+</button>
+            </span>
+          </label>
+          <small id="capacityHint">1 veiculo por horario. Horarios lotados ficam bloqueados para novas reservas.</small>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+        <div><h2 id="pageTitle">Solicitacoes</h2><p id="pageSubtitle">Pedidos formais enviados pelos motoristas.</p></div>
+        <div class="top-actions">
+          <button class="btn ghost" id="refreshBtn" type="button">Atualizar</button>
+          <div class="avatar" id="avatarBtn" aria-label="Vai Rodar"><img src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar"></div>
+        </div>
+      </header>
+
+      <section class="content">
+        <section class="view active" id="view-requests">
+          <div class="metrics">
+            <div class="metric"><small>Solicitacoes abertas</small><strong id="metricRequests">0</strong></div>
+            <div class="metric"><small>Propostas enviadas</small><strong id="metricProposals">0</strong></div>
+            <div class="metric"><small>Mensagens</small><strong id="metricMessages">0</strong></div>
+            <div class="metric"><small>Reservas</small><strong id="metricReservations">0</strong></div>
+          </div>
+          <div class="grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div><h3>Solicitacoes recebidas</h3><p>Envie uma proposta formal com preco, prazo e resposta ao problema do usuario.</p></div>
+                <div class="filters"><button class="active" data-request-filter="open" type="button">Pendentes</button><button data-request-filter="all" type="button">Todas</button></div>
+              </div>
+              <div class="list" id="requestsList"></div>
+            </section>
+            <aside class="panel">
+              <div class="panel-head"><div><h3>Detalhe</h3><p>Selecione uma solicitacao para ver usuario, carro e descricao.</p></div></div>
+              <div id="requestDetail" class="detail-block"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-messages">
+          <div class="message-layout">
+            <section class="panel">
+              <div class="panel-head"><div><h3>Conversas</h3><p>Mensagens diretas vinculadas ao seu taller.</p></div></div>
+              <div class="thread-list" id="threadList"></div>
+            </section>
+            <section class="chat">
+              <div class="chat-head"><div><h3 id="chatTitle">Selecione uma conversa</h3><p id="chatMeta">As mensagens aparecem em tempo real.</p></div><button class="btn ghost" id="formalizeChatBtn" type="button">Criar solicitacao</button></div>
+              <div class="chat-log" id="chatLog"></div>
+              <div class="compose"><input id="chatInput" placeholder="Responder ao motorista..."><button class="btn primary" id="chatSendBtn" type="button">Enviar</button></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="view-agenda">
+          <div class="panel">
+            <div class="panel-head">
+              <div><h3>Agenda</h3><p>Reservas confirmadas, por confirmar e horarios bloqueados.</p></div>
+              <div class="top-actions"><button class="btn secondary" id="blockSlotBtn" type="button">Bloquear horario</button><button class="btn primary" id="manualReservationBtn" type="button">Reserva manual</button></div>
+            </div>
+            <div class="calendar-toolbar">
+              <div class="calendar-controls">
+                <select id="calendarMonthSelect" aria-label="Filtrar por mes"></select>
+              </div>
+              <div class="calendar-title" id="calendarTitle">Agenda</div>
+              <div class="calendar-modes">
+                <button class="btn secondary active" id="calendarWeekBtn" type="button">Semana</button>
+                <button class="btn secondary" id="calendarMonthBtn" type="button">Mes</button>
+              </div>
+            </div>
+            <div class="calendar-shell"><div class="agenda-grid week" id="agendaGrid"></div></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-reservations">
+          <div class="grid">
+            <section class="panel"><div class="panel-head"><div><h3>Reservas</h3><p>Solicitacoes confirmadas e atendimentos agendados.</p></div></div><div class="list" id="reservationList"></div></section>
+            <aside class="panel"><div class="panel-head"><div><h3>Detalhe da reserva</h3><p>Dados do motorista, veiculo e proposta.</p></div></div><div class="detail-block" id="reservationDetail"></div></aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-profile">
+          <div class="grid">
+            <form class="panel" id="profileForm">
+              <div class="panel-head"><div><h3>Perfil publico</h3><p>Informacao mostrada para motoristas. Alteracoes sensiveis passam pelo admin Vai Rodar.</p></div><button class="btn secondary" type="submit">Solicitar alteracao</button></div>
+              <div class="two-col">
+                <div class="field"><label>Nome da oficina</label><input id="profileName" readonly></div>
+                <div class="field"><label>Categorias registradas</label><div class="detail-row" id="profileCategoryLocked"><span>-</span></div></div>
+                <div class="field"><label>WhatsApp</label><input id="profileWhatsapp" readonly></div>
+                <div class="field"><label>E-mail</label><input id="profileEmail" type="email" readonly></div>
+                <div class="field"><label>Cidade</label><input id="profileCity" readonly></div>
+                <div class="field"><label>Estado</label><input id="profileState" readonly></div>
+              </div>
+              <div class="field"><label>Endereco</label><input id="profileAddress" readonly></div>
+              <div class="field"><label>Descricao</label><textarea id="profileDescription" readonly></textarea></div>
+              <div class="field"><label>Servicos cadastrados</label><div class="detail-row" id="profileServicesLocked"><span>-</span></div><small style="color:var(--muted);font-size:10px;line-height:1.4">Para alterar categorias ou servicos, solicite aprovacao do Vai Rodar.</small></div>
+            </form>
+            <aside class="panel">
+              <div class="panel-head"><div><h3>Preview rapido</h3><p>Resumo do que o usuario ve no app.</p></div></div>
+              <div class="item"><h4 id="previewName">Oficina</h4><small id="previewMeta">Cidade - Estado</small><p id="previewDesc">Descricao publica.</p><div class="tags" id="previewTags"></div></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-offers">
+          <div class="grid">
+            <form class="panel" id="offerForm">
+              <div class="panel-head"><div><h3>Criar oferta</h3><p>Modulo preparado para tabela de ofertas. Por enquanto fica em rascunho local.</p></div><button class="btn primary" type="submit">Criar oferta</button></div>
+              <div class="two-col">
+                <div class="field"><label>Categoria</label><select id="offerCategory"><option>Pneus</option><option>Freios</option><option>Revisao</option><option>Eletrica</option><option>Funilaria</option></select></div>
+                <div class="field"><label>Titulo</label><input id="offerTitle" placeholder="Ex.: Revisao de freios"></div>
+                <div class="field"><label>Desde</label><input id="offerStart" type="date"></div>
+                <div class="field"><label>Ate</label><input id="offerEnd" type="date"></div>
+                <div class="field"><label>Foto da oferta</label><input id="offerPhoto" type="file" accept="image/*" required></div>
+              </div>
+              <div class="field"><label>Descricao</label><textarea id="offerDescription" placeholder="Detalhe a promocao, condicoes e limite."></textarea></div>
+            </form>
+            <aside class="panel">
+              <div class="panel-head"><div><h3>Ofertas atuais</h3><p>Clicks, contatos e vendas entram quando tivermos a tabela.</p></div></div>
+              <div class="list" id="offersList"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-account">
+          <div class="grid">
+            <section class="panel"><div class="panel-head"><div><h3>Conta da oficina</h3><p>Sessao e dados principais.</p></div></div><div class="detail-block" id="accountDetail"></div><div class="actions"><button class="btn secondary" id="resetPasswordBtn" type="button">Enviar reset de senha</button><button class="btn danger" id="signOutBtn" type="button">Sair</button></div></section>
+            <aside class="panel"><div class="panel-head"><div><h3>Checklist</h3><p>O que precisa estar pronto para operar.</p></div></div><div class="list"><div class="item"><h4>Perfil publico</h4><small>Nome, telefone, endereco e servicos.</small></div><div class="item"><h4>Propostas</h4><small>Responder pedidos com preco e prazo.</small></div><div class="item"><h4>Agenda</h4><small>Confirmar ou bloquear horarios.</small></div></div></aside>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+</section>
+
+<section class="modal" id="proposalModal">
+  <form class="modal-card" id="proposalForm">
+    <div class="modal-head"><div><h3>Enviar proposta</h3><p id="proposalModalText">Responda com preco, prazo e observacoes.</p></div><button class="modal-close" id="proposalCloseBtn" type="button">x</button></div>
+    <div class="field"><label>Preco</label><input id="proposalPrice" type="number" min="0" step="0.01" placeholder="Ex.: 420.00"></div>
+    <div class="field"><label>Prazo</label><input id="proposalTime" placeholder="Ex.: Hoje 15h ou 2 horas"></div>
+    <div class="field"><label>Resposta ao usuario</label><textarea id="proposalMessage" placeholder="Explique o que esta incluido na proposta."></textarea></div>
+    <button class="btn primary" id="proposalSubmitBtn" type="submit" style="width:100%">Enviar proposta</button>
+    <div class="status-text" id="proposalStatus"></div>
+  </form>
+</section>
+
+<section class="modal" id="blockModal">
+  <form class="modal-card" id="blockForm">
+    <div class="modal-head"><div><h3>Bloquear horario</h3><p>Escolha um ou varios dias e defina o intervalo indisponivel.</p></div><button class="modal-close" id="blockCloseBtn" type="button">x</button></div>
+    <div class="day-checks">
+      <label><input type="checkbox" name="blockDay" value="1">Segunda</label>
+      <label><input type="checkbox" name="blockDay" value="2">Terca</label>
+      <label><input type="checkbox" name="blockDay" value="3">Quarta</label>
+      <label><input type="checkbox" name="blockDay" value="4">Quinta</label>
+      <label><input type="checkbox" name="blockDay" value="5">Sexta</label>
+      <label><input type="checkbox" name="blockDay" value="6">Sabado</label>
+    </div>
+    <div class="two-col">
+      <div class="field"><label>Desde</label><input id="blockStart" type="time" value="08:00"></div>
+      <div class="field"><label>Ate</label><input id="blockEnd" type="time" value="17:00"></div>
+    </div>
+    <div class="field"><label>Motivo opcional</label><input id="blockReason" placeholder="Ex.: almoco, manutencao, equipe fora"></div>
+    <button class="btn primary" type="submit" style="width:100%">Bloquear horario</button>
+    <div class="status-text" id="blockStatus"></div>
+  </form>
+</section>
+
+<section class="modal" id="manualReservationModal">
+  <form class="modal-card" id="manualReservationForm">
+    <div class="modal-head"><div><h3>Reserva manual</h3><p>Use para trabalhos combinados fora do app. Eles aparecem em Reservas e Agenda.</p></div><button class="modal-close" id="manualReservationCloseBtn" type="button">x</button></div>
+    <div class="two-col">
+      <div class="field"><label>Nome do cliente</label><input id="manualClientName" required placeholder="Nome completo"></div>
+      <div class="field"><label>E-mail opcional</label><input id="manualClientEmail" type="email" placeholder="cliente@email.com"></div>
+      <div class="field"><label>Placa</label><input id="manualPlate" placeholder="ABC1D23"></div>
+      <div class="field"><label>Veiculo manual</label><input id="manualVehicle" placeholder="Marca Modelo Ano"></div>
+      <div class="field"><label>Data</label><input id="manualDate" type="date" required></div>
+      <div class="field"><label>Hora</label><input id="manualTime" type="time" required value="09:00"></div>
+    </div>
+    <div class="field"><label>Descricao do trabalho</label><textarea id="manualDescription" required placeholder="Ex.: troca de pastilhas, revisao, diagnostico..."></textarea></div>
+    <div class="field"><label>Preco estimado opcional</label><input id="manualPrice" type="number" min="0" step="0.01" placeholder="0,00"></div>
+    <button class="btn primary" type="submit" style="width:100%">Criar reserva manual</button>
+    <div class="status-text" id="manualReservationStatus"></div>
+  </form>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL="https://glyooliyoclxkkzffdiw.supabase.co";
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdseW9vbGl5b2NseGtremZmZGl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyODcxNzAsImV4cCI6MjA5Njg2MzE3MH0.-USQobe61N-a8GtUdGa8WjK-IxpPrAnP9KxCsJNcFRE";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const DEMO_EMAIL="oficina.demo@vairodar.com.br";
+const DEMO_PASSWORD="VaiRodar2026!";
+const $=(id)=>document.getElementById(id);
+const state={user:null,workshop:null,requests:[],proposals:[],conversations:[],messages:[],reservations:[],activeRequest:null,activeConversation:null,requestFilter:"open",calendarMode:"week",calendarDate:new Date(),channel:null,realtimeChannel:null,demoMode:false,backendReady:{blocks:false,offers:false,owner:false,manualReservations:false},localOffers:JSON.parse(localStorage.getItem("vr_workshop_offers")||"[]"),manualReservations:JSON.parse(localStorage.getItem("vr_manual_reservations")||"[]"),blockedSlots:JSON.parse(localStorage.getItem("vr_blocked_slots")||"[]"),ownerDetails:null};
+const demoStore={
+  user:{id:"demo-workshop-user",email:DEMO_EMAIL},
+  workshop:{id:"demo-workshop",owner_id:"demo-workshop-user",name:"Auto Center Vital Brasil",category:"Freios e suspensao",city:"Sao Paulo",state:"SP",address:"Rua Camargo, 221 - Butanta",whatsapp:"+55 11 99999-9999",email:DEMO_EMAIL,description:"Oficina especializada em freios, suspensao, pneus e revisao preventiva.",services:["Freios","Suspensao","Pneus","Revisao"],open:true,max_bookings_per_slot:3,slot_minutes:60},
+  requests:[
+    {id:"demo-req-1",user_id:"demo-user-1",title:"Barulho nos freios",description:"Meu carro faz um ruido quando freio em baixa velocidade.",location:"Butanta, Sao Paulo",status:"open",category:"Freios e suspensao",created_at:new Date().toISOString(),vehicles:{brand:"Volkswagen",model:"T-Cross",year:"2021",plate:"ABC1D23",color:"Prata"},profiles:{id:"demo-user-1",name:"Mariana Alves",email:"mariana@email.com"}},
+    {id:"demo-req-2",user_id:"demo-user-2",title:"Troca de pneus",description:"Preciso cotar pneus 205/55 R16 e alinhamento.",location:"Pinheiros, Sao Paulo",status:"open",category:"Pneus",created_at:new Date(Date.now()-86400000).toISOString(),vehicles:{brand:"Honda",model:"Civic",year:"2019",plate:"DEF4G56",color:"Preto"},profiles:{id:"demo-user-2",name:"Rafael Lima",email:"rafael@email.com"}}
+  ],
+  proposals:[],
+  conversations:[{id:"demo-conv-1",user_id:"demo-user-1",workshop_id:"demo-workshop",updated_at:new Date().toISOString(),profiles:{id:"demo-user-1",name:"Mariana Alves",email:"mariana@email.com"}}],
+  messages:[{id:"demo-msg-1",conversation_id:"demo-conv-1",sender_id:"demo-user-1",text:"Ola, voces conseguem revisar os freios hoje?",created_at:new Date(Date.now()-600000).toISOString()},{id:"demo-msg-2",conversation_id:"demo-conv-1",sender_id:"demo-workshop-user",text:"Sim, podemos avaliar e enviar uma proposta.",created_at:new Date(Date.now()-300000).toISOString()}],
+  reservations:[{id:"demo-res-1",user_id:"demo-user-2",workshop_id:"demo-workshop",service_type:"Revisao geral",scheduled_at:new Date(Date.now()+86400000).toISOString(),notes:"Checklist antes de viagem.",status:"confirmed",profiles:{id:"demo-user-2",name:"Rafael Lima",email:"rafael@email.com"}}]
+};
+const titles={requests:["Solicitacoes","Pedidos formais enviados pelos motoristas e cotacoes de pecas."],messages:["Mensagens","Conversas diretas e acompanhamento em tempo real."],agenda:["Agenda","Calendario operacional da oficina."],reservations:["Reservas","Atendimentos confirmados e historico."],profile:["Perfil publico","Dados mostrados no app para usuarios."],offers:["Ofertas","Promocoes e campanhas da empresa."],account:["Conta","Sessao, acesso e configuracoes."]};
+function businessType(){return state.workshop?.business_type||"workshop";} 
+function businessLabel(){return businessType()==="parts_store"?"Comercio de pecas":businessType()==="both"?"Oficina + pecas":"Oficina mecanica";} 
+function acceptsServiceRequests(){return ["workshop","both"].includes(businessType());} 
+function acceptsPartsRequests(){return ["parts_store","both"].includes(businessType());}
+function esc(value){return String(value??"").replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[char]));}
+function money(value){return Number(value||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
+function toast(text){$("toast").textContent=text;$("toast").classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>$("toast").classList.remove("show"),2200);}
+function openMobileMenu(){document.querySelector(".side")?.classList.add("open");$("mobileDrawerBackdrop")?.classList.add("open");}
+function closeMobileMenu(){document.querySelector(".side")?.classList.remove("open");$("mobileDrawerBackdrop")?.classList.remove("open");}
+function initials(name){return (name||"Oficina").split(/\s+/).slice(0,2).map((part)=>part[0]||"").join("").toUpperCase()||"VR";}
+function showAuth(){state.user=null;state.workshop=null;$("authScreen").style.display="grid";$("app").style.display="none";}
+function showApp(){ $("authScreen").style.display="none";$("app").style.display="block";renderShell();loadAll();}
+async function login(email,password,useDemoFallback){$("authStatus").textContent="";$("loginBtn").disabled=true;$("loginBtn").textContent="Entrando...";const {error}=await sb.auth.signInWithPassword({email,password});$("loginBtn").disabled=false;$("loginBtn").textContent="Entrar no painel";if(error){if(useDemoFallback){startDemoMode();return;}$("authStatus").textContent=error.message==="Invalid login credentials"?"E-mail ou senha incorretos.":error.message;}}
+function startDemoMode(){state.demoMode=true;state.user={...demoStore.user};state.workshop={...demoStore.workshop};showApp();toast("Modo demo aberto sem Supabase.");}
+async function loadWorkshop(){const {data,error}=await sb.from("workshops").select("*").eq("owner_id",state.user.id).maybeSingle();if(error)console.warn("[workshop]",error.message);state.workshop=data||null;}
+function renderShell(){
+  const workshop=state.workshop;
+  const name=workshop?.name||state.user?.email?.split("@")[0]||"Oficina";
+  $("shopName").textContent=name;
+  $("shopMeta").textContent=workshop?`${workshop.city||"Cidade"} ${workshop.state?("- "+workshop.state):""} - ${businessLabel()} - ${workshop.category||"Sem categoria"}`:"Perfil de empresa nao encontrado";
+  $("avatarBtn").title=name;
+  const isReceiving=workshop?.open!==false;
+  $("receivingToggle").classList.toggle("active",isReceiving);
+  $("receivingLabel").textContent=isReceiving?"Receber pedidos":"Pedidos pausados";
+  const capacity=Math.max(1,Math.min(10,Number(workshop?.max_bookings_per_slot||1)));
+  $("capacityInput").value=capacity;
+  $("capacityHint").textContent=`${capacity} ${capacity===1?"veiculo":"veiculos"} por hora. Ao lotar, o horario bloqueia no app do usuario.`;
+  renderProfileForm();
+  renderAccount();
+}
+async function loadAll(){
+  if(state.demoMode){state.requests=[...demoStore.requests];state.proposals=[...demoStore.proposals];state.conversations=[...demoStore.conversations];state.reservations=[...demoStore.reservations];renderMetrics();renderRequests();renderThreads();renderAgenda();renderReservations();renderOffers();return;}
+  await Promise.all([loadRequests(),loadProposals(),loadConversations(),loadReservations(),loadBlocks(),loadOffers(),loadOwnerDetails()]);
+  renderMetrics();renderRequests();renderProposalsCount();renderThreads();renderAgenda();renderReservations();renderOffers();renderAccount();subscribeRealtime();
+}
+async function loadRequests(){
+  try{
+    let query=sb.from("service_requests").select("id,user_id,vehicle_id,title,description,location,status,category,request_type,target_business_type,part_name,part_specs,selected_business_ids,created_at,vehicles(brand,model,year,plate,color),profiles(id,name,email)").order("created_at",{ascending:false}).limit(80);
+    if(acceptsServiceRequests()&&!acceptsPartsRequests())query=query.in("request_type",["service",null]);
+    if(acceptsPartsRequests()&&!acceptsServiceRequests())query=query.eq("request_type","part_quote");
+    if(acceptsServiceRequests()&&acceptsPartsRequests())query=query.in("request_type",["service","part_quote",null]);
+    if(state.requestFilter==="open")query=query.eq("status","open");
+    const {data,error}=await query;if(error)throw error;state.requests=data||[];
+  }catch(error){console.warn("[requests]",error.message);state.requests=[];}
+}
+async function loadProposals(){
+  if(!state.workshop?.id){state.proposals=[];return;}
+  try{const {data,error}=await sb.from("proposals").select("id,request_id,workshop_id,price,estimated_time,message,status,created_at,service_requests(title,location,user_id)").eq("workshop_id",state.workshop.id).order("created_at",{ascending:false});if(error)throw error;state.proposals=data||[];}catch(error){console.warn("[proposals]",error.message);state.proposals=[];}
+}
+async function loadConversations(){
+  if(!state.workshop?.id){state.conversations=[];return;}
+  try{const {data,error}=await sb.from("conversations").select("id,user_id,workshop_id,updated_at,profiles(id,name,email)").eq("workshop_id",state.workshop.id).order("updated_at",{ascending:false});if(error)throw error;state.conversations=data||[];}catch(error){console.warn("[conversations]",error.message);state.conversations=[];}
+}
+async function loadReservations(){
+  if(!state.workshop?.id){state.reservations=[];return;}
+  try{
+    const {data,error}=await sb.from("reservations").select("id,user_id,workshop_id,source,service_type,scheduled_at,notes,status,created_at,estimated_price,external_client_name,external_client_phone,external_client_email,external_vehicle_plate,external_vehicle_description,profiles(id,name,email)").eq("workshop_id",state.workshop.id).order("scheduled_at",{ascending:true});
+    if(error)throw error;
+    const rows=(data||[]).map(normalizeReservation);
+    state.reservations=rows.filter((item)=>!item.manual);
+    state.manualReservations=rows.filter((item)=>item.manual);
+    state.backendReady.manualReservations=true;
+  }catch(error){
+    console.warn("[reservations]",error.message);
+    state.backendReady.manualReservations=false;
+    try{
+      const {data,error:legacyError}=await sb.from("reservations").select("id,user_id,workshop_id,service_type,scheduled_at,notes,status,created_at,profiles(id,name,email)").eq("workshop_id",state.workshop.id).order("scheduled_at",{ascending:true});
+      if(legacyError)throw legacyError;
+      state.reservations=data||[];
+    }catch(legacyError){
+      console.warn("[reservations legacy]",legacyError.message);
+      state.reservations=[];
+    }
+  }
+}
+function normalizeReservation(row){
+  const manual=row.source==="manual";
+  return {...row,manual,remote:true,client_name:row.external_client_name||row.profiles?.name||"",client_email:row.external_client_email||row.profiles?.email||"",client_phone:row.external_client_phone||"",plate:row.external_vehicle_plate||"",vehicle:row.external_vehicle_description||"",service_type:row.service_type||row.notes||"Reserva"};
+}
+async function loadBlocks(){
+  if(!state.workshop?.id){return;}
+  try{
+    const {data,error}=await sb.from("workshop_availability_blocks").select("id,workshop_id,day_of_week,start_time,end_time,reason,active").eq("workshop_id",state.workshop.id).eq("active",true).order("day_of_week",{ascending:true});
+    if(error)throw error;
+    state.blockedSlots=(data||[]).map((item)=>({id:item.id,day:item.day_of_week,start:(item.start_time||"").slice(0,5),end:(item.end_time||"").slice(0,5),reason:item.reason||"",remote:true}));
+    state.backendReady.blocks=true;
+  }catch(error){
+    console.warn("[blocks]",error.message);
+    state.backendReady.blocks=false;
+  }
+}
+async function loadOffers(){
+  if(!state.workshop?.id){return;}
+  try{
+    const {data,error}=await sb.from("workshop_offers").select("id,workshop_id,category,title,description,image_url,starts_at,ends_at,status,clicks,sales,created_at").eq("workshop_id",state.workshop.id).order("created_at",{ascending:false});
+    if(error)throw error;
+    state.localOffers=(data||[]).map((item)=>({...item,remote:true,start:item.starts_at,end:item.ends_at,photoName:item.image_url?"Foto publicada":"",clicks:item.clicks||0,sales:item.sales||0}));
+    state.backendReady.offers=true;
+  }catch(error){
+    console.warn("[offers]",error.message);
+    state.backendReady.offers=false;
+  }
+}
+async function loadOwnerDetails(){
+  state.ownerDetails=null;
+  if(!state.workshop?.id){return;}
+  try{
+    const {data,error}=await sb.from("workshop_owner_details").select("*").eq("workshop_id",state.workshop.id).maybeSingle();
+    if(error)throw error;
+    state.ownerDetails=data||null;
+    state.backendReady.owner=true;
+  }catch(error){
+    console.warn("[owner details]",error.message);
+    state.backendReady.owner=false;
+  }
+}
+function renderMetrics(){
+  $("metricRequests").textContent=state.requests.filter((item)=>item.status==="open").length;
+  $("metricProposals").textContent=state.proposals.length;
+  $("metricMessages").textContent=state.conversations.length;
+  $("metricReservations").textContent=allReservations().length;
+}
+function requestVehicle(request){const v=request.vehicles||{};return [v.brand,v.model,v.year].filter(Boolean).join(" ")||"Veiculo nao informado";}
+function renderRequests(){
+  const list=$("requestsList");
+  const pausedNotice=state.workshop?.open===false?'<div class="empty">Recebimento pausado para novas solicitacoes. As solicitacoes ja recebidas seguem disponiveis para responder, conversar e reservar.</div>':"";
+  if(!state.requests.length){list.innerHTML=pausedNotice||'<div class="empty">Nenhuma solicitacao encontrada. Quando o usuario enviar uma cotacao, ela aparece aqui.</div>';$("requestDetail").innerHTML='<div class="empty">Sem solicitacao selecionada.</div>';return;}
+  if(!state.activeRequest||!state.requests.some((item)=>item.id===state.activeRequest))state.activeRequest=state.requests[0].id;
+  list.innerHTML=pausedNotice+state.requests.map((request)=>`<button class="item" data-request-id="${esc(request.id)}" type="button">
+    <div class="item-head"><div><h4>${esc(request.profiles?.name||"Motorista")}</h4><small>${esc(request.title||"Solicitacao")} - ${new Date(request.created_at).toLocaleDateString("pt-BR")}</small></div><span class="pill ${esc(request.status||"open")}">${esc(request.status||"open")}</span></div>
+    <p>${esc(request.description||request.location||"Sem descricao")}</p>
+    <div class="tags"><span>${request.request_type==="part_quote"?"Pedido de peca":"Servico"}</span><span>${esc(request.category||"Categoria IA")}</span><span>${esc(requestVehicle(request))}</span></div>
+    <div class="actions"><span class="btn ghost">Ver detalhe</span><span class="btn primary">Enviar proposta</span></div>
+  </button>`).join("");
+  list.querySelectorAll("[data-request-id]").forEach((button)=>button.addEventListener("click",()=>{state.activeRequest=button.dataset.requestId;renderRequestDetail();openProposal(button.dataset.requestId,false);}));
+  renderRequestDetail();
+}
+function renderRequestDetail(){
+  const request=state.requests.find((item)=>item.id===state.activeRequest);
+  if(!request){$("requestDetail").innerHTML='<div class="empty">Selecione uma solicitacao.</div>';return;}
+  const v=request.vehicles||{};
+  $("requestDetail").innerHTML=`<div class="detail-row"><small>Usuario</small><b>${esc(request.profiles?.name||"Motorista")}</b><span>${esc(request.profiles?.email||"")}</span></div>
+  <div class="vehicle-grid">
+    <div class="detail-row"><small>Marca</small><b>${esc(v.brand||"-")}</b></div>
+    <div class="detail-row"><small>Modelo</small><b>${esc(v.model||"-")}</b></div>
+    <div class="detail-row"><small>Ano</small><b>${esc(v.year||"-")}</b></div>
+    <div class="detail-row"><small>Placa</small><b>${esc(v.plate||"-")}</b></div>
+  </div>
+  <div class="detail-row"><small>Tipo</small><b>${request.request_type==="part_quote"?"Cotacao de peca":"Servico de oficina"}</b><span>${esc(request.part_name||request.category||"")}</span></div>
+  <div class="detail-row"><small>Descricao</small><span>${esc(request.description||"-")}</span></div>
+  <div class="detail-row"><small>Localizacao</small><span>${esc(request.location||"-")}</span></div>
+  <div class="actions"><button class="btn primary" type="button" onclick="openProposal('${esc(request.id)}',true)">Enviar proposta</button><button class="btn secondary" type="button" onclick="createConversationFromRequest('${esc(request.id)}')">Abrir conversa</button></div>`;
+}
+function renderProposalsCount(){renderMetrics();}
+function openProposal(requestId,force){if(!force&&window.innerWidth>960)return;state.activeRequest=requestId;const request=state.requests.find((item)=>item.id===requestId);$("proposalModalText").textContent=request?`${request.profiles?.name||"Motorista"} - ${request.title||"Solicitacao"}`:"Responda com preco e prazo.";$("proposalPrice").value="";$("proposalTime").value="";$("proposalMessage").value=request?.description?`Podemos avaliar: ${request.description}`:"";$("proposalStatus").textContent="";$("proposalModal").classList.add("open");}
+async function submitProposal(event){
+  event.preventDefault();
+  const requestId=state.activeRequest;const message=$("proposalMessage").value.trim();const price=Number($("proposalPrice").value);const time=$("proposalTime").value.trim();
+  if(!state.workshop?.id){$("proposalStatus").textContent="Perfil da oficina nao encontrado.";return;}
+  if(!requestId||!message||!price||!time){$("proposalStatus").textContent="Preencha preco, prazo e resposta.";return;}
+  if(state.demoMode){demoStore.proposals.unshift({id:"demo-proposal-"+Date.now(),request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time,status:"pending",created_at:new Date().toISOString(),service_requests:{title:state.requests.find((item)=>item.id===requestId)?.title||"Solicitacao",location:state.requests.find((item)=>item.id===requestId)?.location||""}});$("proposalModal").classList.remove("open");toast("Proposta demo enviada.");await loadAll();return;}
+  $("proposalSubmitBtn").disabled=true;
+  try{const {error}=await sb.from("proposals").insert({request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time,status:"pending"});if(error)throw error;$("proposalModal").classList.remove("open");toast("Proposta enviada.");await loadProposals();renderMetrics();}catch(error){$("proposalStatus").textContent=error.message||"Erro ao enviar proposta.";}finally{$("proposalSubmitBtn").disabled=false;}
+}
+async function createConversationFromRequest(requestId){
+  const request=state.requests.find((item)=>item.id===requestId);if(!request||!state.workshop?.id)return;
+  if(state.demoMode){const existing=demoStore.conversations.find((item)=>item.user_id===request.user_id);if(!existing){demoStore.conversations.unshift({id:"demo-conv-"+Date.now(),user_id:request.user_id,workshop_id:state.workshop.id,updated_at:new Date().toISOString(),profiles:request.profiles});}toast("Conversa demo criada.");await loadAll();setView("messages");return;}
+  try{
+    const {data,error}=await sb.from("conversations").upsert({user_id:request.user_id,workshop_id:state.workshop.id},{onConflict:"user_id,workshop_id"}).select("id").single();
+    if(error)throw error;
+    await sb.from("messages").insert({conversation_id:data.id,sender_id:state.user.id,text:"Ola, recebemos sua solicitacao e vamos acompanhar por aqui."});
+    toast("Conversa criada.");await loadConversations();setView("messages");renderThreads();
+  }catch(error){toast(error.message||"Nao foi possivel criar conversa.");}
+}
+function renderThreads(){
+  const list=$("threadList");
+  if(!state.conversations.length){list.innerHTML='<div class="empty">Nenhuma conversa ainda.</div>';$("chatLog").innerHTML='<div class="empty">Selecione uma conversa.</div>';return;}
+  if(!state.activeConversation)state.activeConversation=state.conversations[0].id;
+  list.innerHTML=state.conversations.map((conversation)=>{const name=conversation.profiles?.name||conversation.profiles?.email?.split("@")[0]||"Motorista";return `<button class="thread ${conversation.id===state.activeConversation?"active":""}" data-conversation-id="${esc(conversation.id)}" type="button"><h4>${esc(name)}</h4><small>${new Date(conversation.updated_at).toLocaleDateString("pt-BR")} - Toque para abrir</small></button>`;}).join("");
+  list.querySelectorAll("[data-conversation-id]").forEach((button)=>button.addEventListener("click",()=>openConversation(button.dataset.conversationId)));
+  if(state.activeConversation)openConversation(state.activeConversation,true);
+}
+async function openConversation(conversationId,silent){
+  state.activeConversation=conversationId;
+  if(state.channel){sb.removeChannel(state.channel);state.channel=null;}
+  const conversation=state.conversations.find((item)=>item.id===conversationId);const name=conversation?.profiles?.name||conversation?.profiles?.email?.split("@")[0]||"Motorista";
+  $("chatTitle").textContent=name;$("chatMeta").textContent=conversation?.profiles?.email||"Conversa";
+  if(!silent)renderThreads();
+  $("chatLog").innerHTML='<div class="empty">Carregando mensagens...</div>';
+  if(state.demoMode){state.messages=demoStore.messages.filter((item)=>item.conversation_id===conversationId);renderMessages();return;}
+  try{
+    const {data,error}=await sb.from("messages").select("id,text,sender_id,created_at").eq("conversation_id",conversationId).order("created_at",{ascending:true});if(error)throw error;state.messages=data||[];renderMessages();
+    state.channel=sb.channel("workshop-chat:"+conversationId).on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:"conversation_id=eq."+conversationId},(payload)=>{state.messages.push(payload.new);renderMessages();}).subscribe();
+  }catch(error){$("chatLog").innerHTML='<div class="empty">Erro ao carregar mensagens.</div>';console.warn("[messages]",error.message);}
+}
+function renderMessages(){
+  $("chatLog").innerHTML=state.messages.map((message)=>`<div class="bubble ${message.sender_id===state.user.id?"me":"them"}">${esc(message.text||"")}</div>`).join("")||'<div class="empty">Nenhuma mensagem ainda.</div>';
+  $("chatLog").scrollTop=$("chatLog").scrollHeight;
+}
+async function sendMessage(){const text=$("chatInput").value.trim();if(!text||!state.activeConversation)return;$("chatInput").value="";if(state.demoMode){demoStore.messages.push({id:"demo-msg-"+Date.now(),conversation_id:state.activeConversation,sender_id:state.user.id,text,created_at:new Date().toISOString()});state.messages=demoStore.messages.filter((item)=>item.conversation_id===state.activeConversation);renderMessages();return;}try{const {error}=await sb.from("messages").insert({conversation_id:state.activeConversation,sender_id:state.user.id,text});if(error)throw error;}catch(error){$("chatInput").value=text;toast("Erro ao enviar mensagem.");}}
+function startOfWeek(date){const d=new Date(date);const day=(d.getDay()+6)%7;d.setHours(0,0,0,0);d.setDate(d.getDate()-day);return d;}
+function startOfMonthGrid(date){const first=new Date(date.getFullYear(),date.getMonth(),1);return startOfWeek(first);}
+function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function addDays(date,days){const d=new Date(date);d.setDate(d.getDate()+days);return d;}
+function allReservations(){return [...state.reservations,...state.manualReservations].sort((a,b)=>new Date(a.scheduled_at)-new Date(b.scheduled_at));}
+function calendarEventsFor(day,hour){
+  return allReservations().filter((item)=>{const d=new Date(item.scheduled_at);return sameDay(d,day)&&(hour==null||d.getHours()===hour);});
+}
+function blockEventsFor(day,hour){
+  return state.blockedSlots.filter((item)=>Number(item.day)===day.getDay()&&(hour==null||(hour>=Number(item.start.slice(0,2))&&hour<Number(item.end.slice(0,2)))));
+}
+function slotCapacity(){return Math.max(1,Math.min(10,Number(state.workshop?.max_bookings_per_slot||1)));}
+function capacityBadge(events){
+  const capacity=slotCapacity();
+  const used=events.filter((item)=>!["cancelled","completed"].includes(item.status||"")).length;
+  const cls=used>=capacity?"full":used>0?"partial":"free";
+  const label=used>=capacity?"Lotado":`${used}/${capacity} ocupado`;
+  return `<span class="capacity-status ${cls}">${label}</span>`;
+}
+function eventButton(res){
+  const time=new Date(res.scheduled_at).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+  const status=res.status||"pending";
+  const source=res.manual?"Manual":"App";
+  return `<button class="event ${esc(status)}" type="button" data-calendar-reservation="${esc(res.id)}">${time} ${esc(res.service_type||"Reserva")}<br>${esc(res.profiles?.name||res.client_name||"Motorista")} · ${source}</button>`;
+}
+function blockButton(block){
+  return `<button class="event blocked" type="button">${esc(block.start)}-${esc(block.end)} Bloqueado${block.reason?`<br>${esc(block.reason)}`:""}</button>`;
+}
+function monthValue(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`;}
+function setupCalendarMonthFilter(){
+  const select=$("calendarMonthSelect");
+  if(select.dataset.ready==="true")return;
+  const base=new Date();
+  const start=new Date(base.getFullYear(),0,1);
+  const months=[];
+  for(let i=0;i<24;i+=1)months.push(new Date(start.getFullYear(),start.getMonth()+i,1));
+  select.innerHTML=months.map((month)=>`<option value="${monthValue(month)}">${month.toLocaleDateString("pt-BR",{month:"long",year:"numeric"})}</option>`).join("");
+  select.dataset.ready="true";
+}
+function syncCalendarMonthFilter(){
+  const select=$("calendarMonthSelect");
+  const value=monthValue(state.calendarDate);
+  if([...select.options].some((option)=>option.value===value))select.value=value;
+}
+function renderAgenda(){
+  setupCalendarMonthFilter();
+  syncCalendarMonthFilter();
+  const grid=$("agendaGrid");
+  const today=new Date();
+  const weekDays=["Seg","Ter","Qua","Qui","Sex","Sab","Dom"];
+  grid.className="agenda-grid "+state.calendarMode;
+  if(state.calendarMode==="week"){
+    const start=startOfWeek(state.calendarDate);
+    const days=Array.from({length:7},(_,i)=>addDays(start,i));
+    $("calendarTitle").textContent=`Semana de ${days[0].toLocaleDateString("pt-BR",{day:"2-digit",month:"short"})} a ${days[6].toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"})}`;
+    const hours=[8,9,10,11,12,13,14,15,16,17,18];
+    let html='<div class="cal-cell cal-head"></div>'+days.map((day,i)=>`<div class="cal-cell cal-head"><div class="cal-day-number ${sameDay(day,today)?"today":""}">${weekDays[i]} <span>${day.getDate()}</span></div></div>`).join("");
+    hours.forEach((hour)=>{
+      html+=`<div class="cal-cell cal-time">${String(hour).padStart(2,"0")}:00</div>`;
+      days.forEach((day)=>{
+        const events=calendarEventsFor(day,hour);
+        const blocks=blockEventsFor(day,hour);
+        html+=`<div class="cal-cell">${capacityBadge(events)}${blocks.map(blockButton).join("")}${events.map(eventButton).join("")}</div>`;
+      });
+    });
+    grid.innerHTML=html;
+  }else{
+    const month=state.calendarDate.getMonth();
+    const start=startOfMonthGrid(state.calendarDate);
+    $("calendarTitle").textContent=state.calendarDate.toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+    let html=weekDays.map((day)=>`<div class="cal-cell cal-head">${day}</div>`).join("");
+    for(let i=0;i<42;i+=1){
+      const day=addDays(start,i);
+      const events=calendarEventsFor(day,null);
+      const blocks=blockEventsFor(day,null);
+      html+=`<div class="cal-cell ${day.getMonth()!==month?"cal-outside":""}">
+        <div class="cal-day-number ${sameDay(day,today)?"today":""}"><span>${day.getDate()}</span></div>
+        ${events.length?capacityBadge(events):""}
+        ${blocks.slice(0,1).map(blockButton).join("")}
+        ${events.slice(0,3).map(eventButton).join("")}
+        ${events.length+blocks.length>4?`<button class="event blocked" type="button">+${events.length+blocks.length-4} mais</button>`:""}
+      </div>`;
+    }
+    grid.innerHTML=html;
+  }
+  grid.querySelectorAll("[data-calendar-reservation]").forEach((button)=>button.addEventListener("click",()=>{setView("reservations");renderReservationDetail(button.dataset.calendarReservation);}));
+}
+function renderReservations(){
+  const list=$("reservationList");
+  const reservations=allReservations();
+  if(!reservations.length){list.innerHTML='<div class="empty">Nenhuma reserva ainda.</div>';$("reservationDetail").innerHTML='<div class="empty">Sem reserva selecionada.</div>';return;}
+  list.innerHTML=reservations.map((res)=>`<button class="item" data-reservation-id="${esc(res.id)}" type="button"><div class="item-head"><div><h4>${esc(res.profiles?.name||res.client_name||"Motorista")}</h4><small>${new Date(res.scheduled_at).toLocaleString("pt-BR")} · ${res.manual?"Reserva manual":"Reserva do app"}</small></div><span class="pill ${res.manual?"info":esc(res.status||"pending")}">${res.manual?"Manual":esc(res.status||"pending")}</span></div><p>${esc(res.service_type||"Servico")} - ${esc(res.notes||"Sem observacoes")}</p></button>`).join("");
+  list.querySelectorAll("[data-reservation-id]").forEach((button)=>button.addEventListener("click",()=>renderReservationDetail(button.dataset.reservationId)));
+  renderReservationDetail(reservations[0].id);
+}
+function renderReservationDetail(id){const res=allReservations().find((item)=>item.id===id);if(!res)return;const isManual=!!res.manual;$("reservationDetail").innerHTML=`<div class="detail-row"><small>Origem</small><b>${isManual?"Reserva manual externa":"Reserva criada pelo app"}</b><span>${isManual?"Cliente fora do Vai Rodar: chat indisponivel.":"Cliente pode conversar pelo app."}</span></div><div class="detail-row"><small>Cliente</small><b>${esc(res.profiles?.name||res.client_name||"Motorista")}</b><span>${esc(res.profiles?.email||res.client_email||"")}</span></div><div class="detail-row"><small>Horario</small><b>${new Date(res.scheduled_at).toLocaleString("pt-BR")}</b></div><div class="detail-row"><small>Veiculo</small><span>${esc(res.vehicle||res.plate||"-")}</span></div><div class="detail-row"><small>Servico</small><span>${esc(res.service_type||"-")}</span></div><div class="detail-row"><small>Observacoes</small><span>${esc(res.notes||"-")}</span></div>${res.estimated_price?`<div class="detail-row"><small>Preco estimado</small><b>${money(res.estimated_price)}</b></div>`:""}<div class="actions">${isManual?`<button class="btn secondary" type="button" onclick="editManualReservation('${esc(res.id)}')">Modificar</button><button class="btn danger" type="button" onclick="cancelManualReservation('${esc(res.id)}')">Cancelar</button>`:`<button class="btn secondary" type="button">Reagendar</button><button class="btn danger" type="button">Cancelar</button><button class="btn success" type="button">Finalizar</button>`}</div>`;}
+function renderProfileForm(){
+  const w=state.workshop||{};$("profileName").value=w.name||"";$("profileWhatsapp").value=w.whatsapp||w.phone||"";$("profileEmail").value=w.email||state.user?.email||"";$("profileCity").value=w.city||"";$("profileState").value=w.state||"";$("profileAddress").value=w.address||"";$("profileDescription").value=w.description||"";const services=w.services||[];$("profileCategoryLocked").innerHTML=`<span>${esc(w.category||services[0]||"Sem categoria")}</span>`;$("profileServicesLocked").innerHTML=services.length?`<div class="tags">${services.map((service)=>`<span>${esc(service)}</span>`).join("")}</div>`:"<span>Sem servicos cadastrados</span>";renderProfilePreview();
+}
+function renderProfilePreview(){const services=state.workshop?.services||[];const category=state.workshop?.category||services[0]||"";$("previewName").textContent=$("profileName").value||"Oficina";$("previewMeta").textContent=[ $("profileCity").value,$("profileState").value,category].filter(Boolean).join(" - ")||"Perfil publico";$("previewDesc").textContent=$("profileDescription").value||"Descricao publica da oficina."; $("previewTags").innerHTML=services.map((s)=>`<span>${esc(s)}</span>`).join("")||"<span>Servico</span>";}
+async function saveProfile(event){event.preventDefault();await requestProfileChange("perfil_publico",{name:$("profileName").value,whatsapp:$("profileWhatsapp").value,email:$("profileEmail").value,city:$("profileCity").value,state:$("profileState").value,address:$("profileAddress").value,description:$("profileDescription").value},"Solicitacao de alteracao enviada ao admin Vai Rodar.");}
+function renderOffers(){const list=$("offersList");if(!state.localOffers.length){list.innerHTML='<div class="empty">Nenhuma oferta criada ainda.</div>';return;}list.innerHTML=state.localOffers.map((offer)=>`<div class="item offer-card">${offer.image_url?`<img src="${esc(offer.image_url)}" alt="${esc(offer.title)}" style="width:54px;height:46px;border-radius:10px;object-fit:cover">`:`<div class="offer-thumb">${esc((offer.category||"OF").slice(0,2).toUpperCase())}</div>`}<div><h4>${esc(offer.title)}</h4><small>${esc(offer.category)} - ${esc(offer.start||offer.starts_at||"")} ate ${esc(offer.end||offer.ends_at||"")}</small><p>${esc(offer.description||"")}</p><div class="tags"><span>${offer.remote?"Publicada":"Rascunho local"}</span><span>${Number(offer.clicks||0)} clicks</span><span>${Number(offer.sales||0)} vendas</span><span>${esc(offer.status||"pendente")}</span></div></div></div>`).join("");}
+async function createOffer(event){
+  event.preventDefault();
+  const photo=$("offerPhoto").files[0];
+  const offer={category:$("offerCategory").value,title:$("offerTitle").value.trim(),start:$("offerStart").value,end:$("offerEnd").value,description:$("offerDescription").value.trim(),photoName:photo?.name||"",status:"active",clicks:0,sales:0};
+  if(!offer.title){toast("Informe o titulo da oferta.");return;}
+  if(!photo){toast("Adicione uma foto para criar a oferta.");return;}
+  const submit=$("offerForm").querySelector('button[type="submit"]');
+  submit.disabled=true;submit.textContent="Publicando...";
+  if(!state.demoMode&&state.workshop?.id){
+    try{
+      const safeName=photo.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+      const path=`${state.user.id}/${Date.now()}-${safeName}`;
+      const {error:uploadError}=await sb.storage.from("offer-images").upload(path,photo,{upsert:false});
+      if(uploadError)throw uploadError;
+      const {data:{publicUrl}}=sb.storage.from("offer-images").getPublicUrl(path);
+      const {error:insertError}=await sb.from("workshop_offers").insert({workshop_id:state.workshop.id,category:offer.category,title:offer.title,description:offer.description||null,image_url:publicUrl,starts_at:offer.start,ends_at:offer.end,status:"active"});
+      if(insertError)throw insertError;
+      await loadOffers();
+      event.target.reset();renderOffers();toast("Oferta publicada.");
+      submit.disabled=false;submit.textContent="Criar oferta";
+      return;
+    }catch(error){
+      console.warn("[offer]",error.message);
+      state.backendReady.offers=false;
+    }
+  }
+  state.localOffers.unshift(offer);localStorage.setItem("vr_workshop_offers",JSON.stringify(state.localOffers));event.target.reset();renderOffers();toast("Oferta salva como rascunho local.");
+  submit.disabled=false;submit.textContent="Criar oferta";
+}
+function ownerFromDescription(){const desc=state.workshop?.description||"";const match=desc.match(/Respons[aá]vel:\s*([^·]+)/i);return match?match[1].trim():"Nao informado";}
+function cnpjFromDescription(){const desc=state.workshop?.description||"";const match=desc.match(/CNPJ:\s*([^·]+)/i);return match?match[1].trim():(desc.includes("Sem CNPJ")?"Sem CNPJ":"Nao informado");}
+function renderAccount(){const owner=state.ownerDetails||{};$("accountDetail").innerHTML=`<div class="detail-row"><small>E-mail de acesso</small><b>${esc(state.user?.email||"-")}</b></div><div class="detail-row"><small>Senha</small><b>••••••••</b><span>Use o botao de reset para trocar a senha com seguranca.</span></div><div class="detail-row"><small>Empresa</small><b>${esc(state.workshop?.name||"Nao vinculada")}</b><span>CNPJ: ${esc(owner.cnpj||cnpjFromDescription())}</span></div><div class="detail-row"><small>Responsavel</small><b>${esc(owner.responsible_name||ownerFromDescription())}</b><span>Contato: ${esc(owner.contact_phone||state.workshop?.whatsapp||state.workshop?.phone||"-")}</span></div>${owner.no_cnpj?'<div class="detail-row"><small>CNPJ</small><span>Oficina registrada sem CNPJ.</span></div>':""}<div class="detail-row"><small>ID da oficina</small><span>${esc(state.workshop?.id||"Crie/corrija a linha em workshops.owner_id")}</span></div><button class="btn secondary" type="button" onclick="openChangeRequest()" style="width:100%;margin-top:10px">Solicitar alteracao de dados</button>`;}
+async function requestProfileChange(fieldName,newValue,successMessage){
+  if(!state.workshop?.id){toast("Perfil da oficina nao encontrado.");return;}
+  if(state.demoMode){toast(successMessage||"Solicitacao enviada ao admin Vai Rodar.");return;}
+  try{
+    const {error}=await sb.from("workshop_profile_change_requests").insert({workshop_id:state.workshop.id,requested_by:state.user.id,field_name:fieldName,new_value:newValue,reason:"Solicitado pelo painel da oficina"});
+    if(error)throw error;
+    toast(successMessage||"Solicitacao enviada ao admin Vai Rodar.");
+  }catch(error){
+    console.warn("[change request]",error.message);
+    toast("Solicitacao registrada para analise do admin.");
+  }
+}
+function openChangeRequest(){
+  const field=prompt("Qual campo deseja alterar? Ex.: telefone, CNPJ, responsavel, categorias");
+  if(!field)return;
+  const value=prompt(`Novo valor para ${field}:`);
+  if(!value)return;
+  requestProfileChange(field,{value},"Solicitacao enviada ao admin Vai Rodar.");
+}
+function saveLocalOps(){localStorage.setItem("vr_manual_reservations",JSON.stringify(state.manualReservations));localStorage.setItem("vr_blocked_slots",JSON.stringify(state.blockedSlots));}
+function openBlockModal(){$("blockForm").reset();$("blockStart").value="08:00";$("blockEnd").value="17:00";$("blockStatus").textContent="";$("blockModal").classList.add("open");}
+function openManualReservationModal(reservation){
+  $("manualReservationForm").reset();$("manualReservationStatus").textContent="";
+  $("manualReservationForm").dataset.editId=reservation?.id||"";
+  $("manualReservationForm").querySelector('button[type="submit"]').textContent=reservation?"Modificar reserva":"Criar reserva manual";
+  if(reservation){
+    $("manualClientName").value=reservation.client_name||"";
+    $("manualClientEmail").value=reservation.client_email||"";
+    $("manualPlate").value=reservation.plate||"";
+    $("manualVehicle").value=reservation.vehicle||"";
+    const d=new Date(reservation.scheduled_at);
+    $("manualDate").value=d.toISOString().slice(0,10);
+    $("manualTime").value=d.toTimeString().slice(0,5);
+    $("manualDescription").value=reservation.notes||"";
+    $("manualPrice").value=reservation.estimated_price||"";
+  }else{
+    $("manualDate").value=new Date().toISOString().slice(0,10);
+    $("manualTime").value="09:00";
+  }
+  $("manualReservationModal").classList.add("open");
+}
+async function submitBlock(event){
+  event.preventDefault();
+  const days=[...document.querySelectorAll('input[name="blockDay"]:checked')].map((item)=>Number(item.value));
+  const start=$("blockStart").value,end=$("blockEnd").value,reason=$("blockReason").value.trim();
+  if(!days.length){$("blockStatus").textContent="Selecione pelo menos um dia.";return;}
+  if(!start||!end||start>=end){$("blockStatus").textContent="Informe um intervalo valido.";return;}
+  const submit=$("blockForm").querySelector('button[type="submit"]');
+  submit.disabled=true;submit.textContent="Salvando...";
+  if(!state.demoMode&&state.workshop?.id){
+    try{
+      const rows=days.map((day)=>({workshop_id:state.workshop.id,day_of_week:day,start_time:start,end_time:end,reason:reason||null,active:true}));
+      const {error}=await sb.from("workshop_availability_blocks").insert(rows);
+      if(error)throw error;
+      await loadBlocks();
+      $("blockModal").classList.remove("open");renderAgenda();toast("Horario bloqueado.");
+      submit.disabled=false;submit.textContent="Bloquear horario";
+      return;
+    }catch(error){
+      console.warn("[block insert]",error.message);
+      state.backendReady.blocks=false;
+    }
+  }
+  days.forEach((day)=>state.blockedSlots.push({id:"block-"+Date.now()+"-"+day,day,start,end,reason,remote:false}));
+  saveLocalOps();$("blockModal").classList.remove("open");renderAgenda();toast("Horario bloqueado localmente.");
+  submit.disabled=false;submit.textContent="Bloquear horario";
+}
+async function submitManualReservation(event){
+  event.preventDefault();
+  const date=$("manualDate").value,time=$("manualTime").value,name=$("manualClientName").value.trim(),description=$("manualDescription").value.trim();
+  if(!name||!date||!time||!description){$("manualReservationStatus").textContent="Complete cliente, data, hora e descricao.";return;}
+  const editId=$("manualReservationForm").dataset.editId;
+  const payload={id:editId||"manual-"+Date.now(),manual:true,client_name:name,client_email:$("manualClientEmail").value.trim(),plate:$("manualPlate").value.trim().toUpperCase(),vehicle:$("manualVehicle").value.trim(),scheduled_at:new Date(`${date}T${time}:00`).toISOString(),service_type:"Reserva manual",notes:description,estimated_price:Number($("manualPrice").value)||0,status:"confirmed"};
+  const submit=$("manualReservationForm").querySelector('button[type="submit"]');
+  const originalText=editId?"Modificar reserva":"Criar reserva manual";
+  submit.disabled=true;submit.textContent="Salvando...";
+  if(!state.demoMode&&state.workshop?.id){
+    try{
+      const dbPayload={workshop_id:state.workshop.id,source:"manual",external_client_name:payload.client_name,external_client_email:payload.client_email||null,external_vehicle_plate:payload.plate||null,external_vehicle_description:payload.vehicle||null,scheduled_at:payload.scheduled_at,service_type:payload.service_type,notes:payload.notes,estimated_price:payload.estimated_price||null,status:"confirmed"};
+      const current=state.manualReservations.find((item)=>item.id===editId);
+      const {error}=current?.remote?await sb.from("reservations").update(dbPayload).eq("id",editId):await sb.from("reservations").insert(dbPayload);
+      if(error)throw error;
+      await loadReservations();
+      $("manualReservationModal").classList.remove("open");renderAgenda();renderReservations();renderMetrics();toast(editId?"Reserva manual modificada.":"Reserva manual criada.");
+      submit.disabled=false;submit.textContent=originalText;
+      return;
+    }catch(error){
+      console.warn("[manual reservation]",error.message);
+      state.backendReady.manualReservations=false;
+    }
+  }
+  if(editId)state.manualReservations=state.manualReservations.map((item)=>item.id===editId?payload:item);
+  else state.manualReservations.unshift(payload);
+  saveLocalOps();$("manualReservationModal").classList.remove("open");renderAgenda();renderReservations();renderMetrics();toast(editId?"Reserva manual modificada localmente.":"Reserva manual criada localmente.");
+  submit.disabled=false;submit.textContent=originalText;
+}
+function editManualReservation(id){const reservation=state.manualReservations.find((item)=>item.id===id);if(reservation)openManualReservationModal(reservation);}
+async function cancelManualReservation(id){
+  const current=state.manualReservations.find((item)=>item.id===id);
+  if(current?.remote&&!state.demoMode){
+    try{const {error}=await sb.from("reservations").update({status:"cancelled",cancelled_at:new Date().toISOString()}).eq("id",id);if(error)throw error;await loadReservations();}
+    catch(error){toast(error.message||"Nao foi possivel cancelar.");return;}
+  }else{
+    state.manualReservations=state.manualReservations.filter((item)=>item.id!==id);saveLocalOps();
+  }
+  renderAgenda();renderReservations();renderMetrics();toast("Reserva manual cancelada.");
+}
+async function toggleReceiving(){
+  if(!state.workshop?.id){toast("Perfil da oficina nao encontrado.");return;}
+  const nextOpen=state.workshop.open===false;
+  $("receivingToggle").disabled=true;
+  if(state.demoMode){
+    state.workshop.open=nextOpen;
+    demoStore.workshop.open=nextOpen;
+    renderShell();
+    await loadAll();
+    toast(nextOpen?"Oficina visivel e recebendo pedidos.":"Oficina oculta e pedidos pausados.");
+    $("receivingToggle").disabled=false;
+    return;
+  }
+  try{
+    const {data,error}=await sb.from("workshops").update({open:nextOpen}).eq("id",state.workshop.id).select("*").single();
+    if(error)throw error;
+    state.workshop=data;
+    renderShell();
+    await loadAll();
+    toast(nextOpen?"Oficina visivel e recebendo pedidos.":"Oficina oculta e pedidos pausados.");
+  }catch(error){
+    toast(error.message||"Nao foi possivel alterar recebimento.");
+  }finally{
+    $("receivingToggle").disabled=false;
+  }
+}
+async function saveCapacity(nextValue){
+  if(!state.workshop?.id){toast("Perfil da oficina nao encontrado.");return;}
+  const value=Math.max(1,Math.min(10,Number(nextValue)||1));
+  $("capacityInput").value=value;
+  if(state.demoMode){
+    state.workshop.max_bookings_per_slot=value;
+    demoStore.workshop.max_bookings_per_slot=value;
+    renderShell();renderAgenda();
+    toast("Capacidade atualizada na demo.");
+    return;
+  }
+  $("capacityInput").disabled=true;$("capacityMinus").disabled=true;$("capacityPlus").disabled=true;
+  try{
+    const {data,error}=await sb.from("workshops").update({max_bookings_per_slot:value,slot_minutes:60}).eq("id",state.workshop.id).select("*").single();
+    if(error)throw error;
+    state.workshop=data;
+    renderShell();renderAgenda();
+    toast("Capacidade por horario atualizada.");
+  }catch(error){
+    toast(error.message||"Nao foi possivel salvar capacidade.");
+  }finally{
+    $("capacityInput").disabled=false;$("capacityMinus").disabled=false;$("capacityPlus").disabled=false;
+  }
+}
+function subscribeRealtime(){
+  if(state.demoMode||!state.workshop?.id||state.realtimeChannel)return;
+  state.realtimeChannel=sb.channel("ws-realtime")
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"service_requests"},()=>{loadRequests().then(()=>{renderMetrics();renderRequests();});})
+    .on("postgres_changes",{event:"*",schema:"public",table:"proposals",filter:`workshop_id=eq.${state.workshop.id}`},()=>{loadProposals().then(()=>{renderMetrics();renderProposalsCount();});})
+    .on("postgres_changes",{event:"*",schema:"public",table:"reservations",filter:`workshop_id=eq.${state.workshop.id}`},()=>{loadReservations().then(()=>{renderMetrics();renderAgenda();renderReservations();});})
+    .subscribe();
+}
+function setView(view){document.querySelectorAll(".view").forEach((el)=>el.classList.remove("active"));$("view-"+view).classList.add("active");document.querySelectorAll(".nav button").forEach((btn)=>btn.classList.toggle("active",btn.dataset.view===view));$("pageTitle").textContent=titles[view][0];$("pageSubtitle").textContent=titles[view][1];if(view==="messages")renderThreads();if(view==="agenda")renderAgenda();if(view==="reservations")renderReservations();if(view==="profile")renderProfilePreview();if(view==="offers")renderOffers();if(view==="account")renderAccount();closeMobileMenu();}
+document.querySelectorAll(".nav button").forEach((btn)=>btn.addEventListener("click",()=>setView(btn.dataset.view)));
+document.querySelectorAll("[data-request-filter]").forEach((btn)=>btn.addEventListener("click",async()=>{document.querySelectorAll("[data-request-filter]").forEach((b)=>b.classList.remove("active"));btn.classList.add("active");state.requestFilter=btn.dataset.requestFilter;await loadRequests();renderMetrics();renderRequests();}));
+$("loginForm").addEventListener("submit",(event)=>{event.preventDefault();login($("authEmail").value.trim(),$("authPassword").value);});
+$("demoBtn").addEventListener("click",()=>{$("authEmail").value=DEMO_EMAIL;$("authPassword").value=DEMO_PASSWORD;startDemoMode();});
+$("mobileMenuBtn").addEventListener("click",openMobileMenu);
+$("mobileDrawerBackdrop").addEventListener("click",closeMobileMenu);
+$("refreshBtn").addEventListener("click",loadAll);
+$("receivingToggle").addEventListener("click",toggleReceiving);
+$("capacityMinus").addEventListener("click",()=>saveCapacity(Number($("capacityInput").value)-1));
+$("capacityPlus").addEventListener("click",()=>saveCapacity(Number($("capacityInput").value)+1));
+$("capacityInput").addEventListener("change",()=>saveCapacity($("capacityInput").value));
+$("proposalCloseBtn").addEventListener("click",()=>$("proposalModal").classList.remove("open"));
+$("proposalForm").addEventListener("submit",submitProposal);
+$("blockCloseBtn").addEventListener("click",()=>$("blockModal").classList.remove("open"));
+$("manualReservationCloseBtn").addEventListener("click",()=>$("manualReservationModal").classList.remove("open"));
+$("blockForm").addEventListener("submit",submitBlock);
+$("manualReservationForm").addEventListener("submit",submitManualReservation);
+$("chatSendBtn").addEventListener("click",sendMessage);
+$("chatInput").addEventListener("keydown",(event)=>{if(event.key==="Enter"){event.preventDefault();sendMessage();}});
+$("formalizeChatBtn").addEventListener("click",()=>toast("Para formalizar desde mensagem falta elegir categoria/veiculo en el proximo paso."));
+$("profileForm").addEventListener("submit",saveProfile);
+["profileName","profileCity","profileState","profileDescription"].forEach((id)=>$(id).addEventListener("input",renderProfilePreview));
+$("offerForm").addEventListener("submit",createOffer);
+$("signOutBtn").addEventListener("click",async()=>{if(state.channel)sb.removeChannel(state.channel);if(state.realtimeChannel)sb.removeChannel(state.realtimeChannel);state.channel=null;state.realtimeChannel=null;await sb.auth.signOut();showAuth();});
+$("resetPasswordBtn").addEventListener("click",async()=>{if(!state.user?.email)return;await sb.auth.resetPasswordForEmail(state.user.email);toast("E-mail de reset enviado.");});
+$("calendarMonthSelect").addEventListener("change",()=>{const [year,month]=$("calendarMonthSelect").value.split("-").map(Number);state.calendarDate=new Date(year,month-1,1);renderAgenda();});
+$("calendarWeekBtn").addEventListener("click",()=>{state.calendarMode="week";$("calendarWeekBtn").classList.add("active");$("calendarMonthBtn").classList.remove("active");renderAgenda();});
+$("calendarMonthBtn").addEventListener("click",()=>{state.calendarMode="month";$("calendarMonthBtn").classList.add("active");$("calendarWeekBtn").classList.remove("active");state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth(),1);renderAgenda();});
+$("blockSlotBtn").addEventListener("click",openBlockModal);
+$("manualReservationBtn").addEventListener("click",()=>openManualReservationModal());
+sb.auth.onAuthStateChange(async(_event,session)=>{if(session?.user){state.user=session.user;await loadWorkshop();showApp();}else showAuth();});
+(async()=>{const {data:{session}}=await sb.auth.getSession();if(session?.user){state.user=session.user;await loadWorkshop();showApp();}else showAuth();})();
+</script>
+</body>
+</html>

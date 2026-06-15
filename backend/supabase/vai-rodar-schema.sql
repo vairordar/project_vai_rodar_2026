@@ -64,6 +64,8 @@ create table if not exists public.workshops (
   rating          numeric(3,2) default 0,
   review_count    integer default 0,
   open            boolean default true,
+  max_bookings_per_slot integer not null default 1,
+  slot_minutes    integer not null default 60,
   verified        boolean default false,
   services        text[],            -- ex: ARRAY['Pneus','Alinhamento']
   schedule        jsonb,             -- horários por dia da semana
@@ -204,6 +206,26 @@ create trigger trg_conversations_updated_at
 create trigger trg_reservations_updated_at
   before update on public.reservations
   for each row execute procedure public.set_updated_at();
+
+create or replace function public.get_workshop_slot_usage(
+  p_workshop_id uuid,
+  p_slot_start timestamptz,
+  p_slot_minutes integer default 60
+)
+returns integer
+language sql
+security definer
+set search_path = public
+as $$
+  select count(*)::integer
+  from public.reservations r
+  where r.workshop_id = p_workshop_id
+    and r.status in ('pending','confirmed')
+    and r.scheduled_at >= p_slot_start
+    and r.scheduled_at < p_slot_start + make_interval(mins => coalesce(p_slot_minutes,60));
+$$;
+
+grant execute on function public.get_workshop_slot_usage(uuid,timestamptz,integer) to anon, authenticated;
 
 -- ─── Trigger: novo profile ao registrar user ─────────────────
 create or replace function public.handle_new_user()
