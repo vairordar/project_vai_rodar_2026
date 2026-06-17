@@ -1,18 +1,27 @@
-/**
+﻿/**
  * Consulta FIPE Beta por placa usando APIBrasil.
  *
  * POST /.netlify/functions/consultar-fipe
  * Body: { "placa": "ABC1234" }
  *
- * Variaveis de ambiente:
- * - APIBRASIL_BEARER_TOKEN
+ * Variaveis de ambiente (Netlify):
+ * - APIBRASIL_BEARER_TOKEN  (Authorization: Bearer ...)
+ * - APIBRASIL_DEVICE_TOKEN  (opcional; FIPE Beta muestra solo Authorization en la doc actual)
  * - APIBRASIL_HOMOLOG: "true" para homologacao, "false" para consumir creditos reais
+ *
+ * IMPORTANTE: confirmar el endpoint exacto y el nombre del campo categoria
+ * ("fipe") en el panel app.apibrasil.io > Minhas APIs > API Placa FIPE,
+ * ya que la documentacion oficial (doc.apibrasil.io) exige login y no es
+ * accesible publicamente. El endpoint abajo es el documentado para la
+ * categoria "veiculos"; si el panel muestra una ruta distinta, actualizar
+ * API_URL.
  */
 
 const https = require('https');
 
-const API_URL = 'https://gateway.apibrasil.io/api/v2/consulta/veiculos/credits';
+const API_URL = 'https://gateway.apibrasil.io/api/v2/vehicles/dados';
 const BEARER_TOKEN = process.env.APIBRASIL_BEARER_TOKEN;
+const DEVICE_TOKEN = process.env.APIBRASIL_DEVICE_TOKEN;
 const HOMOLOG = String(process.env.APIBRASIL_HOMOLOG || 'false').toLowerCase() === 'true';
 
 function jsonResponse(statusCode, body) {
@@ -36,7 +45,7 @@ function isValidPlate(plate) {
   return /^[A-Z]{3}[0-9][A-Z][0-9]{2}$/.test(plate) || /^[A-Z]{3}[0-9]{4}$/.test(plate);
 }
 
-function postJson(url, body, token) {
+function postJson(url, body, token, deviceToken) {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify(body);
     const parsedUrl = new URL(url);
@@ -47,6 +56,7 @@ function postJson(url, body, token) {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
+          ...(deviceToken ? { DeviceToken: deviceToken } : {}),
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(payload),
         },
@@ -116,23 +126,23 @@ function extractVehicle(raw, plate) {
 
   return {
     placa: plate,
-    marca: marca || '—',
-    modelo: modelo || '—',
-    ano: ano || '—',
+    marca: marca || 'â€”',
+    modelo: modelo || 'â€”',
+    ano: ano || 'â€”',
     codigoFipe: codigoFipe || '',
-    valorFipe: valorFipe || '—',
+    valorFipe: valorFipe || 'â€”',
     mesReferencia: mesReferencia || '',
     linkConsulta: linkConsulta || '',
-    cor: cor || '—',
+    cor: cor || 'â€”',
     combustivel: combustivel || '',
     municipio: municipio || '',
     uf: uf || '',
     plate,
-    brand: marca || '—',
-    model: modelo || '—',
-    year: ano || '—',
-    color: cor || '—',
-    valueFipe: valorFipe || '—',
+    brand: marca || 'â€”',
+    model: modelo || 'â€”',
+    year: ano || 'â€”',
+    color: cor || 'â€”',
+    valueFipe: valorFipe || 'â€”',
     fuel: combustivel || '',
     city: municipio || '',
     state: uf || '',
@@ -141,7 +151,7 @@ function extractVehicle(raw, plate) {
 
 function isInsufficientBalance(data) {
   const text = JSON.stringify(data || {}).toLowerCase();
-  return text.includes('saldo') || text.includes('crédito') || text.includes('credito') || text.includes('balance');
+  return text.includes('saldo') || text.includes('crÃ©dito') || text.includes('credito') || text.includes('balance');
 }
 
 exports.handler = async (event) => {
@@ -164,7 +174,6 @@ exports.handler = async (event) => {
   if (!BEARER_TOKEN) {
     return jsonResponse(500, { success: false, error: 'APIBRASIL_BEARER_TOKEN not configured' });
   }
-
   try {
     const apiResponse = await postJson(
       API_URL,
@@ -173,7 +182,8 @@ exports.handler = async (event) => {
         placa: plate,
         homolog: HOMOLOG,
       },
-      BEARER_TOKEN
+      BEARER_TOKEN,
+      DEVICE_TOKEN
     );
 
     const data = apiResponse.body;
@@ -187,7 +197,7 @@ exports.handler = async (event) => {
     }
 
     const vehicle = extractVehicle(data, plate);
-    const hasUsefulData = [vehicle.marca, vehicle.modelo, vehicle.valorFipe].some((item) => item && item !== '—');
+    const hasUsefulData = [vehicle.marca, vehicle.modelo, vehicle.valorFipe].some((item) => item && item !== 'â€”');
     if (!hasUsefulData) {
       return jsonResponse(404, { success: false, error: 'Resposta sem dados FIPE.', raw: data });
     }
@@ -205,3 +215,4 @@ exports.handler = async (event) => {
     });
   }
 };
+

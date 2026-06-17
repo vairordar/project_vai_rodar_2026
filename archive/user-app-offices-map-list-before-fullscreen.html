@@ -6,17 +6,15 @@
 <title>Vai Rodar</title>
 
 <!-- PWA -->
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#075cff">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Vai Rodar">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/icon-192x192.png">
-<link rel="shortcut icon" type="image/png" href="assets/icon-192x192.png">
-<link rel="apple-touch-icon" href="assets/icon-180x180.png">
-<link rel="apple-touch-icon" sizes="152x152" href="assets/icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180x180.png">
+<link rel="apple-touch-icon" href="/assets/icon-180x180.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180x180.png">
 <meta name="description" content="Conecte seu carro à melhor oficina. Diagnóstico com IA, cotações e serviços automotivos.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -717,30 +715,6 @@ h1{
 .office-actions button{height:40px;border-radius:14px;font-size:12px;font-weight:750;cursor:pointer}
 .load-more-offices{border:1.2px solid var(--blue);background:var(--button-bg);color:var(--blue)}
 .send-office-proposals{border:0;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 12px 24px rgba(7,92,255,.22)}
-/* Oficinas: mapa como experiencia principal */
-.app-shell.offices-open .app{padding:68px 0 0;overflow:hidden}
-.app-shell.offices-open .offices-view{max-width:none;width:100%;height:100%;margin:0;display:block}
-.app-shell.offices-open .office-map-shell{position:relative;width:100%;height:100%;display:block;margin:0;padding:0;border:0;border-radius:0;background:#eef3f8;box-shadow:none;overflow:hidden}
-.app-shell.offices-open .office-map{position:absolute;inset:0;min-height:0;width:100%;height:100%;border:0;border-radius:0;background:#eef3f8;filter:saturate(.88) hue-rotate(190deg) contrast(1.04) brightness(1.07)}
-.app-shell.offices-open .office-map{position:absolute;inset:0;min-height:0;width:100%;height:100%;border:0;border-radius:0;background:#eef3f8;filter:saturate(.82) contrast(1.03) brightness(1.04)}
-.app-shell.offices-open .office-map::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(248,250,252,.9) 0%,rgba(248,250,252,.46) 28%,rgba(248,250,252,0) 52%,rgba(248,250,252,.58) 100%);z-index:420}
-.office-map-top{position:absolute;top:12px;left:12px;right:12px;z-index:430;display:grid;gap:8px}
-.office-map-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.office-map-head h2{color:var(--headline);font-size:21px;line-height:1.05;font-weight:820;letter-spacing:-.35px}.office-map-head p{color:var(--muted);font-size:9px;line-height:1.35;margin-top:3px;max-width:210px}
-.app-shell.offices-open .office-ai-search{margin:0;padding:6px;border:1px solid rgba(216,226,239,.92);border-radius:16px;background:rgba(255,255,255,.92);box-shadow:0 18px 42px rgba(15,23,42,.13);backdrop-filter:blur(14px)}
-.app-shell.offices-open .office-ai-search input{height:36px;background:#fff;border-color:#dbe5f2;font-size:10px}.app-shell.offices-open .office-ai-search button{width:36px;height:36px}
-.office-filter-menu{justify-self:start;position:relative}.office-filter-menu>summary{height:32px;display:inline-flex;align-items:center;gap:7px;padding:0 12px;border:1px solid rgba(216,226,239,.95);border-radius:999px;background:rgba(255,255,255,.94);color:var(--text);font-size:10px;font-weight:800;box-shadow:0 12px 30px rgba(15,23,42,.12);cursor:pointer;list-style:none;backdrop-filter:blur(14px)}.office-filter-menu>summary::-webkit-details-marker{display:none}.office-filter-menu>summary::after{content:"▾";font-size:9px;color:var(--blue)}
-.app-shell.offices-open .office-filters{position:absolute;top:38px;left:0;width:min(330px,calc(100vw - 36px));display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:10px;border:1px solid rgba(216,226,239,.95);border-radius:16px;background:rgba(255,255,255,.96);box-shadow:0 24px 54px rgba(15,23,42,.18);backdrop-filter:blur(16px)}
-.app-shell.offices-open .location-filter-wrap{grid-column:1 / -1}.app-shell.offices-open .office-filter,.app-shell.offices-open .rating-filter summary,.app-shell.offices-open .clear-filters{height:34px;border-radius:11px;background:#f8fbff;font-size:9.5px}.app-shell.offices-open .clear-filters{grid-column:1 / -1;background:#fff}.app-shell.offices-open .rating-panel{top:38px;z-index:450;background:#fff}
-.app-shell.offices-open .office-map-focus{position:absolute;right:12px;top:138px;z-index:425;height:32px;border:1px solid rgba(216,226,239,.95);border-radius:999px;background:rgba(255,255,255,.93);color:var(--blue);padding:0 12px;font-size:9px;box-shadow:0 12px 30px rgba(15,23,42,.13);backdrop-filter:blur(14px)}
-.office-results-sheet{position:absolute;left:10px;right:10px;bottom:10px;z-index:430;max-height:38%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:8px;border:1px solid rgba(216,226,239,.96);border-radius:18px;background:rgba(255,255,255,.95);box-shadow:0 28px 68px rgba(15,23,42,.24);backdrop-filter:blur(18px)}
-.office-sheet-grip{width:34px;height:4px;border-radius:999px;background:#d8e2ef;justify-self:center;margin-bottom:1px}.office-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px}.office-sheet-head strong{display:block;color:var(--headline);font-size:11px;font-weight:850}.office-sheet-head span{display:block;color:var(--muted);font-size:8px;margin-top:1px}
-.app-shell.offices-open .office-list{display:grid;gap:7px;overflow-y:auto;min-height:0;padding-right:2px;scrollbar-width:none}.app-shell.offices-open .office-list::-webkit-scrollbar{display:none}
-.app-shell.offices-open .office-card{grid-template-columns:54px 1fr auto;gap:8px;border-radius:13px;background:#fff;padding:7px;box-shadow:none}.app-shell.offices-open .office-photo{width:54px;height:48px;border-radius:9px}.app-shell.offices-open .office-card h3{font-size:10px;margin-bottom:2px}.app-shell.offices-open .office-address{font-size:8px;margin-bottom:5px}.app-shell.offices-open .office-links{gap:5px}.app-shell.offices-open .office-links button{height:24px;padding:0 8px;font-size:8px}.app-shell.offices-open .office-score{font-size:10px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:9px;padding-top:9px}
-.app-shell.offices-open .office-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0}.app-shell.offices-open .office-actions button{height:34px;border-radius:12px;font-size:10px}
-.app-shell.offices-open .leaflet-control-zoom{border:0!important;box-shadow:0 12px 30px rgba(15,23,42,.16)!important}.app-shell.offices-open .leaflet-control-zoom a{border:0!important;color:#0f172a!important}.app-shell.offices-open .leaflet-control-attribution{background:rgba(255,255,255,.65)!important}
-@media(min-width:760px){.office-results-sheet{left:auto;right:12px;top:178px;bottom:12px;width:330px;max-height:none}.app-shell.offices-open .office-map-focus{top:128px}.office-map-top{right:auto;width:420px}.app-shell.offices-open .office-filters{width:380px}}
-@media(max-width:520px){.app-shell.offices-open .app{padding-top:68px;padding-bottom:0}.office-map-head h2{font-size:20px}.office-map-head p{max-width:190px}.office-results-sheet{max-height:42%}.app-shell.offices-open .office-card{grid-template-columns:50px 1fr}.app-shell.offices-open .office-score{grid-column:2;justify-self:start}.app-shell.offices-open .office-map-focus{top:134px}.app-shell.offices-open .office-filters{width:calc(100vw - 44px)}}
 .parts-intro{color:var(--muted);font-size:10px;line-height:1.45;margin:-3px 0 12px}
 .parts-form{display:grid;grid-template-columns:1fr 170px 42px;gap:8px;padding:9px;border:1.2px solid var(--blue);border-radius:16px;background:linear-gradient(180deg,var(--card),var(--card-soft));box-shadow:var(--card-shadow);margin-bottom:12px}
 .parts-form input{width:100%;min-width:0;height:38px;border:1px solid var(--input-border);border-radius:999px;background:var(--bottom);color:var(--text);padding:0 14px;font-size:11px;outline:none}
@@ -1290,14 +1264,9 @@ h1{
 .account-divider::before,.account-divider::after{content:"";height:1px;background:var(--line);flex:1}
 .social-account{display:grid;gap:8px}
 .social-account button{height:40px;border:1px solid var(--input-border);border-radius:12px;background:var(--bottom);color:var(--text);font-size:11px;font-weight:750;cursor:pointer}
-.social-account .apple{display:none!important}
+.social-account .apple{background:#050505;color:#fff;border-color:#050505}
 .social-mark{display:inline-grid;place-items:center;width:20px;margin-right:7px;font-size:16px;font-weight:800;vertical-align:middle}
 .account-note{color:var(--muted);font-size:8.5px;line-height:1.4;text-align:center;margin-top:12px}
-.account-legal-consent{display:flex!important;align-items:flex-start;gap:9px;border:1px solid var(--input-border);border-radius:13px;background:var(--bottom);padding:10px 11px;color:var(--muted);font-size:11px;line-height:1.35;font-weight:650;margin:0;text-align:left}
-.account-legal-consent input#accountLegalConsent{appearance:auto!important;-webkit-appearance:auto!important;width:14px!important;height:14px!important;min-width:14px!important;max-width:14px!important;margin:1px 0 0!important;padding:0!important;border-radius:3px!important;accent-color:var(--blue);flex:0 0 14px;background:#fff}
-.account-legal-consent span{display:block;min-width:0}
-.account-legal-consent a{color:var(--blue);font-weight:850;text-decoration:none}
-.account-legal-consent a:hover{text-decoration:underline}
 .account-status{min-height:14px;margin-top:8px;color:#dc2626;font-size:9px;font-weight:700;text-align:center}
 .account-status.success{color:#16a34a}
 .account-toggle{text-align:center;font-size:9px;color:var(--muted);margin-top:8px}
@@ -1933,40 +1902,58 @@ body.theme-dark{
       </div>
 
       <section class="offices-view" aria-label="Todas as oficinas">
+        <div class="offices-hero">
+          <div>
+            <h2>Todas as oficinas</h2>
+            <p>Busque por bairro, categoria, horário e avaliação. Sem filtros, mostramos as melhores oficinas primeiro.</p>
+          </div>
+          <button class="back-home" id="backHomeBtn">Voltar ao início</button>
+        </div>
+        <div class="office-ai-search">
+          <input id="officeSearchInput" placeholder="Escreva o que precisa ou onde está...">
+          <button id="officeSearchBtn" aria-label="Buscar oficinas">
+            <svg viewBox="0 0 24 24"><path d="M21.7 3.4 3.6 10.8c-1.2.5-1.1 2.2.1 2.5l6.4 1.6 1.6 6.3c.3 1.2 2 1.3 2.5.2l7.4-18.1c.3-.8-.4-1.5-1.2-1.2ZM11 14l7.2-7.2-4.7 11.5-1.1-4.4L8 12.8 19.5 8.1 12.3 15.3 11 14Z"/></svg>
+          </button>
+        </div>
+        <div class="office-filters">
+          <div class="location-filter-wrap">
+            <input class="office-filter" id="officeLocationFilter" placeholder="Ubicação ou endereço">
+            <button class="inline-location" id="useOfficeLocation" type="button" aria-label="Usar localização"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+          </div>
+          <select class="office-filter" id="officeOpenFilter" aria-label="Aberto">
+            <option value="all">Todos</option>
+            <option value="open">Aberto</option>
+          </select>
+          <select class="office-filter" id="officeCategoryFilter" aria-label="Categoria">
+            <option value="">Categoria</option>
+            <option>Pneus e alinhamento</option>
+            <option>Freios e suspensão</option>
+            <option>Motor e transmissão</option>
+            <option>Elétrica automotiva</option>
+            <option>Revisão geral</option>
+          </select>
+          <details class="rating-filter" id="ratingFilter">
+            <summary>Melhores avaliações</summary>
+            <div class="rating-panel">
+              <label><input type="checkbox" value="4.8"> 4.8 ou mais</label>
+              <label><input type="checkbox" value="4.6"> 4.6 ou mais</label>
+              <label><input type="checkbox" value="4.4"> 4.4 ou mais</label>
+            </div>
+          </details>
+          <button class="clear-filters" id="clearOfficeFilters" type="button">Limpar filtros</button>
+        </div>
         <div class="office-map-shell" id="officeMapShell">
           <div class="office-map" id="officeMap"></div>
-          <div class="office-map-top">
-            <div class="office-map-head">
-              <div><h2>Oficinas</h2><p>Escolha um serviço e veja opções próximas no mapa.</p></div>
-              <button class="back-home" id="backHomeBtn">Voltar</button>
-            </div>
-            <div class="office-ai-search">
-              <input id="officeSearchInput" placeholder="Buscar serviço, bairro ou oficina">
-              <button id="officeSearchBtn" aria-label="Buscar oficinas">
-                <svg viewBox="0 0 24 24"><path d="M21.7 3.4 3.6 10.8c-1.2.5-1.1 2.2.1 2.5l6.4 1.6 1.6 6.3c.3 1.2 2 1.3 2.5.2l7.4-18.1c.3-.8-.4-1.5-1.2-1.2ZM11 14l7.2-7.2-4.7 11.5-1.1-4.4L8 12.8 19.5 8.1 12.3 15.3 11 14Z"/></svg>
-              </button>
-            </div>
-            <details class="office-filter-menu" id="officeFilterMenu">
-              <summary>Filtros</summary>
-              <div class="office-filters">
-                <div class="location-filter-wrap">
-                  <input class="office-filter" id="officeLocationFilter" placeholder="Localização ou endereço">
-                  <button class="inline-location" id="useOfficeLocation" type="button" aria-label="Usar localização"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
-                </div>
-                <select class="office-filter" id="officeOpenFilter" aria-label="Aberto"><option value="all">Todos</option><option value="open">Aberto agora</option></select>
-                <select class="office-filter" id="officeCategoryFilter" aria-label="Categoria"><option value="">Serviço</option><option>Pneus e alinhamento</option><option>Freios e suspensão</option><option>Motor e transmissão</option><option>Elétrica automotiva</option><option>Revisão geral</option></select>
-                <details class="rating-filter" id="ratingFilter"><summary>Avaliação</summary><div class="rating-panel"><label><input type="checkbox" value="4.8"> 4.8 ou mais</label><label><input type="checkbox" value="4.6"> 4.6 ou mais</label><label><input type="checkbox" value="4.4"> 4.4 ou mais</label></div></details>
-                <button class="clear-filters" id="clearOfficeFilters" type="button">Limpar</button>
-              </div>
-            </details>
-          </div>
-          <button class="office-map-focus" id="officeMapFocus" type="button">Centralizar</button>
-          <div class="office-results-sheet">
-            <div class="office-sheet-grip"></div>
-            <div class="office-sheet-head"><div><strong>Oficinas encontradas</strong><span>Toque no mapa ou escolha abaixo</span></div></div>
-            <div class="office-list" id="officeList"></div>
-            <div class="office-actions"><button class="load-more-offices" id="loadMoreOffices">Ver mais</button><button class="send-office-proposals" id="sendOfficeProposals">Enviar propostas</button></div>
-          </div>
+          <aside class="office-map-side">
+            <h3>Oficinas no mapa</h3>
+            <p>Os marcadores acompanham os filtros de categoria, bairro, avaliação e disponibilidade.</p>
+            <div class="office-map-legend"><span><i></i> Oficina filtrada</span><span><i></i> Aberta agora</span></div>
+            <button class="office-map-focus" id="officeMapFocus" type="button">Centralizar mapa</button>
+          </aside>
+        </div>        <div class="office-list" id="officeList"></div>
+        <div class="office-actions">
+          <button class="load-more-offices" id="loadMoreOffices">Ver mais oficinas</button>
+          <button class="send-office-proposals" id="sendOfficeProposals">Enviar propostas</button>
         </div>
       </section>
 
@@ -2247,15 +2234,15 @@ body.theme-dark{
           <input id="accountEmail" placeholder="E-mail" autocomplete="email" type="email" required>
           <input id="accountPassword" placeholder="Senha (mín. 6 caracteres)" type="password" autocomplete="new-password" required>
           <input id="accountPlate" placeholder="Placa do carro" maxlength="7">
-          <label class="account-legal-consent" id="accountLegalBox"><input id="accountLegalConsent" type="checkbox"><span>Li e aceito os <a href="legal/termos.html" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="legal/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> da Vai Rodar.</span></label>
           <button class="create-account" type="submit" id="accountSubmitBtn">Criar conta</button>
         </form>
         <p class="account-toggle"><span id="accountToggleText">Já tem conta?</span> <button type="button" id="accountToggleBtn">Entrar</button></p>
         <div class="account-divider">ou continue com</div>
         <div class="social-account">
           <button type="button" id="accountGoogleBtn"><span class="social-mark">G</span>Continuar com Google</button>
+          <button class="apple" type="button" id="accountAppleBtn"><span class="social-mark"></span>Continuar com Apple</button>
         </div>
-        <p class="account-note">Você pode consultar os <a href="legal/termos.html" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="legal/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> a qualquer momento.</p>
+        <p class="account-note">Ao continuar, você aceita os termos de uso e a política de privacidade do Vai Rodar.</p>
         <div class="account-status" id="accountStatus"></div>
       </div>
       <div id="accountLoggedIn" style="display:none">
@@ -2551,8 +2538,6 @@ const accountName=document.getElementById("accountName");
 const accountPhone=document.getElementById("accountPhone");
 const accountEmail=document.getElementById("accountEmail");
 const accountPassword=document.getElementById("accountPassword");
-const accountLegalConsent=document.getElementById("accountLegalConsent");
-const accountLegalBox=document.getElementById("accountLegalBox");
 const accountPlate=document.getElementById("accountPlate");
 const accountStatus=document.getElementById("accountStatus");
 const accountSubmitBtn=document.getElementById("accountSubmitBtn");
@@ -2951,7 +2936,7 @@ function officeCoordinates(office){
 function ensureOfficeMap(){
   if(!officeMap) return null;
   if(!window.L){
-    officeMap.innerHTML='<div class="office-map-empty">Mapa disponível quando houver conexão.<br>Não foram encontradas oficinas para estes filtros.</div>';
+    officeMap.innerHTML='<div class="office-map-empty">Mapa disponível quando houver conexão com OpenStreetMap.<br>Os resultados continuam na lista abaixo.</div>';
     return null;
   }
   if(!officeMapInstance){
@@ -3007,7 +2992,7 @@ function renderOffices(reset=false){
   const filtered=getFilteredOffices();
   if(!filtered.length){
     updateOfficeMap(filtered);
-    officeList.innerHTML='<div class="empty">Não foram encontradas oficinas para estes filtros.</div>';
+    officeList.innerHTML='<div class="empty">Ainda não há oficinas reais cadastradas para estes filtros.</div>';
     loadMoreOffices.style.display="none";
     sendOfficeProposals.style.display="none";
     return;
@@ -3037,7 +3022,7 @@ function renderOffices(reset=false){
         <div class="office-detail-actions"><button class="collapse-detail" type="button" data-index="${index}">Contrair informações</button><button class="reserve-detail" type="button" data-index="${index}">Agendar reserva</button></div>
       </section>
     </article>
-  `}).join("")||'<div class="form-error show">Não foram encontradas oficinas para estes filtros.</div>';
+  `}).join("")||'<div class="form-error show">Nenhuma oficina encontrada com esses filtros.</div>';
   loadMoreOffices.style.display=visibleOfficeCount<filtered.length?"block":"none";
   officeList.querySelectorAll(".message-btn").forEach((button)=>button.addEventListener("click",closeOfficesView));
   officeList.querySelectorAll(".more-info-btn").forEach((button)=>button.addEventListener("click",()=>focusOfficeCard(button.dataset.index)));
@@ -3462,7 +3447,6 @@ function setAuthMode(signUp){
   accountName.style.display=signUp?"block":"none";
   accountPhone.style.display=signUp?"block":"none";
   accountPlate.style.display=signUp?"block":"none";
-  if(accountLegalBox) accountLegalBox.style.display=signUp?"flex":"none";
   accountPassword.autocomplete=signUp?"new-password":"current-password";
   accountStatus.textContent="";
   accountStatus.classList.remove("success");
@@ -3475,10 +3459,6 @@ function oauthRedirectTo(){
   return window.location.origin || "https://vairodar.com.br";
 }
 async function signInSocial(provider){
-  if(isSignUpMode&&accountLegalConsent&&!accountLegalConsent.checked){
-    setAccountStatus("Para continuar com login social, aceite os Termos de Uso e a Política de Privacidade.");
-    return;
-  }
   if(!sb){
     setAccountStatus("Conexao com autenticação indisponível. Tente novamente em alguns segundos.");
     return;
@@ -4876,10 +4856,6 @@ accountForm.addEventListener("submit",async(event)=>{
     setAccountStatus("Conexao com autenticação indisponível. Tente novamente em alguns segundos.");
     return;
   }
-  if(isSignUpMode&&accountLegalConsent&&!accountLegalConsent.checked){
-    setAccountStatus("Para criar sua conta, aceite os Termos de Uso e a Política de Privacidade.");
-    return;
-  }
   if(!emailOk||!passwordOk){
     setAccountStatus("Informe um e-mail válido e senha com mínimo de 6 caracteres.");
     return;
@@ -4907,10 +4883,7 @@ accountForm.addEventListener("submit",async(event)=>{
             full_name:accountName.value.trim(),
             phone:normalizeBrazilPhone(accountPhone.value),
             plate:signupPlate,
-            vehicles:[signupVehicle],
-            terms_accepted_at:new Date().toISOString(),
-            privacy_accepted_at:new Date().toISOString(),
-            legal_version:"2026-06"
+            vehicles:[signupVehicle]
           }
         }
       });
@@ -4935,7 +4908,7 @@ accountForm.addEventListener("submit",async(event)=>{
   }
 });
 accountGoogleBtn.addEventListener("click",()=>signInSocial("google"));
-if(accountAppleBtn) accountAppleBtn.addEventListener("click",()=>signInSocial("apple"));
+accountAppleBtn.addEventListener("click",()=>signInSocial("apple"));
 accountSignOut.addEventListener("click",async()=>{
   if(!sb) return;
   await sb.auth.signOut();
@@ -5133,22 +5106,6 @@ if('serviceWorker' in navigator && window.location.protocol !== 'file:'){
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

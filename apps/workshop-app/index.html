@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
+<style>html{min-height:100%;overflow-y:auto;scrollbar-gutter:stable}
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --blue:#075cff;
@@ -60,8 +60,8 @@ button{cursor:pointer}
 .btn.success{background:#ecfdf3;border-color:#bbf7d0;color:var(--green)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .status-text{font-size:11px;color:var(--red);min-height:16px;margin-top:9px;text-align:center}
-.app{display:none;min-height:100dvh;padding:18px}
-.shell{width:min(1240px,100%);height:calc(100dvh - 36px);min-height:720px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:230px minmax(0,1fr)}
+.app{display:none;min-height:100dvh;padding:18px;overflow:visible}
+.shell{width:min(1240px,100%);min-height:calc(100dvh - 36px);margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:visible;display:grid;grid-template-columns:230px minmax(0,1fr)}
 .side{background:#fbfcfe;border-right:1px solid var(--line);padding:16px;display:flex;flex-direction:column;min-width:0}
 .brand{display:flex;align-items:center;gap:9px;padding:3px 2px 14px;border-bottom:1px solid var(--line)}
 .brand b{display:block;font-size:13px;line-height:1.1}
@@ -88,7 +88,7 @@ button{cursor:pointer}
 .capacity-status.free{background:#dcfce7;color:#15803d}
 .capacity-status.partial{background:#e8f0ff;color:var(--blue)}
 .capacity-status.full{background:#fee2e2;color:#b91c1c}
-.main{display:grid;grid-template-rows:66px minmax(0,1fr);min-width:0}
+.main{display:flex;flex-direction:column;min-width:0;min-height:0}
 .topbar{border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 22px;background:var(--surface)}
 .topbar h2{font-size:18px;letter-spacing:-.2px}
 .topbar p{font-size:10px;color:var(--muted);margin-top:3px}
@@ -99,7 +99,7 @@ button{cursor:pointer}
 .mobile-menu-btn span{width:15px;height:2px;border-radius:999px;background:var(--text);display:block}
 .mobile-drawer-backdrop{display:none;position:fixed;inset:0;background:rgba(7,11,20,.42);z-index:38;opacity:0;transition:.18s}
 .mobile-drawer-backdrop.open{opacity:1}
-.content{overflow:auto;padding:20px 22px;background:var(--surface)}
+.content{flex:1 1 auto;overflow:visible;padding:20px 22px;background:var(--surface)}
 .view{display:none}.view.active{display:block}
 .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:12px;max-width:520px}
 .metric{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:9px 10px;min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -181,15 +181,14 @@ button{cursor:pointer}
 .day-checks input{accent-color:var(--blue)}
 .toast{position:fixed;right:22px;bottom:22px;max-width:320px;border:1px solid rgba(22,163,74,.28);border-radius:12px;background:#fff;box-shadow:0 18px 45px rgba(15,23,42,.18);padding:11px 13px;font-size:11px;font-weight:800;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
-@media(max-width:960px){
-  body{background:#fff}.app{padding:0}.shell{height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none;grid-template-columns:1fr}
+@media(max-width:960px){  body{background:#fff}.app{padding:0;overflow:visible}.shell{min-height:100dvh;height:auto;border:0;border-radius:0;box-shadow:none;grid-template-columns:1fr}
   .side{position:fixed;left:0;top:0;bottom:0;width:min(310px,86vw);z-index:40;border-right:1px solid var(--line);border-bottom:0;box-shadow:24px 0 70px rgba(15,23,42,.22);transform:translateX(-105%);transition:.22s;max-height:none;overflow:auto}
   .side.open{transform:translateX(0)}
   .mobile-drawer-backdrop{display:block;pointer-events:none}
   .mobile-drawer-backdrop.open{pointer-events:auto}
   .mobile-menu-btn{display:inline-flex;flex:0 0 auto}
   .nav{grid-template-columns:1fr}
-  .main{grid-template-rows:auto minmax(0,1fr)}.topbar{align-items:center;flex-direction:row;padding:12px 14px;position:sticky;top:0;z-index:30}
+  .main{min-height:100dvh}.topbar{align-items:center;flex-direction:row;padding:12px 14px;position:sticky;top:0;z-index:30}
   .topbar>div:first-child{min-width:0}.topbar h2{font-size:16px}.topbar p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw}
   .top-actions{flex-wrap:nowrap}
   .top-actions .btn.ghost{display:none}
@@ -670,7 +669,7 @@ function eventButton(res){
   const time=new Date(res.scheduled_at).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
   const status=res.status||"pending";
   const source=res.manual?"Manual":"App";
-  return `<button class="event ${esc(status)}" type="button" data-calendar-reservation="${esc(res.id)}">${time} ${esc(res.service_type||"Reserva")}<br>${esc(res.profiles?.name||res.client_name||"Motorista")} · ${source}</button>`;
+  return `<button class="event ${esc(status)}" type="button" data-calendar-reservation="${esc(res.id)}">${time} ${esc(res.service_type||"Reserva")}<br>${esc(res.profiles?.name||res.client_name||"Motorista")} Â· ${source}</button>`;
 }
 function blockButton(block){
   return `<button class="event blocked" type="button">${esc(block.start)}-${esc(block.end)} Bloqueado${block.reason?`<br>${esc(block.reason)}`:""}</button>`;
@@ -738,7 +737,7 @@ function renderReservations(){
   const list=$("reservationList");
   const reservations=allReservations();
   if(!reservations.length){list.innerHTML='<div class="empty">Nenhuma reserva ainda.</div>';$("reservationDetail").innerHTML='<div class="empty">Sem reserva selecionada.</div>';return;}
-  list.innerHTML=reservations.map((res)=>`<button class="item" data-reservation-id="${esc(res.id)}" type="button"><div class="item-head"><div><h4>${esc(res.profiles?.name||res.client_name||"Motorista")}</h4><small>${new Date(res.scheduled_at).toLocaleString("pt-BR")} · ${res.manual?"Reserva manual":"Reserva do app"}</small></div><span class="pill ${res.manual?"info":esc(res.status||"pending")}">${res.manual?"Manual":esc(res.status||"pending")}</span></div><p>${esc(res.service_type||"Servico")} - ${esc(res.notes||"Sem observacoes")}</p></button>`).join("");
+  list.innerHTML=reservations.map((res)=>`<button class="item" data-reservation-id="${esc(res.id)}" type="button"><div class="item-head"><div><h4>${esc(res.profiles?.name||res.client_name||"Motorista")}</h4><small>${new Date(res.scheduled_at).toLocaleString("pt-BR")} Â· ${res.manual?"Reserva manual":"Reserva do app"}</small></div><span class="pill ${res.manual?"info":esc(res.status||"pending")}">${res.manual?"Manual":esc(res.status||"pending")}</span></div><p>${esc(res.service_type||"Servico")} - ${esc(res.notes||"Sem observacoes")}</p></button>`).join("");
   list.querySelectorAll("[data-reservation-id]").forEach((button)=>button.addEventListener("click",()=>renderReservationDetail(button.dataset.reservationId)));
   renderReservationDetail(reservations[0].id);
 }
@@ -778,9 +777,9 @@ async function createOffer(event){
   state.localOffers.unshift(offer);localStorage.setItem("vr_workshop_offers",JSON.stringify(state.localOffers));event.target.reset();renderOffers();toast("Oferta salva como rascunho local.");
   submit.disabled=false;submit.textContent="Criar oferta";
 }
-function ownerFromDescription(){const desc=state.workshop?.description||"";const match=desc.match(/Respons[aá]vel:\s*([^·]+)/i);return match?match[1].trim():"Nao informado";}
-function cnpjFromDescription(){const desc=state.workshop?.description||"";const match=desc.match(/CNPJ:\s*([^·]+)/i);return match?match[1].trim():(desc.includes("Sem CNPJ")?"Sem CNPJ":"Nao informado");}
-function renderAccount(){const owner=state.ownerDetails||{};$("accountDetail").innerHTML=`<div class="detail-row"><small>E-mail de acesso</small><b>${esc(state.user?.email||"-")}</b></div><div class="detail-row"><small>Senha</small><b>••••••••</b><span>Use o botao de reset para trocar a senha com seguranca.</span></div><div class="detail-row"><small>Empresa</small><b>${esc(state.workshop?.name||"Nao vinculada")}</b><span>CNPJ: ${esc(owner.cnpj||cnpjFromDescription())}</span></div><div class="detail-row"><small>Responsavel</small><b>${esc(owner.responsible_name||ownerFromDescription())}</b><span>Contato: ${esc(owner.contact_phone||state.workshop?.whatsapp||state.workshop?.phone||"-")}</span></div>${owner.no_cnpj?'<div class="detail-row"><small>CNPJ</small><span>Oficina registrada sem CNPJ.</span></div>':""}<div class="detail-row"><small>ID da oficina</small><span>${esc(state.workshop?.id||"Crie/corrija a linha em workshops.owner_id")}</span></div><button class="btn secondary" type="button" onclick="openChangeRequest()" style="width:100%;margin-top:10px">Solicitar alteracao de dados</button>`;}
+function ownerFromDescription(){const desc=state.workshop?.description||"";const match=desc.match(/Respons[aÃ¡]vel:\s*([^Â·]+)/i);return match?match[1].trim():"Nao informado";}
+function cnpjFromDescription(){const desc=state.workshop?.description||"";const match=desc.match(/CNPJ:\s*([^Â·]+)/i);return match?match[1].trim():(desc.includes("Sem CNPJ")?"Sem CNPJ":"Nao informado");}
+function renderAccount(){const owner=state.ownerDetails||{};$("accountDetail").innerHTML=`<div class="detail-row"><small>E-mail de acesso</small><b>${esc(state.user?.email||"-")}</b></div><div class="detail-row"><small>Senha</small><b>â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢</b><span>Use o botao de reset para trocar a senha com seguranca.</span></div><div class="detail-row"><small>Empresa</small><b>${esc(state.workshop?.name||"Nao vinculada")}</b><span>CNPJ: ${esc(owner.cnpj||cnpjFromDescription())}</span></div><div class="detail-row"><small>Responsavel</small><b>${esc(owner.responsible_name||ownerFromDescription())}</b><span>Contato: ${esc(owner.contact_phone||state.workshop?.whatsapp||state.workshop?.phone||"-")}</span></div>${owner.no_cnpj?'<div class="detail-row"><small>CNPJ</small><span>Oficina registrada sem CNPJ.</span></div>':""}<div class="detail-row"><small>ID da oficina</small><span>${esc(state.workshop?.id||"Crie/corrija a linha em workshops.owner_id")}</span></div><button class="btn secondary" type="button" onclick="openChangeRequest()" style="width:100%;margin-top:10px">Solicitar alteracao de dados</button>`;}
 async function requestProfileChange(fieldName,newValue,successMessage){
   if(!state.workshop?.id){toast("Perfil da oficina nao encontrado.");return;}
   if(state.demoMode){toast(successMessage||"Solicitacao enviada ao admin Vai Rodar.");return;}
@@ -982,3 +981,5 @@ sb.auth.onAuthStateChange(async(_event,session)=>{if(session?.user){state.user=s
 </script>
 </body>
 </html>
+
+

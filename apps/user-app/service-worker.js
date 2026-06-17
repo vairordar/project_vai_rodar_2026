@@ -1,7 +1,5 @@
-const CACHE_NAME = 'vai-rodar-v2';
+const CACHE_NAME = 'vai-rodar-v3';
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
   '/manifest.json',
   '/assets/vai_rodar_logo_transparent.png',
   '/assets/icon-192x192.png',

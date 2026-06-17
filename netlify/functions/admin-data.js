@@ -1,4 +1,4 @@
-const { authorize, corsHeaders, json, supabaseRequest } = require('./admin-common');
+﻿const { authorize, corsHeaders, json, supabaseRequest } = require('./admin-common');
 
 async function readMaybe(path, fallback) {
   try { return await supabaseRequest(path); }
@@ -27,6 +27,7 @@ exports.handler = async (event) => {
       serviceRequests,
       reservations,
       auditLogs,
+      adminUsers,
     ] = await Promise.all([
       readMaybe('/rest/v1/admin_workshops_overview?select=*&limit=1000', []),
       readMaybe('/rest/v1/admin_dashboard_summary?select=*&limit=1', []),
@@ -39,6 +40,7 @@ exports.handler = async (event) => {
       readMaybe('/rest/v1/service_requests?select=id,status&limit=5000', []),
       readMaybe('/rest/v1/reservations?select=id,status&limit=5000', []),
       readMaybe('/rest/v1/admin_audit_logs?select=*&order=created_at.desc&limit=500', []),
+      readMaybe('/rest/v1/admin_users_overview?select=*&limit=5000', []),
     ]);
 
     return json(200, {
@@ -55,6 +57,7 @@ exports.handler = async (event) => {
         serviceRequests,
         reservations,
         auditLogs,
+        adminUsers,
       },
     });
   } catch (error) {
@@ -62,3 +65,4 @@ exports.handler = async (event) => {
     return json(500, { success: false, error: error.message });
   }
 };
+

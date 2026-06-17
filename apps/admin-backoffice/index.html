@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
+<style>html{min-height:100%;overflow-y:auto;scrollbar-gutter:stable}
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --blue:#075cff;
@@ -25,7 +25,7 @@
   --red:#dc2626;
   --shadow:0 24px 70px rgba(15,23,42,.14);
 }
-body{min-height:100dvh;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+body{min-height:100dvh;overflow:auto;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
 button,input,select{font:inherit}button{cursor:pointer}
 .auth{min-height:100dvh;display:grid;place-items:center;padding:22px}
 .auth-card{width:min(400px,100%);background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:24px}
@@ -39,17 +39,17 @@ button,input,select{font:inherit}button{cursor:pointer}
 .btn.secondary{background:#fff;border-color:var(--line-strong);color:var(--text)}.btn.ghost{background:rgba(7,92,255,.06);border-color:rgba(7,92,255,.2);color:var(--blue)}
 .btn.danger{background:#fff1f2;border-color:#fecdd3;color:var(--red)}.btn.success{background:#ecfdf3;border-color:#bbf7d0;color:#15803d}
 .status{font-size:11px;color:var(--red);min-height:16px;text-align:center;margin-top:9px}
-.app{display:none;min-height:100dvh;padding:18px}.shell{width:min(1320px,100%);height:calc(100dvh - 36px);min-height:720px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:240px minmax(0,1fr)}
+.app{display:none;min-height:100dvh;padding:18px;overflow:visible}.shell{width:min(1320px,100%);min-height:calc(100dvh - 36px);margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:visible;display:grid;grid-template-columns:240px minmax(0,1fr)}
 .side{background:#fbfcfe;border-right:1px solid var(--line);padding:16px;display:flex;flex-direction:column;min-width:0}
 .brand{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:3px 2px 14px;border-bottom:1px solid var(--line)}.brand img{width:92px;height:auto}.brand small{font-size:9px;color:var(--muted);font-weight:800;text-transform:uppercase}
 .admin-card{padding:14px 0;border-bottom:1px solid var(--line)}.admin-card h2{font-size:13px;line-height:1.25}.admin-card p{font-size:10px;color:var(--muted);line-height:1.35;margin-top:4px}
 .nav{display:grid;gap:5px;margin-top:14px}.nav button{height:34px;border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;color:var(--text);font-size:11px;font-weight:750;padding:0 10px}.nav button.active{background:rgba(7,92,255,.07);border-color:rgba(7,92,255,.24);color:var(--blue)}
 .side-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}.mini{font-size:10px;color:var(--muted);line-height:1.35}
-.main{display:grid;grid-template-rows:66px minmax(0,1fr);min-width:0}.topbar{border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 22px;background:#fff}
+.main{display:flex;flex-direction:column;min-width:0;min-height:0}.topbar{border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 22px;background:#fff}
 .topbar h2{font-size:18px;letter-spacing:-.2px}.topbar p{font-size:10px;color:var(--muted);margin-top:3px}.top-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .logo-clean{width:86px;height:auto;display:block}.menu-btn{display:none;width:34px;height:34px;border:0;background:transparent;align-items:center;justify-content:center;gap:4px;flex-direction:column}.menu-btn span{width:16px;height:2px;border-radius:999px;background:var(--text)}
 .backdrop{display:none;position:fixed;inset:0;background:rgba(7,11,20,.42);z-index:38;opacity:0;transition:.18s}.backdrop.open{opacity:1}
-.content{overflow:auto;padding:18px 22px;background:#fff}.view{display:none}.view.active{display:block}
+.content{flex:1 1 auto;overflow:visible;padding:18px 22px;background:#fff}.view{display:none}.view.active{display:block}
 .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:13px}.metric{border:1px solid var(--line);border-radius:12px;background:#fff;padding:11px;min-height:72px}.metric small{display:block;font-size:9px;color:var(--muted);font-weight:850;text-transform:uppercase}.metric strong{display:block;font-size:24px;line-height:1;margin-top:9px}.metric span{display:block;font-size:9px;color:var(--muted);margin-top:5px}
 .grid{display:grid;grid-template-columns:minmax(0,1.4fr) 350px;gap:13px;align-items:start}.panel{border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:11px}.panel-head h3{font-size:14px;line-height:1.2}.panel-head p{font-size:10px;color:var(--muted);line-height:1.4;margin-top:3px}
 .filters{display:flex;gap:6px;flex-wrap:wrap}.filters button{height:28px;border:1px solid var(--line-strong);border-radius:999px;background:#fff;padding:0 9px;font-size:9px;font-weight:800;color:var(--muted)}.filters button.active{border-color:var(--blue);background:rgba(7,92,255,.06);color:var(--blue)}
@@ -60,8 +60,7 @@ button,input,select{font:inherit}button{cursor:pointer}
 .export-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.export-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;display:grid;gap:8px}.export-card h4{font-size:12px}.export-card p{font-size:10px;color:var(--muted);line-height:1.4;min-height:42px}
 .empty{border:1px dashed var(--line-strong);border-radius:12px;padding:20px 14px;text-align:center;color:var(--muted);font-size:11px;line-height:1.45}
 .toast{position:fixed;right:22px;bottom:22px;max-width:320px;border:1px solid rgba(22,163,74,.28);border-radius:12px;background:#fff;box-shadow:0 18px 45px rgba(15,23,42,.18);padding:11px 13px;font-size:11px;font-weight:800;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
-@media(max-width:980px){
-  body{background:#fff}.app{padding:0}.shell{height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none;grid-template-columns:1fr}.side{position:fixed;left:0;top:0;bottom:0;width:min(310px,86vw);z-index:40;border-right:1px solid var(--line);box-shadow:24px 0 70px rgba(15,23,42,.22);transform:translateX(-105%);transition:.22s;overflow:auto}.side.open{transform:translateX(0)}.backdrop{display:block;pointer-events:none}.backdrop.open{pointer-events:auto}.menu-btn{display:inline-flex;flex:0 0 auto}.main{grid-template-rows:auto minmax(0,1fr)}.topbar{padding:12px 14px;position:sticky;top:0;z-index:30}.topbar h2{font-size:16px}.topbar p{max-width:48vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.content{padding:16px}.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.export-grid{grid-template-columns:1fr}.top-actions .btn.ghost{display:none}
+@media(max-width:980px){  body{background:#fff}.app{padding:0;overflow:visible}.shell{min-height:100dvh;height:auto;border:0;border-radius:0;box-shadow:none;grid-template-columns:1fr}.side{position:fixed;left:0;top:0;bottom:0;width:min(310px,86vw);z-index:40;border-right:1px solid var(--line);box-shadow:24px 0 70px rgba(15,23,42,.22);transform:translateX(-105%);transition:.22s;overflow:auto}.side.open{transform:translateX(0)}.backdrop{display:block;pointer-events:none}.backdrop.open{pointer-events:auto}.menu-btn{display:inline-flex;flex:0 0 auto}.main{min-height:100dvh}.topbar{padding:12px 14px;position:sticky;top:0;z-index:30}.topbar h2{font-size:16px}.topbar p{max-width:48vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.content{padding:16px}.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.export-grid{grid-template-columns:1fr}.top-actions .btn.ghost{display:none}
 }
 @media(max-width:560px){.metrics{gap:6px}.metric{padding:9px;min-height:64px}.metric small{font-size:7.5px}.metric strong{font-size:20px}.logo-clean{width:74px}.panel-head{flex-direction:column}.bar-row{grid-template-columns:92px 1fr 38px}}
 </style>
@@ -91,6 +90,7 @@ button,input,select{font:inherit}button{cursor:pointer}
       <nav class="nav">
         <button class="active" data-view="overview" type="button">Visao geral</button>
         <button data-view="workshops" type="button">Oficinas</button>
+        <button data-view="users" type="button">Usuarios</button>
         <button data-view="subscriptions" type="button">Assinaturas</button>
         <button data-view="payments" type="button">Pagamentos</button>
         <button data-view="analytics" type="button">Analytics</button>
@@ -143,6 +143,16 @@ button,input,select{font:inherit}button{cursor:pointer}
           </div>
         </section>
 
+
+        <section class="view" id="view-users">
+          <div class="panel">
+            <div class="panel-head">
+              <div><h3>Usuarios</h3><p>Motoristas cadastrados, atividade, veiculos, solicitacoes e anuncios.</p></div>
+              <button class="btn secondary" data-export="users" type="button">Exportar CSV</button>
+            </div>
+            <div class="table-wrap"><table class="table"><thead><tr><th>Usuario</th><th>Contato</th><th>Registro</th><th>Ultimo login</th><th>Veiculos</th><th>Solicitacoes</th><th>Anuncios</th></tr></thead><tbody id="userRows"></tbody></table></div>
+          </div>
+        </section>
         <section class="view" id="view-subscriptions">
           <div class="grid">
             <section class="panel">
@@ -206,6 +216,7 @@ const $=(id)=>document.getElementById(id);
 const titles={
   overview:["Visao geral","Indicadores principais da operacao."],
   workshops:["Oficinas","Cadastro, aprovacao, visibilidade e dados fiscais."],
+  users:["Usuarios","Motoristas, atividade e anuncios publicados."],
   subscriptions:["Assinaturas","Validade, pagamento e vencimento da membresia."],
   payments:["Pagamentos","Historico financeiro por oficina."],
   analytics:["Analytics","Demanda por lugar, chat, servico e conversao."],
@@ -288,6 +299,7 @@ async function loadAdminData(){
     data.dashboard=payload.dashboard||null;
     data.subscriptions=payload.subscriptions||[];
     data.payments=payload.payments||[];
+    data.users=payload.adminUsers||payload.users||[];
     const locationAnalytics=(payload.topLocations||[]).map((e)=>({event_type:"search",label:e.location_text||[e.neighborhood,e.city,e.state].filter(Boolean).join(", ")||"Local nao informado",value:Number(e.event_count||0)}));
     const serviceAnalytics=(payload.topServices||[]).map((e)=>({event_type:"service",label:e.service_category||"Servico nao informado",value:Number(e.event_count||0)}));
     const rawAnalytics=(payload.analyticsEvents||[]).map((e)=>({event_type:e.event_type,label:e.location_text||e.service_category||e.metadata?.label||e.event_type,value:1}));
@@ -340,6 +352,18 @@ function renderWorkshops(){
   $("workshopRows").querySelectorAll("[data-block]").forEach((btn)=>btn.addEventListener("click",()=>setWorkshopStatus(btn.dataset.block,"blocked",false,false)));
   $("workshopRows").querySelectorAll("[data-pay]").forEach((btn)=>btn.addEventListener("click",()=>registerPayment(btn.dataset.pay)));
 }
+function renderUsers(){
+  const rows=(data.users||[]).map((user)=>{
+    const name=user.full_name||user.name||user.email||"Usuario";
+    const email=user.email||"-";
+    const phone=user.phone||user.contact_phone||"-";
+    const vehicles=user.vehicle_count??user.vehicles_count??0;
+    const requests=user.service_request_count??user.requests_count??0;
+    const listings=user.vehicle_listing_count??user.listings_count??0;
+    return `<tr><td><b>${esc(name)}</b><small>${esc(user.id||"")}</small></td><td>${esc(email)}<small>${esc(phone)}</small></td><td>${dateBR(user.created_at)}</td><td>${dateBR(user.last_sign_in_at)}</td><td>${vehicles}</td><td>${requests}</td><td>${listings}</td></tr>`;
+  }).join("");
+  $("userRows").innerHTML=rows||'<tr><td colspan="7"><div class="empty">Sem usuarios carregados ainda.</div></td></tr>';
+}
 function renderPayments(){
   $("paymentRows").innerHTML=data.payments.map((p)=>{const w=workshop(p.workshop_id);return `<tr><td>${dateBR(p.paid_at)}</td><td><b>${esc(w.name)}</b><small>${esc(w.cnpj)}</small></td><td><span class="pill ${esc(p.status)}">${esc(p.status)}</span></td><td>${esc(p.method)}</td><td>${money(p.amount)}</td><td>${esc(p.reference)}</td><td>${esc(p.notes||"-")}</td></tr>`}).join("");
 }
@@ -358,6 +382,7 @@ function renderAlerts(){
 function renderExports(){
   const exports=[
     ["workshops","Oficinas completas","Dados cadastrais, fiscal, cidade, status, categorias e assinatura."],
+    ["users","Usuarios","Motoristas, contato, veiculos, solicitacoes e anuncios."],
     ["subscriptions","Assinaturas","Validade, inicio, vencimento, plano, valor e referencia de pagamento."],
     ["payments","Pagamentos","Historico financeiro para controle e conciliacao."],
     ["analytics-locations","Lugares buscados","Cidades, bairros e regioes mais demandadas."],
@@ -372,6 +397,7 @@ function renderAudit(){
 }
 function rowsForExport(key){
   if(key==="workshops")return data.workshops;
+  if(key==="users")return data.users||[];
   if(key==="subscriptions")return data.subscriptions.map((s)=>({...s,workshop_name:workshop(s.workshop_id).name,cnpj:workshop(s.workshop_id).cnpj}));
   if(key==="payments")return data.payments.map((p)=>({...p,workshop_name:workshop(p.workshop_id).name,cnpj:workshop(p.workshop_id).cnpj}));
   if(key==="analytics-locations")return aggregate("search").map(([location,count])=>({location,count}));
@@ -387,7 +413,7 @@ function downloadCSV(key){
   const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`vai-rodar-${key}.csv`;a.click();URL.revokeObjectURL(url);toast("CSV gerado.");
 }
 function bindExports(){document.querySelectorAll("[data-export]").forEach((btn)=>{btn.onclick=()=>downloadCSV(btn.dataset.export)})}
-function renderAll(){renderMetrics();renderSubscriptions();renderWorkshops();renderPayments();renderBars("locationBars","search");renderBars("serviceBars","service");renderAlerts();renderExports();renderAudit();bindExports()}
+function renderAll(){renderMetrics();renderSubscriptions();renderWorkshops();renderUsers();renderPayments();renderBars("locationBars","search");renderBars("serviceBars","service");renderAlerts();renderExports();renderAudit();bindExports()}
 async function setWorkshopStatus(workshopId,approvalStatus,visible,open){
   if(!confirm(`Confirmar alteracao da oficina para ${approvalStatus}?`))return;
   try{
@@ -428,3 +454,6 @@ document.querySelectorAll("[data-filter-workshop]").forEach((btn)=>btn.addEventL
 </script>
 </body>
 </html>
+
+
+

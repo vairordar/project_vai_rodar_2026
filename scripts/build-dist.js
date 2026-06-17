@@ -56,6 +56,7 @@ copyFile(path.join(APPS, "user-app", "index.html"),   path.join(DIST, "index.htm
 copyFile(path.join(APPS, "user-app", "manifest.json"), path.join(DIST, "manifest.json"));
 copyFile(path.join(APPS, "user-app", "service-worker.js"), path.join(DIST, "service-worker.js"));
 copyDir( path.join(APPS, "user-app", "assets"),       path.join(DIST, "assets"));
+copyDir( path.join(APPS, "user-app", "legal"),        path.join(DIST, "legal"));
 
 // OneSignalSDKWorker si existe
 const oneSignalSrc = path.join(APPS, "user-app", "OneSignalSDKWorker.js");
