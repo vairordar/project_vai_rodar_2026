@@ -91,6 +91,7 @@ button,input,select{font:inherit}button{cursor:pointer}
         <button class="active" data-view="overview" type="button">Visao geral</button>
         <button data-view="workshops" type="button">Oficinas</button>
         <button data-view="users" type="button">Usuarios</button>
+        <button data-view="listings" type="button">Anuncios</button>
         <button data-view="subscriptions" type="button">Assinaturas</button>
         <button data-view="payments" type="button">Pagamentos</button>
         <button data-view="analytics" type="button">Analytics</button>
@@ -151,6 +152,16 @@ button,input,select{font:inherit}button{cursor:pointer}
               <button class="btn secondary" data-export="users" type="button">Exportar CSV</button>
             </div>
             <div class="table-wrap"><table class="table"><thead><tr><th>Usuario</th><th>Contato</th><th>Registro</th><th>Ultimo login</th><th>Veiculos</th><th>Solicitacoes</th><th>Anuncios</th></tr></thead><tbody id="userRows"></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-listings">
+          <div class="panel">
+            <div class="panel-head">
+              <div><h3>Anuncios de veiculos</h3><p>Aprove, rejeite e acompanhe os carros publicados pelos usuarios.</p></div>
+              <div class="filters"><button class="active" data-filter-listing="all" type="button">Todos</button><button data-filter-listing="pending_review" type="button">Em revisao</button><button data-filter-listing="active" type="button">Ativos</button><button data-export="vehicle-listings" type="button">CSV</button></div>
+            </div>
+            <div class="table-wrap"><table class="table"><thead><tr><th>Veiculo</th><th>Usuario</th><th>Preco</th><th>Local</th><th>Status</th><th>Acoes</th></tr></thead><tbody id="listingRows"></tbody></table></div>
           </div>
         </section>
         <section class="view" id="view-subscriptions">
@@ -217,13 +228,14 @@ const titles={
   overview:["Visao geral","Indicadores principais da operacao."],
   workshops:["Oficinas","Cadastro, aprovacao, visibilidade e dados fiscais."],
   users:["Usuarios","Motoristas, atividade e anuncios publicados."],
+  listings:["Anuncios","Aprovacao e controle dos carros publicados."],
   subscriptions:["Assinaturas","Validade, pagamento e vencimento da membresia."],
   payments:["Pagamentos","Historico financeiro por oficina."],
   analytics:["Analytics","Demanda por lugar, chat, servico e conversao."],
   exports:["Exportacoes","Dados prontos para Excel."],
   audit:["Auditoria","Trazabilidade das acoes administrativas."]
 };
-const state={view:"overview",workshopFilter:"all",loadedFromSupabase:false,adminPassword:sessionStorage.getItem("vr_admin_password")||""};
+const state={view:"overview",workshopFilter:"all",listingFilter:"all",loadedFromSupabase:false,adminPassword:sessionStorage.getItem("vr_admin_password")||""};
 const today=new Date();
 const daysBetween=(date)=>Math.ceil((new Date(date)-today)/86400000);
 const money=(value)=>Number(value||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
@@ -263,6 +275,10 @@ const data={
     {created_at:"2026-06-15T09:40:00",admin_email:"admin@vairodar.com.br",action:"subscription_created",entity:"workshop_subscriptions",detail:"Auto Center Butanta ativado por 365 dias"},
     {created_at:"2026-06-14T18:10:00",admin_email:"admin@vairodar.com.br",action:"workshop_approved",entity:"workshops",detail:"Pneus Moema aprovado"},
     {created_at:"2026-06-13T11:22:00",admin_email:"admin@vairodar.com.br",action:"profile_change_reviewed",entity:"workshop_profile_change_requests",detail:"Categoria recusada: fora do cadastro inicial"}
+  ],
+  vehicle_listings:[
+    {id:"vl-001",plate:"ABC1D23",brand:"Volkswagen",model:"T-Cross",year:2021,color:"Prata",price:92000,location:"Butanta, Sao Paulo",status:"pending_review",user_email:"motorista@demo.com",user_name:"Motorista Demo",created_at:"2026-06-16"},
+    {id:"vl-002",plate:"DEF4G56",brand:"Chevrolet",model:"Onix",year:2020,color:"Branco",price:56500,location:"Moema, Sao Paulo",status:"active",user_email:"cliente@demo.com",user_name:"Cliente Demo",created_at:"2026-06-15"}
   ],
   dashboard:null,
   chat_usage:[]
@@ -308,6 +324,7 @@ async function loadAdminData(){
     data.service_requests=payload.serviceRequests||[];
     data.reservations=payload.reservations||[];
     data.audit_logs=payload.auditLogs||[];
+    data.vehicle_listings=payload.vehicleListings||payload.vehicle_listings||[];
     state.loadedFromSupabase=true;
     return true;
   }catch(error){console.warn("[admin load]",error.message);toast(error.message||"Nao foi possivel carregar admin.");return false}
@@ -364,6 +381,22 @@ function renderUsers(){
   }).join("");
   $("userRows").innerHTML=rows||'<tr><td colspan="7"><div class="empty">Sem usuarios carregados ainda.</div></td></tr>';
 }
+function renderVehicleListings(){
+  const listings=data.vehicle_listings||[];
+  const filtered=listings.filter((listing)=>state.listingFilter==="all"||(listing.status||"pending_review")===state.listingFilter);
+  $("listingRows").innerHTML=filtered.map((listing)=>{
+    const title=[listing.brand,listing.model].filter(Boolean).join(" ")||listing.plate||"Veiculo";
+    const owner=(data.users||[]).find((item)=>item.id===listing.user_id)||{};
+    const user=listing.user_name||listing.full_name||owner.full_name||owner.name||listing.email||listing.user_email||"-";
+    const email=listing.user_email||listing.email||listing.owner_email||owner.email||"-";
+    const status=listing.status||"pending_review";
+    const canApprove=status!=="active";
+    const canReject=status!=="rejected";
+    return `<tr><td><b>${esc(title)}</b><small>${esc([listing.plate,listing.year,listing.color].filter(Boolean).join(" · "))}</small></td><td>${esc(user)}<small>${esc(email)}</small></td><td>${listing.price?money(listing.price):"A combinar"}</td><td>${esc(listing.location||listing.city||"-")}</td><td><span class="pill ${esc(status)}">${esc(status)}</span><small>${dateBR(listing.created_at)}</small></td><td><small style="display:flex;gap:5px;flex-wrap:wrap">${canApprove?`<button class="btn success" data-approve-listing="${esc(listing.id)}" type="button">Aprovar</button>`:""}${canReject?`<button class="btn danger" data-reject-listing="${esc(listing.id)}" type="button">Rejeitar</button>`:""}</small></td></tr>`;
+  }).join("")||'<tr><td colspan="6"><div class="empty">Sem anuncios nesta lista.</div></td></tr>';
+  $("listingRows").querySelectorAll("[data-approve-listing]").forEach((btn)=>btn.addEventListener("click",()=>setVehicleListingStatus(btn.dataset.approveListing,"active")));
+  $("listingRows").querySelectorAll("[data-reject-listing]").forEach((btn)=>btn.addEventListener("click",()=>setVehicleListingStatus(btn.dataset.rejectListing,"rejected")));
+}
 function renderPayments(){
   $("paymentRows").innerHTML=data.payments.map((p)=>{const w=workshop(p.workshop_id);return `<tr><td>${dateBR(p.paid_at)}</td><td><b>${esc(w.name)}</b><small>${esc(w.cnpj)}</small></td><td><span class="pill ${esc(p.status)}">${esc(p.status)}</span></td><td>${esc(p.method)}</td><td>${money(p.amount)}</td><td>${esc(p.reference)}</td><td>${esc(p.notes||"-")}</td></tr>`}).join("");
 }
@@ -383,6 +416,7 @@ function renderExports(){
   const exports=[
     ["workshops","Oficinas completas","Dados cadastrais, fiscal, cidade, status, categorias e assinatura."],
     ["users","Usuarios","Motoristas, contato, veiculos, solicitacoes e anuncios."],
+    ["vehicle-listings","Anuncios de veiculos","Publicacoes de compra e venda, status de revisao, usuario, preco e local."],
     ["subscriptions","Assinaturas","Validade, inicio, vencimento, plano, valor e referencia de pagamento."],
     ["payments","Pagamentos","Historico financeiro para controle e conciliacao."],
     ["analytics-locations","Lugares buscados","Cidades, bairros e regioes mais demandadas."],
@@ -398,6 +432,7 @@ function renderAudit(){
 function rowsForExport(key){
   if(key==="workshops")return data.workshops;
   if(key==="users")return data.users||[];
+  if(key==="vehicle-listings")return data.vehicle_listings||[];
   if(key==="subscriptions")return data.subscriptions.map((s)=>({...s,workshop_name:workshop(s.workshop_id).name,cnpj:workshop(s.workshop_id).cnpj}));
   if(key==="payments")return data.payments.map((p)=>({...p,workshop_name:workshop(p.workshop_id).name,cnpj:workshop(p.workshop_id).cnpj}));
   if(key==="analytics-locations")return aggregate("search").map(([location,count])=>({location,count}));
@@ -413,11 +448,13 @@ function downloadCSV(key){
   const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`vai-rodar-${key}.csv`;a.click();URL.revokeObjectURL(url);toast("CSV gerado.");
 }
 function bindExports(){document.querySelectorAll("[data-export]").forEach((btn)=>{btn.onclick=()=>downloadCSV(btn.dataset.export)})}
-function renderAll(){renderMetrics();renderSubscriptions();renderWorkshops();renderUsers();renderPayments();renderBars("locationBars","search");renderBars("serviceBars","service");renderAlerts();renderExports();renderAudit();bindExports()}
+function renderAll(){renderMetrics();renderSubscriptions();renderWorkshops();renderUsers();renderVehicleListings();renderPayments();renderBars("locationBars","search");renderBars("serviceBars","service");renderAlerts();renderExports();renderAudit();bindExports()}
 async function setWorkshopStatus(workshopId,approvalStatus,visible,open){
   if(!confirm(`Confirmar alteracao da oficina para ${approvalStatus}?`))return;
   try{
     await adminAction("setWorkshopVisibility",{workshop_id:workshopId,approval_status:approvalStatus,visible,open});
+    await loadAdminData();
+    renderAll();
     toast("Oficina atualizada.");
   }catch(error){toast(error.message||"Nao foi possivel atualizar oficina.")}
 }
@@ -428,8 +465,19 @@ async function registerPayment(workshopId){
   const reference=prompt("Referencia do pagamento", `ADMIN-${Date.now()}`)||`ADMIN-${Date.now()}`;
   try{
     await adminAction("createSubscriptionPayment",{workshop_id:workshopId,amount:Number(amount),method,reference,duration_days:365});
+    await loadAdminData();
+    renderAll();
     toast("Pagamento e assinatura registrados.");
   }catch(error){toast(error.message||"Nao foi possivel registrar pagamento.")}
+}
+async function setVehicleListingStatus(listingId,status){
+  if(!confirm(`Confirmar anuncio como ${status}?`))return;
+  try{
+    await adminAction("setVehicleListingStatus",{listing_id:listingId,status});
+    await loadAdminData();
+    renderAll();
+    toast("Anuncio atualizado.");
+  }catch(error){toast(error.message||"Nao foi possivel atualizar anuncio.")}
 }
 $("loginForm").addEventListener("submit",async(event)=>{
   event.preventDefault();
@@ -451,6 +499,7 @@ $("refreshBtn").addEventListener("click",async()=>{await loadAdminData();renderA
 $("menuBtn").addEventListener("click",openDrawer);$("drawerBackdrop").addEventListener("click",closeDrawer);
 document.querySelectorAll(".nav button").forEach((btn)=>btn.addEventListener("click",()=>setView(btn.dataset.view)));
 document.querySelectorAll("[data-filter-workshop]").forEach((btn)=>btn.addEventListener("click",()=>{document.querySelectorAll("[data-filter-workshop]").forEach((b)=>b.classList.remove("active"));btn.classList.add("active");state.workshopFilter=btn.dataset.filterWorkshop;renderWorkshops()}));
+document.querySelectorAll("[data-filter-listing]").forEach((btn)=>btn.addEventListener("click",()=>{document.querySelectorAll("[data-filter-listing]").forEach((b)=>b.classList.remove("active"));btn.classList.add("active");state.listingFilter=btn.dataset.filterListing;renderVehicleListings()}));
 </script>
 </body>
 </html>

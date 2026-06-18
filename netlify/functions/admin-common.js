@@ -6,7 +6,7 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Password',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Password, Authorization',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Content-Type': 'application/json',
 };

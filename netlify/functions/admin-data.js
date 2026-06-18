@@ -28,6 +28,7 @@ exports.handler = async (event) => {
       reservations,
       auditLogs,
       adminUsers,
+      vehicleListings,
     ] = await Promise.all([
       readMaybe('/rest/v1/admin_workshops_overview?select=*&limit=1000', []),
       readMaybe('/rest/v1/admin_dashboard_summary?select=*&limit=1', []),
@@ -41,6 +42,7 @@ exports.handler = async (event) => {
       readMaybe('/rest/v1/reservations?select=id,status&limit=5000', []),
       readMaybe('/rest/v1/admin_audit_logs?select=*&order=created_at.desc&limit=500', []),
       readMaybe('/rest/v1/admin_users_overview?select=*&limit=5000', []),
+      readMaybe('/rest/v1/vehicle_listings?select=*&order=created_at.desc&limit=1000', []),
     ]);
 
     return json(200, {
@@ -58,6 +60,7 @@ exports.handler = async (event) => {
         reservations,
         auditLogs,
         adminUsers,
+        vehicleListings,
       },
     });
   } catch (error) {

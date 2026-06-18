@@ -739,6 +739,40 @@ h1{
 .app-shell.offices-open .office-card{grid-template-columns:54px 1fr auto;gap:8px;border-radius:13px;background:#fff;padding:7px;box-shadow:none}.app-shell.offices-open .office-photo{width:54px;height:48px;border-radius:9px}.app-shell.offices-open .office-card h3{font-size:10px;margin-bottom:2px}.app-shell.offices-open .office-address{font-size:8px;margin-bottom:5px}.app-shell.offices-open .office-links{gap:5px}.app-shell.offices-open .office-links button{height:24px;padding:0 8px;font-size:8px}.app-shell.offices-open .office-score{font-size:10px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:9px;padding-top:9px}
 .app-shell.offices-open .office-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0}.app-shell.offices-open .office-actions button{height:34px;border-radius:12px;font-size:10px}
 .app-shell.offices-open .leaflet-control-zoom{border:0!important;box-shadow:0 12px 30px rgba(15,23,42,.16)!important}.app-shell.offices-open .leaflet-control-zoom a{border:0!important;color:#0f172a!important}.app-shell.offices-open .leaflet-control-attribution{background:rgba(255,255,255,.65)!important}
+body.theme-dark .app-shell.offices-open .office-map-shell{background:#050607}
+body.theme-dark .app-shell.offices-open .office-map{background:#eef3f8;filter:saturate(.82) contrast(1.03) brightness(1.04)}
+body.theme-dark .app-shell.offices-open .office-map .leaflet-tile{filter:none}
+body.theme-dark .app-shell.offices-open .office-map::after{background:linear-gradient(180deg,rgba(5,6,7,.74) 0%,rgba(5,6,7,.24) 28%,rgba(5,6,7,0) 52%,rgba(5,6,7,.42) 100%)}
+body.theme-dark .app-shell.offices-open .office-ai-search,
+body.theme-dark .app-shell.offices-open .office-filters,
+body.theme-dark .office-filter-menu>summary,
+body.theme-dark .office-results-sheet,
+body.theme-dark .app-shell.offices-open .office-map-focus{
+  border-color:rgba(7,92,255,.72);
+  background:rgba(6,9,14,.94);
+  box-shadow:0 22px 58px rgba(0,0,0,.46),0 0 0 1px rgba(7,92,255,.08);
+}
+body.theme-dark .app-shell.offices-open .office-ai-search input,
+body.theme-dark .app-shell.offices-open .office-filter,
+body.theme-dark .app-shell.offices-open .rating-filter summary,
+body.theme-dark .app-shell.offices-open .clear-filters,
+body.theme-dark .app-shell.offices-open .rating-panel{
+  border-color:rgba(7,92,255,.55);
+  background:#080b11;
+  color:#fff;
+}
+body.theme-dark .app-shell.offices-open .office-card{
+  border:1px solid rgba(7,92,255,.42);
+  background:#08090b;
+  color:#fff;
+}
+body.theme-dark .app-shell.offices-open .office-card.map-active{border-color:var(--blue);box-shadow:0 14px 34px rgba(7,92,255,.2)}
+body.theme-dark .office-sheet-grip{background:#1d4ed8}
+body.theme-dark .app-shell.offices-open .leaflet-control-zoom a{background:#080b11!important;color:#fff!important}
+body.theme-dark .app-shell.offices-open .leaflet-control-attribution{background:rgba(6,9,14,.75)!important;color:#fff!important}
+body.theme-dark .app-shell.offices-open .leaflet-popup-content-wrapper,
+body.theme-dark .app-shell.offices-open .leaflet-popup-tip{background:#080b11;color:#fff}
+body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
 @media(min-width:760px){.office-results-sheet{left:auto;right:12px;top:178px;bottom:12px;width:330px;max-height:none}.app-shell.offices-open .office-map-focus{top:128px}.office-map-top{right:auto;width:420px}.app-shell.offices-open .office-filters{width:380px}}
 @media(max-width:520px){.app-shell.offices-open .app{padding-top:68px;padding-bottom:0}.office-map-head h2{font-size:20px}.office-map-head p{max-width:190px}.office-results-sheet{max-height:42%}.app-shell.offices-open .office-card{grid-template-columns:50px 1fr}.app-shell.offices-open .office-score{grid-column:2;justify-self:start}.app-shell.offices-open .office-map-focus{top:134px}.app-shell.offices-open .office-filters{width:calc(100vw - 44px)}}
 .parts-intro{color:var(--muted);font-size:10px;line-height:1.45;margin:-3px 0 12px}
@@ -1153,6 +1187,65 @@ h1{
   z-index:10;
 }
 .app-shell.flow-active .bottom-tools{display:none}
+.pwa-install-backdrop{
+  position:absolute;
+  inset:0;
+  display:none;
+  background:rgba(15,23,42,.34);
+  backdrop-filter:blur(8px);
+  z-index:760;
+}
+.pwa-install-backdrop.show{display:block}
+.pwa-install-banner{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(326px,calc(100% - 36px));
+  display:none;
+  grid-template-columns:1fr;
+  gap:12px;
+  align-items:start;
+  padding:18px;
+  border:1px solid rgba(7,92,255,.18);
+  border-radius:22px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 30px 78px rgba(15,23,42,.3);
+  backdrop-filter:blur(18px);
+  z-index:770;
+  opacity:0;
+  transform:translate(-50%,-46%);
+  pointer-events:none;
+  transition:opacity .22s ease,transform .22s ease;
+}
+.pwa-install-banner.show{display:grid;opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
+.pwa-install-icon{width:54px;height:54px;border-radius:16px;background:var(--blue);display:grid;place-items:center;box-shadow:0 14px 30px rgba(7,92,255,.28)}
+.pwa-install-icon img{width:40px;height:40px;object-fit:contain}
+.pwa-install-copy b{display:block;color:var(--headline);font-size:18px;line-height:1.15;letter-spacing:0}
+.pwa-install-copy span{display:block;color:var(--muted);font-size:12px;line-height:1.45;margin-top:7px}
+.pwa-install-actions{display:grid;gap:8px;width:100%}
+.pwa-install-actions button{height:46px;border-radius:999px;border:0;font-size:13px;font-weight:850;cursor:pointer}
+.pwa-install-primary{padding:0 14px;background:var(--blue);color:#fff}
+.pwa-install-close{position:absolute;right:12px;top:12px;width:34px;height:34px;background:rgba(7,92,255,.08);color:var(--blue);border-radius:50%!important}
+.app-shell.flow-active .pwa-install-banner,
+.app-shell.offices-open .pwa-install-banner,
+.app-shell.parts-open .pwa-install-banner,
+.app-shell.proposal-open .pwa-install-banner,
+.app-shell.cars-open .pwa-install-banner,
+.app-shell.sell-car-open .pwa-install-banner,
+.app-shell.quick-evaluation-open .pwa-install-banner,
+.app-shell.benefits-open .pwa-install-banner,
+.app-shell.workshop-register-open .pwa-install-banner,
+.app-shell.how-open .pwa-install-banner{display:none}
+.app-shell.flow-active .pwa-install-backdrop,
+.app-shell.offices-open .pwa-install-backdrop,
+.app-shell.parts-open .pwa-install-backdrop,
+.app-shell.proposal-open .pwa-install-backdrop,
+.app-shell.cars-open .pwa-install-backdrop,
+.app-shell.sell-car-open .pwa-install-backdrop,
+.app-shell.quick-evaluation-open .pwa-install-backdrop,
+.app-shell.benefits-open .pwa-install-backdrop,
+.app-shell.workshop-register-open .pwa-install-backdrop,
+.app-shell.how-open .pwa-install-backdrop{display:none}
 .tool-btn{
   min-width:0;
   height:50px;
@@ -1473,11 +1566,12 @@ h1{
   color:var(--text);
   transform:translateX(calc(100% + 48px));
   transition:.24s;
-  z-index:21;
+  z-index:900;
   border:1px solid var(--line);
   border-radius:16px;
   box-shadow:0 22px 50px rgba(0,0,0,.22);
 }
+.app-shell.offices-open .topbar{z-index:650}
 .side-menu.open{transform:translateX(0)}
 .close{
   position:absolute;
@@ -1954,7 +2048,7 @@ body.theme-dark{
                   <button class="inline-location" id="useOfficeLocation" type="button" aria-label="Usar localização"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
                 </div>
                 <select class="office-filter" id="officeOpenFilter" aria-label="Aberto"><option value="all">Todos</option><option value="open">Aberto agora</option></select>
-                <select class="office-filter" id="officeCategoryFilter" aria-label="Categoria"><option value="">Serviço</option><option>Pneus e alinhamento</option><option>Freios e suspensão</option><option>Motor e transmissão</option><option>Elétrica automotiva</option><option>Revisão geral</option></select>
+                <select class="office-filter" id="officeCategoryFilter" aria-label="Categoria"><option value="">Serviço</option></select>
                 <details class="rating-filter" id="ratingFilter"><summary>Avaliação</summary><div class="rating-panel"><label><input type="checkbox" value="4.8"> 4.8 ou mais</label><label><input type="checkbox" value="4.6"> 4.6 ou mais</label><label><input type="checkbox" value="4.4"> 4.4 ou mais</label></div></details>
                 <button class="clear-filters" id="clearOfficeFilters" type="button">Limpar</button>
               </div>
@@ -2207,6 +2301,18 @@ body.theme-dark{
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
         <span>Notificações</span>
       </button>
+    </div>
+    <div class="pwa-install-backdrop" id="pwaInstallBackdrop"></div>
+    <div class="pwa-install-banner" id="pwaInstallBanner" role="dialog" aria-modal="true" aria-labelledby="pwaInstallTitle" aria-describedby="pwaInstallText">
+      <button class="pwa-install-close" id="pwaInstallClose" type="button" aria-label="Fechar">×</button>
+      <div class="pwa-install-icon"><img src="assets/vai_rodar_logo_transparent.png" alt="VR"></div>
+      <div class="pwa-install-copy">
+        <b id="pwaInstallTitle">Instale o Vai Rodar</b>
+        <span id="pwaInstallText">Acesse mais rápido pela tela inicial do celular.</span>
+      </div>
+      <div class="pwa-install-actions">
+        <button class="pwa-install-primary" id="pwaInstallBtn" type="button">Instalar</button>
+      </div>
     </div>
 
     <div class="overlay" id="overlay"></div>
@@ -2640,6 +2746,12 @@ const mobileNotificationsBtn=document.getElementById("mobileNotificationsBtn");
 const notificationsPanel=document.getElementById("notificationsPanel");
 const notificationsClose=document.getElementById("notificationsClose");
 const notificationList=document.getElementById("notificationList");
+const pwaInstallBackdrop=document.getElementById("pwaInstallBackdrop");
+const pwaInstallBanner=document.getElementById("pwaInstallBanner");
+const pwaInstallBtn=document.getElementById("pwaInstallBtn");
+const pwaInstallClose=document.getElementById("pwaInstallClose");
+const pwaInstallTitle=document.getElementById("pwaInstallTitle");
+const pwaInstallText=document.getElementById("pwaInstallText");
 const menuReservationsBtn=document.getElementById("menuReservationsBtn");
 const reservationsPanel=document.getElementById("reservationsPanel");
 const reservationsClose=document.getElementById("reservationsClose");
@@ -2736,6 +2848,8 @@ let activeChatIndex=0;
 let activeReservationOffice=null;
 let assistantConversation=[];
 let assistantLatestContext="";
+let assistantLatestTechnicalSummary="";
+let assistantLatestQuestions=[];
 let assistantLastIntentType="serviceQuote";
 let userVehicles=[];
 let userVehicleListings=[];
@@ -2818,6 +2932,25 @@ const allowedCategories=[
   "Vidros e acessórios",
   "Blindagem"
 ];
+const aiCategoryAliases={
+  "Revisao geral / Manutencao preventiva":"Revisão geral / Manutenção preventiva",
+  "Troca de oleo e filtros":"Troca de óleo e filtros",
+  "Freios e suspensao":"Freios e suspensão",
+  "Motor e transmissao":"Motor e transmissão",
+  "Eletrica automotiva":"Elétrica automotiva",
+  "Diagnostico computadorizado":"Diagnóstico computadorizado",
+  "Vidros e acessorios":"Vidros e acessórios"
+};
+function normalizeAICategory(name){
+  return aiCategoryAliases[name]||name;
+}
+function populateOfficeCategoryFilter(){
+  if(!officeCategoryFilter) return;
+  const current=officeCategoryFilter.value;
+  officeCategoryFilter.innerHTML=`<option value="">Serviço</option>${allowedCategories.map((category)=>`<option value="${category}">${category}</option>`).join("")}`;
+  if(allowedCategories.includes(current)) officeCategoryFilter.value=current;
+}
+populateOfficeCategoryFilter();
 function inferCategories(text){
   const value=text.toLowerCase();
   if(value.includes("óleo")||value.includes("oleo")||value.includes("filtro")) return ["Troca de óleo e filtros","Revisão geral / Manutenção preventiva"];
@@ -2861,6 +2994,8 @@ function resetAssistant(silent=false){
   problemBubble.textContent="";
   assistantConversation=[];
   assistantLatestContext="";
+  assistantLatestTechnicalSummary="";
+  assistantLatestQuestions=[];
   assistantLastIntentType="serviceQuote";
   assistantThread.querySelectorAll(".chat-extra").forEach((node)=>node.remove());
   categoryChips.innerHTML="";
@@ -2909,21 +3044,19 @@ function getFilteredOffices(){
 async function loadPublicOffices(){
   if(!sb) return;
   try{
-    const {data,error}=await sb.from("workshops")
-      .select("id,name,address,city,state,category,services,rating,review_count,open,photo_url,business_type,visible,approval_status")
-      .eq("visible",true)
-      .eq("approval_status","approved")
+    const {data,error}=await sb.from("public_workshops_search")
+      .select("id,name,address,city,neighborhood,category,categories,open,business_type")
       .limit(50);
     if(error) throw error;
     offices.splice(0,offices.length,...(data||[]).map((row)=>({
       id:row.id,
       name:row.name||"Oficina Vai Rodar",
       rating:Number(row.rating||0),
-      address:[row.address,row.city,row.state].filter(Boolean).join(", "),
-      category:row.category||(Array.isArray(row.services)?row.services[0]:"")||"Serviços automotivos",
+      address:[row.address,row.neighborhood,row.city].filter(Boolean).join(", "),
+      category:row.category||(Array.isArray(row.categories)?row.categories[0]:"")||"Serviços automotivos",
       open:row.open!==false,
       img:row.photo_url||"assets/vai_rodar_logo_transparent.png",
-      services:Array.isArray(row.services)?row.services:[],
+      services:Array.isArray(row.categories)?row.categories:[],
       businessType:row.business_type||"workshop"
     })));
   }catch(error){
@@ -3180,6 +3313,7 @@ function proposalDescriptionPlaceholder(){
   return "Descreva o problema. Ex.: faz barulho ao frear, acontece em baixa velocidade, começou há dois dias.";
 }
 function technicalSummaryForRequest(){
+  if(assistantLatestTechnicalSummary) return assistantLatestTechnicalSummary;
   const original=proposalOriginalText();
   const context=assistantLatestContext||original;
   const categories=inferCategories(context).filter((name)=>allowedCategories.includes(name));
@@ -3638,7 +3772,14 @@ async function upsertUserVehicle(vehicle,successMessage="Placa adicionada."){
   userVehicles=mergeVehicles([normalized],userVehicles);
   plateCache[normalized.plate]=normalized;
   accountNewPlate.value="";
-  await saveUserProfileMeta({vehicles:userVehicles},successMessage);
+  renderAccountPlates();
+  renderAllRegisteredPlatePickers();
+  try{
+    await saveUserProfileMeta({vehicles:userVehicles},successMessage);
+  }catch(error){
+    console.warn("[Vehicle metadata sync]",error.message);
+    setAccountStatus(successMessage,true);
+  }
 }
 async function removeUserVehicleByPlate(plate){
   if(!sb||!currentUser) throw new Error("Conta indisponível.");
@@ -3647,7 +3788,14 @@ async function removeUserVehicleByPlate(plate){
   if(error) throw error;
   userVehicles=userVehicles.filter((vehicle)=>vehicle.plate!==normalizedPlate);
   delete plateCache[normalizedPlate];
-  await saveUserProfileMeta({vehicles:userVehicles},"Placa removida.");
+  renderAccountPlates();
+  renderAllRegisteredPlatePickers();
+  try{
+    await saveUserProfileMeta({vehicles:userVehicles},"Placa removida.");
+  }catch(error){
+    console.warn("[Vehicle metadata sync]",error.message);
+    setAccountStatus("Placa removida.",true);
+  }
 }
 function renderAccountPlates(){
   if(!accountPlatesList) return;
@@ -3792,7 +3940,7 @@ async function saveUserProfileMeta(extraMeta={},successMessage="Dados atualizado
   if(Object.prototype.hasOwnProperty.call(extraMeta,"phone")) profilePatch.phone=extraMeta.phone;
   if(Object.keys(profilePatch).length){
     const {error:profileError}=await sb.from("profiles").update(profilePatch).eq("id",currentUser.id);
-    if(profileError) console.warn("[Profile sync]",profileError.message);
+    if(profileError) throw profileError;
   }
   setLoggedIn(data?.user||{...currentUser,user_metadata:nextMeta});
   setAccountStatus(successMessage,true);
@@ -3821,6 +3969,9 @@ function setLoggedIn(user){
     loadUserVehicles();
     loadUserVehicleListings();
     renderAllRegisteredPlatePickers();
+    if(("Notification" in window)&&Notification.permission==="granted"){
+      enablePushNotifications({silent:true}).catch((error)=>console.warn("[Push]",error.message));
+    }
     return;
   }
   topAccountLabel.textContent="Criar conta";
@@ -3916,13 +4067,71 @@ function closeQuotes(){
   if(!sideMenu.classList.contains("open")&&!emergencyPanel.classList.contains("open")&&!accountPanel.classList.contains("open")&&!messagesPanel.classList.contains("open")&&!notificationsPanel.classList.contains("open")) overlay.classList.remove("open");
 }
 function renderNotifications(){
-  if(!notifications.length){notificationList.innerHTML='<div class="account-empty">Ainda não há notificações reais.</div>';return;}
+  if(!notifications.length){
+    const pushCta=currentUser&&("Notification" in window)&&window.location.protocol!=="file:"
+      ? '<button class="outline-btn" type="button" data-enable-push style="margin-top:10px;width:100%">Ativar notificações no celular</button>'
+      : "";
+    notificationList.innerHTML=`<div class="account-empty">Ainda não há notificações reais.${pushCta}</div>`;
+    return;
+  }
   notificationList.innerHTML=notifications.map((item)=>`
     <article class="notification-item">
       <span class="notification-icon ${item.type}">${item.icon}</span>
       <div><b>${item.title}</b><p>${item.detail}</p><time>${item.time}</time></div>
     </article>
   `).join("");
+}
+function urlBase64ToUint8Array(base64String){
+  const padding="=".repeat((4-base64String.length%4)%4);
+  const base64=(base64String+padding).replace(/-/g,"+").replace(/_/g,"/");
+  const rawData=window.atob(base64);
+  return Uint8Array.from([...rawData].map((char)=>char.charCodeAt(0)));
+}
+async function getPushPublicKey(){
+  const response=await fetch("/.netlify/functions/push-config");
+  if(!response.ok) throw new Error("push-config "+response.status);
+  const data=await response.json();
+  if(!data.enabled||!data.publicKey) throw new Error("VAPID_PUBLIC_KEY nao configurada");
+  return data.publicKey;
+}
+async function enablePushNotifications({silent=false}={}){
+  if(!currentUser||!sb||!("serviceWorker" in navigator)||!("PushManager" in window)||!("Notification" in window)||window.location.protocol==="file:"){
+    if(!silent) setAccountStatus("Notificações push funcionam apenas no site HTTPS depois do login.");
+    return false;
+  }
+  if(Notification.permission==="denied"){
+    if(!silent) setAccountStatus("As notificações estão bloqueadas no navegador. Ative nas configurações do site.");
+    return false;
+  }
+  if(Notification.permission!=="granted"){
+    const permission=await Notification.requestPermission();
+    if(permission!=="granted"){
+      if(!silent) setAccountStatus("Permissão de notificação não ativada.");
+      return false;
+    }
+  }
+  const registration=await navigator.serviceWorker.ready;
+  const publicKey=await getPushPublicKey();
+  const existing=await registration.pushManager.getSubscription();
+  const subscription=existing||await registration.pushManager.subscribe({
+    userVisibleOnly:true,
+    applicationServerKey:urlBase64ToUint8Array(publicKey)
+  });
+  const {data}=await sb.auth.getSession();
+  const token=data?.session?.access_token;
+  if(!token) throw new Error("Sessao invalida");
+  const response=await fetch("/.netlify/functions/push-subscribe",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+    body:JSON.stringify({
+      subscription:subscription.toJSON(),
+      userAgent:navigator.userAgent,
+      platform:isIOSDevice()?"ios":(/Android/i.test(navigator.userAgent)?"android":"web")
+    })
+  });
+  if(!response.ok) throw new Error("push-subscribe "+response.status);
+  if(!silent) setAccountStatus("Notificações ativadas neste dispositivo.",true);
+  return true;
 }
 function openNotifications(){
   closeMenu();
@@ -4094,9 +4303,9 @@ async function createVehicleListingRecord(visibility){
 async function publishVehicleListing(visibility){
   const listingId=await createVehicleListingRecord(visibility);
   if(listingId){
+    setAccountStatus("Anúncio enviado para revisão. Ele aparece em Minha conta > Meus veículos à venda.",true);
+    await loadUserVehicleListings();
     renderNotifications();
-    overlay.classList.add("open");
-    visibilityPopup.classList.add("open");
   }
 }
 function reservationDateTimeISO(dateValue,timeValue){
@@ -4473,7 +4682,10 @@ function renderAssistantExtraTurn(text,intent,contextText){
       ${actionHTML}
     </div>`;
   aiRow.querySelector("strong").textContent=intent.title;
-  aiRow.querySelector("p").textContent=intent.text;
+  const questions=Array.isArray(intent.missingQuestions)&&intent.missingQuestions.length
+    ? `\n\nPara deixar a cotação melhor: ${intent.missingQuestions.join(" ")}`
+    : "";
+  aiRow.querySelector("p").textContent=`${intent.text}${questions}`;
   assistantThread.appendChild(userRow);
   assistantThread.appendChild(aiRow);
 }
@@ -4554,15 +4766,21 @@ function assistantActionForType(type, fallback="Pedir cotação"){
   return "Pedir cotação";
 }
 function applyAssistantIntent(intent,text,contextText,sourceInput){
+  const validCategories=Array.isArray(intent.categories)
+    ? intent.categories.map(normalizeAICategory).filter(n=>allowedCategories.includes(n))
+    : [];
+  const questions=Array.isArray(intent.missingQuestions)?intent.missingQuestions.filter(Boolean).slice(0,3):[];
+  const assistantText=questions.length?`${intent.text}\n\nPara deixar a cotação melhor: ${questions.join(" ")}`:intent.text;
+  assistantLatestTechnicalSummary=intent.technicalSummary||assistantLatestTechnicalSummary;
+  assistantLatestQuestions=questions;
   if(assistantConversation.length===0){
     problemBubble.textContent=text;
-    const validCategories=Array.isArray(intent.categories)?intent.categories.filter(n=>allowedCategories.includes(n)):[];
     categoryChips.innerHTML=validCategories.length
       ? validCategories.map(n=>`<button class="ai-chip">${categoryIcons[n]||categoryIcons.default}<span>${n}</span></button>`).join("")
       : assistantCategoriesHTML(contextText);
     assistantActionBlock.dataset.context=contextText;
     assistantIntentTitle.textContent=intent.title;
-    assistantIntentText.textContent=intent.text;
+    assistantIntentText.textContent=assistantText;
     startOnlineQuote.textContent=assistantActionForType(intent.type||intent.intent,intent.action);
     startOnlineQuote.dataset.intent=intent.type||intent.intent||"serviceQuote";
   }else{
@@ -4570,11 +4788,12 @@ function applyAssistantIntent(intent,text,contextText,sourceInput){
       type:intent.type||intent.intent||"serviceQuote",
       title:intent.title,
       text:intent.text,
+      missingQuestions:questions,
       action:assistantActionForType(intent.type||intent.intent,intent.action),
     },contextText);
   }
   assistantLastIntentType=intent.type||intent.intent||"serviceQuote";
-  assistantConversation.push({user:text,intent:assistantLastIntentType,assistant:intent.text});
+  assistantConversation.push({user:text,intent:assistantLastIntentType,assistant:assistantText});
   proposalBtn.textContent=assistantLastIntentType==="partQuote"?"Enviar solicitação de peça":"Enviar solicitação a oficinas";
   assistantCard.classList.add("expanded","chat-mode","intent-ready");
   assistantCard.classList.remove("form-open","quote-active");
@@ -4768,6 +4987,10 @@ newQuote.addEventListener("click",()=>{closeQuotes();openMenuProposalView();});
 topNotificationsBtn.addEventListener("click",openNotifications);
 mobileNotificationsBtn.addEventListener("click",openNotifications);
 notificationsClose.addEventListener("click",closeNotifications);
+notificationList.addEventListener("click",(event)=>{
+  if(!event.target.closest("[data-enable-push]")) return;
+  enablePushNotifications().catch((error)=>setAccountStatus(error.message||"Não foi possível ativar notificações."));
+});
 menuReservationsBtn.addEventListener("click",openReservations);
 reservationsClose.addEventListener("click",closeReservations);
 manageReservations.addEventListener("click",()=>reservationManagement.classList.toggle("show"));
@@ -5121,6 +5344,70 @@ overlay.addEventListener("click",()=>{
 });
 document.getElementById("closeMenu").addEventListener("click",closeMenu);
 initAuth();
+
+let deferredInstallPrompt=null;
+function isMobileDevice(){
+  return new URLSearchParams(window.location.search).has("previewPwa") || window.matchMedia("(max-width: 720px)").matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+function isStandalonePWA(){
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true;
+}
+function isIOSDevice(){
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+function pwaBannerDismissed(){
+  if(new URLSearchParams(window.location.search).has("previewPwa")) return false;
+  return localStorage.getItem("vairodar_pwa_install_dismissed")==="1";
+}
+function showPwaInstallBanner(mode="android"){
+  if(!pwaInstallBanner||!isMobileDevice()||isStandalonePWA()||pwaBannerDismissed()) return;
+  if(mode==="ios"){
+    pwaInstallTitle.textContent="Adicione o Vai Rodar";
+    pwaInstallText.textContent="No iPhone, toque em Compartilhar e depois em Adicionar à Tela de Início para usar como app.";
+    pwaInstallBtn.textContent="Entendi";
+  }else{
+    pwaInstallTitle.textContent="Instale o Vai Rodar";
+    pwaInstallText.textContent="Use como app no celular e receba notificações de propostas, mensagens e reservas.";
+    pwaInstallBtn.textContent="Instalar app";
+  }
+  pwaInstallBanner.dataset.mode=mode;
+  pwaInstallBackdrop?.classList.add("show");
+  pwaInstallBanner.classList.add("show");
+}
+function hidePwaInstallBanner(remember=true){
+  if(!pwaInstallBanner) return;
+  pwaInstallBackdrop?.classList.remove("show");
+  pwaInstallBanner.classList.remove("show");
+  if(remember) localStorage.setItem("vairodar_pwa_install_dismissed","1");
+}
+window.addEventListener("beforeinstallprompt",(event)=>{
+  if(!isMobileDevice()) return;
+  event.preventDefault();
+  deferredInstallPrompt=event;
+  setTimeout(()=>showPwaInstallBanner("android"),1800);
+});
+window.addEventListener("appinstalled",()=>hidePwaInstallBanner(true));
+pwaInstallBtn?.addEventListener("click",async()=>{
+  if(pwaInstallBanner.dataset.mode==="ios"){
+    hidePwaInstallBanner(true);
+    return;
+  }
+  if(!deferredInstallPrompt){
+    hidePwaInstallBanner(false);
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice.catch(()=>null);
+  deferredInstallPrompt=null;
+  hidePwaInstallBanner(true);
+});
+pwaInstallClose?.addEventListener("click",()=>hidePwaInstallBanner(true));
+pwaInstallBackdrop?.addEventListener("click",()=>hidePwaInstallBanner(true));
+setTimeout(()=>{
+  const previewMode=new URLSearchParams(window.location.search).get("previewPwa");
+  if(previewMode==="ios"||previewMode==="android") showPwaInstallBanner(previewMode);
+  else if(isIOSDevice()) showPwaInstallBanner("ios");
+},900);
 
 // Registro do Service Worker (PWA). Funciona em HTTPS/localhost, nao em file://.
 if('serviceWorker' in navigator && window.location.protocol !== 'file:'){
