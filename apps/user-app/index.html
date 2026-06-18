@@ -2850,6 +2850,7 @@ let assistantConversation=[];
 let assistantLatestContext="";
 let assistantLatestTechnicalSummary="";
 let assistantLatestQuestions=[];
+let assistantLatestCategories=[];
 let assistantLastIntentType="serviceQuote";
 let userVehicles=[];
 let userVehicleListings=[];
@@ -2996,6 +2997,7 @@ function resetAssistant(silent=false){
   assistantLatestContext="";
   assistantLatestTechnicalSummary="";
   assistantLatestQuestions=[];
+  assistantLatestCategories=[];
   assistantLastIntentType="serviceQuote";
   assistantThread.querySelectorAll(".chat-extra").forEach((node)=>node.remove());
   categoryChips.innerHTML="";
@@ -4521,6 +4523,40 @@ function buildPurchaseAssistant(value){
   }
   return null;
 }
+function localCategoriesFor(text){
+  const value=normalizeText(text);
+  const categories=[];
+  const add=(name)=>{if(!categories.includes(name)) categories.push(name);};
+  if(value.includes("freio")||value.includes("freno")||value.includes("pastilha")||value.includes("pastilla")||value.includes("disco")) add("Freios e suspensao");
+  if(value.includes("suspensao")||value.includes("suspensão")||value.includes("direcao")||value.includes("direção")||value.includes("rolamento")||value.includes("barulho")||value.includes("ruido")) add("Freios e suspensao");
+  if(value.includes("pneu")||value.includes("neumatico")||value.includes("alinhamento")||value.includes("balanceamento")) add("Pneus e alinhamento");
+  if(value.includes("bateria")||value.includes("eletrica")||value.includes("elétrica")||value.includes("farol")||value.includes("luz")) add("Eletrica automotiva");
+  if(value.includes("motor")||value.includes("oleo")||value.includes("óleo")||value.includes("fumaca")||value.includes("fumaça")||value.includes("vazamento")) add("Motor e transmissao");
+  if(value.includes("scanner")||value.includes("diagnostico")||value.includes("diagnóstico")||value.includes("painel")||value.includes("check")) add("Diagnostico computadorizado");
+  if(value.includes("ar condicionado")||value.includes("ar-condicionado")) add("Ar-condicionado");
+  if(!categories.length) add("Revisao geral / Manutencao preventiva");
+  return categories.slice(0,3);
+}
+function localMissingQuestions(type,text){
+  const value=normalizeText(text);
+  if(type==="partQuote"){
+    if(value.includes("pneu")||value.includes("neumatico")) return ["Você sabe a medida do pneu? Ex.: 205/55 R16.", "Quer uma unidade, par ou jogo completo?"];
+    if(value.includes("bateria")) return ["Você sabe a amperagem da bateria atual?", "O carro está ligando ou ficou parado?"];
+    if(value.includes("pastilha")||value.includes("disco")||value.includes("freio")) return ["É peça dianteira ou traseira?", "Você quer só a peça ou instalação também?"];
+    return ["Você sabe marca, código ou medida da peça?", "Precisa de entrega ou retirada?"];
+  }
+  if(value.includes("barulho")||value.includes("ruido")) return ["Acontece ao frear, virar, acelerar ou passar em buracos?", "O barulho é leve, médio ou forte?"];
+  if(value.includes("freio")||value.includes("freno")) return ["Acontece quando freia ou mesmo sem frear?", "O pedal mudou ou o carro demora mais para parar?"];
+  if(value.includes("luz")||value.includes("painel")) return ["Qual luz apareceu no painel?", "O carro perdeu força ou está falhando?"];
+  return ["Quando começou?", "Acontece sempre ou só em alguma situação?"];
+}
+function localTechnicalSummary(text,type,categories){
+  const clean=text.trim();
+  if(type==="partQuote"){
+    return `Cliente solicita cotacao de peca/reposto. Pedido inicial: ${clean}. Categorias provaveis: ${categories.join(", ")}. Confirmar compatibilidade pelo veiculo, disponibilidade, preco, prazo e forma de retirada/entrega.`;
+  }
+  return `Cliente relata: ${clean}. Areas provaveis: ${categories.join(", ")}. Solicita diagnostico/reparo com preco estimado, prazo, disponibilidade e orientacao se e seguro rodar ate a oficina.`;
+}
 function detectAssistantIntent(text){
   const value=normalizeText(text);
   const priceWords=["quanto custa","quanto sai","cuanto cuesta","cuanto sale","precio","preco","valor","orçamento","orcamento","cotizar","cotacao","cotação"];
@@ -4537,14 +4573,15 @@ function detectAssistantIntent(text){
   const wantsCarBuy=carBuyWords.some((word)=>value.includes(word))&&!talksAboutPiece;
   const advice=buildAssistantAdvice(value);
   const purchaseIntent=buildPurchaseAssistant(value);
-  if(valueWords.some((word)=>value.includes(word))) return {type:"value",title:"Posso te ajudar a estimar o valor.",text:"Para uma avaliação inicial, eu preciso da placa, quilometragem e estado geral. Quer abrir a avaliação rápida agora?",action:"Avaliar veículo"};
-  if(sellWords.some((word)=>value.includes(word))&&value.includes("carro")) return {type:"sell",title:"Entendi que você quer vender o carro.",text:"Posso usar a placa para preencher os dados principais e deixar o anúncio quase pronto. Quer começar por aí?",action:"Publicar veículo"};
-  if(purchaseIntent&&!describesSymptom) return purchaseIntent;
-  if(talksAboutPiece&&asksForPiece&&!describesSymptom) return {type:"partQuote",title:"Vamos confirmar a peça certa antes de comprar.",text:formatAssistantAdvice(advice,"Quer cotar preço e disponibilidade usando a placa do carro?"),action:"Buscar peça"};
-  if(wantsCarBuy) return {type:"buy",title:"Entendi, você quer procurar um carro.",text:"Posso abrir a busca com filtros iniciais a partir do que você escreveu. Quer ver opções disponíveis?",action:"Ver carros disponíveis"};
-  if(offerWords.some((word)=>value.includes(word))) return {type:"offers",title:"Posso mostrar ofertas relacionadas.",text:"Tenho promoções, eventos e oportunidades ativas. Quer ver o que está disponível agora?",action:"Ver ofertas"};
-  if(talksAboutService) return {type:"serviceQuote",title:"Entendi seu problema.",text:`${advice.simple}\n\nPara evitar orçamento errado, posso montar uma cotação técnica para oficinas próximas. Se quiser, antes me conte: acontece só em uma situação específica ou sempre?`,action:"Pedir cotação"};
-  return {type:"serviceQuote",title:"Entendi sua mensagem.",text:"Posso organizar isso como uma cotação para oficinas. Se preferir, me dê mais um detalhe: quando acontece, intensidade e há quanto tempo começou.",action:"Pedir cotação"};
+  const categories=localCategoriesFor(text);
+  if(valueWords.some((word)=>value.includes(word))) return {type:"value",title:"Posso te ajudar a estimar o valor.",text:"Para uma avaliação inicial, eu preciso da placa, quilometragem e estado geral. Quer abrir a avaliação rápida agora?",categories:["Revisao geral / Manutencao preventiva"],missingQuestions:["Qual a quilometragem atual?", "O carro tem algum detalhe importante?"],technicalSummary:localTechnicalSummary(text,"value",["Revisao geral / Manutencao preventiva"]),action:"Avaliar veículo"};
+  if(sellWords.some((word)=>value.includes(word))&&value.includes("carro")) return {type:"sell",title:"Entendi que você quer vender o carro.",text:"Posso usar a placa para preencher os dados principais e deixar o anúncio quase pronto. Quer começar por aí?",categories:["Revisao geral / Manutencao preventiva"],missingQuestions:["Qual preço você pretende pedir?", "Você tem fotos do veículo?"],technicalSummary:localTechnicalSummary(text,"sell",["Revisao geral / Manutencao preventiva"]),action:"Publicar veículo"};
+  if(purchaseIntent&&!describesSymptom) return {...purchaseIntent,categories,missingQuestions:localMissingQuestions("partQuote",text),technicalSummary:localTechnicalSummary(text,"partQuote",categories)};
+  if(talksAboutPiece&&asksForPiece&&!describesSymptom) return {type:"partQuote",title:"Vamos confirmar a peça certa antes de comprar.",text:"Para evitar comprar peça errada, o melhor é cotar usando a placa e, se possível, medida/código da peça.",categories,missingQuestions:localMissingQuestions("partQuote",text),technicalSummary:localTechnicalSummary(text,"partQuote",categories),action:"Buscar peça"};
+  if(wantsCarBuy) return {type:"buy",title:"Entendi, você quer procurar um carro.",text:"Posso abrir a busca com filtros iniciais a partir do que você escreveu. Quer ver opções disponíveis?",categories:["Revisao geral / Manutencao preventiva"],missingQuestions:["Qual faixa de preço?", "Busca automático ou manual?"],technicalSummary:localTechnicalSummary(text,"buy",["Revisao geral / Manutencao preventiva"]),action:"Ver carros disponíveis"};
+  if(offerWords.some((word)=>value.includes(word))) return {type:"offers",title:"Posso mostrar ofertas relacionadas.",text:"Tenho promoções, eventos e oportunidades ativas. Quer ver o que está disponível agora?",categories:["Revisao geral / Manutencao preventiva"],missingQuestions:[],technicalSummary:localTechnicalSummary(text,"offers",["Revisao geral / Manutencao preventiva"]),action:"Ver ofertas"};
+  if(talksAboutService) return {type:"serviceQuote",title:advice.title||"Entendi seu problema.",text:`${advice.simple}\n\nPara evitar orçamento errado, posso montar uma cotação técnica para oficinas próximas.`,categories,missingQuestions:localMissingQuestions("serviceQuote",text),technicalSummary:localTechnicalSummary(text,"serviceQuote",categories),action:"Pedir cotação"};
+  return {type:"serviceQuote",title:"Entendi sua mensagem.",text:"Posso organizar isso para uma oficina avaliar melhor. Me conte quando acontece e se é leve, médio ou forte.",categories,missingQuestions:localMissingQuestions("serviceQuote",text),technicalSummary:localTechnicalSummary(text,"serviceQuote",categories),action:"Pedir cotação"};
 }
 function assistantMessageHasOwnSignal(text){
   const value=normalizeText(text);
@@ -4690,7 +4727,9 @@ function renderAssistantExtraTurn(text,intent,contextText){
   assistantThread.appendChild(aiRow);
 }
 function revealAssistantCategories(){
-  const chips=assistantCategoriesHTML(assistantLatestContext||assistantConversation.at(-1)?.user||"");
+  const chips=assistantLatestCategories.length
+    ? assistantLatestCategories.map((name)=>`<button class="ai-chip">${categoryIcons[name]||categoryIcons.default}<span>${name}</span></button>`).join("")
+    : assistantCategoriesHTML(assistantLatestContext||assistantConversation.at(-1)?.user||"");
   proposalCategoryChips.innerHTML=chips;
 }
 function appendAssistantSystemMessage(title,text,className="chat-extra"){
@@ -4730,6 +4769,7 @@ function startAssistantQuoteWithAnalysis(){
       setTimeout(()=>openPartsView(query),350);
       return;
     }
+    revealAssistantCategories();
     setTimeout(()=>openProposalConfirmation(),350);
   },1800);
 }
@@ -4773,11 +4813,10 @@ function applyAssistantIntent(intent,text,contextText,sourceInput){
   const assistantText=questions.length?`${intent.text}\n\nPara deixar a cotação melhor: ${questions.join(" ")}`:intent.text;
   assistantLatestTechnicalSummary=intent.technicalSummary||assistantLatestTechnicalSummary;
   assistantLatestQuestions=questions;
+  assistantLatestCategories=validCategories;
   if(assistantConversation.length===0){
     problemBubble.textContent=text;
-    categoryChips.innerHTML=validCategories.length
-      ? validCategories.map(n=>`<button class="ai-chip">${categoryIcons[n]||categoryIcons.default}<span>${n}</span></button>`).join("")
-      : assistantCategoriesHTML(contextText);
+    categoryChips.innerHTML="";
     assistantActionBlock.dataset.context=contextText;
     assistantIntentTitle.textContent=intent.title;
     assistantIntentText.textContent=assistantText;
@@ -4856,7 +4895,16 @@ async function expandAssistant(sourceInput=problemInput){
   hideAssistantLoading();
   // Usa resultado de la IA o fallback local
   const intent=aiResult
-    ? {type:aiResult.intent,title:aiResult.title,text:aiResult.text,categories:aiResult.categories,action:aiResult.action}
+    ? {
+        type:aiResult.intent,
+        title:aiResult.title,
+        text:aiResult.text,
+        categories:aiResult.categories,
+        missingQuestions:aiResult.missingQuestions,
+        technicalSummary:aiResult.technicalSummary,
+        urgency:aiResult.urgency,
+        action:aiResult.action
+      }
     : detectAssistantIntent(contextText);
   applyAssistantIntent(intent,text,contextText,null);
 }
