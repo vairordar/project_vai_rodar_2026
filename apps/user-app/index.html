@@ -3191,7 +3191,8 @@ function renderOffices(reset=false){
   }));
   officeList.querySelectorAll(".collapse-detail").forEach((button)=>button.addEventListener("click",()=>{
     document.getElementById(`officeDetail${button.dataset.index}`)?.classList.remove("show");
-    officeList.querySelector(`.more-info-btn[data-index="${button.dataset.index}"]`)?.textContent="Ver mais informações";
+    const moreInfoButton=officeList.querySelector(`.more-info-btn[data-index="${button.dataset.index}"]`);
+    if(moreInfoButton) moreInfoButton.textContent="Ver mais informações";
   }));
   officeList.querySelectorAll(".call-btn").forEach((button)=>button.addEventListener("click",()=>window.location.href="tel:+5511999999999"));
   officeList.querySelectorAll(".reserve-detail").forEach((button)=>button.addEventListener("click",()=>{
