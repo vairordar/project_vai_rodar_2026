@@ -830,7 +830,7 @@ body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
   opacity:0;
   pointer-events:none;
   transition:.2s;
-  z-index:26;
+  z-index:900;
 }
 .proposal-popup.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:all}
 .proposal-popup-icon{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;margin:0 auto 11px;background:rgba(22,163,74,.12);color:#16a34a;font-size:24px;font-weight:900}
@@ -1551,7 +1551,7 @@ body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
   opacity:0;
   pointer-events:none;
   transition:.2s;
-  z-index:20;
+  z-index:800;
 }
 .overlay.open{opacity:1;pointer-events:all}
 .side-menu{
@@ -3174,11 +3174,30 @@ function renderOffices(reset=false){
     </article>
   `}).join("")||'<div class="form-error show">Não foram encontradas oficinas para estes filtros.</div>';
   loadMoreOffices.style.display=visibleOfficeCount<filtered.length?"block":"none";
-  officeList.querySelectorAll(".message-btn").forEach((button)=>button.addEventListener("click",closeOfficesView));
-  officeList.querySelectorAll(".more-info-btn").forEach((button)=>button.addEventListener("click",()=>focusOfficeCard(button.dataset.index)));
-  officeList.querySelectorAll(".collapse-detail").forEach((button)=>button.addEventListener("click",()=>document.getElementById(`officeDetail${button.dataset.index}`).classList.remove("show")));
+  officeList.querySelectorAll(".message-btn").forEach((button)=>button.addEventListener("click",()=>{
+    officeList.querySelectorAll(".office-detail.show").forEach((detail)=>detail.classList.remove("show"));
+    closeOfficesView();
+    openMessages();
+  }));
+  officeList.querySelectorAll(".more-info-btn").forEach((button)=>button.addEventListener("click",()=>{
+    const detail=document.getElementById(`officeDetail${button.dataset.index}`);
+    const isOpen=detail?.classList.contains("show");
+    officeList.querySelectorAll(".office-detail.show").forEach((item)=>item.classList.remove("show"));
+    officeList.querySelectorAll(".more-info-btn").forEach((item)=>item.textContent="Ver mais informações");
+    if(!isOpen){
+      focusOfficeCard(button.dataset.index);
+      button.textContent="Contrair informações";
+    }
+  }));
+  officeList.querySelectorAll(".collapse-detail").forEach((button)=>button.addEventListener("click",()=>{
+    document.getElementById(`officeDetail${button.dataset.index}`)?.classList.remove("show");
+    officeList.querySelector(`.more-info-btn[data-index="${button.dataset.index}"]`)?.textContent="Ver mais informações";
+  }));
   officeList.querySelectorAll(".call-btn").forEach((button)=>button.addEventListener("click",()=>window.location.href="tel:+5511999999999"));
-  officeList.querySelectorAll(".reserve-detail").forEach((button)=>button.addEventListener("click",()=>openReservationPopup(Number(button.dataset.index))));
+  officeList.querySelectorAll(".reserve-detail").forEach((button)=>button.addEventListener("click",()=>{
+    officeList.querySelectorAll(".office-detail.show").forEach((detail)=>detail.classList.remove("show"));
+    openReservationPopup(Number(button.dataset.index));
+  }));
 }
 async function openOfficesView(){
   closeMenu();
@@ -3407,7 +3426,18 @@ async function sendReviewedProposal(){
   const vehicle=await lookupPlate(plateValue).catch(()=>vehicleFromAnyPlate(plateValue));
   const original=isPart?partsQuery.value.trim():proposalOriginalText();
   const finalDescription=(description.value.trim()||original||proposalDescriptionPlaceholder()).trim();
-  const requestId=await createServiceRequestRecord({isPart,vehicle,description:finalDescription,address:address.value.trim(),original,locationData:getLocationPayload(address)});
+  let requestId=null;
+  try{
+    requestId=await createServiceRequestRecord({isPart,vehicle,description:finalDescription,address:address.value.trim(),original,locationData:getLocationPayload(address)});
+  }catch(err){
+    proposalPopup.innerHTML=`
+      <div class="proposal-popup-icon">×</div>
+      <h3>Não foi possível enviar</h3>
+      <p>${escapeHTML(err.message||"Erro ao registrar a solicitação. Tente novamente.")}</p>
+      <button id="proposalPopupClose" type="button">Entendido</button>`;
+    document.getElementById("proposalPopupClose").addEventListener("click",closeProposalPopup);
+    return;
+  }
   proposalPopup.innerHTML=`
     <div class="analysis-loader"></div>
     <h3>Enviando solicitação...</h3>
@@ -3631,6 +3661,9 @@ function getLocationPayload(input){
   };
 }
 async function reverseGeocode(lat,lng){
+  if(window.location.protocol==="file:"){
+    return {success:true,address:`${lat.toFixed(5)}, ${lng.toFixed(5)}`,details:{}};
+  }
   const response=await fetch("/.netlify/functions/geocode",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
@@ -3654,7 +3687,12 @@ async function applyCurrentLocation(input,button,after){
     const position=await currentBrowserPosition();
     const lat=position.coords.latitude;
     const lng=position.coords.longitude;
-    const geo=await reverseGeocode(lat,lng);
+    let geo={address:`${lat.toFixed(5)}, ${lng.toFixed(5)}`,details:{}};
+    try{
+      geo=await reverseGeocode(lat,lng);
+    }catch(geoError){
+      console.warn("[Reverse geocode]",geoError.message);
+    }
     input.value=geo.address||`${lat.toFixed(5)}, ${lng.toFixed(5)}`;
     input.dataset.latitude=String(lat);
     input.dataset.longitude=String(lng);
@@ -3663,7 +3701,11 @@ async function applyCurrentLocation(input,button,after){
     return {lat,lng,address:input.value};
   }catch(error){
     console.warn("[Location]",error.message);
-    input.placeholder=error.message||"Não foi possível obter localização";
+    const message=error.code===1
+      ?"Permissão de localização negada."
+      : (error.message||"Não foi possível obter localização");
+    input.placeholder=message;
+    input.classList.add("invalid");
     return null;
   }finally{
     if(button){button.disabled=false;button.setAttribute("aria-label",previousLabel);}
@@ -3736,6 +3778,13 @@ function mergeVehicles(...lists){
   });
   return Array.from(byPlate.values());
 }
+function setUserVehiclesFromDb(rows=[]){
+  userVehicles=(rows||[]).map(normalizeVehicle).filter(Boolean);
+  Object.keys(plateCache).forEach((plate)=>delete plateCache[plate]);
+  userVehicles.forEach((vehicle)=>{plateCache[vehicle.plate]=vehicle;});
+  renderAccountPlates();
+  renderAllRegisteredPlatePickers();
+}
 async function loadUserVehicles(){
   if(!sb||!currentUser){renderAccountPlates();return;}
   try{
@@ -3744,20 +3793,13 @@ async function loadUserVehicles(){
       .eq("user_id",currentUser.id)
       .order("created_at",{ascending:false});
     if(error) throw error;
-    const dbVehicles=(data||[]).map(normalizeVehicle).filter(Boolean);
-    const metaVehicles=vehiclesFromMeta(currentUser.user_metadata||{});
-    const missingMetaVehicles=metaVehicles.filter((vehicle)=>!dbVehicles.some((dbVehicle)=>dbVehicle.plate===vehicle.plate));
-    for(const vehicle of missingMetaVehicles){
-      const {error:insertError}=await sb.from("vehicles").insert(vehicleDbPayload(vehicle));
-      if(insertError) console.warn("[User vehicles sync]",insertError.message);
-    }
-    userVehicles=mergeVehicles(dbVehicles,missingMetaVehicles,metaVehicles);
+    setUserVehiclesFromDb(data||[]);
+  }catch(error){
+    console.warn("[User vehicles]",error.message);
+    userVehicles=vehiclesFromMeta(currentUser.user_metadata||{});
     userVehicles.forEach((vehicle)=>{plateCache[vehicle.plate]=vehicle;});
     renderAccountPlates();
     renderAllRegisteredPlatePickers();
-  }catch(error){
-    console.warn("[User vehicles]",error.message);
-    renderAccountPlates();
   }
 }
 async function upsertUserVehicle(vehicle,successMessage="Placa adicionada."){
@@ -3765,17 +3807,20 @@ async function upsertUserVehicle(vehicle,successMessage="Placa adicionada."){
   const normalized=normalizeVehicle(vehicle);
   if(!normalized) throw new Error("Placa inválida.");
   const payload=vehicleDbPayload(normalized);
-  const {data:existing,error:findError}=await sb.from("vehicles").select("id").eq("user_id",currentUser.id).eq("plate",normalized.plate).maybeSingle();
+  const {data:existingRows,error:findError}=await sb.from("vehicles")
+    .select("id")
+    .eq("user_id",currentUser.id)
+    .eq("plate",normalized.plate)
+    .order("created_at",{ascending:false})
+    .limit(1);
   if(findError) throw findError;
+  const existing=(existingRows||[])[0];
   const write=existing?.id
     ? await sb.from("vehicles").update(payload).eq("id",existing.id).eq("user_id",currentUser.id)
     : await sb.from("vehicles").insert(payload);
   if(write.error) throw write.error;
-  userVehicles=mergeVehicles([normalized],userVehicles);
-  plateCache[normalized.plate]=normalized;
   accountNewPlate.value="";
-  renderAccountPlates();
-  renderAllRegisteredPlatePickers();
+  await loadUserVehicles();
   try{
     await saveUserProfileMeta({vehicles:userVehicles},successMessage);
   }catch(error){
@@ -4219,8 +4264,8 @@ async function ensureVehicleRecord(vehicle){
     await loadUserVehicleListings();
     return data?.id||null;
   }catch(error){
-    console.warn("[Vehicle save]",error.message);
-    return null;
+    console.error("[Vehicle save]",error.message);
+    throw error;
   }
 }
 function proposalCategory(isPart,text){
@@ -4252,8 +4297,8 @@ async function createServiceRequestRecord({isPart,vehicle,description,address,or
     await loadUserVehicleListings();
     return data?.id||null;
   }catch(error){
-    console.warn("[Service request]",error.message);
-    return null;
+    console.error("[Service request]",error.message);
+    throw error;
   }
 }
 function parseMoney(value){
@@ -4298,8 +4343,8 @@ async function createVehicleListingRecord(visibility){
     await loadUserVehicleListings();
     return data?.id||null;
   }catch(error){
-    console.warn("[Vehicle listing]",error.message);
-    return null;
+    console.error("[Vehicle listing]",error.message);
+    throw error;
   }
 }
 async function publishVehicleListing(visibility){
@@ -4333,8 +4378,8 @@ async function createReservationRecord({office,service,dateValue,timeValue,notes
     await loadUserVehicleListings();
     return data?.id||null;
   }catch(error){
-    console.warn("[Reservation save]",error.message);
-    return null;
+    console.error("[Reservation save]",error.message);
+    throw error;
   }
 }
 function listingToCar(row){
@@ -5052,7 +5097,14 @@ cancelReservation.addEventListener("click",()=>{
 sendReservation.addEventListener("click",async()=>{
   const valid=reservationService.value&&reservationDetails.value.trim()&&reservationDate.value&&reservationTime.value;
   reservationError.classList.toggle("show",!valid);if(!valid)return;
-  const remoteId=await createReservationRecord({office:activeReservationOffice,service:reservationService.value,dateValue:reservationDate.value,timeValue:reservationTime.value,notes:reservationDetails.value.trim()});
+  let remoteId=null;
+  try{
+    remoteId=await createReservationRecord({office:activeReservationOffice,service:reservationService.value,dateValue:reservationDate.value,timeValue:reservationTime.value,notes:reservationDetails.value.trim()});
+  }catch(err){
+    reservationError.textContent=err.message||"Erro ao agendar. Tente novamente.";
+    reservationError.classList.add("show");
+    return;
+  }
   const date=reservationDate.value.split("-").reverse().join("/");
   reservations.unshift({id:remoteId,office:activeReservationOffice.name,service:reservationService.value,date:`${date} às ${reservationTime.value}`,status:"Pendente",className:"pending"});
   reservationPopup.classList.remove("open");reservationSuccessPopup.classList.add("open");
@@ -5104,11 +5156,18 @@ evaluateCar.addEventListener("click",()=>{
 evaluationPopupAction.addEventListener("click",()=>closeEvaluationPopup(true));
 publishCar.addEventListener("click",async()=>{
   const valid=isValidPlateFormat(sellPlate.value.trim().toUpperCase())&&sellPrice.value.trim()&&sellMileage.value.trim()&&sellAddress.value.trim()&&sellPhotos?.files?.length;
+  sellError.textContent="Informe placa, preço, quilometragem, localização e pelo menos uma foto.";
   sellError.classList.toggle("show",!valid);if(!valid)return;
   if(!requireUserAccount("Crie sua conta para salvar e acompanhar seu anúncio.")) return;
   publishCar.disabled=true;publishCar.textContent="Publicando...";
-  await publishVehicleListing("free");
-  publishCar.disabled=false;publishCar.textContent="Enviar para revisão";
+  try{
+    await publishVehicleListing("free");
+  }catch(err){
+    sellError.textContent=err.message||"Erro ao publicar o anúncio. Tente novamente.";
+    sellError.classList.add("show");
+  }finally{
+    publishCar.disabled=false;publishCar.textContent="Enviar para revisão";
+  }
 });
 carPopupSend.addEventListener("click",sendVehicleListingMessage);
 publishFeatured.addEventListener("click",closeVisibilityPopup);

@@ -458,9 +458,9 @@ function closeMobileMenu(){document.querySelector(".side")?.classList.remove("op
 function initials(name){return (name||"Oficina").split(/\s+/).slice(0,2).map((part)=>part[0]||"").join("").toUpperCase()||"VR";}
 function showAuth(){state.user=null;state.workshop=null;$("authScreen").style.display="grid";$("app").style.display="none";}
 function showApp(){ $("authScreen").style.display="none";$("app").style.display="block";renderShell();loadAll();}
-async function login(email,password,useDemoFallback){$("authStatus").textContent="";$("loginBtn").disabled=true;$("loginBtn").textContent="Entrando...";const {error}=await sb.auth.signInWithPassword({email,password});$("loginBtn").disabled=false;$("loginBtn").textContent="Entrar no painel";if(error){if(useDemoFallback){startDemoMode();return;}$("authStatus").textContent=error.message==="Invalid login credentials"?"E-mail ou senha incorretos.":error.message;}}
+async function login(email,password,useDemoFallback){$("authStatus").textContent="";$("loginBtn").disabled=true;$("loginBtn").textContent="Entrando...";const {error}=await sb.auth.signInWithPassword({email,password});$("loginBtn").disabled=false;$("loginBtn").textContent="Entrar no painel";if(error){if(useDemoFallback){startDemoMode();return;}const message=error.message==="Invalid login credentials"?"E-mail ou senha incorretos.":(error.message==="Email not confirmed"?"E-mail ainda nao confirmado. Confirme o usuario no Supabase Auth ou cadastre novamente a oficina.":error.message);$("authStatus").textContent=message;}}
 function startDemoMode(){state.demoMode=true;state.user={...demoStore.user};state.workshop={...demoStore.workshop};showApp();toast("Modo demo aberto sem Supabase.");}
-async function loadWorkshop(){const {data,error}=await sb.from("workshops").select("*").eq("owner_id",state.user.id).maybeSingle();if(error)console.warn("[workshop]",error.message);state.workshop=data||null;}
+async function loadWorkshop(){const {data,error}=await sb.from("workshops").select("*").eq("owner_id",state.user.id).maybeSingle();if(error){console.warn("[workshop]",error.message);state.workshop=null;return {ok:false,error};}state.workshop=data||null;return {ok:Boolean(data),error:null};}
 function renderShell(){
   const workshop=state.workshop;
   const name=workshop?.name||state.user?.email?.split("@")[0]||"Oficina";
@@ -976,8 +976,8 @@ $("calendarWeekBtn").addEventListener("click",()=>{state.calendarMode="week";$("
 $("calendarMonthBtn").addEventListener("click",()=>{state.calendarMode="month";$("calendarMonthBtn").classList.add("active");$("calendarWeekBtn").classList.remove("active");state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth(),1);renderAgenda();});
 $("blockSlotBtn").addEventListener("click",openBlockModal);
 $("manualReservationBtn").addEventListener("click",()=>openManualReservationModal());
-sb.auth.onAuthStateChange(async(_event,session)=>{if(session?.user){state.user=session.user;await loadWorkshop();showApp();}else showAuth();});
-(async()=>{const {data:{session}}=await sb.auth.getSession();if(session?.user){state.user=session.user;await loadWorkshop();showApp();}else showAuth();})();
+sb.auth.onAuthStateChange(async(_event,session)=>{if(session?.user){state.user=session.user;const result=await loadWorkshop();if(!result.ok){showAuth();$("authStatus").textContent="Conta autenticada, mas nenhuma oficina foi encontrada para este e-mail. Verifique se o cadastro foi aprovado e se o owner_id esta vinculado ao usuario.";return;}showApp();}else showAuth();});
+(async()=>{const {data:{session}}=await sb.auth.getSession();if(session?.user){state.user=session.user;const result=await loadWorkshop();if(!result.ok){showAuth();$("authStatus").textContent="Conta autenticada, mas nenhuma oficina foi encontrada para este e-mail. Verifique se o cadastro foi aprovado e se o owner_id esta vinculado ao usuario.";return;}showApp();}else showAuth();})();
 </script>
 </body>
 </html>

@@ -62,16 +62,11 @@ function supabaseRequest(path, options = {}) {
   });
 }
 
-async function findUserByEmail(email) {
-  const pages = [1, 2, 3, 4, 5];
-  for (const page of pages) {
-    const result = await supabaseRequest(`/auth/v1/admin/users?page=${page}&per_page=200`);
-    const users = Array.isArray(result?.users) ? result.users : [];
-    const user = users.find((item) => String(item.email || '').toLowerCase() === email.toLowerCase());
-    if (user) return user;
-    if (users.length < 200) break;
-  }
-  return null;
+async function findProfileByEmail(email) {
+  const rows = await supabaseRequest(
+    `/rest/v1/profiles?email=eq.${encodeURIComponent(email)}&select=id,email,name&limit=1`
+  );
+  return Array.isArray(rows) ? rows[0] || null : null;
 }
 
 async function getOrCreateUser(email, password, metadata) {
@@ -81,15 +76,15 @@ async function getOrCreateUser(email, password, metadata) {
       body: {
         email,
         password,
-        email_confirm: false,
+        email_confirm: true,
         user_metadata: metadata,
       },
     });
   } catch (error) {
     if (!/already|registered|exists|duplicate/i.test(error.message)) throw error;
-    const existing = await findUserByEmail(email);
-    if (!existing) throw error;
-    return existing;
+    const existingProfile = await findProfileByEmail(email).catch(() => null);
+    if (existingProfile?.id) return { id: existingProfile.id, email };
+    throw new Error('Este e-mail ja existe no Auth, mas nao tem perfil vinculado. Use outro e-mail ou remova o usuario antigo no Supabase Auth.');
   }
 }
 
