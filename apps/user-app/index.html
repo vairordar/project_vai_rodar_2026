@@ -343,7 +343,9 @@ h1{
   display:grid;
   gap:8px;
   box-shadow:0 8px 18px rgba(16,24,40,.06);
-  max-width:100%;
+  max-width:92%;
+  width:fit-content;
+  justify-self:start;
 }
 .ai-response strong{color:var(--text);font-size:10.5px;line-height:1.35;font-weight:650}
 .ai-response p{color:var(--text);font-size:10px;line-height:1.56;font-weight:450;white-space:pre-line;text-align:left;overflow-wrap:anywhere;margin:0}
@@ -5040,6 +5042,8 @@ function applyAssistantIntent(intent,text,contextText,sourceInput){
     assistantIntentText.textContent=assistantText;
     startOnlineQuote.textContent=assistantActionForType(intent.type||intent.intent,intent.action);
     startOnlineQuote.dataset.intent=intent.type||intent.intent||"serviceQuote";
+    const assistantIntentActions=document.getElementById("assistantIntentActions");
+    if(assistantIntentActions) assistantIntentActions.style.display=questions.length?"none":"";
   }else{
     renderAssistantExtraTurn(text,{
       type:intent.type||intent.intent||"serviceQuote",
