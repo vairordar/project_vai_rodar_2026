@@ -1,4 +1,19 @@
 const { authorize, corsHeaders, json, supabaseRequest } = require('./admin-common');
+const { sendPushToUser } = require('./push-core');
+
+const LISTING_STATUS_MESSAGES = {
+  active: 'Seu anuncio foi aprovado e ja esta publicado.',
+  rejected: 'Seu anuncio foi rejeitado pela equipe Vai Rodar.',
+  paused: 'Seu anuncio foi pausado.',
+  sold: 'Seu anuncio foi marcado como vendido.',
+  expired: 'Seu anuncio expirou.',
+};
+
+const WORKSHOP_STATUS_MESSAGES = {
+  approved: 'Sua oficina foi aprovada e ja esta visivel para os usuarios.',
+  rejected: 'O cadastro da sua oficina foi rejeitado pela equipe Vai Rodar.',
+  blocked: 'Sua oficina foi bloqueada pela equipe Vai Rodar.',
+};
 
 const VALID_STATUSES = new Set(['pending', 'approved', 'rejected', 'blocked']);
 const VALID_LISTING_STATUSES = new Set(['pending_review', 'active', 'paused', 'sold', 'expired', 'rejected']);
@@ -65,6 +80,11 @@ exports.handler = async (event) => {
         `Oficina marcada como ${status}. Visivel: ${update.visible}. Recebe pedidos: ${update.open === undefined ? 'sem alteracao' : update.open}.`,
         update
       );
+      const ownerId = Array.isArray(result) ? result[0]?.owner_id : result?.owner_id;
+      if (ownerId && WORKSHOP_STATUS_MESSAGES[status]) {
+        await sendPushToUser(ownerId, { title: 'Vai Rodar', body: WORKSHOP_STATUS_MESSAGES[status], url: '/' })
+          .catch((error) => console.warn('[admin-action push]', error.message));
+      }
       return json(200, { success: true, data: result });
     }
 
@@ -130,6 +150,11 @@ exports.handler = async (event) => {
         `Anuncio de veiculo marcado como ${status}.`,
         { status }
       );
+      const listingOwnerId = Array.isArray(result) ? result[0]?.user_id : result?.user_id;
+      if (listingOwnerId && LISTING_STATUS_MESSAGES[status]) {
+        await sendPushToUser(listingOwnerId, { title: 'Vai Rodar', body: LISTING_STATUS_MESSAGES[status], url: '/' })
+          .catch((error) => console.warn('[admin-action push]', error.message));
+      }
       return json(200, { success: true, data: result });
     }
 
@@ -205,6 +230,20 @@ exports.handler = async (event) => {
         `Solicitacao de alteracao (${request.field_name}) da oficina ${request.workshop_id} marcada como ${decision}.`,
         { field_name: request.field_name, decision }
       );
+      if (request.workshop_id) {
+        try {
+          const workshopRows = await supabaseRequest(`/rest/v1/workshops?id=eq.${encodeURIComponent(request.workshop_id)}&select=owner_id`);
+          const ownerId = Array.isArray(workshopRows) ? workshopRows[0]?.owner_id : workshopRows?.owner_id;
+          if (ownerId) {
+            const msg = decision === 'approved'
+              ? 'Sua solicitacao de alteracao de perfil foi aprovada.'
+              : 'Sua solicitacao de alteracao de perfil foi rejeitada.';
+            await sendPushToUser(ownerId, { title: 'Vai Rodar', body: msg, url: '/' });
+          }
+        } catch (error) {
+          console.warn('[admin-action push]', error.message);
+        }
+      }
       return json(200, { success: true, data: result });
     }
 

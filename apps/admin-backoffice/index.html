@@ -452,8 +452,10 @@ function renderAlerts(){
   const expired=data.subscriptions.filter((s)=>s.status==="expired").length;
   const pending=data.workshops.filter((w)=>w.approval_status==="pending").length;
   const due=data.subscriptions.filter((s)=>s.expires_at&&daysBetween(s.expires_at)<=30&&daysBetween(s.expires_at)>0).length;
+  const pendingChangeRequests=(data.profile_change_requests||[]).filter((r)=>(r.status||"pending")==="pending").length;
   $("alertsList").innerHTML=[
     ["Oficinas pendentes",pending,"Revisar cadastro, categorias e dados fiscais."],
+    ["Solicitacoes de alteracao pendentes",pendingChangeRequests,"Revisar na aba de oficinas/solicitacoes."],
     ["Assinaturas vencidas",expired,"Contatar ou bloquear visibilidade."],
     ["Vencem em 30 dias",due,"Criar campanha de renovacao."]
   ].map((item)=>`<div class="item"><div class="item-row"><h4>${item[0]}</h4><span class="pill ${item[1]?"pending":"active"}">${item[1]}</span></div><p>${item[2]}</p></div>`).join("");

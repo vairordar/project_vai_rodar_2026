@@ -1995,6 +1995,13 @@ body.theme-dark{
         </div>
       </section>
 
+      <section class="offers-section" id="realOffersSection" style="display:none">
+        <div class="section-title">
+          <h3>Ofertas das oficinas</h3>
+        </div>
+        <div class="carousel" id="realOffersCarousel"></div>
+      </section>
+
       <section class="market-section">
         <div class="section-title">
           <h3>Compra e venda de carros</h3>
@@ -2523,6 +2530,7 @@ body.theme-dark{
       <p id="reservationOfficeName">Escolha os detalhes do atendimento.</p>
       <div class="reservation-form">
         <label>Serviço</label><select id="reservationService"></select>
+        <label>Veículo</label><select id="reservationVehicle"></select>
         <label>Detalhes do que você precisa</label><textarea id="reservationDetails" placeholder="Explique brevemente o serviço necessário..."></textarea>
         <div class="reservation-date-time">
           <div><label>Data</label><input id="reservationDate" type="date"></div>
@@ -2767,6 +2775,7 @@ const reservationPickerClose=document.getElementById("reservationPickerClose");
 const reservationPickerList=document.getElementById("reservationPickerList");
 const reservationOfficeName=document.getElementById("reservationOfficeName");
 const reservationService=document.getElementById("reservationService");
+const reservationVehicle=document.getElementById("reservationVehicle");
 const reservationDetails=document.getElementById("reservationDetails");
 const reservationDate=document.getElementById("reservationDate");
 const reservationTime=document.getElementById("reservationTime");
@@ -4335,6 +4344,9 @@ function openReservationPopup(index,reservation=null){
   reservationService.innerHTML=services.map((service)=>`<option>${service}</option>`).join("");
   if(filteredService&&services.includes(filteredService)) reservationService.value=filteredService;
   if(reservation&&services.includes(reservation.service)) reservationService.value=reservation.service;
+  reservationVehicle.innerHTML=userVehicles.length
+    ?userVehicles.map((vehicle,vehicleIndex)=>`<option value="${vehicleIndex}">${vehicle.plate} · ${vehicle.brand} ${vehicle.model}</option>`).join("")
+    :'<option value="">Nenhum veículo cadastrado</option>';
   reservationDetails.value=reservation?"Solicito alterar a data ou o horário desta reserva.":"";reservationDate.value="";reservationTime.innerHTML=reservationTimeOptions();reservationError.classList.remove("show");
   overlay.classList.add("open");reservationPopup.classList.add("open");
 }
@@ -4490,7 +4502,7 @@ function reservationDateTimeISO(dateValue,timeValue){
   const [hour,minute]=timeValue.split(":").map(Number);
   return new Date(year,month-1,day,hour,minute||0,0).toISOString();
 }
-async function createReservationRecord({office,service,dateValue,timeValue,notes}){
+async function createReservationRecord({office,service,dateValue,timeValue,notes,vehicle}){
   if(!sb||!currentUser||!office?.id) return null;
   const scheduledAt=reservationDateTimeISO(dateValue,timeValue);
   if(!scheduledAt) return null;
@@ -4501,7 +4513,9 @@ async function createReservationRecord({office,service,dateValue,timeValue,notes
       service_type:service,
       scheduled_at:scheduledAt,
       notes,
-      status:"pending"
+      status:"pending",
+      external_vehicle_plate:vehicle?.plate||null,
+      external_vehicle_description:vehicle?`${vehicle.brand} ${vehicle.model}${vehicle.year&&vehicle.year!=="—"?" "+vehicle.year:""}`.trim():null
     }).select("id").single();
     if(error) throw error;
     await loadUserVehicleListings();
@@ -4523,6 +4537,31 @@ async function loadVehicleListings(){
     if(error) throw error;
     verifiedCars.splice(0,verifiedCars.length,...(data||[]).map(listingToCar));
   }catch(error){console.warn("[Vehicle listings]",error.message);}
+}
+async function loadRealWorkshopOffers(){
+  const section=document.getElementById("realOffersSection");
+  const carousel=document.getElementById("realOffersCarousel");
+  if(!sb||!section||!carousel) return;
+  try{
+    const {data,error}=await sb.from("workshop_offers")
+      .select("id,title,description,category,image_url,workshop_id,workshops(name)")
+      .order("created_at",{ascending:false})
+      .limit(12);
+    if(error) throw error;
+    const offers=data||[];
+    if(!offers.length){section.style.display="none";return;}
+    carousel.innerHTML=offers.map((offer)=>`
+      <article class="deal">
+        <p>${offer.title||"Oferta"}</p>
+        <img class="deal-photo" src="${offer.image_url||""}" alt="${offer.title||"Oferta"}">
+        <small style="display:block;padding:0 8px 8px;color:#6b7280">${offer.workshops?.name||"Oficina parceira"}</small>
+      </article>
+    `).join("");
+    section.style.display="";
+  }catch(error){
+    console.warn("[Workshop offers]",error.message);
+    section.style.display="none";
+  }
 }
 async function sendVehicleListingMessage(){
   if(!activeCar?.id||!sb||!currentUser){closeCarPopup();return;}
@@ -5226,9 +5265,10 @@ cancelReservation.addEventListener("click",()=>{
 sendReservation.addEventListener("click",async()=>{
   const valid=reservationService.value&&reservationDetails.value.trim()&&reservationDate.value&&reservationTime.value;
   reservationError.classList.toggle("show",!valid);if(!valid)return;
+  const selectedVehicle=reservationVehicle.value!==""?userVehicles[Number(reservationVehicle.value)]:null;
   let remoteId=null;
   try{
-    remoteId=await createReservationRecord({office:activeReservationOffice,service:reservationService.value,dateValue:reservationDate.value,timeValue:reservationTime.value,notes:reservationDetails.value.trim()});
+    remoteId=await createReservationRecord({office:activeReservationOffice,service:reservationService.value,dateValue:reservationDate.value,timeValue:reservationTime.value,notes:reservationDetails.value.trim(),vehicle:selectedVehicle});
   }catch(err){
     reservationError.textContent=err.message||"Erro ao agendar. Tente novamente.";
     reservationError.classList.add("show");
@@ -5580,6 +5620,7 @@ overlay.addEventListener("click",()=>{
 });
 document.getElementById("closeMenu").addEventListener("click",closeMenu);
 initAuth();
+loadRealWorkshopOffers();
 
 let deferredInstallPrompt=null;
 function isMobileDevice(){
