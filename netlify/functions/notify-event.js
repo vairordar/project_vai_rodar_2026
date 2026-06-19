@@ -7,11 +7,9 @@ const { sendPushToUser } = require('./push-core');
 // 2. Envia push web (celular) para o destinatario, via push-core (usa as mesmas
 //    VAPID keys/secrets que ja existem so no Netlify, nunca no frontend).
 //
-// Autenticacao: igual ao push-subscribe.js - o proprio token de sessao do usuario que
-// disparou o evento (motorista ou taller), sem precisar de ADMIN_PASSWORD nem de
-// segredo interno. O destinatario e' resolvido no servidor (com a service role key) e
-// validamos que quem chamou realmente e' uma das partes (da proposta ou da conversa),
-// para que ninguem possa forjar notificacoes para outros usuarios.
+// O campo "link" guarda um token simples que o frontend usa pra navegar direto pra
+// acao relacionada ao clicar na notificacao (chat:<conversationId> ou quote:<requestId>),
+// ja que o app nao tem router de URL.
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
 const SUPABASE_ANON_KEY =
@@ -113,7 +111,7 @@ exports.handler = async (event) => {
         type: 'message',
         title: `Nova mensagem de ${senderName}`,
         detail: text,
-        link: '/',
+        link: `chat:${conversationId}`,
       });
       const push = await sendPushToUser(recipientId, {
         title: `Nova mensagem de ${senderName}`,
@@ -140,7 +138,7 @@ exports.handler = async (event) => {
         type: 'quote',
         title: 'Nova proposta recebida',
         detail: `${workshopName} respondeu: ${requestTitle} (${priceText}).`,
-        link: '/',
+        link: `quote:${proposal.request_id}`,
       });
       const push = await sendPushToUser(driverId, {
         title: 'Nova proposta recebida',

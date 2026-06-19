@@ -901,6 +901,16 @@ body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
 .car-result-actions button{height:28px;border-radius:999px;padding:0 9px;font-size:8px;font-weight:800;cursor:pointer}
 .offer-car{border:0;background:var(--blue);color:#fff}
 .message-car{border:1px solid var(--blue);background:transparent;color:var(--blue)}
+.desktop-top-tool,.tool-btn{position:relative}
+.notif-badge{position:absolute;top:2px;right:6px;width:8px;height:8px;border-radius:50%;background:#3b82f6;box-shadow:0 0 0 2px var(--bottom,#fff)}
+.car-result{cursor:pointer}
+.car-detail-popup{text-align:left;max-height:80vh;overflow-y:auto}
+.car-detail-images{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;border-radius:12px}
+.car-detail-images img{width:140px;height:100px;border-radius:10px;object-fit:cover;flex:0 0 auto}
+.car-detail-popup h3{color:var(--text);font-size:14px;margin:0 0 4px}
+.car-detail-popup strong{display:block;color:var(--blue);font-size:16px;margin-bottom:6px}
+.car-detail-popup p{color:var(--muted);font-size:10px;line-height:1.5;margin:4px 0}
+.car-detail-popup .car-result-actions{margin-top:12px}
 .car-modal-form{display:grid;gap:8px;margin-top:12px;text-align:left}
 .car-modal-form textarea{min-height:74px;resize:vertical;border:1px solid var(--input-border);border-radius:11px;background:var(--bottom);color:var(--text);padding:9px;font-size:10px;outline:none}
 .reservation-form{display:grid;gap:8px;margin-top:12px;text-align:left}
@@ -1865,6 +1875,7 @@ body.theme-dark{
           </button>
           <button class="desktop-top-tool" id="topNotificationsBtn">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+            <span class="notif-badge" id="topNotifBadge" style="display:none"></span>
             Notificações
           </button>
           <button class="workshop-cta" id="registerWorkshopBtn">Oficinas mecânicas</button>
@@ -2301,6 +2312,7 @@ body.theme-dark{
       </button>
       <button class="tool-btn" id="mobileNotificationsBtn">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+        <span class="notif-badge" id="mobileNotifBadge" style="display:none"></span>
         <span>Notificações</span>
       </button>
     </div>
@@ -2493,6 +2505,19 @@ body.theme-dark{
         </div>
       </div>
       <button id="carPopupSend" type="button">Enviar proposta</button>
+    </section>
+    <section class="proposal-popup car-detail-popup" id="carDetailPopup" aria-label="Detalhes do veículo">
+      <button class="drawer-close" id="carDetailClose" type="button" aria-label="Fechar">×</button>
+      <div class="car-detail-images" id="carDetailImages"></div>
+      <h3 id="carDetailTitle"></h3>
+      <strong id="carDetailPrice"></strong>
+      <p id="carDetailMeta"></p>
+      <p id="carDetailLocation"></p>
+      <p id="carDetailDescription"></p>
+      <div class="car-result-actions">
+        <button id="carDetailOffer" type="button">Enviar proposta</button>
+        <button id="carDetailMessage" type="button">Enviar mensagem</button>
+      </div>
     </section>
     <section class="proposal-popup" id="visibilityPopup" aria-label="Revisão do anúncio">
       <div class="proposal-popup-icon">✓</div>
@@ -2746,6 +2771,8 @@ const quoteDetail=document.getElementById("quoteDetail");
 const newQuote=document.getElementById("newQuote");
 const topNotificationsBtn=document.getElementById("topNotificationsBtn");
 const mobileNotificationsBtn=document.getElementById("mobileNotificationsBtn");
+const topNotifBadge=document.getElementById("topNotifBadge");
+const mobileNotifBadge=document.getElementById("mobileNotifBadge");
 const notificationsPanel=document.getElementById("notificationsPanel");
 const notificationsClose=document.getElementById("notificationsClose");
 const notificationList=document.getElementById("notificationList");
@@ -2821,6 +2848,16 @@ const carPriceOffer=document.getElementById("carPriceOffer");
 const carCurrentPrice=document.getElementById("carCurrentPrice");
 const carOfferPrice=document.getElementById("carOfferPrice");
 const carPopupSend=document.getElementById("carPopupSend");
+const carDetailPopup=document.getElementById("carDetailPopup");
+const carDetailClose=document.getElementById("carDetailClose");
+const carDetailImages=document.getElementById("carDetailImages");
+const carDetailTitle=document.getElementById("carDetailTitle");
+const carDetailPrice=document.getElementById("carDetailPrice");
+const carDetailMeta=document.getElementById("carDetailMeta");
+const carDetailLocation=document.getElementById("carDetailLocation");
+const carDetailDescription=document.getElementById("carDetailDescription");
+const carDetailOffer=document.getElementById("carDetailOffer");
+const carDetailMessage=document.getElementById("carDetailMessage");
 const visibilityPopup=document.getElementById("visibilityPopup");
 const publishFeatured=document.getElementById("publishFeatured");
 const publishFree=document.getElementById("publishFree");
@@ -2933,6 +2970,101 @@ async function respondProposal(proposalId,status,quoteIndex){
   }
 }
 const notifications=[];
+const notificationIcons={quote:"🛠",message:"💬",system:"🔔",promo:"🎁"};
+function notificationTimeAgo(iso){
+  if(!iso) return "";
+  const diffMs=Date.now()-new Date(iso).getTime();
+  const minutes=Math.floor(diffMs/60000);
+  if(minutes<1) return "agora";
+  if(minutes<60) return `${minutes} min`;
+  const hours=Math.floor(minutes/60);
+  if(hours<24) return `${hours} h`;
+  const days=Math.floor(hours/24);
+  if(days<7) return `${days} d`;
+  return new Date(iso).toLocaleDateString("pt-BR");
+}
+let notificationsChannel=null;
+function updateNotifBadge(hasUnread){
+  if(topNotifBadge) topNotifBadge.style.display=hasUnread?"block":"none";
+  if(mobileNotifBadge) mobileNotifBadge.style.display=hasUnread?"block":"none";
+}
+async function refreshUnreadNotifCount(){
+  if(!sb||!currentUser) return;
+  try{
+    const {count,error}=await sb.from("notifications")
+      .select("id",{count:"exact",head:true})
+      .eq("user_id",currentUser.id)
+      .eq("read",false);
+    if(error) throw error;
+    updateNotifBadge(Boolean(count));
+  }catch(error){
+    console.warn("[notifications-count]",error.message);
+  }
+}
+function subscribeNotificationsChannel(){
+  if(!sb||!currentUser) return;
+  unsubscribeNotificationsChannel();
+  notificationsChannel=sb.channel("user-notifications:"+currentUser.id)
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"notifications",filter:"user_id=eq."+currentUser.id},()=>{
+      updateNotifBadge(true);
+      if(notificationsPanel.classList.contains("open")) loadNotifications();
+    })
+    .subscribe();
+}
+function unsubscribeNotificationsChannel(){
+  if(notificationsChannel){
+    sb.removeChannel(notificationsChannel);
+    notificationsChannel=null;
+  }
+}
+async function loadNotifications(){
+  if(!sb||!currentUser) return;
+  try{
+    const {data,error}=await sb.from("notifications")
+      .select("id,type,title,detail,read,link,created_at")
+      .eq("user_id",currentUser.id)
+      .order("created_at",{ascending:false})
+      .limit(30);
+    if(error) throw error;
+    notifications.length=0;
+    (data||[]).forEach((row)=>{
+      notifications.push({
+        id:row.id,
+        type:row.type||"system",
+        icon:notificationIcons[row.type]||notificationIcons.system,
+        title:row.title||"Notificação",
+        detail:row.detail||"",
+        time:notificationTimeAgo(row.created_at),
+        read:Boolean(row.read),
+        link:row.link||"",
+      });
+    });
+    renderNotifications();
+    const unreadIds=(data||[]).filter((row)=>!row.read).map((row)=>row.id);
+    if(unreadIds.length){
+      await sb.from("notifications").update({read:true}).in("id",unreadIds);
+    }
+    updateNotifBadge(false);
+  }catch(error){
+    console.warn("[notifications]",error.message);
+  }
+}
+async function openChatByConversationId(conversationId){
+  await openMessages();
+  const index=chats.findIndex((chat)=>chat.id===conversationId);
+  if(index>=0) await openChat(index);
+}
+async function openQuoteByRequestId(requestId){
+  openQuotes();
+  await loadMyServiceRequests();
+  const index=sentQuotes.findIndex((quote)=>quote.id===requestId);
+  if(index>=0) openQuoteDetail(index);
+}
+function handleNotificationClick(item){
+  const link=item?.link||"";
+  if(link.startsWith("chat:")) openChatByConversationId(link.slice(5));
+  else if(link.startsWith("quote:")) openQuoteByRequestId(link.slice(6));
+}
 const reservations=[];
 const verifiedCars=[];
 const benefitCatalog={
@@ -4088,6 +4220,8 @@ function setLoggedIn(user){
     if(("Notification" in window)&&Notification.permission==="granted"){
       enablePushNotifications({silent:true}).catch((error)=>console.warn("[Push]",error.message));
     }
+    refreshUnreadNotifCount();
+    subscribeNotificationsChannel();
     return;
   }
   topAccountLabel.textContent="Criar conta";
@@ -4095,6 +4229,8 @@ function setLoggedIn(user){
   userVehicleListings=[];
   chats=[];
   unsubscribeChatChannel();
+  unsubscribeNotificationsChannel();
+  updateNotifBadge(false);
   resetAccountModules();
   renderAccountPlates();
   renderUserVehicleListings();
@@ -4316,8 +4452,8 @@ function renderNotifications(){
     notificationList.innerHTML=`<div class="account-empty">Ainda não há notificações reais.${pushCta}</div>`;
     return;
   }
-  notificationList.innerHTML=notifications.map((item)=>`
-    <article class="notification-item">
+  notificationList.innerHTML=notifications.map((item,index)=>`
+    <article class="notification-item" data-index="${index}"${item.link?' style="cursor:pointer"':""}>
       <span class="notification-icon ${item.type}">${item.icon}</span>
       <div><b>${item.title}</b><p>${item.detail}</p><time>${item.time}</time></div>
     </article>
@@ -4384,6 +4520,7 @@ function openNotifications(){
   renderNotifications();
   overlay.classList.add("open");
   notificationsPanel.classList.add("open");
+  loadNotifications();
 }
 function closeNotifications(){
   notificationsPanel.classList.remove("open");
@@ -4508,6 +4645,13 @@ function parseMileage(value){
   const amount=Number(String(value||"").replace(/\D/g,""));
   return Number.isFinite(amount)&&amount>0?amount:null;
 }
+function guessCityFromAddress(text){
+  const raw=String(text||"").trim();
+  if(!raw) return "";
+  const parts=raw.split(",").map((part)=>part.trim()).filter(Boolean);
+  if(parts.length>=2) return parts[parts.length-1].split("-")[0].trim();
+  return parts[0]?parts[0].split("-")[0].trim():"";
+}
 async function createVehicleListingRecord(visibility){
   if(!sb||!currentUser) return null;
   const plate=sellPlate.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
@@ -4525,6 +4669,7 @@ async function createVehicleListingRecord(visibility){
       mileage:parseMileage(sellMileage.value),
       price:parseMoney(sellPrice.value),
       location:sellAddress.value.trim(),
+      city:sellAddress.dataset.city||guessCityFromAddress(sellAddress.value)||null,
       description:sellDescription.value.trim(),
       address:getLocationPayload(sellAddress).address,
       latitude:getLocationPayload(sellAddress).latitude,
@@ -4598,15 +4743,30 @@ async function createReservationRecord({office,service,dateValue,timeValue,notes
     throw error;
   }
 }
+const fallbackCarImg="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=420&h=280&fit=crop";
 function listingToCar(row){
   const title=[row.brand,row.model].filter(Boolean).join(" ")||"Veículo anunciado";
   const price=row.price?Number(row.price).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}):"Preço a combinar";
-  return {id:row.id,sellerId:row.user_id,name:title,year:row.year||"-",color:row.color||"-",mileage:row.mileage?`${Number(row.mileage).toLocaleString("pt-BR")} km`:"Quilometragem não informada",location:row.location||"Brasil",price,img:"https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=420&h=280&fit=crop"};
+  const photos=(row.vehicle_listing_photos||[]).slice().sort((a,b)=>(a.sort_order||0)-(b.sort_order||0)).map((photo)=>photo.image_url).filter(Boolean);
+  const city=row.city||guessCityFromAddress(row.location)||"Localização não informada";
+  return {
+    id:row.id,
+    sellerId:row.user_id,
+    name:title,
+    year:row.year||"-",
+    color:row.color||"-",
+    mileage:row.mileage?`${Number(row.mileage).toLocaleString("pt-BR")} km`:"Quilometragem não informada",
+    location:city,
+    description:row.description||"",
+    price,
+    img:photos[0]||fallbackCarImg,
+    images:photos.length?photos:[fallbackCarImg]
+  };
 }
 async function loadVehicleListings(){
   if(!sb) return;
   try{
-    const {data,error}=await sb.from("vehicle_listings").select("id,user_id,brand,model,year,color,mileage,price,location,status,created_at").eq("status","active").order("created_at",{ascending:false}).limit(24);
+    const {data,error}=await sb.from("vehicle_listings").select("id,user_id,brand,model,year,color,mileage,price,location,city,description,status,created_at,vehicle_listing_photos(image_url,sort_order)").eq("status","active").order("created_at",{ascending:false}).limit(24);
     if(error) throw error;
     verifiedCars.splice(0,verifiedCars.length,...(data||[]).map(listingToCar));
   }catch(error){console.warn("[Vehicle listings]",error.message);}
@@ -4651,7 +4811,7 @@ async function sendVehicleListingMessage(){
 function renderCars(){
   if(!verifiedCars.length){carsList.innerHTML='<div class="empty">Ainda não há veículos ativos publicados.</div>';return;}
   carsList.innerHTML=verifiedCars.map((car,index)=>`
-    <article class="car-result">
+    <article class="car-result" data-index="${index}">
       <img src="${car.img}" alt="">
       <div><h3>${car.name}</h3><p>${car.year} · ${car.color} · ${car.mileage}<br>${car.location}</p><strong>${car.price}</strong>
       <div class="car-result-actions"><button class="offer-car" data-index="${index}">Enviar proposta</button><button class="message-car" data-index="${index}">Enviar mensagem</button></div></div>
@@ -4659,7 +4819,26 @@ function renderCars(){
   `).join("");
   carsList.querySelectorAll(".offer-car").forEach((button)=>button.addEventListener("click",()=>openCarPopup(Number(button.dataset.index),true)));
   carsList.querySelectorAll(".message-car").forEach((button)=>button.addEventListener("click",()=>openCarPopup(Number(button.dataset.index),false)));
+  carsList.querySelectorAll(".car-result").forEach((card)=>card.addEventListener("click",(event)=>{
+    if(event.target.closest("button")) return;
+    openCarDetail(Number(card.dataset.index));
+  }));
 }
+function openCarDetail(index){
+  const car=verifiedCars[index];
+  if(!car) return;
+  activeCar=car;
+  carDetailImages.innerHTML=(car.images||[car.img]).map((src)=>`<img src="${src}" alt="">`).join("");
+  carDetailTitle.textContent=car.name;
+  carDetailPrice.textContent=car.price;
+  carDetailMeta.textContent=`${car.year} · ${car.color} · ${car.mileage}`;
+  carDetailLocation.textContent=`⌖ ${car.location}`;
+  carDetailDescription.textContent=car.description||"";
+  carDetailOffer.dataset.index=String(index);
+  carDetailMessage.dataset.index=String(index);
+  overlay.classList.add("open");carDetailPopup.classList.add("open");
+}
+function closeCarDetailPopup(){carDetailPopup.classList.remove("open");overlay.classList.remove("open");}
 async function openCarsView(){
   goHome();
   screenShell.classList.add("cars-open");
@@ -5335,8 +5514,12 @@ topNotificationsBtn.addEventListener("click",openNotifications);
 mobileNotificationsBtn.addEventListener("click",openNotifications);
 notificationsClose.addEventListener("click",closeNotifications);
 notificationList.addEventListener("click",(event)=>{
-  if(!event.target.closest("[data-enable-push]")) return;
-  enablePushNotifications().catch((error)=>setAccountStatus(error.message||"Não foi possível ativar notificações."));
+  if(event.target.closest("[data-enable-push]")){
+    enablePushNotifications().catch((error)=>setAccountStatus(error.message||"Não foi possível ativar notificações."));
+    return;
+  }
+  const item=event.target.closest(".notification-item");
+  if(item) handleNotificationClick(notifications[Number(item.dataset.index)]);
 });
 menuReservationsBtn.addEventListener("click",openReservations);
 reservationsClose.addEventListener("click",closeReservations);
@@ -5425,6 +5608,9 @@ publishCar.addEventListener("click",async()=>{
   }
 });
 carPopupSend.addEventListener("click",sendVehicleListingMessage);
+carDetailClose.addEventListener("click",closeCarDetailPopup);
+carDetailOffer.addEventListener("click",()=>{closeCarDetailPopup();openCarPopup(Number(carDetailOffer.dataset.index),true);});
+carDetailMessage.addEventListener("click",()=>{closeCarDetailPopup();openCarPopup(Number(carDetailMessage.dataset.index),false);});
 publishFeatured.addEventListener("click",closeVisibilityPopup);
 publishFree.addEventListener("click",closeVisibilityPopup);
 registerWorkshopBtn.addEventListener("click",openWorkshopDemo);
@@ -5633,7 +5819,7 @@ officeSearchInput.addEventListener("keydown",(event)=>{
 ratingFilter.querySelectorAll("input").forEach((control)=>control.addEventListener("change",()=>renderOffices(true)));
 useOfficeLocation.addEventListener("click",async()=>{await applyCurrentLocation(officeLocationFilter,useOfficeLocation,()=>renderOffices(true));renderOffices(true);});
 carsUseLocation.addEventListener("click",async()=>{await applyCurrentLocation(carsLocation,carsUseLocation);});
-sellUseLocation.addEventListener("click",async()=>{await applyCurrentLocation(sellAddress,sellUseLocation);});
+sellUseLocation.addEventListener("click",async()=>{await applyCurrentLocation(sellAddress,sellUseLocation,({details})=>{sellAddress.dataset.city=details?.city||"";});});
 clearOfficeFilters.addEventListener("click",()=>{
   officeSearchInput.value="";
   officeLocationFilter.value="";
@@ -5689,6 +5875,7 @@ overlay.addEventListener("click",()=>{
     return;
   }
   if(carActionPopup.classList.contains("open")){closeCarPopup();return;}
+  if(carDetailPopup.classList.contains("open")){closeCarDetailPopup();return;}
   if(visibilityPopup.classList.contains("open")){visibilityPopup.classList.remove("open");overlay.classList.remove("open");return;}
   if(registerSuccessPopup.classList.contains("open")){finishWorkshopRegister();return;}
   if(workshopDemoPopup.classList.contains("open")){closeWorkshopDemo();return;}
