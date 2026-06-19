@@ -458,7 +458,37 @@ function closeMobileMenu(){document.querySelector(".side")?.classList.remove("op
 function initials(name){return (name||"Oficina").split(/\s+/).slice(0,2).map((part)=>part[0]||"").join("").toUpperCase()||"VR";}
 function showAuth(){state.user=null;state.workshop=null;$("authScreen").style.display="grid";$("app").style.display="none";}
 function showApp(){ $("authScreen").style.display="none";$("app").style.display="block";renderShell();loadAll();}
-async function login(email,password,useDemoFallback){$("authStatus").textContent="";$("loginBtn").disabled=true;$("loginBtn").textContent="Entrando...";const {error}=await sb.auth.signInWithPassword({email,password});$("loginBtn").disabled=false;$("loginBtn").textContent="Entrar no painel";if(error){if(useDemoFallback){startDemoMode();return;}const message=error.message==="Invalid login credentials"?"E-mail ou senha incorretos.":(error.message==="Email not confirmed"?"E-mail ainda nao confirmado. Confirme o usuario no Supabase Auth ou cadastre novamente a oficina.":error.message);$("authStatus").textContent=message;}}
+async function login(email,password,useDemoFallback){
+  $("authStatus").textContent="";
+  $("loginBtn").disabled=true;
+  $("loginBtn").textContent="Entrando...";
+  const {data,error}=await sb.auth.signInWithPassword({email,password});
+  $("loginBtn").disabled=false;
+  $("loginBtn").textContent="Entrar no painel";
+  if(error){
+    if(useDemoFallback){startDemoMode();return;}
+    const message=error.message==="Invalid login credentials"?"E-mail ou senha incorretos.":(error.message==="Email not confirmed"?"E-mail ainda nao confirmado. Confirme o usuario no Supabase Auth ou cadastre novamente a oficina.":error.message);
+    $("authStatus").textContent=message;
+    return;
+  }
+  // Nao depender apenas do listener onAuthStateChange (pode demorar ou nao disparar
+  // em alguns navegadores/abas). Entramos direto apos login bem-sucedido.
+  if(data?.user){
+    state.user=data.user;
+    try{
+      const result=await loadWorkshop();
+      if(!result.ok){
+        showAuth();
+        $("authStatus").textContent="Conta autenticada, mas nenhuma oficina foi encontrada para este e-mail. Verifique se o cadastro foi aprovado e se o owner_id esta vinculado ao usuario.";
+        return;
+      }
+      showApp();
+    }catch(workshopError){
+      showAuth();
+      $("authStatus").textContent="Erro ao carregar a oficina: "+(workshopError?.message||"tente novamente.");
+    }
+  }
+}
 function startDemoMode(){state.demoMode=true;state.user={...demoStore.user};state.workshop={...demoStore.workshop};showApp();toast("Modo demo aberto sem Supabase.");}
 async function loadWorkshop(){const {data,error}=await sb.from("workshops").select("*").eq("owner_id",state.user.id).maybeSingle();if(error){console.warn("[workshop]",error.message);state.workshop=null;return {ok:false,error};}state.workshop=data||null;return {ok:Boolean(data),error:null};}
 function renderShell(){

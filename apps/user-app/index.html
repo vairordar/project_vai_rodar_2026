@@ -2871,7 +2871,8 @@ const emergencyServices=[
   {name:"Combustível emergencial",desc:"Entrega rápida para continuar rodando",icon:"⛽",price:79}
 ];
 const partsStores=[];
-const chats=[];
+let chats=[];
+let messagesChannel=null;
 const sentQuotes=[];
 const workshopQuotes=[];
 const notifications=[];
@@ -3176,8 +3177,9 @@ function renderOffices(reset=false){
   loadMoreOffices.style.display=visibleOfficeCount<filtered.length?"block":"none";
   officeList.querySelectorAll(".message-btn").forEach((button)=>button.addEventListener("click",()=>{
     officeList.querySelectorAll(".office-detail.show").forEach((detail)=>detail.classList.remove("show"));
-    closeOfficesView();
-    openMessages();
+    const card=button.closest(".office-card");
+    const office=offices[Number(card?.dataset.officeIndex)];
+    openConversationWithWorkshop(office?.id,office?.name);
   }));
   officeList.querySelectorAll(".more-info-btn").forEach((button)=>button.addEventListener("click",()=>{
     const detail=document.getElementById(`officeDetail${button.dataset.index}`);
@@ -3241,7 +3243,7 @@ function renderPartsStores(){
       <div class="parts-stock">${store.stock}</div>
     </article>
   `).join("");
-  partsList.querySelectorAll(".message-btn").forEach((button)=>button.addEventListener("click",closePartsView));
+  partsList.querySelectorAll(".message-btn").forEach((button)=>button.addEventListener("click",openMessages));
 }
 function searchParts(){
   const queryOk=partsQuery.value.trim().length>=3;
@@ -4025,6 +4027,8 @@ function setLoggedIn(user){
   topAccountLabel.textContent="Criar conta";
   userVehicles=[];
   userVehicleListings=[];
+  chats=[];
+  unsubscribeChatChannel();
   resetAccountModules();
   renderAccountPlates();
   renderUserVehicleListings();
@@ -4040,52 +4044,160 @@ async function initAuth(){
   setLoggedIn(data?.session?.user||null);
   sb.auth.onAuthStateChange((_event,session)=>setLoggedIn(session?.user||null));
 }
+function chatInitials(name){
+  return (name||"OF").split(" ").filter(Boolean).slice(0,2).map((word)=>word[0]).join("").toUpperCase()||"OF";
+}
+async function loadUserConversations(){
+  if(!sb||!currentUser){chats=[];return;}
+  try{
+    const {data,error}=await sb.from("conversations")
+      .select("id,workshop_id,updated_at,workshops(name)")
+      .eq("user_id",currentUser.id)
+      .order("updated_at",{ascending:false});
+    if(error) throw error;
+    chats=(data||[]).map((row)=>{
+      const name=row.workshops?.name||"Oficina";
+      return {
+        id:row.id,
+        workshopId:row.workshop_id,
+        name,
+        initials:chatInitials(name),
+        time:new Date(row.updated_at).toLocaleDateString("pt-BR"),
+        unread:0,
+        lastMessage:"Toque para abrir a conversa",
+        messages:[]
+      };
+    });
+  }catch(error){
+    console.warn("[Conversas]",error.message);
+    chats=[];
+  }
+}
 function renderChats(){
   if(!chats.length){chatList.innerHTML='<div class="account-empty">Ainda não há mensagens reais.</div>';return;}
   chatList.innerHTML=chats.map((chat,index)=>`
     <button class="chat-item" type="button" data-index="${index}">
       <span class="chat-avatar">${chat.initials}</span>
-      <span><b>${chat.name}</b><p>${chat.messages.at(-1)[1]}</p></span>
+      <span><b>${chat.name}</b><p>${chat.messages.length?chat.messages.at(-1)[1]:chat.lastMessage}</p></span>
       <span class="chat-time">${chat.time}${chat.unread?`<span class="unread">${chat.unread}</span>`:""}</span>
     </button>
   `).join("");
   chatList.querySelectorAll(".chat-item").forEach((button)=>button.addEventListener("click",()=>openChat(Number(button.dataset.index))));
 }
-function openMessages(){
+async function openMessages(){
   if(!requireUserAccount("Entre para ver e responder suas mensagens.")) return;
   closeMenu();
   closeEmergency();
   closeAccount();
   closeQuotes();
   closeNotifications();
-  renderChats();
-  chatList.style.display="grid";
+  chatList.innerHTML='<div class="account-empty">Carregando conversas...</div>';
   chatRoom.classList.remove("show");
+  chatList.style.display="grid";
   overlay.classList.add("open");
   messagesPanel.classList.add("open");
+  await loadUserConversations();
+  renderChats();
+}
+function unsubscribeChatChannel(){
+  if(messagesChannel){
+    sb.removeChannel(messagesChannel);
+    messagesChannel=null;
+  }
 }
 function closeMessages(){
   messagesPanel.classList.remove("open");
+  unsubscribeChatChannel();
   if(!sideMenu.classList.contains("open")&&!emergencyPanel.classList.contains("open")&&!accountPanel.classList.contains("open")&&!quotesPanel.classList.contains("open")&&!notificationsPanel.classList.contains("open")) overlay.classList.remove("open");
 }
-function openChat(index){
+function renderChatMessages(){
+  const chat=chats[activeChatIndex];
+  if(!chat) return;
+  chatMessages.innerHTML=chat.messages.map(([who,text])=>`<div class="bubble ${who}">${text}</div>`).join("")||'<div class="account-empty">Nenhuma mensagem ainda. Escreva para a oficina.</div>';
+  chatMessages.scrollTop=chatMessages.scrollHeight;
+}
+async function loadChatMessages(chat){
+  unsubscribeChatChannel();
+  try{
+    const {data,error}=await sb.from("messages")
+      .select("id,text,sender_id,created_at")
+      .eq("conversation_id",chat.id)
+      .order("created_at",{ascending:true});
+    if(error) throw error;
+    chat.messages=(data||[]).map((message)=>[message.sender_id===currentUser.id?"me":"them",message.text||""]);
+    renderChatMessages();
+    messagesChannel=sb.channel("user-chat:"+chat.id)
+      .on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:"conversation_id=eq."+chat.id},(payload)=>{
+        if(payload.new.sender_id===currentUser.id) return;
+        chat.messages.push([payload.new.sender_id===currentUser.id?"me":"them",payload.new.text||""]);
+        if(chats[activeChatIndex]===chat) renderChatMessages();
+      })
+      .subscribe();
+  }catch(error){
+    console.warn("[Mensagens]",error.message);
+    chatMessages.innerHTML='<div class="account-empty">Erro ao carregar mensagens: '+error.message+'</div>';
+  }
+}
+async function openChat(index){
+  const chat=chats[index];
+  if(!chat) return;
   activeChatIndex=index;
-  chats[index].unread=0;
+  chat.unread=0;
   chatList.style.display="none";
   chatRoom.classList.add("show");
-  chatRoomAvatar.textContent=chats[index].initials;
-  chatRoomName.textContent=chats[index].name;
-  chatMessages.innerHTML=chats[index].messages.map(([who,text])=>`<div class="bubble ${who}">${text}</div>`).join("");
-  chatMessages.scrollTop=chatMessages.scrollHeight;
+  chatRoomAvatar.textContent=chat.initials;
+  chatRoomName.textContent=chat.name;
+  chatMessages.innerHTML='<div class="account-empty">Carregando mensagens...</div>';
+  await loadChatMessages(chat);
   setTimeout(()=>chatInput.focus(),80);
 }
-function sendChatMessage(){
+async function openConversationWithWorkshop(workshopId,workshopName){
+  if(!workshopId) return;
+  if(!requireUserAccount("Entre para conversar com a oficina.")) return;
+  closeMenu();closeEmergency();closeAccount();closeQuotes();closeNotifications();
+  chatList.style.display="none";
+  chatRoom.classList.add("show");
+  chatRoomAvatar.textContent=chatInitials(workshopName);
+  chatRoomName.textContent=workshopName||"Oficina";
+  chatMessages.innerHTML='<div class="account-empty">Abrindo conversa...</div>';
+  overlay.classList.add("open");
+  messagesPanel.classList.add("open");
+  try{
+    const {data,error}=await sb.from("conversations")
+      .upsert({user_id:currentUser.id,workshop_id:workshopId},{onConflict:"user_id,workshop_id"})
+      .select("id")
+      .single();
+    if(error) throw error;
+    await loadUserConversations();
+    let index=chats.findIndex((chat)=>chat.id===data.id);
+    if(index===-1){
+      chats.unshift({id:data.id,workshopId,name:workshopName||"Oficina",initials:chatInitials(workshopName),time:new Date().toLocaleDateString("pt-BR"),unread:0,lastMessage:"Toque para abrir a conversa",messages:[]});
+      index=0;
+    }
+    await openChat(index);
+  }catch(error){
+    console.warn("[Conversa]",error.message);
+    chatMessages.innerHTML='<div class="account-empty">Não foi possível abrir a conversa: '+error.message+'</div>';
+  }
+}
+async function sendChatMessage(){
   if(!requireUserAccount("Entre para enviar mensagens.")) return;
   const text=chatInput.value.trim();
   if(!text) return;
-  chats[activeChatIndex].messages.push(["me",text]);
+  const chat=chats[activeChatIndex];
+  if(!chat) return;
   chatInput.value="";
-  openChat(activeChatIndex);
+  chat.messages.push(["me",text]);
+  renderChatMessages();
+  try{
+    const {error}=await sb.from("messages").insert({conversation_id:chat.id,sender_id:currentUser.id,text});
+    if(error) throw error;
+  }catch(error){
+    console.warn("[Enviar mensagem]",error.message);
+    chat.messages.pop();
+    renderChatMessages();
+    alert("Não foi possível enviar a mensagem: "+(error.message||""));
+  }
 }
 function renderQuotes(){
   if(!sentQuotes.length){quotesList.innerHTML='<div class="account-empty">Ainda não há cotações reais.</div>';return;}
@@ -4487,7 +4599,7 @@ function openQuoteDetail(index){
   `;
   document.getElementById("quoteBack").addEventListener("click",()=>{quoteDetail.classList.remove("show");quotesOverview.style.display="block";});
   quoteDetail.querySelectorAll(".accept-quote,.reject-quote").forEach((button)=>button.addEventListener("click",()=>button.textContent=button.classList.contains("accept-quote")?"Proposta aceita":"Recusada"));
-  quoteDetail.querySelectorAll(".message-quote").forEach((button,index)=>button.addEventListener("click",()=>{closeQuotes();openMessages();openChat(Math.min(index,chats.length-1));}));
+  quoteDetail.querySelectorAll(".message-quote").forEach((button)=>button.addEventListener("click",()=>{closeQuotes();openMessages();}));
 }
 function updateEmergencyPrice(){
   if(!selectedEmergency) return;
@@ -5072,7 +5184,7 @@ menuAccountBtn.addEventListener("click",openAccount);
 accountClose.addEventListener("click",closeAccount);
 menuMessagesBtn.addEventListener("click",openMessages);
 messagesClose.addEventListener("click",closeMessages);
-chatBack.addEventListener("click",()=>{chatRoom.classList.remove("show");chatList.style.display="grid";renderChats();});
+chatBack.addEventListener("click",()=>{unsubscribeChatChannel();chatRoom.classList.remove("show");chatList.style.display="grid";renderChats();});
 chatSend.addEventListener("click",sendChatMessage);
 chatInput.addEventListener("keydown",(event)=>{if(event.key==="Enter"){event.preventDefault();sendChatMessage();}});
 menuQuotesBtn.addEventListener("click",openQuotes);
