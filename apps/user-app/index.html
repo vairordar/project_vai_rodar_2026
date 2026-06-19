@@ -2878,7 +2878,60 @@ const partsStores=[];
 let chats=[];
 let messagesChannel=null;
 const sentQuotes=[];
-const workshopQuotes=[];
+async function loadMyServiceRequests(){
+  if(!sb||!currentUser) return;
+  try{
+    const {data,error}=await sb.from("service_requests")
+      .select("id,title,description,location,status,created_at,vehicles(brand,model,year,plate),proposals(id,price,estimated_time,message,status,created_at,workshops(name))")
+      .eq("user_id",currentUser.id)
+      .order("created_at",{ascending:false})
+      .limit(50);
+    if(error) throw error;
+    sentQuotes.length=0;
+    (data||[]).forEach((req)=>{
+      const proposals=(req.proposals||[]).map((p)=>({
+        id:p.id,
+        name:p.workshops?.name||"Oficina parceira",
+        price:p.price!=null&&p.price!==""?`R$ ${p.price}`:"A combinar",
+        estimatedTime:p.estimated_time||"",
+        message:p.message||"",
+        time:p.created_at?new Date(p.created_at).toLocaleDateString("pt-BR"):"",
+        status:p.status||"pending",
+      })).sort((a,b)=>(a.time<b.time?1:-1));
+      const accepted=proposals.find((p)=>p.status==="accepted");
+      const pending=proposals.filter((p)=>p.status==="pending");
+      let status="Aguardando",className="waiting";
+      if(accepted){status="Proposta aceita";className="accepted";}
+      else if(pending.length){status="Proposta recebida";className="received";}
+      else if(req.status==="closed"){status="Encerrada";className="closed";}
+      const v=req.vehicles;
+      const vehicle=v?`${v.brand||""} ${v.model||""} ${v.year||""}`.replace(/\s+/g," ").trim():"";
+      sentQuotes.push({
+        id:req.id,
+        title:req.title||req.description||"Solicitação",
+        vehicle:vehicle||"Veículo não informado",
+        location:req.location||"",
+        status,className,
+        proposals,
+      });
+    });
+    renderQuotes();
+  }catch(error){
+    console.warn("[quotes]",error.message);
+  }
+}
+async function respondProposal(proposalId,status,quoteIndex){
+  if(!sb||!proposalId) return;
+  try{
+    const {error}=await sb.from("proposals").update({status}).eq("id",proposalId);
+    if(error) throw error;
+    await loadMyServiceRequests();
+    if(sentQuotes[quoteIndex]) openQuoteDetail(quoteIndex);
+  }catch(error){
+    console.warn("[proposal-response]",error.message);
+    alert("Não foi possível atualizar a proposta agora. Tente novamente.");
+  }
+}
 const notifications=[];
 const reservations=[];
 const verifiedCars=[];
@@ -4234,6 +4287,7 @@ function openQuotes(){
   quoteDetail.classList.remove("show");
   overlay.classList.add("open");
   quotesPanel.classList.add("open");
+  loadMyServiceRequests();
 }
 function closeQuotes(){
   quotesPanel.classList.remove("open");
@@ -4645,22 +4699,30 @@ function openWorkshopDemo(){overlay.classList.add("open");workshopDemoPopup.clas
 function closeWorkshopDemo(){workshopDemoPopup.classList.remove("open");overlay.classList.remove("open");}
 function openQuoteDetail(index){
   const quote=sentQuotes[index];
+  if(!quote) return;
+  const proposals=quote.proposals||[];
   quotesOverview.style.display="none";
   quoteDetail.classList.add("show");
   quoteDetail.innerHTML=`
     <button class="drawer-back" type="button" id="quoteBack">← Minhas cotações</button>
     <div class="quote-description"><small>DESCRIÇÃO</small><p>${quote.title}</p><span>🚗 ${quote.vehicle}<br>⌖ ${quote.location}</span></div>
-    <div class="flow-label">Propostas de oficinas <small>${workshopQuotes.length}</small></div>
-    ${workshopQuotes.map((proposal)=>`
+    <div class="flow-label">Propostas de oficinas <small>${proposals.length}</small></div>
+    ${proposals.length?proposals.map((proposal)=>`
       <article class="workshop-proposal">
         <div class="workshop-proposal-head"><div><h4>${proposal.name}</h4><small>Resposta recebida · ${proposal.time}</small></div><strong>${proposal.price}</strong></div>
         <p>${proposal.message}</p>
-        <div class="proposal-card-actions"><button class="accept-quote">Aceitar proposta</button><button class="reject-quote">Recusar</button><button class="message-quote">Enviar mensagem</button></div>
+        <div class="proposal-card-actions">
+          ${proposal.status==="pending"
+            ?`<button class="accept-quote" data-id="${proposal.id}">Aceitar proposta</button><button class="reject-quote" data-id="${proposal.id}">Recusar</button>`
+            :`<span class="status-pill ${proposal.status}">${proposal.status==="accepted"?"Aceita":proposal.status==="declined"?"Recusada":proposal.status}</span>`}
+          <button class="message-quote">Enviar mensagem</button>
+        </div>
       </article>
-    `).join("")}
+    `).join(""):'<div class="account-empty">Ainda não há propostas recebidas para esta solicitação.</div>'}
   `;
   document.getElementById("quoteBack").addEventListener("click",()=>{quoteDetail.classList.remove("show");quotesOverview.style.display="block";});
-  quoteDetail.querySelectorAll(".accept-quote,.reject-quote").forEach((button)=>button.addEventListener("click",()=>button.textContent=button.classList.contains("accept-quote")?"Proposta aceita":"Recusada"));
+  quoteDetail.querySelectorAll(".accept-quote").forEach((button)=>button.addEventListener("click",()=>respondProposal(button.dataset.id,"accepted",index)));
+  quoteDetail.querySelectorAll(".reject-quote").forEach((button)=>button.addEventListener("click",()=>respondProposal(button.dataset.id,"declined",index)));
   quoteDetail.querySelectorAll(".message-quote").forEach((button)=>button.addEventListener("click",()=>{closeQuotes();openMessages();}));
 }
 function updateEmergencyPrice(){
