@@ -5636,6 +5636,12 @@ if('serviceWorker' in navigator && window.location.protocol !== 'file:'){
       .then(reg=>console.log('[SW] Registrado:',reg.scope))
       .catch(err=>console.warn('[SW] Falha:',err));
   });
+  let swRefreshing=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(swRefreshing) return;
+    swRefreshing=true;
+    window.location.reload();
+  });
 }
 </script>
 </body>
