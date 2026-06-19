@@ -2,6 +2,9 @@ const { authorize, corsHeaders, json, supabaseRequest } = require('./admin-commo
 
 const VALID_STATUSES = new Set(['pending', 'approved', 'rejected', 'blocked']);
 const VALID_LISTING_STATUSES = new Set(['pending_review', 'active', 'paused', 'sold', 'expired', 'rejected']);
+const VALID_OFFER_STATUSES = new Set(['active', 'inactive']);
+const VALID_PCR_DECISIONS = new Set(['approved', 'rejected']);
+const PERFIL_PUBLICO_FIELDS = ['name', 'whatsapp', 'email', 'city', 'state', 'address', 'description'];
 
 function cleanText(value, max = 500) {
   return String(value || '').trim().slice(0, max);
@@ -126,6 +129,81 @@ exports.handler = async (event) => {
         listingId,
         `Anuncio de veiculo marcado como ${status}.`,
         { status }
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'setWorkshopOfferStatus') {
+      const offerId = cleanText(payload.offer_id, 80);
+      const status = cleanText(payload.status, 20);
+      if (!offerId || !VALID_OFFER_STATUSES.has(status)) {
+        return json(400, { success: false, error: 'offer_id e status validos (active/inactive) sao obrigatorios.' });
+      }
+      const result = await supabaseRequest(`/rest/v1/workshop_offers?id=eq.${encodeURIComponent(offerId)}`, {
+        method: 'PATCH',
+        body: { status },
+      });
+      await writeAudit(
+        `workshop_offer_${status}`,
+        'workshop_offers',
+        offerId,
+        `Oferta marcada como ${status}.`,
+        { status }
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'reviewProfileChangeRequest') {
+      const requestId = cleanText(payload.request_id, 80);
+      const decision = cleanText(payload.decision, 20);
+      const adminNotes = cleanText(payload.admin_notes || '', 500);
+      if (!requestId || !VALID_PCR_DECISIONS.has(decision)) {
+        return json(400, { success: false, error: 'request_id e decision validos (approved/rejected) sao obrigatorios.' });
+      }
+
+      const rows = await supabaseRequest(
+        `/rest/v1/workshop_profile_change_requests?id=eq.${encodeURIComponent(requestId)}&select=*`
+      );
+      const request = Array.isArray(rows) ? rows[0] : rows;
+      if (!request) return json(404, { success: false, error: 'Solicitacao nao encontrada.' });
+      if (request.status !== 'pending') {
+        return json(400, { success: false, error: 'Esta solicitacao ja foi revisada.' });
+      }
+
+      if (decision === 'approved') {
+        let workshopUpdate = {};
+        if (request.field_name === 'perfil_publico' && request.new_value && typeof request.new_value === 'object') {
+          PERFIL_PUBLICO_FIELDS.forEach((field) => {
+            if (request.new_value[field] !== undefined) workshopUpdate[field] = request.new_value[field];
+          });
+        } else if (request.new_value && typeof request.new_value === 'object' && 'value' in request.new_value) {
+          workshopUpdate[request.field_name] = request.new_value.value;
+        }
+        if (Object.keys(workshopUpdate).length > 0) {
+          await supabaseRequest(`/rest/v1/workshops?id=eq.${encodeURIComponent(request.workshop_id)}`, {
+            method: 'PATCH',
+            body: workshopUpdate,
+          });
+        }
+      }
+
+      const result = await supabaseRequest(
+        `/rest/v1/workshop_profile_change_requests?id=eq.${encodeURIComponent(requestId)}`,
+        {
+          method: 'PATCH',
+          body: {
+            status: decision,
+            admin_notes: adminNotes || null,
+            reviewed_at: new Date().toISOString(),
+          },
+        }
+      );
+      await writeAudit(
+        `profile_change_request_${decision}`,
+        'workshop_profile_change_requests',
+        requestId,
+        `Solicitacao de alteracao (${request.field_name}) da oficina ${request.workshop_id} marcada como ${decision}.`,
+        { field_name: request.field_name, decision }
       );
       return json(200, { success: true, data: result });
     }

@@ -124,6 +124,7 @@ button{cursor:pointer}
 .pill.open,.pill.pending{background:#fff7d6;color:var(--yellow)}
 .pill.active,.pill.accepted,.pill.confirmed{background:#dcfce7;color:#15803d}
 .pill.closed,.pill.declined,.pill.cancelled{background:#fee2e2;color:#b91c1c}
+.pill.completed{background:#e8f0ff;color:var(--blue)}
 .pill.info{background:#e8f0ff;color:var(--blue)}
 .tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .tags span{border:1px solid var(--line-strong);border-radius:999px;background:var(--soft);color:var(--blue);padding:4px 7px;font-size:8px;font-weight:800}
@@ -763,15 +764,69 @@ function renderAgenda(){
   }
   grid.querySelectorAll("[data-calendar-reservation]").forEach((button)=>button.addEventListener("click",()=>{setView("reservations");renderReservationDetail(button.dataset.calendarReservation);}));
 }
+const RESERVATION_STATUS_LABEL={pending:"Pendente",confirmed:"Confirmada",completed:"Finalizada",cancelled:"Cancelada"};
 function renderReservations(){
   const list=$("reservationList");
   const reservations=allReservations();
   if(!reservations.length){list.innerHTML='<div class="empty">Nenhuma reserva ainda.</div>';$("reservationDetail").innerHTML='<div class="empty">Sem reserva selecionada.</div>';return;}
-  list.innerHTML=reservations.map((res)=>`<button class="item" data-reservation-id="${esc(res.id)}" type="button"><div class="item-head"><div><h4>${esc(res.profiles?.name||res.client_name||"Motorista")}</h4><small>${new Date(res.scheduled_at).toLocaleString("pt-BR")} Â· ${res.manual?"Reserva manual":"Reserva do app"}</small></div><span class="pill ${res.manual?"info":esc(res.status||"pending")}">${res.manual?"Manual":esc(res.status||"pending")}</span></div><p>${esc(res.service_type||"Servico")} - ${esc(res.notes||"Sem observacoes")}</p></button>`).join("");
+  list.innerHTML=reservations.map((res)=>{const status=res.status||"pending";const label=RESERVATION_STATUS_LABEL[status]||status;return `<button class="item" data-reservation-id="${esc(res.id)}" type="button"><div class="item-head"><div><h4>${esc(res.profiles?.name||res.client_name||"Motorista")}</h4><small>${new Date(res.scheduled_at).toLocaleString("pt-BR")} Â· ${res.manual?"Reserva manual":"Reserva do app"}</small></div><span class="pill ${esc(status)}">${esc(label)}</span></div><p>${esc(res.service_type||"Servico")} - ${esc(res.notes||"Sem observacoes")}</p></button>`;}).join("");
   list.querySelectorAll("[data-reservation-id]").forEach((button)=>button.addEventListener("click",()=>renderReservationDetail(button.dataset.reservationId)));
   renderReservationDetail(reservations[0].id);
 }
-function renderReservationDetail(id){const res=allReservations().find((item)=>item.id===id);if(!res)return;const isManual=!!res.manual;$("reservationDetail").innerHTML=`<div class="detail-row"><small>Origem</small><b>${isManual?"Reserva manual externa":"Reserva criada pelo app"}</b><span>${isManual?"Cliente fora do Vai Rodar: chat indisponivel.":"Cliente pode conversar pelo app."}</span></div><div class="detail-row"><small>Cliente</small><b>${esc(res.profiles?.name||res.client_name||"Motorista")}</b><span>${esc(res.profiles?.email||res.client_email||"")}</span></div><div class="detail-row"><small>Horario</small><b>${new Date(res.scheduled_at).toLocaleString("pt-BR")}</b></div><div class="detail-row"><small>Veiculo</small><span>${esc(res.vehicle||res.plate||"-")}</span></div><div class="detail-row"><small>Servico</small><span>${esc(res.service_type||"-")}</span></div><div class="detail-row"><small>Observacoes</small><span>${esc(res.notes||"-")}</span></div>${res.estimated_price?`<div class="detail-row"><small>Preco estimado</small><b>${money(res.estimated_price)}</b></div>`:""}<div class="actions">${isManual?`<button class="btn secondary" type="button" onclick="editManualReservation('${esc(res.id)}')">Modificar</button><button class="btn danger" type="button" onclick="cancelManualReservation('${esc(res.id)}')">Cancelar</button>`:`<button class="btn secondary" type="button">Reagendar</button><button class="btn danger" type="button">Cancelar</button><button class="btn success" type="button">Finalizar</button>`}</div>`;}
+function renderReservationDetail(id){
+  const res=allReservations().find((item)=>item.id===id);
+  if(!res)return;
+  const isManual=!!res.manual;
+  const status=res.status||"pending";
+  const statusLabel=RESERVATION_STATUS_LABEL[status]||status;
+  let actions;
+  if(isManual){
+    actions=status==="cancelled"
+      ?`<span class="pill cancelled">Reserva cancelada</span>`
+      :`<button class="btn secondary" type="button" onclick="editManualReservation('${esc(res.id)}')">Modificar</button><button class="btn danger" type="button" onclick="cancelManualReservation('${esc(res.id)}')">Cancelar</button>`;
+  }else if(status==="pending"){
+    actions=`<button class="btn success" type="button" onclick="setReservationStatus('${esc(res.id)}','confirmed')">Aprovar</button><button class="btn danger" type="button" onclick="setReservationStatus('${esc(res.id)}','cancelled')">Rejeitar</button>`;
+  }else if(status==="confirmed"){
+    actions=`<button class="btn secondary" type="button" onclick="rescheduleReservation('${esc(res.id)}')">Reagendar</button><button class="btn danger" type="button" onclick="setReservationStatus('${esc(res.id)}','cancelled')">Cancelar</button><button class="btn success" type="button" onclick="setReservationStatus('${esc(res.id)}','completed')">Finalizar</button>`;
+  }else{
+    actions=`<span class="pill ${esc(status)}">${esc(statusLabel)}</span>`;
+  }
+  $("reservationDetail").innerHTML=`<div class="detail-row"><small>Origem</small><b>${isManual?"Reserva manual externa":"Reserva criada pelo app"}</b><span>${isManual?"Cliente fora do Vai Rodar: chat indisponivel.":"Cliente pode conversar pelo app."}</span></div><div class="detail-row"><small>Cliente</small><b>${esc(res.profiles?.name||res.client_name||"Motorista")}</b><span>${esc(res.profiles?.email||res.client_email||"")}</span></div><div class="detail-row"><small>Status</small><b>${esc(statusLabel)}</b></div><div class="detail-row"><small>Horario</small><b>${new Date(res.scheduled_at).toLocaleString("pt-BR")}</b></div><div class="detail-row"><small>Veiculo</small><span>${esc(res.vehicle||res.plate||"-")}</span></div><div class="detail-row"><small>Servico</small><span>${esc(res.service_type||"-")}</span></div><div class="detail-row"><small>Observacoes</small><span>${esc(res.notes||"-")}</span></div>${res.estimated_price?`<div class="detail-row"><small>Preco estimado</small><b>${money(res.estimated_price)}</b></div>`:""}<div class="actions">${actions}</div>`;
+}
+async function setReservationStatus(id,status){
+  const extra={};
+  if(status==="cancelled")extra.cancelled_at=new Date().toISOString();
+  if(status==="completed")extra.completed_at=new Date().toISOString();
+  try{
+    const{error}=await sb.from("reservations").update({status,...extra}).eq("id",id);
+    if(error)throw error;
+    await loadReservations();
+    renderAgenda();renderReservations();renderMetrics();
+    toast("Reserva atualizada.");
+  }catch(error){
+    toast(error.message||"Nao foi possivel atualizar a reserva.");
+  }
+}
+async function rescheduleReservation(id){
+  const res=allReservations().find((item)=>item.id===id);
+  if(!res)return;
+  const current=new Date(res.scheduled_at);
+  const dateStr=prompt("Nova data (AAAA-MM-DD):",current.toISOString().slice(0,10));
+  if(!dateStr)return;
+  const timeStr=prompt("Novo horario (HH:MM):",current.toTimeString().slice(0,5));
+  if(!timeStr)return;
+  const newDate=new Date(`${dateStr}T${timeStr}:00`);
+  if(isNaN(newDate.getTime())){toast("Data ou horario invalido.");return;}
+  try{
+    const{error}=await sb.from("reservations").update({scheduled_at:newDate.toISOString()}).eq("id",id);
+    if(error)throw error;
+    await loadReservations();
+    renderAgenda();renderReservations();renderMetrics();
+    toast("Reserva reagendada.");
+  }catch(error){
+    toast(error.message||"Nao foi possivel reagendar.");
+  }
+}
 function renderProfileForm(){
   const w=state.workshop||{};$("profileName").value=w.name||"";$("profileWhatsapp").value=w.whatsapp||w.phone||"";$("profileEmail").value=w.email||state.user?.email||"";$("profileCity").value=w.city||"";$("profileState").value=w.state||"";$("profileAddress").value=w.address||"";$("profileDescription").value=w.description||"";const services=w.services||[];$("profileCategoryLocked").innerHTML=`<span>${esc(w.category||services[0]||"Sem categoria")}</span>`;$("profileServicesLocked").innerHTML=services.length?`<div class="tags">${services.map((service)=>`<span>${esc(service)}</span>`).join("")}</div>`:"<span>Sem servicos cadastrados</span>";renderProfilePreview();
 }

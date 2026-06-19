@@ -4449,9 +4449,25 @@ async function createVehicleListingRecord(visibility){
     }).select("id").single();
     if(error) throw error;
     if(data?.id&&sellPhotos?.files?.length){
-      const photos=[...sellPhotos.files].slice(0,8).map((file,index)=>({listing_id:data.id,image_url:file.name,sort_order:index}));
-      const photoResponse=await sb.from("vehicle_listing_photos").insert(photos);
-      if(photoResponse.error) console.warn("[Vehicle listing photos]",photoResponse.error.message);
+      const files=[...sellPhotos.files].slice(0,8);
+      const photos=[];
+      for(let index=0;index<files.length;index++){
+        const file=files[index];
+        try{
+          const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+          const path=`${currentUser.id}/${data.id}/${Date.now()}-${index}-${safeName}`;
+          const{error:uploadError}=await sb.storage.from("vehicle-listing-photos").upload(path,file,{upsert:false});
+          if(uploadError) throw uploadError;
+          const{data:{publicUrl}}=sb.storage.from("vehicle-listing-photos").getPublicUrl(path);
+          photos.push({listing_id:data.id,image_url:publicUrl,sort_order:index});
+        }catch(uploadErr){
+          console.warn("[Vehicle listing photo upload]",uploadErr.message);
+        }
+      }
+      if(photos.length){
+        const photoResponse=await sb.from("vehicle_listing_photos").insert(photos);
+        if(photoResponse.error) console.warn("[Vehicle listing photos]",photoResponse.error.message);
+      }
     }
     await loadUserVehicleListings();
     return data?.id||null;

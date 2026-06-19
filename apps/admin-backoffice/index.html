@@ -54,7 +54,7 @@ button,input,select{font:inherit}button{cursor:pointer}
 .grid{display:grid;grid-template-columns:minmax(0,1.4fr) 350px;gap:13px;align-items:start}.panel{border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:11px}.panel-head h3{font-size:14px;line-height:1.2}.panel-head p{font-size:10px;color:var(--muted);line-height:1.4;margin-top:3px}
 .filters{display:flex;gap:6px;flex-wrap:wrap}.filters button{height:28px;border:1px solid var(--line-strong);border-radius:999px;background:#fff;padding:0 9px;font-size:9px;font-weight:800;color:var(--muted)}.filters button.active{border-color:var(--blue);background:rgba(7,92,255,.06);color:var(--blue)}
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;font-size:10px;vertical-align:top}.table th{background:var(--soft);font-size:8.5px;text-transform:uppercase;letter-spacing:.35px;color:var(--muted);font-weight:850}.table tr:last-child td{border-bottom:0}.table b{font-size:11px}.table small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
-.pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:850;white-space:nowrap}.pill.active,.pill.paid,.pill.approved{background:#dcfce7;color:#15803d}.pill.pending,.pill.trial{background:#fff7d6;color:var(--yellow)}.pill.expired,.pill.unpaid,.pill.blocked{background:#fee2e2;color:#b91c1c}.pill.info{background:#e8f0ff;color:var(--blue)}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 7px;font-size:8px;font-weight:850;white-space:nowrap}.pill.active,.pill.paid,.pill.approved{background:#dcfce7;color:#15803d}.pill.pending,.pill.trial{background:#fff7d6;color:var(--yellow)}.pill.expired,.pill.unpaid,.pill.blocked,.pill.rejected,.pill.inactive{background:#fee2e2;color:#b91c1c}.pill.info{background:#e8f0ff;color:var(--blue)}
 .list{display:grid;gap:8px}.item{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px}.item h4{font-size:12px}.item p{font-size:10px;color:var(--muted);line-height:1.45;margin-top:5px}.item-row{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .chart-bars{display:grid;gap:8px}.bar-row{display:grid;grid-template-columns:120px 1fr 48px;gap:8px;align-items:center;font-size:10px}.bar{height:8px;background:#edf2f7;border-radius:999px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(135deg,var(--blue),var(--blue-2));border-radius:999px}
 .export-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.export-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;display:grid;gap:8px}.export-card h4{font-size:12px}.export-card p{font-size:10px;color:var(--muted);line-height:1.4;min-height:42px}
@@ -92,6 +92,7 @@ button,input,select{font:inherit}button{cursor:pointer}
         <button data-view="workshops" type="button">Oficinas</button>
         <button data-view="users" type="button">Usuarios</button>
         <button data-view="listings" type="button">Anuncios</button>
+        <button data-view="offers" type="button">Ofertas</button>
         <button data-view="subscriptions" type="button">Assinaturas</button>
         <button data-view="payments" type="button">Pagamentos</button>
         <button data-view="analytics" type="button">Analytics</button>
@@ -164,6 +165,21 @@ button,input,select{font:inherit}button{cursor:pointer}
             <div class="table-wrap"><table class="table"><thead><tr><th>Veiculo</th><th>Usuario</th><th>Preco</th><th>Local</th><th>Status</th><th>Acoes</th></tr></thead><tbody id="listingRows"></tbody></table></div>
           </div>
         </section>
+
+        <section class="view" id="view-offers">
+          <div class="panel">
+            <div class="panel-head">
+              <div><h3>Ofertas das oficinas</h3><p>Acompanhe e modere as ofertas publicadas pelas oficinas.</p></div>
+            </div>
+            <div class="table-wrap"><table class="table"><thead><tr><th>Oferta</th><th>Oficina</th><th>Categoria</th><th>Vigencia</th><th>Status</th><th>Acoes</th></tr></thead><tbody id="offerRows"></tbody></table></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <div><h3>Solicitacoes de alteracao de perfil</h3><p>Pedidos das oficinas para mudar dados do perfil publico. Aprovar aplica a mudanca direto na oficina.</p></div>
+            </div>
+            <div class="table-wrap"><table class="table"><thead><tr><th>Oficina</th><th>Campo</th><th>Valor solicitado</th><th>Motivo</th><th>Status</th><th>Acoes</th></tr></thead><tbody id="changeRequestRows"></tbody></table></div>
+          </div>
+        </section>
         <section class="view" id="view-subscriptions">
           <div class="grid">
             <section class="panel">
@@ -229,6 +245,7 @@ const titles={
   workshops:["Oficinas","Cadastro, aprovacao, visibilidade e dados fiscais."],
   users:["Usuarios","Motoristas, atividade e anuncios publicados."],
   listings:["Anuncios","Aprovacao e controle dos carros publicados."],
+  offers:["Ofertas","Moderacao de ofertas e solicitacoes de alteracao de perfil das oficinas."],
   subscriptions:["Assinaturas","Validade, pagamento e vencimento da membresia."],
   payments:["Pagamentos","Historico financeiro por oficina."],
   analytics:["Analytics","Demanda por lugar, chat, servico e conversao."],
@@ -325,6 +342,8 @@ async function loadAdminData(){
     data.reservations=payload.reservations||[];
     data.audit_logs=payload.auditLogs||[];
     data.vehicle_listings=payload.vehicleListings||payload.vehicle_listings||[];
+    data.workshop_offers=payload.workshopOffers||payload.workshop_offers||[];
+    data.profile_change_requests=payload.profileChangeRequests||payload.profile_change_requests||[];
     state.loadedFromSupabase=true;
     return true;
   }catch(error){console.warn("[admin load]",error.message);toast(error.message||"Nao foi possivel carregar admin.");return false}
@@ -397,6 +416,33 @@ function renderVehicleListings(){
   $("listingRows").querySelectorAll("[data-approve-listing]").forEach((btn)=>btn.addEventListener("click",()=>setVehicleListingStatus(btn.dataset.approveListing,"active")));
   $("listingRows").querySelectorAll("[data-reject-listing]").forEach((btn)=>btn.addEventListener("click",()=>setVehicleListingStatus(btn.dataset.rejectListing,"rejected")));
 }
+function renderOffers(){
+  const offers=data.workshop_offers||[];
+  $("offerRows").innerHTML=offers.map((offer)=>{
+    const workshopName=offer.workshops?.name||workshop(offer.workshop_id).name||"-";
+    const status=offer.status||"active";
+    const vigencia=`${dateBR(offer.starts_at)} - ${dateBR(offer.ends_at)}`;
+    const toggleLabel=status==="active"?"Desativar":"Ativar";
+    const toggleTo=status==="active"?"inactive":"active";
+    const toggleClass=status==="active"?"danger":"success";
+    return `<tr><td><b>${esc(offer.title||"-")}</b><small>${esc(offer.description||"")}</small></td><td>${esc(workshopName)}</td><td>${esc(offer.category||"-")}</td><td>${esc(vigencia)}</td><td><span class="pill ${esc(status)}">${esc(status)}</span></td><td><button class="btn ${toggleClass}" data-offer-toggle="${esc(offer.id)}" data-offer-status="${toggleTo}" type="button">${toggleLabel}</button></td></tr>`;
+  }).join("")||'<tr><td colspan="6"><div class="empty">Nenhuma oferta publicada ainda.</div></td></tr>';
+  $("offerRows").querySelectorAll("[data-offer-toggle]").forEach((btn)=>btn.addEventListener("click",()=>setWorkshopOfferStatus(btn.dataset.offerToggle,btn.dataset.offerStatus)));
+}
+function renderChangeRequests(){
+  const requests=data.profile_change_requests||[];
+  $("changeRequestRows").innerHTML=requests.map((req)=>{
+    const workshopName=req.workshops?.name||workshop(req.workshop_id).name||"-";
+    const status=req.status||"pending";
+    const value=req.field_name==="perfil_publico"
+      ?Object.entries(req.new_value||{}).map(([k,v])=>`${esc(k)}: ${esc(String(v))}`).join("<br>")
+      :esc(JSON.stringify(req.new_value));
+    const canReview=status==="pending";
+    return `<tr><td><b>${esc(workshopName)}</b><small>${dateBR(req.created_at)}</small></td><td>${esc(req.field_name)}</td><td><small>${value}</small></td><td>${esc(req.reason||"-")}</td><td><span class="pill ${esc(status)}">${esc(status)}</span></td><td>${canReview?`<small style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn success" data-pcr-approve="${esc(req.id)}" type="button">Aprovar</button><button class="btn danger" data-pcr-reject="${esc(req.id)}" type="button">Rejeitar</button></small>`:"-"}</td></tr>`;
+  }).join("")||'<tr><td colspan="6"><div class="empty">Nenhuma solicitacao pendente.</div></td></tr>';
+  $("changeRequestRows").querySelectorAll("[data-pcr-approve]").forEach((btn)=>btn.addEventListener("click",()=>reviewProfileChangeRequest(btn.dataset.pcrApprove,"approved")));
+  $("changeRequestRows").querySelectorAll("[data-pcr-reject]").forEach((btn)=>btn.addEventListener("click",()=>reviewProfileChangeRequest(btn.dataset.pcrReject,"rejected")));
+}
 function renderPayments(){
   $("paymentRows").innerHTML=data.payments.map((p)=>{const w=workshop(p.workshop_id);return `<tr><td>${dateBR(p.paid_at)}</td><td><b>${esc(w.name)}</b><small>${esc(w.cnpj)}</small></td><td><span class="pill ${esc(p.status)}">${esc(p.status)}</span></td><td>${esc(p.method)}</td><td>${money(p.amount)}</td><td>${esc(p.reference)}</td><td>${esc(p.notes||"-")}</td></tr>`}).join("");
 }
@@ -448,7 +494,7 @@ function downloadCSV(key){
   const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`vai-rodar-${key}.csv`;a.click();URL.revokeObjectURL(url);toast("CSV gerado.");
 }
 function bindExports(){document.querySelectorAll("[data-export]").forEach((btn)=>{btn.onclick=()=>downloadCSV(btn.dataset.export)})}
-function renderAll(){renderMetrics();renderSubscriptions();renderWorkshops();renderUsers();renderVehicleListings();renderPayments();renderBars("locationBars","search");renderBars("serviceBars","service");renderAlerts();renderExports();renderAudit();bindExports()}
+function renderAll(){renderMetrics();renderSubscriptions();renderWorkshops();renderUsers();renderVehicleListings();renderOffers();renderChangeRequests();renderPayments();renderBars("locationBars","search");renderBars("serviceBars","service");renderAlerts();renderExports();renderAudit();bindExports()}
 async function setWorkshopStatus(workshopId,approvalStatus,visible,open){
   if(!confirm(`Confirmar alteracao da oficina para ${approvalStatus}?`))return;
   try{
@@ -478,6 +524,25 @@ async function setVehicleListingStatus(listingId,status){
     renderAll();
     toast("Anuncio atualizado.");
   }catch(error){toast(error.message||"Nao foi possivel atualizar anuncio.")}
+}
+async function setWorkshopOfferStatus(offerId,status){
+  if(!confirm(`Confirmar oferta como ${status}?`))return;
+  try{
+    await adminAction("setWorkshopOfferStatus",{offer_id:offerId,status});
+    await loadAdminData();
+    renderAll();
+    toast("Oferta atualizada.");
+  }catch(error){toast(error.message||"Nao foi possivel atualizar oferta.")}
+}
+async function reviewProfileChangeRequest(requestId,decision){
+  if(!confirm(`Confirmar solicitacao como ${decision==="approved"?"aprovada":"rejeitada"}?`))return;
+  const adminNotes=decision==="rejected"?(prompt("Motivo da rejeicao (opcional):")||""):"";
+  try{
+    await adminAction("reviewProfileChangeRequest",{request_id:requestId,decision,admin_notes:adminNotes});
+    await loadAdminData();
+    renderAll();
+    toast(decision==="approved"?"Solicitacao aprovada e aplicada na oficina.":"Solicitacao rejeitada.");
+  }catch(error){toast(error.message||"Nao foi possivel revisar a solicitacao.")}
 }
 $("loginForm").addEventListener("submit",async(event)=>{
   event.preventDefault();
