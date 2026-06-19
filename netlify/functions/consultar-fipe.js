@@ -9,17 +9,14 @@
  * - APIBRASIL_DEVICE_TOKEN  (opcional; FIPE Beta muestra solo Authorization en la doc actual)
  * - APIBRASIL_HOMOLOG: "true" para homologacao, "false" para consumir creditos reais
  *
- * IMPORTANTE: confirmar el endpoint exacto y el nombre del campo categoria
- * ("fipe") en el panel app.apibrasil.io > Minhas APIs > API Placa FIPE,
- * ya que la documentacion oficial (doc.apibrasil.io) exige login y no es
- * accesible publicamente. El endpoint abajo es el documentado para la
- * categoria "veiculos"; si el panel muestra una ruta distinta, actualizar
- * API_URL.
+ * Endpoint confirmado en doc.apibrasil.io (19/06/2026): a API "Fipe (Beta)"
+ * usa a rota consulta/veiculos/credits sob a Base URL gateway.apibrasil.io/api/v2.
+ * A rota antiga vehicles/dados retornava 404 "Plano ativo nao encontrado".
  */
 
 const https = require('https');
 
-const API_URL = 'https://gateway.apibrasil.io/api/v2/vehicles/dados';
+const API_URL = 'https://gateway.apibrasil.io/api/v2/consulta/veiculos/credits';
 const BEARER_TOKEN = process.env.APIBRASIL_BEARER_TOKEN;
 const DEVICE_TOKEN = process.env.APIBRASIL_DEVICE_TOKEN;
 const HOMOLOG = String(process.env.APIBRASIL_HOMOLOG || 'false').toLowerCase() === 'true';
