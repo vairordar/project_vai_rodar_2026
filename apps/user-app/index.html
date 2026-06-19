@@ -1995,13 +1995,6 @@ body.theme-dark{
         </div>
       </section>
 
-      <section class="offers-section" id="realOffersSection" style="display:none">
-        <div class="section-title">
-          <h3>Ofertas das oficinas</h3>
-        </div>
-        <div class="carousel" id="realOffersCarousel"></div>
-      </section>
-
       <section class="market-section">
         <div class="section-title">
           <h3>Compra e venda de carros</h3>
@@ -3345,8 +3338,17 @@ function proposalDescriptionPlaceholder(){
   }
   return "Descreva o problema. Ex.: faz barulho ao frear, acontece em baixa velocidade, começou há dois dias.";
 }
+function assistantConversationHistoryText(){
+  if(assistantConversation.length<2) return "";
+  const lines=assistantConversation.map((turn,index)=>{
+    const answer=turn.assistant?`\n   Resposta do assistente: ${turn.assistant}`:"";
+    return `${index+1}. Cliente: ${turn.user}${answer}`;
+  });
+  return `\n\nHistórico da conversa com o assistente:\n${lines.join("\n")}`;
+}
 function technicalSummaryForRequest(){
-  if(assistantLatestTechnicalSummary) return assistantLatestTechnicalSummary;
+  const historyText=assistantConversationHistoryText();
+  if(assistantLatestTechnicalSummary) return `${assistantLatestTechnicalSummary}${historyText}`;
   const original=proposalOriginalText();
   const context=assistantLatestContext||original;
   const categories=inferCategories(context).filter((name)=>allowedCategories.includes(name));
@@ -3359,7 +3361,7 @@ function technicalSummaryForRequest(){
   if(normalized.includes("buraco")||normalized.includes("lombada")) symptomHints.push("aparece em irregularidades da via");
   if(normalized.includes("forte")) symptomHints.push("intensidade relatada como forte");
   const symptomText=symptomHints.length?` Observações: ${symptomHints.join("; ")}.`:"";
-  return `Cliente relata: ${original}. Áreas prováveis: ${categoryText}.${symptomText} Solicita diagnóstico e orçamento com preço, prazo e disponibilidade.`;
+  return `Cliente relata: ${original}. Áreas prováveis: ${categoryText}.${symptomText} Solicita diagnóstico e orçamento com preço, prazo e disponibilidade.${historyText}`;
 }
 function popupRegisteredVehiclesHTML(){
   if(!userVehicles.length) return "";
@@ -4539,28 +4541,31 @@ async function loadVehicleListings(){
   }catch(error){console.warn("[Vehicle listings]",error.message);}
 }
 async function loadRealWorkshopOffers(){
-  const section=document.getElementById("realOffersSection");
-  const carousel=document.getElementById("realOffersCarousel");
-  if(!sb||!section||!carousel) return;
+  if(!sb) return;
   try{
     const {data,error}=await sb.from("workshop_offers")
       .select("id,title,description,category,image_url,workshop_id,workshops(name)")
       .order("created_at",{ascending:false})
-      .limit(12);
+      .limit(24);
     if(error) throw error;
     const offers=data||[];
-    if(!offers.length){section.style.display="none";return;}
-    carousel.innerHTML=offers.map((offer)=>`
-      <article class="deal">
-        <p>${offer.title||"Oferta"}</p>
-        <img class="deal-photo" src="${offer.image_url||""}" alt="${offer.title||"Oferta"}">
-        <small style="display:block;padding:0 8px 8px;color:#6b7280">${offer.workshops?.name||"Oficina parceira"}</small>
-      </article>
-    `).join("");
-    section.style.display="";
+    benefitCatalog.weekly.subtitle=offers.length
+      ?"Ofertas reais publicadas pelas oficinas parceiras."
+      :"Ainda não há ofertas publicadas pelas oficinas.";
+    benefitCatalog.weekly.items=offers.map((offer)=>({
+      category:offer.category||"Oferta",
+      title:`${offer.workshops?.name||"Oficina parceira"}: ${offer.title||"Oferta"}`,
+      text:offer.description||"",
+      img:offer.image_url||"https://images.pexels.com/photos/4489737/pexels-photo-4489737.jpeg?auto=compress&cs=tinysrgb&w=420&h=220&fit=crop",
+    }));
+    if(activeBenefitType==="weekly"&&screenShell.classList.contains("benefits-open")){
+      benefitsTitle.textContent=benefitCatalog.weekly.title;
+      benefitsSubtitle.textContent=benefitCatalog.weekly.subtitle;
+      benefitsCategory.innerHTML='<option value="">Todas as categorias</option>'+[...new Set(benefitCatalog.weekly.items.map((item)=>item.category))].map((category)=>`<option>${category}</option>`).join("");
+      renderBenefits();
+    }
   }catch(error){
     console.warn("[Workshop offers]",error.message);
-    section.style.display="none";
   }
 }
 async function sendVehicleListingMessage(){
@@ -5041,7 +5046,7 @@ function applyAssistantIntent(intent,text,contextText,sourceInput){
       title:intent.title,
       text:intent.text,
       missingQuestions:questions,
-      action:assistantActionForType(intent.type||intent.intent,intent.action),
+      action:questions.length?"":assistantActionForType(intent.type||intent.intent,intent.action),
     },contextText);
   }
   assistantLastIntentType=intent.type||intent.intent||"serviceQuote";
