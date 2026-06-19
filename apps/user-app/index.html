@@ -4258,11 +4258,26 @@ async function sendChatMessage(){
   try{
     const {error}=await sb.from("messages").insert({conversation_id:chat.id,sender_id:currentUser.id,text});
     if(error) throw error;
+    notifyMessageEvent(chat.id,text);
   }catch(error){
     console.warn("[Enviar mensagem]",error.message);
     chat.messages.pop();
     renderChatMessages();
     alert("Não foi possível enviar a mensagem: "+(error.message||""));
+  }
+}
+async function notifyMessageEvent(conversationId,text){
+  try{
+    const {data}=await sb.auth.getSession();
+    const token=data?.session?.access_token;
+    if(!token) return;
+    await fetch("/.netlify/functions/notify-event",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body:JSON.stringify({event:"message_received",conversationId,text}),
+    });
+  }catch(error){
+    console.warn("[notify-event]",error.message);
   }
 }
 function renderQuotes(){

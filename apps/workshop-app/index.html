@@ -694,7 +694,19 @@ function renderMessages(){
   $("chatLog").innerHTML=state.messages.map((message)=>`<div class="bubble ${message.sender_id===state.user.id?"me":"them"}">${esc(message.text||"")}</div>`).join("")||'<div class="empty">Nenhuma mensagem ainda.</div>';
   $("chatLog").scrollTop=$("chatLog").scrollHeight;
 }
-async function sendMessage(){const text=$("chatInput").value.trim();if(!text||!state.activeConversation)return;$("chatInput").value="";if(state.demoMode){demoStore.messages.push({id:"demo-msg-"+Date.now(),conversation_id:state.activeConversation,sender_id:state.user.id,text,created_at:new Date().toISOString()});state.messages=demoStore.messages.filter((item)=>item.conversation_id===state.activeConversation);renderMessages();return;}try{const {error}=await sb.from("messages").insert({conversation_id:state.activeConversation,sender_id:state.user.id,text});if(error)throw error;}catch(error){$("chatInput").value=text;toast("Erro ao enviar mensagem.");}}
+async function sendMessage(){const text=$("chatInput").value.trim();if(!text||!state.activeConversation)return;$("chatInput").value="";if(state.demoMode){demoStore.messages.push({id:"demo-msg-"+Date.now(),conversation_id:state.activeConversation,sender_id:state.user.id,text,created_at:new Date().toISOString()});state.messages=demoStore.messages.filter((item)=>item.conversation_id===state.activeConversation);renderMessages();return;}const conversationId=state.activeConversation;try{const {error}=await sb.from("messages").insert({conversation_id:conversationId,sender_id:state.user.id,text});if(error)throw error;notifyMessageEvent(conversationId,text);}catch(error){$("chatInput").value=text;toast("Erro ao enviar mensagem.");}}
+async function notifyMessageEvent(conversationId,text){
+  try{
+    const {data}=await sb.auth.getSession();
+    const token=data?.session?.access_token;
+    if(!token) return;
+    await fetch("/.netlify/functions/notify-event",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body:JSON.stringify({event:"message_received",conversationId,text}),
+    });
+  }catch(error){console.warn("[notify-event]",error.message);}
+}
 function startOfWeek(date){const d=new Date(date);const day=(d.getDay()+6)%7;d.setHours(0,0,0,0);d.setDate(d.getDate()-day);return d;}
 function startOfMonthGrid(date){const first=new Date(date.getFullYear(),date.getMonth(),1);return startOfWeek(first);}
 function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
