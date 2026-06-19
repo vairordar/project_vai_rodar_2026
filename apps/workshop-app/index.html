@@ -602,17 +602,35 @@ function renderMetrics(){
 function requestVehicle(request){const v=request.vehicles||{};return [v.brand,v.model,v.year].filter(Boolean).join(" ")||"Veiculo nao informado";}
 function renderRequests(){
   const list=$("requestsList");
+  const declinedIds=new Set(state.proposals.filter((item)=>item.status==="declined").map((item)=>item.request_id));
+  const visibleRequests=state.requests.filter((item)=>!declinedIds.has(item.id));
   const pausedNotice=state.workshop?.open===false?'<div class="empty">Recebimento pausado para novas solicitacoes. As solicitacoes ja recebidas seguem disponiveis para responder, conversar e reservar.</div>':"";
-  if(!state.requests.length){list.innerHTML=pausedNotice||'<div class="empty">Nenhuma solicitacao encontrada. Quando o usuario enviar uma cotacao, ela aparece aqui.</div>';$("requestDetail").innerHTML='<div class="empty">Sem solicitacao selecionada.</div>';return;}
-  if(!state.activeRequest||!state.requests.some((item)=>item.id===state.activeRequest))state.activeRequest=state.requests[0].id;
-  list.innerHTML=pausedNotice+state.requests.map((request)=>`<button class="item" data-request-id="${esc(request.id)}" type="button">
+  if(!visibleRequests.length){list.innerHTML=pausedNotice||'<div class="empty">Nenhuma solicitacao encontrada. Quando o usuario enviar uma cotacao, ela aparece aqui.</div>';$("requestDetail").innerHTML='<div class="empty">Sem solicitacao selecionada.</div>';return;}
+  if(!state.activeRequest||!visibleRequests.some((item)=>item.id===state.activeRequest))state.activeRequest=visibleRequests[0].id;
+  list.innerHTML=pausedNotice+visibleRequests.map((request)=>`<button class="item" data-request-id="${esc(request.id)}" type="button">
     <div class="item-head"><div><h4>${esc(request.profiles?.name||"Motorista")}</h4><small>${esc(request.title||"Solicitacao")} - ${new Date(request.created_at).toLocaleDateString("pt-BR")}</small></div><span class="pill ${esc(request.status||"open")}">${esc(request.status||"open")}</span></div>
     <p>${esc(request.description||request.location||"Sem descricao")}</p>
     <div class="tags"><span>${request.request_type==="part_quote"?"Pedido de peca":"Servico"}</span><span>${esc(request.category||"Categoria IA")}</span><span>${esc(requestVehicle(request))}</span></div>
-    <div class="actions"><span class="btn ghost">Ver detalhe</span><span class="btn primary">Enviar proposta</span></div>
+    <div class="actions"><span class="btn ghost">Ver detalhe</span><span class="btn primary">Enviar proposta</span><span class="btn secondary" data-decline-id="${esc(request.id)}">Recusar</span></div>
   </button>`).join("");
   list.querySelectorAll("[data-request-id]").forEach((button)=>button.addEventListener("click",()=>{state.activeRequest=button.dataset.requestId;renderRequestDetail();openProposal(button.dataset.requestId,false);}));
+  list.querySelectorAll("[data-decline-id]").forEach((button)=>button.addEventListener("click",(event)=>{event.stopPropagation();declineRequest(button.dataset.declineId);}));
   renderRequestDetail();
+}
+async function declineRequest(requestId){
+  if(!requestId) return;
+  if(!confirm("Recusar esta solicitacao? Ela deixara de aparecer na sua lista de pendentes."))return;
+  if(state.demoMode){demoStore.proposals.unshift({id:"demo-declined-"+Date.now(),request_id:requestId,workshop_id:state.workshop?.id,status:"declined",message:"Recusada (demo).",created_at:new Date().toISOString()});if(state.activeRequest===requestId)state.activeRequest=null;toast("Solicitacao recusada (demo).");await loadAll();return;}
+  if(!state.workshop?.id)return;
+  try{
+    const {error}=await sb.from("proposals").insert({request_id:requestId,workshop_id:state.workshop.id,status:"declined",message:"Oficina nao podera atender esta solicitacao."});
+    if(error)throw error;
+    if(state.activeRequest===requestId)state.activeRequest=null;
+    toast("Solicitacao recusada.");
+    await loadProposals();
+    renderRequests();
+    renderProposalsCount();
+  }catch(error){toast(error.message||"Nao foi possivel recusar a solicitacao.");}
 }
 function renderRequestDetail(){
   const request=state.requests.find((item)=>item.id===state.activeRequest);
@@ -628,7 +646,7 @@ function renderRequestDetail(){
   <div class="detail-row"><small>Tipo</small><b>${request.request_type==="part_quote"?"Cotacao de peca":"Servico de oficina"}</b><span>${esc(request.part_name||request.category||"")}</span></div>
   <div class="detail-row"><small>Descricao</small><span>${esc(request.description||"-")}</span></div>
   <div class="detail-row"><small>Localizacao</small><span>${esc(request.location||"-")}</span></div>
-  <div class="actions"><button class="btn primary" type="button" onclick="openProposal('${esc(request.id)}',true)">Enviar proposta</button><button class="btn secondary" type="button" onclick="createConversationFromRequest('${esc(request.id)}')">Abrir conversa</button></div>`;
+  <div class="actions"><button class="btn primary" type="button" onclick="openProposal('${esc(request.id)}',true)">Enviar proposta</button><button class="btn secondary" type="button" onclick="createConversationFromRequest('${esc(request.id)}')">Abrir conversa</button><button class="btn secondary" type="button" onclick="declineRequest('${esc(request.id)}')">Recusar</button></div>`;
 }
 function renderProposalsCount(){renderMetrics();}
 function openProposal(requestId,force){if(!force&&window.innerWidth>960)return;state.activeRequest=requestId;const request=state.requests.find((item)=>item.id===requestId);$("proposalModalText").textContent=request?`${request.profiles?.name||"Motorista"} - ${request.title||"Solicitacao"}`:"Responda com preco e prazo.";$("proposalPrice").value="";$("proposalTime").value="";$("proposalMessage").value=request?.description?`Podemos avaliar: ${request.description}`:"";$("proposalStatus").textContent="";$("proposalModal").classList.add("open");}
