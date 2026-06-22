@@ -3252,7 +3252,7 @@ function getFilteredOffices(){
       const haystack=normalizeText(`${office.name} ${office.address} ${office.category}`);
       return (!query||haystack.includes(query)||query.includes("pneu")&&office.category==="Pneus e alinhamento"||query.includes("freio")&&office.category==="Freios e suspensão")
         &&(!location||normalizeText(office.address).includes(location))
-        &&(!category||office.category===category)
+        &&(!category||office.category===category||(Array.isArray(office.services)&&office.services.includes(category)))
         &&(!onlyOpen||office.open)
         &&office.rating>=minRating;
     })
@@ -3337,6 +3337,7 @@ function updateOfficeMap(filtered){
     bounds.push(coords);
     const marker=L.circleMarker(coords,{radius:8,color:office.open?"#16a34a":"#075cff",weight:3,fillColor:"#fff",fillOpacity:1});
     marker.bindPopup(`<b>${office.name}</b>${office.category}<br>${office.address||"Endereço em cadastro"}`);
+    marker.officeIndex=index;
     marker.on("click",()=>focusOfficeCard(index));
     marker.addTo(map);
     officeMapMarkers.push(marker);
@@ -3346,6 +3347,12 @@ function updateOfficeMap(filtered){
 }
 function centerOfficeMap(){
   updateOfficeMap(getFilteredOffices());
+}
+function focusOfficeMarker(index){
+  const marker=officeMapMarkers.find((item)=>item.officeIndex===Number(index));
+  if(!marker||!officeMapInstance) return;
+  officeMapInstance.panTo(marker.getLatLng());
+  marker.openPopup();
 }
 function getOfficeServices(office){
   if(Array.isArray(office.services)&&office.services.length) return office.services;
@@ -3402,8 +3409,13 @@ function renderOffices(reset=false){
     officeList.querySelectorAll(".more-info-btn").forEach((item)=>item.textContent="Ver mais informações");
     if(!isOpen){
       focusOfficeCard(button.dataset.index);
+      focusOfficeMarker(button.dataset.index);
       button.textContent="Contrair informações";
     }
+  }));
+  officeList.querySelectorAll(".office-card").forEach((card)=>card.addEventListener("click",(event)=>{
+    if(event.target.closest("button")) return;
+    focusOfficeMarker(card.dataset.officeIndex);
   }));
   officeList.querySelectorAll(".collapse-detail").forEach((button)=>button.addEventListener("click",()=>{
     document.getElementById(`officeDetail${button.dataset.index}`)?.classList.remove("show");
