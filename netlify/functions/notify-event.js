@@ -121,6 +121,34 @@ exports.handler = async (event) => {
       return json(200, { ok: true, push });
     }
 
+    if (eventType === 'reservation_status_changed') {
+      const reservationId = String(payload.reservationId || '').trim();
+      const status = String(payload.status || '').trim();
+      if (!reservationId || !status) return json(400, { error: 'reservationId e status sao obrigatorios.' });
+      const reservationRows = await supabaseRequest(
+        `/rest/v1/reservations?id=eq.${encodeURIComponent(reservationId)}&select=id,user_id,workshop_id,service_type,workshops(id,name,owner_id)`
+      );
+      const reservation = Array.isArray(reservationRows) ? reservationRows[0] : null;
+      if (!reservation || !reservation.workshops) return json(404, { error: 'Reserva nao encontrada.' });
+      if (callerUser.id !== reservation.workshops.owner_id) {
+        return json(403, { error: 'Apenas a oficina pode notificar este evento.' });
+      }
+      if (!reservation.user_id) return json(200, { ok: true, skipped: true });
+      const workshopName = reservation.workshops.name || 'A oficina';
+      const verbByStatus = { confirmed: 'confirmou', cancelled: 'cancelou', completed: 'finalizou' };
+      const titleByStatus = {
+        confirmed: 'Reserva confirmada',
+        cancelled: 'Reserva cancelada',
+        completed: 'Servico finalizado',
+      };
+      const verb = verbByStatus[status] || 'atualizou';
+      const title = titleByStatus[status] || 'Reserva atualizada';
+      const detail = `${workshopName} ${verb} sua reserva (${reservation.service_type || 'servico'}).`;
+      await insertNotification({ userId: reservation.user_id, type: 'quote', title, detail, link: '/' });
+      const push = await sendPushToUser(reservation.user_id, { title, body: detail, url: '/' });
+      return json(200, { ok: true, push });
+    }
+
     const proposalId = String(payload.proposalId || '').trim();
     if (!proposalId) return json(400, { error: 'proposalId obrigatorio.' });
 

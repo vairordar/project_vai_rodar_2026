@@ -833,9 +833,22 @@ async function setReservationStatus(id,status){
     await loadReservations();
     renderAgenda();renderReservations();renderMetrics();
     toast("Reserva atualizada.");
+    notifyReservationEvent(id,status);
   }catch(error){
     toast(error.message||"Nao foi possivel atualizar a reserva.");
   }
+}
+async function notifyReservationEvent(reservationId,status){
+  try{
+    const {data}=await sb.auth.getSession();
+    const token=data?.session?.access_token;
+    if(!token) return;
+    await fetch("/.netlify/functions/notify-event",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body:JSON.stringify({event:"reservation_status_changed",reservationId,status}),
+    });
+  }catch(error){console.warn("[notify-event]",error.message);}
 }
 async function rescheduleReservation(id){
   const res=allReservations().find((item)=>item.id===id);
