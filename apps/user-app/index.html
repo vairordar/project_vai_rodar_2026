@@ -3267,7 +3267,7 @@ async function loadPublicOffices(){
   if(!sb) return;
   try{
     const {data,error}=await sb.from("public_workshops_search")
-      .select("id,name,address,city,neighborhood,category,categories,open,business_type")
+      .select("id,name,address,city,neighborhood,category,categories,open,business_type,latitude,longitude")
       .limit(50);
     if(error) throw error;
     offices.splice(0,offices.length,...(data||[]).map((row)=>({
@@ -3279,29 +3279,20 @@ async function loadPublicOffices(){
       open:row.open!==false,
       img:row.photo_url||"assets/vai_rodar_logo_transparent.png",
       services:Array.isArray(row.categories)?row.categories:[],
-      businessType:row.business_type||"workshop"
+      businessType:row.business_type||"workshop",
+      latitude:Number.isFinite(Number(row.latitude))?Number(row.latitude):null,
+      longitude:Number.isFinite(Number(row.longitude))?Number(row.longitude):null
     })));
   }catch(error){
     console.warn("[Public workshops]",error.message);
     offices.splice(0,offices.length);
   }
 }
-function officeCoordinateSeed(text){
-  const source=String(text||"Vai Rodar");
-  let hash=0;
-  for(let i=0;i<source.length;i++) hash=(hash*31+source.charCodeAt(i))>>>0;
-  return hash;
-}
 function officeCoordinates(office){
   const lat=Number(office.latitude??office.lat);
   const lng=Number(office.longitude??office.lng);
   if(Number.isFinite(lat)&&Number.isFinite(lng)) return [lat,lng];
-  const seed=officeCoordinateSeed(`${office.name} ${office.address}`);
-  const baseLat=-23.5617;
-  const baseLng=-46.6559;
-  const latOffset=((seed%140)-70)/10000;
-  const lngOffset=(((Math.floor(seed/140))%180)-90)/10000;
-  return [baseLat+latOffset,baseLng+lngOffset];
+  return null;
 }
 function ensureOfficeMap(){
   if(!officeMap) return null;
@@ -3340,6 +3331,10 @@ function updateOfficeMap(filtered){
   filtered.forEach((office)=>{
     const index=offices.indexOf(office);
     const coords=officeCoordinates(office);
+    if(!coords){
+      console.warn(`[Oficinas] "${office.name}" nao tem coordenadas reais cadastradas - pino omitido (sem dados falsos).`);
+      return;
+    }
     bounds.push(coords);
     const marker=L.circleMarker(coords,{radius:8,color:office.open?"#16a34a":"#075cff",weight:3,fillColor:"#fff",fillOpacity:1});
     marker.bindPopup(`<b>${office.name}</b>${office.category}<br>${office.address||"Endereço em cadastro"}`);
@@ -3348,7 +3343,8 @@ function updateOfficeMap(filtered){
     marker.addTo(map);
     officeMapMarkers.push(marker);
   });
-  if(bounds.length===1) map.setView(bounds[0],14);
+  if(!bounds.length) map.setView([-23.5617,-46.6559],11);
+  else if(bounds.length===1) map.setView(bounds[0],14);
   else map.fitBounds(bounds,{padding:[24,24],maxZoom:14});
 }
 function centerOfficeMap(){

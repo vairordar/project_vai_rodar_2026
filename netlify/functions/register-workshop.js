@@ -1,4 +1,5 @@
 const https = require('https');
+const { geocodeAddress } = require('./geocode-helper');
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
@@ -158,6 +159,18 @@ exports.handler = async (event) => {
       open: false,
       subscription_status: 'pending_payment',
     };
+
+    const geocoded = await geocodeAddress({
+      address: payload.address,
+      neighborhood: payload.neighborhood,
+      city: payload.city,
+      state: payload.state,
+      cep: payload.cep || payload.zip_code,
+    }).catch(() => null);
+    if (geocoded) {
+      payload.latitude = geocoded.latitude;
+      payload.longitude = geocoded.longitude;
+    }
 
     const saved = existing?.[0]?.id
       ? await supabaseRequest(`/rest/v1/workshops?id=eq.${encodeURIComponent(existing[0].id)}`, {

@@ -1,5 +1,6 @@
 const { authorize, corsHeaders, json, supabaseRequest } = require('./admin-common');
 const { sendPushToUser } = require('./push-core');
+const { geocodeAddress } = require('./geocode-helper');
 
 const LISTING_STATUS_MESSAGES = {
   active: 'Seu anuncio foi aprovado e ja esta publicado.',
@@ -314,6 +315,41 @@ exports.handler = async (event) => {
         { recipient_type: recipientType, recipient_id: recipientId, title }
       );
       return json(200, { success: true, data: { push } });
+    }
+
+    if (action === 'geocodeWorkshop') {
+      const workshopId = cleanText(payload.workshop_id, 80);
+      if (!workshopId) return json(400, { success: false, error: 'workshop_id obrigatorio.' });
+
+      const rows = await supabaseRequest(
+        `/rest/v1/workshops?id=eq.${encodeURIComponent(workshopId)}&select=address,neighborhood,city,state,cep,zip_code`
+      );
+      const workshop = Array.isArray(rows) ? rows[0] : rows;
+      if (!workshop) return json(404, { success: false, error: 'Oficina nao encontrada.' });
+
+      const geocoded = await geocodeAddress({
+        address: workshop.address,
+        neighborhood: workshop.neighborhood,
+        city: workshop.city,
+        state: workshop.state,
+        cep: workshop.cep || workshop.zip_code,
+      });
+      if (!geocoded) {
+        return json(422, { success: false, error: 'Nao foi possivel localizar coordenadas para este endereco. Confira o CEP/endereco cadastrado da oficina.' });
+      }
+
+      const result = await supabaseRequest(`/rest/v1/workshops?id=eq.${encodeURIComponent(workshopId)}`, {
+        method: 'PATCH',
+        body: { latitude: geocoded.latitude, longitude: geocoded.longitude },
+      });
+      await writeAudit(
+        'workshop_geocoded',
+        'workshops',
+        workshopId,
+        `Coordenadas recalculadas: ${geocoded.latitude}, ${geocoded.longitude}.`,
+        geocoded
+      );
+      return json(200, { success: true, data: result });
     }
 
     return json(400, { success: false, error: 'Acao admin desconhecida.' });

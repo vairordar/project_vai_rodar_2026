@@ -411,11 +411,20 @@ function renderSubscriptions(){
 }
 function renderWorkshops(){
   const filtered=data.workshops.filter((w)=>state.workshopFilter==="all"||w.approval_status===state.workshopFilter||w.subscription_status===state.workshopFilter);
-  $("workshopRows").innerHTML=filtered.map((w)=>`<tr><td><b>${esc(w.name)}</b><small>${esc(w.legal_name||"-")}</small></td><td>${esc(w.responsible_name||"-")}<small>${esc(w.contact_phone||"-")}</small></td><td>${esc(w.cnpj||"-")}</td><td>${esc(w.neighborhood||"-")}<small>${esc(w.city||"-")} / ${esc(w.state||"-")}</small></td><td>${(w.categories||[]).map((c)=>`<span class="pill info">${esc(c)}</span>`).join(" ")}</td><td><span class="pill ${esc(w.approval_status)}">${esc(w.approval_status)}</span><small>${w.visible!==false?"Visivel":"Oculta"}</small></td><td><span class="pill ${esc(w.subscription_status)}">${esc(w.subscription_status)}</span><small style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px"><button class="btn success" data-approve="${esc(w.id)}" type="button">Aprovar</button><button class="btn danger" data-block="${esc(w.id)}" type="button">Bloquear</button><button class="btn secondary" data-pay="${esc(w.id)}" type="button">Pagamento</button><button class="btn secondary" data-message="${esc(w.id)}" data-message-type="workshop" type="button">Mensagem</button></small></td></tr>`).join("");
+  $("workshopRows").innerHTML=filtered.map((w)=>`<tr><td><b>${esc(w.name)}</b><small>${esc(w.legal_name||"-")}</small></td><td>${esc(w.responsible_name||"-")}<small>${esc(w.contact_phone||"-")}</small></td><td>${esc(w.cnpj||"-")}</td><td>${esc(w.neighborhood||"-")}<small>${esc(w.city||"-")} / ${esc(w.state||"-")}</small></td><td>${(w.categories||[]).map((c)=>`<span class="pill info">${esc(c)}</span>`).join(" ")}</td><td><span class="pill ${esc(w.approval_status)}">${esc(w.approval_status)}</span><small>${w.visible!==false?"Visivel":"Oculta"}</small></td><td><span class="pill ${esc(w.subscription_status)}">${esc(w.subscription_status)}</span><small style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px"><button class="btn success" data-approve="${esc(w.id)}" type="button">Aprovar</button><button class="btn danger" data-block="${esc(w.id)}" type="button">Bloquear</button><button class="btn secondary" data-pay="${esc(w.id)}" type="button">Pagamento</button><button class="btn secondary" data-message="${esc(w.id)}" data-message-type="workshop" type="button">Mensagem</button><button class="btn secondary" data-geocode="${esc(w.id)}" type="button" title="${w.latitude&&w.longitude?`Lat/Lng atual: ${w.latitude}, ${w.longitude}`:"Sem coordenadas cadastradas"}">${w.latitude&&w.longitude?"Recalcular localizacao":"Localizar no mapa"}</button></small></td></tr>`).join("");
   $("workshopRows").querySelectorAll("[data-approve]").forEach((btn)=>btn.addEventListener("click",()=>setWorkshopStatus(btn.dataset.approve,"approved",true,true)));
   $("workshopRows").querySelectorAll("[data-block]").forEach((btn)=>btn.addEventListener("click",()=>setWorkshopStatus(btn.dataset.block,"blocked",false,false)));
   $("workshopRows").querySelectorAll("[data-pay]").forEach((btn)=>btn.addEventListener("click",()=>registerPayment(btn.dataset.pay)));
   $("workshopRows").querySelectorAll("[data-message]").forEach((btn)=>btn.addEventListener("click",()=>sendAdminMessage(btn.dataset.message,btn.dataset.messageType)));
+  $("workshopRows").querySelectorAll("[data-geocode]").forEach((btn)=>btn.addEventListener("click",()=>geocodeWorkshop(btn.dataset.geocode)));
+}
+async function geocodeWorkshop(workshopId){
+  try{
+    await adminAction("geocodeWorkshop",{workshop_id:workshopId});
+    await loadAdminData();
+    renderAll();
+    toast("Coordenadas atualizadas a partir do endereco/CEP.");
+  }catch(error){toast(error.message||"Nao foi possivel localizar coordenadas para esta oficina.")}
 }
 function renderUsers(){
   const rows=(data.users||[]).map((user)=>{
