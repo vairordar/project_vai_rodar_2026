@@ -762,8 +762,10 @@ h1{
 .app-shell.offices-open .office-map-focus{position:absolute;right:12px;top:138px;z-index:425;height:32px;border:1px solid rgba(216,226,239,.95);border-radius:999px;background:rgba(255,255,255,.93);color:var(--blue);padding:0 12px;font-size:9px;box-shadow:0 12px 30px rgba(15,23,42,.13);backdrop-filter:blur(14px)}
 .office-results-sheet{position:absolute;left:10px;right:10px;bottom:10px;z-index:430;max-height:38%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:8px;border:1px solid rgba(216,226,239,.96);border-radius:18px;background:rgba(255,255,255,.95);box-shadow:0 28px 68px rgba(15,23,42,.24);backdrop-filter:blur(18px)}
 .office-sheet-grip{width:34px;height:4px;border-radius:999px;background:#d8e2ef;justify-self:center;margin-bottom:1px}.office-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px}.office-sheet-head strong{display:block;color:var(--headline);font-size:11px;font-weight:850}.office-sheet-head span{display:block;color:var(--muted);font-size:8px;margin-top:1px}
-.app-shell.offices-open .office-list{display:grid;gap:7px;overflow-y:auto;min-height:0;padding-right:2px;scrollbar-width:none}.app-shell.offices-open .office-list::-webkit-scrollbar{display:none}
-.app-shell.offices-open .office-card{grid-template-columns:54px 1fr auto;gap:8px;border-radius:13px;background:#fff;padding:7px;box-shadow:none}.app-shell.offices-open .office-photo{width:54px;height:48px;border-radius:9px}.app-shell.offices-open .office-card h3{font-size:10px;margin-bottom:2px}.app-shell.offices-open .office-address{font-size:8px;margin-bottom:5px}.app-shell.offices-open .office-links{gap:5px}.app-shell.offices-open .office-links button{height:24px;padding:0 8px;font-size:8px}.app-shell.offices-open .office-score{font-size:10px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:9px;padding-top:9px}
+.app-shell.offices-open .office-list{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;overflow-y:hidden;min-height:0;padding:1px 2px 6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.app-shell.offices-open .office-list::-webkit-scrollbar{display:none}
+.app-shell.offices-open .office-card{flex:0 0 100%;width:100%;scroll-snap-align:center;grid-template-columns:54px 1fr auto;gap:8px;border-radius:13px;background:#fff;padding:7px;box-shadow:none}.app-shell.offices-open .office-photo{width:54px;height:48px;border-radius:9px}.app-shell.offices-open .office-card h3{font-size:10px;margin-bottom:2px}.app-shell.offices-open .office-address{font-size:8px;margin-bottom:5px}.app-shell.offices-open .office-links{gap:5px}.app-shell.offices-open .office-links button{height:24px;padding:0 8px;font-size:8px}.app-shell.offices-open .office-score{font-size:10px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:9px;padding-top:9px}
+.office-sheet-dots{display:flex;justify-content:center;gap:5px;margin-top:-2px}.office-sheet-dots span{width:5px;height:5px;border-radius:50%;background:#d8e2ef;transition:background .2s,transform .2s}.office-sheet-dots span.active{background:var(--blue);transform:scale(1.3)}
+body.theme-dark .office-sheet-dots span{background:#1f2937}body.theme-dark .office-sheet-dots span.active{background:var(--blue)}
 .app-shell.offices-open .office-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0}.app-shell.offices-open .office-actions button{height:34px;border-radius:12px;font-size:10px}
 .app-shell.offices-open .leaflet-control-zoom{border:0!important;box-shadow:0 12px 30px rgba(15,23,42,.16)!important}.app-shell.offices-open .leaflet-control-zoom a{border:0!important;color:#0f172a!important}.app-shell.offices-open .leaflet-control-attribution{background:rgba(255,255,255,.65)!important}
 body.theme-dark .app-shell.offices-open .office-map-shell{background:#050607}
@@ -2097,6 +2099,7 @@ body.theme-dark{
             <div class="office-sheet-grip"></div>
             <div class="office-sheet-head"><div><strong>Oficinas encontradas</strong><span>Toque no mapa ou escolha abaixo</span></div></div>
             <div class="office-list" id="officeList"></div>
+            <div class="office-sheet-dots" id="officeSheetDots"></div>
             <div class="office-actions"><button class="load-more-offices" id="loadMoreOffices">Ver mais</button><button class="send-office-proposals" id="sendOfficeProposals">Enviar propostas</button></div>
           </div>
         </div>
@@ -2664,6 +2667,7 @@ const officeCategoryFilter=document.getElementById("officeCategoryFilter");
 const ratingFilter=document.getElementById("ratingFilter");
 const clearOfficeFilters=document.getElementById("clearOfficeFilters");
 const officeList=document.getElementById("officeList");
+const officeSheetDots=document.getElementById("officeSheetDots");
 const officeMap=document.getElementById("officeMap");
 const officeMapFocus=document.getElementById("officeMapFocus");
 const loadMoreOffices=document.getElementById("loadMoreOffices");
@@ -2747,6 +2751,7 @@ const sb=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL
 let currentUser=null;
 let officeMapInstance=null;
 let officeMapMarkers=[];
+let officeListScrollTimer=null;
 let isSignUpMode=true;
 const partsBackHome=document.getElementById("partsBackHome");
 const partsQuery=document.getElementById("partsQuery");
@@ -3319,7 +3324,8 @@ function focusOfficeCard(index){
   card.classList.add("map-active");
   const detail=document.getElementById(`officeDetail${index}`);
   if(detail) detail.classList.add("show");
-  card.scrollIntoView({behavior:"smooth",block:"nearest"});
+  card.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});
+  renderOfficeSheetDots(index);
 }
 function updateOfficeMap(filtered){
   const map=ensureOfficeMap();
@@ -3353,6 +3359,36 @@ function focusOfficeMarker(index){
   if(!marker||!officeMapInstance) return;
   officeMapInstance.panTo(marker.getLatLng());
   marker.openPopup();
+}
+function renderOfficeSheetDots(activeIndex){
+  if(!officeSheetDots) return;
+  const cards=[...officeList.querySelectorAll(".office-card")];
+  if(cards.length<2){ officeSheetDots.innerHTML=""; return; }
+  officeSheetDots.innerHTML=cards.map((card,position)=>`<span class="${card.dataset.officeIndex===String(activeIndex)?"active":""}"></span>`).join("");
+}
+function handleOfficeListScroll(){
+  clearTimeout(officeListScrollTimer);
+  officeListScrollTimer=setTimeout(()=>{
+    const cards=[...officeList.querySelectorAll(".office-card")];
+    if(!cards.length) return;
+    const listRect=officeList.getBoundingClientRect();
+    const center=listRect.left+listRect.width/2;
+    let closest=cards[0];
+    let closestDist=Infinity;
+    cards.forEach((card)=>{
+      const rect=card.getBoundingClientRect();
+      const dist=Math.abs((rect.left+rect.width/2)-center);
+      if(dist<closestDist){ closestDist=dist; closest=card; }
+    });
+    cards.forEach((card)=>card.classList.remove("map-active"));
+    closest.classList.add("map-active");
+    focusOfficeMarker(closest.dataset.officeIndex);
+    renderOfficeSheetDots(closest.dataset.officeIndex);
+  },110);
+}
+if(officeList&&!officeList.dataset.swipeBound){
+  officeList.dataset.swipeBound="1";
+  officeList.addEventListener("scroll",handleOfficeListScroll,{passive:true});
 }
 function getOfficeServices(office){
   if(Array.isArray(office.services)&&office.services.length) return office.services;
@@ -3396,6 +3432,7 @@ function renderOffices(reset=false){
     </article>
   `}).join("")||'<div class="form-error show">Não foram encontradas oficinas para estes filtros.</div>';
   loadMoreOffices.style.display=visibleOfficeCount<filtered.length?"block":"none";
+  renderOfficeSheetDots(offices.indexOf(visible[0]));
   officeList.querySelectorAll(".message-btn").forEach((button)=>button.addEventListener("click",()=>{
     officeList.querySelectorAll(".office-detail.show").forEach((detail)=>detail.classList.remove("show"));
     const card=button.closest(".office-card");
