@@ -748,9 +748,8 @@ h1{
 .app-shell.offices-open .app{padding:68px 0 0;overflow:hidden}
 .app-shell.offices-open .offices-view{max-width:none;width:100%;height:100%;margin:0;display:block}
 .app-shell.offices-open .office-map-shell{position:relative;width:100%;height:100%;display:block;margin:0;padding:0;border:0;border-radius:0;background:#eef3f8;box-shadow:none;overflow:hidden}
-.app-shell.offices-open .office-map{position:absolute;inset:0;min-height:0;width:100%;height:100%;border:0;border-radius:0;background:#eef3f8;filter:saturate(.88) hue-rotate(190deg) contrast(1.04) brightness(1.07)}
-.app-shell.offices-open .office-map{position:absolute;inset:0;min-height:0;width:100%;height:100%;border:0;border-radius:0;background:#eef3f8;filter:saturate(.82) contrast(1.03) brightness(1.04)}
-.app-shell.offices-open .office-map::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(248,250,252,.9) 0%,rgba(248,250,252,.46) 28%,rgba(248,250,252,0) 52%,rgba(248,250,252,.58) 100%);z-index:420}
+.app-shell.offices-open .office-map{position:absolute;inset:0;min-height:0;width:100%;height:100%;border:0;border-radius:0;background:#eef3f8}
+.app-shell.offices-open .office-map::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(248,250,252,.5) 0%,rgba(248,250,252,.14) 28%,rgba(248,250,252,0) 52%,rgba(248,250,252,.28) 100%);z-index:420}
 .office-map-top{position:absolute;top:12px;left:12px;right:12px;z-index:430;display:grid;gap:8px}
 .office-map-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .office-map-head h2{color:var(--headline);font-size:21px;line-height:1.05;font-weight:820;letter-spacing:-.35px}.office-map-head p{color:var(--muted);font-size:9px;line-height:1.35;margin-top:3px;max-width:210px}
@@ -760,18 +759,18 @@ h1{
 .app-shell.offices-open .office-filters{position:absolute;top:38px;left:0;width:min(330px,calc(100vw - 36px));display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:10px;border:1px solid rgba(216,226,239,.95);border-radius:16px;background:rgba(255,255,255,.96);box-shadow:0 24px 54px rgba(15,23,42,.18);backdrop-filter:blur(16px)}
 .app-shell.offices-open .location-filter-wrap{grid-column:1 / -1}.app-shell.offices-open .office-filter,.app-shell.offices-open .rating-filter summary,.app-shell.offices-open .clear-filters{height:34px;border-radius:11px;background:#f8fbff;font-size:9.5px}.app-shell.offices-open .clear-filters{grid-column:1 / -1;background:#fff}.app-shell.offices-open .rating-panel{top:38px;z-index:450;background:#fff}
 .app-shell.offices-open .office-map-focus{position:absolute;right:12px;top:138px;z-index:425;height:32px;border:1px solid rgba(216,226,239,.95);border-radius:999px;background:rgba(255,255,255,.93);color:var(--blue);padding:0 12px;font-size:9px;box-shadow:0 12px 30px rgba(15,23,42,.13);backdrop-filter:blur(14px)}
-.office-results-sheet{position:absolute;left:10px;right:10px;bottom:10px;z-index:430;max-height:38%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:8px;border:1px solid rgba(216,226,239,.96);border-radius:18px;background:rgba(255,255,255,.95);box-shadow:0 28px 68px rgba(15,23,42,.24);backdrop-filter:blur(18px)}
-.office-sheet-grip{width:34px;height:4px;border-radius:999px;background:#d8e2ef;justify-self:center;margin-bottom:1px}.office-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px}.office-sheet-head strong{display:block;color:var(--headline);font-size:11px;font-weight:850}.office-sheet-head span{display:block;color:var(--muted);font-size:8px;margin-top:1px}
-.app-shell.offices-open .office-list{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;overflow-y:hidden;min-height:0;padding:1px 2px 6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.app-shell.offices-open .office-list::-webkit-scrollbar{display:none}
-.app-shell.offices-open .office-card{flex:0 0 100%;width:100%;scroll-snap-align:center;grid-template-columns:54px 1fr auto;gap:8px;border-radius:13px;background:#fff;padding:7px;box-shadow:none}.app-shell.offices-open .office-photo{width:54px;height:48px;border-radius:9px}.app-shell.offices-open .office-card h3{font-size:10px;margin-bottom:2px}.app-shell.offices-open .office-address{font-size:8px;margin-bottom:5px}.app-shell.offices-open .office-links{gap:5px}.app-shell.offices-open .office-links button{height:24px;padding:0 8px;font-size:8px}.app-shell.offices-open .office-score{font-size:10px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:9px;padding-top:9px}
+.office-results-sheet{position:absolute;left:10px;right:10px;bottom:10px;z-index:430;max-height:34%;transition:max-height .25s ease;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;padding:7px;border:1px solid rgba(216,226,239,.96);border-radius:18px;background:rgba(255,255,255,.95);box-shadow:0 28px 68px rgba(15,23,42,.24);backdrop-filter:blur(18px)}
+.office-results-sheet.expanded{max-height:72%}
+.office-sheet-grip{width:34px;height:4px;border-radius:999px;background:#d8e2ef;justify-self:center;margin-bottom:1px;cursor:grab;touch-action:none}.office-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px}.office-sheet-head strong{display:block;color:var(--headline);font-size:10.5px;font-weight:850}.office-sheet-head span{display:block;color:var(--muted);font-size:7.5px;margin-top:1px}
+.app-shell.offices-open .office-list{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;overflow-y:hidden;min-height:0;padding:1px 2px 5px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.app-shell.offices-open .office-list::-webkit-scrollbar{display:none}
+.app-shell.offices-open .office-card{flex:0 0 100%;width:100%;scroll-snap-align:center;grid-template-columns:42px 1fr auto;gap:6px;border-radius:11px;background:#fff;padding:6px;box-shadow:none}.app-shell.offices-open .office-photo{width:42px;height:38px;border-radius:8px}.app-shell.offices-open .office-card h3{font-size:9.5px;margin-bottom:1px}.app-shell.offices-open .office-address{font-size:7.5px;margin-bottom:4px;line-height:1.25}.app-shell.offices-open .office-links{gap:4px}.app-shell.offices-open .office-links button{height:21px;padding:0 6px;font-size:7.5px}.app-shell.offices-open .office-score{font-size:9px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:8px;padding-top:8px}
 .office-sheet-dots{display:flex;justify-content:center;gap:5px;margin-top:-2px}.office-sheet-dots span{width:5px;height:5px;border-radius:50%;background:#d8e2ef;transition:background .2s,transform .2s}.office-sheet-dots span.active{background:var(--blue);transform:scale(1.3)}
 body.theme-dark .office-sheet-dots span{background:#1f2937}body.theme-dark .office-sheet-dots span.active{background:var(--blue)}
 .app-shell.offices-open .office-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0}.app-shell.offices-open .office-actions button{height:34px;border-radius:12px;font-size:10px}
 .app-shell.offices-open .leaflet-control-zoom{border:0!important;box-shadow:0 12px 30px rgba(15,23,42,.16)!important}.app-shell.offices-open .leaflet-control-zoom a{border:0!important;color:#0f172a!important}.app-shell.offices-open .leaflet-control-attribution{background:rgba(255,255,255,.65)!important}
 body.theme-dark .app-shell.offices-open .office-map-shell{background:#050607}
-body.theme-dark .app-shell.offices-open .office-map{background:#eef3f8;filter:saturate(.82) contrast(1.03) brightness(1.04)}
-body.theme-dark .app-shell.offices-open .office-map .leaflet-tile{filter:none}
-body.theme-dark .app-shell.offices-open .office-map::after{background:linear-gradient(180deg,rgba(5,6,7,.74) 0%,rgba(5,6,7,.24) 28%,rgba(5,6,7,0) 52%,rgba(5,6,7,.42) 100%)}
+body.theme-dark .app-shell.offices-open .office-map{background:#0b0e14}
+body.theme-dark .app-shell.offices-open .office-map::after{background:linear-gradient(180deg,rgba(5,6,7,.5) 0%,rgba(5,6,7,.14) 28%,rgba(5,6,7,0) 52%,rgba(5,6,7,.26) 100%)}
 body.theme-dark .app-shell.offices-open .office-ai-search,
 body.theme-dark .app-shell.offices-open .office-filters,
 body.theme-dark .office-filter-menu>summary,
@@ -3303,7 +3302,12 @@ function ensureOfficeMap(){
   if(!officeMapInstance){
     officeMapInstance=L.map(officeMap,{zoomControl:false,attributionControl:true}).setView([-23.5617,-46.6559],12);
     L.control.zoom({position:"bottomright"}).addTo(officeMapInstance);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap"}).addTo(officeMapInstance);
+    const isDarkMap=document.body.classList.contains("theme-dark");
+    L.tileLayer(`https://{s}.basemaps.cartocdn.com/${isDarkMap?"dark_all":"light_all"}/{z}/{x}/{y}{r}.png`,{
+      maxZoom:19,
+      subdomains:"abcd",
+      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    }).addTo(officeMapInstance);
   }
   setTimeout(()=>officeMapInstance.invalidateSize(),80);
   return officeMapInstance;
@@ -3386,6 +3390,40 @@ if(officeList&&!officeList.dataset.swipeBound){
   officeList.dataset.swipeBound="1";
   officeList.addEventListener("scroll",handleOfficeListScroll,{passive:true});
 }
+function bindOfficeSheetSwipe(){
+  const sheet=document.querySelector(".office-results-sheet");
+  const grip=document.querySelector(".office-sheet-grip");
+  if(!sheet||!grip||grip.dataset.swipeBound) return;
+  grip.dataset.swipeBound="1";
+  let dragging=false;
+  let moved=false;
+  let startY=0;
+  function pointY(event){ return event.touches?event.touches[0].clientY:event.clientY; }
+  function onStart(event){
+    dragging=true;
+    moved=false;
+    startY=pointY(event);
+  }
+  function onMove(event){
+    if(!dragging) return;
+    const delta=pointY(event)-startY;
+    if(Math.abs(delta)>6) moved=true;
+    if(delta<-28) sheet.classList.add("expanded");
+    else if(delta>28) sheet.classList.remove("expanded");
+  }
+  function onEnd(){ dragging=false; }
+  grip.addEventListener("touchstart",onStart,{passive:true});
+  grip.addEventListener("touchmove",onMove,{passive:true});
+  grip.addEventListener("touchend",onEnd,{passive:true});
+  grip.addEventListener("mousedown",onStart);
+  window.addEventListener("mousemove",onMove);
+  window.addEventListener("mouseup",onEnd);
+  grip.addEventListener("click",()=>{
+    if(moved){ moved=false; return; }
+    sheet.classList.toggle("expanded");
+  });
+}
+bindOfficeSheetSwipe();
 function getOfficeServices(office){
   if(Array.isArray(office.services)&&office.services.length) return office.services;
   const extras=office.category==="Pneus e alinhamento"?["Bateria","Balanceamento"]:office.category==="Freios e suspensão"?["Revisão geral","Troca de óleo e filtros"]:["Bateria","Diagnóstico computadorizado"];
