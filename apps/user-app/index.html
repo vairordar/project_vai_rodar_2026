@@ -4217,8 +4217,14 @@ function setLoggedIn(user){
     loadUserVehicles();
     loadUserVehicleListings();
     renderAllRegisteredPlatePickers();
-    if(("Notification" in window)&&Notification.permission==="granted"){
-      enablePushNotifications({silent:true}).catch((error)=>console.warn("[Push]",error.message));
+    if(("Notification" in window)&&window.location.protocol!=="file:"){
+      if(Notification.permission==="granted"){
+        enablePushNotifications({silent:true}).catch((error)=>console.warn("[Push]",error.message));
+      }else if(Notification.permission==="default"){
+        setTimeout(()=>{
+          enablePushNotifications({silent:true}).catch((error)=>console.warn("[Push]",error.message));
+        },1500);
+      }
     }
     refreshUnreadNotifCount();
     subscribeNotificationsChannel();
@@ -4445,10 +4451,11 @@ function closeQuotes(){
   if(!sideMenu.classList.contains("open")&&!emergencyPanel.classList.contains("open")&&!accountPanel.classList.contains("open")&&!messagesPanel.classList.contains("open")&&!notificationsPanel.classList.contains("open")) overlay.classList.remove("open");
 }
 function renderNotifications(){
+  const canPrompt=currentUser&&("Notification" in window)&&window.location.protocol!=="file:"&&Notification.permission!=="granted";
+  const pushCta=canPrompt
+    ? '<button class="outline-btn" type="button" data-enable-push style="margin-top:10px;width:100%">Ativar notificações no celular</button>'
+    : "";
   if(!notifications.length){
-    const pushCta=currentUser&&("Notification" in window)&&window.location.protocol!=="file:"
-      ? '<button class="outline-btn" type="button" data-enable-push style="margin-top:10px;width:100%">Ativar notificações no celular</button>'
-      : "";
     notificationList.innerHTML=`<div class="account-empty">Ainda não há notificações reais.${pushCta}</div>`;
     return;
   }
@@ -4457,7 +4464,7 @@ function renderNotifications(){
       <span class="notification-icon ${item.type}">${item.icon}</span>
       <div><b>${item.title}</b><p>${item.detail}</p><time>${item.time}</time></div>
     </article>
-  `).join("");
+  `).join("")+pushCta;
 }
 function urlBase64ToUint8Array(base64String){
   const padding="=".repeat((4-base64String.length%4)%4);
