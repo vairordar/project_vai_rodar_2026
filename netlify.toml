@@ -6,6 +6,30 @@
 [functions]
   directory = "netlify/functions"
 
+# Headers de seguridad (defensa en profundidad - no reemplazan RLS,
+# pero evitan clickjacking, MIME sniffing y filtracion de referrer).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(self), camera=(), microphone=(), payment=()"
+
+# El admin backoffice y el panel del taller no deben indexarse en
+# buscadores ni cachearse.
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/oficinas/painel/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
 # Redirects
 # /oficinas -> landing de oficinas
 [[redirects]]

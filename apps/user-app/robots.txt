@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /oficinas/painel
+Disallow: /legal/
+
+Sitemap: https://vairodar.com.br/sitemap.xml

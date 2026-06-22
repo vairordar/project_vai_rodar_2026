@@ -55,6 +55,8 @@ console.log("\n2. user-app → dist/");
 copyFile(path.join(APPS, "user-app", "index.html"),   path.join(DIST, "index.html"));
 copyFile(path.join(APPS, "user-app", "manifest.json"), path.join(DIST, "manifest.json"));
 copyFile(path.join(APPS, "user-app", "service-worker.js"), path.join(DIST, "service-worker.js"));
+copyFile(path.join(APPS, "user-app", "robots.txt"),   path.join(DIST, "robots.txt"));
+copyFile(path.join(APPS, "user-app", "sitemap.xml"),  path.join(DIST, "sitemap.xml"));
 copyDir( path.join(APPS, "user-app", "assets"),       path.join(DIST, "assets"));
 copyDir( path.join(APPS, "user-app", "legal"),        path.join(DIST, "legal"));
 
