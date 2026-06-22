@@ -383,10 +383,11 @@ function renderSubscriptions(){
 }
 function renderWorkshops(){
   const filtered=data.workshops.filter((w)=>state.workshopFilter==="all"||w.approval_status===state.workshopFilter||w.subscription_status===state.workshopFilter);
-  $("workshopRows").innerHTML=filtered.map((w)=>`<tr><td><b>${esc(w.name)}</b><small>${esc(w.legal_name||"-")}</small></td><td>${esc(w.responsible_name||"-")}<small>${esc(w.contact_phone||"-")}</small></td><td>${esc(w.cnpj||"-")}</td><td>${esc(w.neighborhood||"-")}<small>${esc(w.city||"-")} / ${esc(w.state||"-")}</small></td><td>${(w.categories||[]).map((c)=>`<span class="pill info">${esc(c)}</span>`).join(" ")}</td><td><span class="pill ${esc(w.approval_status)}">${esc(w.approval_status)}</span><small>${w.visible!==false?"Visivel":"Oculta"}</small></td><td><span class="pill ${esc(w.subscription_status)}">${esc(w.subscription_status)}</span><small style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px"><button class="btn success" data-approve="${esc(w.id)}" type="button">Aprovar</button><button class="btn danger" data-block="${esc(w.id)}" type="button">Bloquear</button><button class="btn secondary" data-pay="${esc(w.id)}" type="button">Pagamento</button></small></td></tr>`).join("");
+  $("workshopRows").innerHTML=filtered.map((w)=>`<tr><td><b>${esc(w.name)}</b><small>${esc(w.legal_name||"-")}</small></td><td>${esc(w.responsible_name||"-")}<small>${esc(w.contact_phone||"-")}</small></td><td>${esc(w.cnpj||"-")}</td><td>${esc(w.neighborhood||"-")}<small>${esc(w.city||"-")} / ${esc(w.state||"-")}</small></td><td>${(w.categories||[]).map((c)=>`<span class="pill info">${esc(c)}</span>`).join(" ")}</td><td><span class="pill ${esc(w.approval_status)}">${esc(w.approval_status)}</span><small>${w.visible!==false?"Visivel":"Oculta"}</small></td><td><span class="pill ${esc(w.subscription_status)}">${esc(w.subscription_status)}</span><small style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px"><button class="btn success" data-approve="${esc(w.id)}" type="button">Aprovar</button><button class="btn danger" data-block="${esc(w.id)}" type="button">Bloquear</button><button class="btn secondary" data-pay="${esc(w.id)}" type="button">Pagamento</button><button class="btn secondary" data-message="${esc(w.id)}" data-message-type="workshop" type="button">Mensagem</button></small></td></tr>`).join("");
   $("workshopRows").querySelectorAll("[data-approve]").forEach((btn)=>btn.addEventListener("click",()=>setWorkshopStatus(btn.dataset.approve,"approved",true,true)));
   $("workshopRows").querySelectorAll("[data-block]").forEach((btn)=>btn.addEventListener("click",()=>setWorkshopStatus(btn.dataset.block,"blocked",false,false)));
   $("workshopRows").querySelectorAll("[data-pay]").forEach((btn)=>btn.addEventListener("click",()=>registerPayment(btn.dataset.pay)));
+  $("workshopRows").querySelectorAll("[data-message]").forEach((btn)=>btn.addEventListener("click",()=>sendAdminMessage(btn.dataset.message,btn.dataset.messageType)));
 }
 function renderUsers(){
   const rows=(data.users||[]).map((user)=>{
@@ -396,9 +397,20 @@ function renderUsers(){
     const vehicles=user.vehicle_count??user.vehicles_count??0;
     const requests=user.service_request_count??user.requests_count??0;
     const listings=user.vehicle_listing_count??user.listings_count??0;
-    return `<tr><td><b>${esc(name)}</b><small>${esc(user.id||"")}</small></td><td>${esc(email)}<small>${esc(phone)}</small></td><td>${dateBR(user.created_at)}</td><td>${dateBR(user.last_sign_in_at)}</td><td>${vehicles}</td><td>${requests}</td><td>${listings}</td></tr>`;
+    return `<tr><td><b>${esc(name)}</b><small>${esc(user.id||"")}</small></td><td>${esc(email)}<small>${esc(phone)}</small></td><td>${dateBR(user.created_at)}</td><td>${dateBR(user.last_sign_in_at)}</td><td>${vehicles}</td><td>${requests}</td><td>${listings}<br><button class="btn secondary" data-message="${esc(user.id||"")}" data-message-type="user" type="button">Mensagem</button></td></tr>`;
   }).join("");
   $("userRows").innerHTML=rows||'<tr><td colspan="7"><div class="empty">Sem usuarios carregados ainda.</div></td></tr>';
+  $("userRows").querySelectorAll("[data-message]").forEach((btn)=>btn.addEventListener("click",()=>sendAdminMessage(btn.dataset.message,btn.dataset.messageType)));
+}
+async function sendAdminMessage(recipientId,recipientType){
+  if(!recipientId){toast("Usuario sem id valido.");return;}
+  const title=prompt("Titulo da mensagem","Vai Rodar")||"Vai Rodar";
+  const message=(prompt("Mensagem a enviar:")||"").trim();
+  if(!message)return;
+  try{
+    await adminAction("sendAdminMessage",{recipient_type:recipientType,recipient_id:recipientId,title,message});
+    toast("Mensagem enviada.");
+  }catch(error){toast(error.message||"Nao foi possivel enviar a mensagem.")}
 }
 function renderVehicleListings(){
   const listings=data.vehicle_listings||[];

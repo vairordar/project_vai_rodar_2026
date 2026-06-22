@@ -25,6 +25,19 @@ function cleanText(value, max = 500) {
   return String(value || '').trim().slice(0, max);
 }
 
+async function insertNotification({ userId, type, title, detail, link }) {
+  if (!userId) return;
+  try {
+    await supabaseRequest('/rest/v1/notifications', {
+      method: 'POST',
+      prefer: 'return=minimal',
+      body: { user_id: userId, type: type || 'system', title, detail, link: link || '/' },
+    });
+  } catch (error) {
+    console.warn('[admin-action notification]', error.message);
+  }
+}
+
 async function writeAudit(action, entity, entityId, detail, metadata = {}) {
   try {
     await supabaseRequest('/rest/v1/admin_audit_logs', {
@@ -82,6 +95,13 @@ exports.handler = async (event) => {
       );
       const ownerId = Array.isArray(result) ? result[0]?.owner_id : result?.owner_id;
       if (ownerId && WORKSHOP_STATUS_MESSAGES[status]) {
+        await insertNotification({
+          userId: ownerId,
+          type: 'system',
+          title: 'Vai Rodar',
+          detail: WORKSHOP_STATUS_MESSAGES[status],
+          link: '/',
+        });
         await sendPushToUser(ownerId, { title: 'Vai Rodar', body: WORKSHOP_STATUS_MESSAGES[status], url: '/' })
           .catch((error) => console.warn('[admin-action push]', error.message));
       }
@@ -152,6 +172,13 @@ exports.handler = async (event) => {
       );
       const listingOwnerId = Array.isArray(result) ? result[0]?.user_id : result?.user_id;
       if (listingOwnerId && LISTING_STATUS_MESSAGES[status]) {
+        await insertNotification({
+          userId: listingOwnerId,
+          type: 'system',
+          title: 'Vai Rodar',
+          detail: LISTING_STATUS_MESSAGES[status],
+          link: '/',
+        });
         await sendPushToUser(listingOwnerId, { title: 'Vai Rodar', body: LISTING_STATUS_MESSAGES[status], url: '/' })
           .catch((error) => console.warn('[admin-action push]', error.message));
       }
@@ -175,6 +202,18 @@ exports.handler = async (event) => {
         `Oferta marcada como ${status}.`,
         { status }
       );
+      try {
+        const offerRows = await supabaseRequest(`/rest/v1/workshop_offers?id=eq.${encodeURIComponent(offerId)}&select=workshop_id,workshops(owner_id)`);
+        const offerOwnerId = Array.isArray(offerRows) ? offerRows[0]?.workshops?.owner_id : offerRows?.workshops?.owner_id;
+        if (offerOwnerId) {
+          const offerMsg = status === 'active' ? 'Sua oferta foi reativada e ja esta visivel.' : 'Sua oferta foi desativada pela equipe Vai Rodar.';
+          await insertNotification({ userId: offerOwnerId, type: 'system', title: 'Vai Rodar', detail: offerMsg, link: '/' });
+          await sendPushToUser(offerOwnerId, { title: 'Vai Rodar', body: offerMsg, url: '/' })
+            .catch((error) => console.warn('[admin-action push]', error.message));
+        }
+      } catch (error) {
+        console.warn('[admin-action offer notify]', error.message);
+      }
       return json(200, { success: true, data: result });
     }
 
@@ -238,6 +277,7 @@ exports.handler = async (event) => {
             const msg = decision === 'approved'
               ? 'Sua solicitacao de alteracao de perfil foi aprovada.'
               : 'Sua solicitacao de alteracao de perfil foi rejeitada.';
+            await insertNotification({ userId: ownerId, type: 'system', title: 'Vai Rodar', detail: msg, link: '/' });
             await sendPushToUser(ownerId, { title: 'Vai Rodar', body: msg, url: '/' });
           }
         } catch (error) {
@@ -245,6 +285,35 @@ exports.handler = async (event) => {
         }
       }
       return json(200, { success: true, data: result });
+    }
+
+    if (action === 'sendAdminMessage') {
+      const recipientType = cleanText(payload.recipient_type, 20);
+      const recipientId = cleanText(payload.recipient_id, 80);
+      const title = cleanText(payload.title || 'Vai Rodar', 120);
+      const message = cleanText(payload.message, 500);
+      if (!['user', 'workshop'].includes(recipientType) || !recipientId || !message) {
+        return json(400, { success: false, error: 'recipient_type (user/workshop), recipient_id e message sao obrigatorios.' });
+      }
+
+      let targetUserId = recipientId;
+      if (recipientType === 'workshop') {
+        const workshopRows = await supabaseRequest(`/rest/v1/workshops?id=eq.${encodeURIComponent(recipientId)}&select=owner_id`);
+        targetUserId = Array.isArray(workshopRows) ? workshopRows[0]?.owner_id : workshopRows?.owner_id;
+        if (!targetUserId) return json(404, { success: false, error: 'Oficina nao encontrada ou sem responsavel cadastrado.' });
+      }
+
+      await insertNotification({ userId: targetUserId, type: 'system', title, detail: message, link: '/' });
+      const push = await sendPushToUser(targetUserId, { title, body: message, url: '/' })
+        .catch((error) => { console.warn('[admin-action push]', error.message); return null; });
+      await writeAudit(
+        'admin_message_sent',
+        recipientType,
+        recipientId,
+        `Mensagem enviada (${recipientType}): ${title} - ${message.slice(0, 100)}`,
+        { recipient_type: recipientType, recipient_id: recipientId, title }
+      );
+      return json(200, { success: true, data: { push } });
     }
 
     return json(400, { success: false, error: 'Acao admin desconhecida.' });
