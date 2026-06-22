@@ -43,7 +43,9 @@ button,input,select{font:inherit}button{cursor:pointer}
 .side{background:#fbfcfe;border-right:1px solid var(--line);padding:16px;display:flex;flex-direction:column;min-width:0}
 .brand{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:3px 2px 14px;border-bottom:1px solid var(--line)}.brand img{width:92px;height:auto}.brand small{font-size:9px;color:var(--muted);font-weight:800;text-transform:uppercase}
 .admin-card{padding:14px 0;border-bottom:1px solid var(--line)}.admin-card h2{font-size:13px;line-height:1.25}.admin-card p{font-size:10px;color:var(--muted);line-height:1.35;margin-top:4px}
-.nav{display:grid;gap:5px;margin-top:14px}.nav button{height:34px;border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;color:var(--text);font-size:11px;font-weight:750;padding:0 10px}.nav button.active{background:rgba(7,92,255,.07);border-color:rgba(7,92,255,.24);color:var(--blue)}
+.nav{display:grid;gap:5px;margin-top:6px}.nav button{height:34px;border:1px solid transparent;border-radius:10px;background:transparent;text-align:left;color:var(--text);font-size:11px;font-weight:750;padding:0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}.nav button.active{background:rgba(7,92,255,.07);border-color:rgba(7,92,255,.24);color:var(--blue)}
+.nav-label{margin:12px 2px 2px;font-size:9px;font-weight:850;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}.nav-label:first-child{margin-top:0}
+.nav-badge{display:none;min-width:16px;height:16px;border-radius:999px;background:var(--red);color:#fff;font-size:8px;font-weight:900;align-items:center;justify-content:center;padding:0 4px;flex:0 0 auto}.nav-badge.show{display:inline-flex}
 .side-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}.mini{font-size:10px;color:var(--muted);line-height:1.35}
 .main{display:flex;flex-direction:column;min-width:0;min-height:0}.topbar{border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 22px;background:#fff}
 .topbar h2{font-size:18px;letter-spacing:-.2px}.topbar p{font-size:10px;color:var(--muted);margin-top:3px}.top-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}
@@ -88,16 +90,24 @@ button,input,select{font:inherit}button{cursor:pointer}
         <p>Talleres, pagamentos, assinaturas, analytics e exportacao para Excel.</p>
       </section>
       <nav class="nav">
+        <p class="nav-label">Operacao</p>
         <button class="active" data-view="overview" type="button">Visao geral</button>
-        <button data-view="workshops" type="button">Oficinas</button>
-        <button data-view="users" type="button">Usuarios</button>
-        <button data-view="listings" type="button">Anuncios</button>
-        <button data-view="offers" type="button">Ofertas</button>
-        <button data-view="subscriptions" type="button">Assinaturas</button>
-        <button data-view="payments" type="button">Pagamentos</button>
-        <button data-view="analytics" type="button">Analytics</button>
-        <button data-view="exports" type="button">Exportacoes</button>
-        <button data-view="audit" type="button">Auditoria</button>
+        <button data-view="workshops" type="button"><span>Oficinas</span><span class="nav-badge" id="navBadgeWorkshops"></span></button>
+        <button data-view="users" type="button"><span>Usuarios</span></button>
+
+        <p class="nav-label">Comercio</p>
+        <button data-view="listings" type="button"><span>Anuncios</span><span class="nav-badge" id="navBadgeListings"></span></button>
+        <button data-view="offers" type="button"><span>Ofertas</span><span class="nav-badge" id="navBadgeOffers"></span></button>
+        <button data-view="subscriptions" type="button"><span>Assinaturas</span><span class="nav-badge" id="navBadgeSubscriptions"></span></button>
+        <button data-view="payments" type="button"><span>Pagamentos</span></button>
+
+        <p class="nav-label">Mensageria</p>
+        <button data-view="messaging" type="button"><span>Mensagens</span></button>
+
+        <p class="nav-label">Dados</p>
+        <button data-view="analytics" type="button"><span>Analytics</span></button>
+        <button data-view="exports" type="button"><span>Exportacoes</span></button>
+        <button data-view="audit" type="button"><span>Auditoria</span></button>
       </nav>
       <div class="side-bottom">
         <p class="mini">Base preparada para Supabase: views admin, CSV exportavel e controle de validade da membresia.</p>
@@ -200,6 +210,23 @@ button,input,select{font:inherit}button{cursor:pointer}
           </div>
         </section>
 
+        <section class="view" id="view-messaging">
+          <div class="panel">
+            <div class="panel-head"><div><h3>Mensagens</h3><p>Envie um aviso direto para uma oficina ou usuario. A mensagem cai na campainha de notificacoes dele.</p></div></div>
+            <div class="field" style="max-width:320px;margin-bottom:0"><label>Buscar por nome ou email</label><input id="messagingSearch" type="text" placeholder="Digite para filtrar..."></div>
+          </div>
+          <div class="grid">
+            <section class="panel">
+              <div class="panel-head"><div><h3>Oficinas</h3></div></div>
+              <div class="list" id="messagingWorkshopList"></div>
+            </section>
+            <aside class="panel">
+              <div class="panel-head"><div><h3>Usuarios</h3></div></div>
+              <div class="list" id="messagingUserList"></div>
+            </aside>
+          </div>
+        </section>
+
         <section class="view" id="view-analytics">
           <div class="metrics">
             <div class="metric"><small>Buscas</small><strong id="mSearches">0</strong><span>termos e locais</span></div>
@@ -248,11 +275,12 @@ const titles={
   offers:["Ofertas","Moderacao de ofertas e solicitacoes de alteracao de perfil das oficinas."],
   subscriptions:["Assinaturas","Validade, pagamento e vencimento da membresia."],
   payments:["Pagamentos","Historico financeiro por oficina."],
+  messaging:["Mensageria","Envie mensagens diretas para oficinas e usuarios."],
   analytics:["Analytics","Demanda por lugar, chat, servico e conversao."],
   exports:["Exportacoes","Dados prontos para Excel."],
   audit:["Auditoria","Trazabilidade das acoes administrativas."]
 };
-const state={view:"overview",workshopFilter:"all",listingFilter:"all",loadedFromSupabase:false,adminPassword:sessionStorage.getItem("vr_admin_password")||""};
+const state={view:"overview",workshopFilter:"all",listingFilter:"all",messagingSearch:"",loadedFromSupabase:false,adminPassword:sessionStorage.getItem("vr_admin_password")||""};
 const today=new Date();
 const daysBetween=(date)=>Math.ceil((new Date(date)-today)/86400000);
 const money=(value)=>Number(value||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
@@ -486,6 +514,28 @@ function renderExports(){
   $("exportGrid").innerHTML=exports.map(([key,title,desc])=>`<div class="export-card"><h4>${title}</h4><p>${desc}</p><button class="btn secondary" data-export="${key}" type="button">Baixar CSV</button></div>`).join("");
   bindExports();
 }
+function renderMessaging(){
+  const term=(state.messagingSearch||"").trim().toLowerCase();
+  const workshops=data.workshops.filter((w)=>!term||(w.name||"").toLowerCase().includes(term));
+  const users=(data.users||[]).filter((u)=>!term||[(u.full_name||u.name||""),(u.email||"")].join(" ").toLowerCase().includes(term));
+  $("messagingWorkshopList").innerHTML=workshops.map((w)=>`<div class="item"><div class="item-row"><h4>${esc(w.name)}</h4><button class="btn secondary" data-message="${esc(w.id)}" data-message-type="workshop" type="button">Mensagem</button></div><p>${esc(w.city||"-")}, ${esc(w.state||"-")}</p></div>`).join("")||'<div class="empty">Nenhuma oficina encontrada.</div>';
+  $("messagingUserList").innerHTML=users.map((u)=>`<div class="item"><div class="item-row"><h4>${esc(u.full_name||u.name||u.email||"Usuario")}</h4><button class="btn secondary" data-message="${esc(u.id||"")}" data-message-type="user" type="button">Mensagem</button></div><p>${esc(u.email||"-")}</p></div>`).join("")||'<div class="empty">Nenhum usuario encontrado.</div>';
+  $("messagingWorkshopList").querySelectorAll("[data-message]").forEach((btn)=>btn.addEventListener("click",()=>sendAdminMessage(btn.dataset.message,btn.dataset.messageType)));
+  $("messagingUserList").querySelectorAll("[data-message]").forEach((btn)=>btn.addEventListener("click",()=>sendAdminMessage(btn.dataset.message,btn.dataset.messageType)));
+}
+function updateNavBadges(){
+  const pendingWorkshops=data.workshops.filter((w)=>w.approval_status==="pending").length;
+  const pendingListings=(data.vehicle_listings||[]).filter((l)=>(l.status||"pending_review")==="pending_review").length;
+  const pendingChangeRequests=(data.profile_change_requests||[]).filter((r)=>(r.status||"pending")==="pending").length;
+  const expiredSubscriptions=data.subscriptions.filter((s)=>s.status==="expired").length;
+  const badges=[
+    ["navBadgeWorkshops",pendingWorkshops],
+    ["navBadgeListings",pendingListings],
+    ["navBadgeOffers",pendingChangeRequests],
+    ["navBadgeSubscriptions",expiredSubscriptions]
+  ];
+  badges.forEach(([id,count])=>{const el=$(id);if(!el)return;el.textContent=count>99?"99+":String(count);el.classList.toggle("show",count>0)});
+}
 function renderAudit(){
   $("auditRows").innerHTML=data.audit_logs.map((log)=>`<tr><td>${new Date(log.created_at).toLocaleString("pt-BR")}</td><td>${esc(log.admin_email||"-")}</td><td><span class="pill info">${esc(log.action)}</span></td><td>${esc(log.entity||"-")}</td><td>${esc(log.detail||JSON.stringify(log.metadata||{}))}</td></tr>`).join("");
 }
@@ -508,7 +558,7 @@ function downloadCSV(key){
   const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`vai-rodar-${key}.csv`;a.click();URL.revokeObjectURL(url);toast("CSV gerado.");
 }
 function bindExports(){document.querySelectorAll("[data-export]").forEach((btn)=>{btn.onclick=()=>downloadCSV(btn.dataset.export)})}
-function renderAll(){renderMetrics();renderSubscriptions();renderWorkshops();renderUsers();renderVehicleListings();renderOffers();renderChangeRequests();renderPayments();renderBars("locationBars","search");renderBars("serviceBars","service");renderAlerts();renderExports();renderAudit();bindExports()}
+function renderAll(){renderMetrics();renderSubscriptions();renderWorkshops();renderUsers();renderVehicleListings();renderOffers();renderChangeRequests();renderPayments();renderMessaging();renderBars("locationBars","search");renderBars("serviceBars","service");renderAlerts();renderExports();renderAudit();bindExports();updateNavBadges()}
 async function setWorkshopStatus(workshopId,approvalStatus,visible,open){
   if(!confirm(`Confirmar alteracao da oficina para ${approvalStatus}?`))return;
   try{
@@ -579,6 +629,7 @@ $("menuBtn").addEventListener("click",openDrawer);$("drawerBackdrop").addEventLi
 document.querySelectorAll(".nav button").forEach((btn)=>btn.addEventListener("click",()=>setView(btn.dataset.view)));
 document.querySelectorAll("[data-filter-workshop]").forEach((btn)=>btn.addEventListener("click",()=>{document.querySelectorAll("[data-filter-workshop]").forEach((b)=>b.classList.remove("active"));btn.classList.add("active");state.workshopFilter=btn.dataset.filterWorkshop;renderWorkshops()}));
 document.querySelectorAll("[data-filter-listing]").forEach((btn)=>btn.addEventListener("click",()=>{document.querySelectorAll("[data-filter-listing]").forEach((b)=>b.classList.remove("active"));btn.classList.add("active");state.listingFilter=btn.dataset.filterListing;renderVehicleListings()}));
+$("messagingSearch").addEventListener("input",(event)=>{state.messagingSearch=event.target.value;renderMessaging()});
 </script>
 </body>
 </html>
