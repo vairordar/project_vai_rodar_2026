@@ -761,9 +761,9 @@ h1{
 .app-shell.offices-open .office-map-focus{position:absolute;right:12px;top:138px;z-index:425;height:32px;border:1px solid rgba(216,226,239,.95);border-radius:999px;background:rgba(255,255,255,.93);color:var(--blue);padding:0 12px;font-size:9px;box-shadow:0 12px 30px rgba(15,23,42,.13);backdrop-filter:blur(14px)}
 .office-results-sheet{position:absolute;left:10px;right:10px;bottom:10px;z-index:430;max-height:34%;transition:max-height .25s ease;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;padding:7px;border:1px solid rgba(216,226,239,.96);border-radius:18px;background:rgba(255,255,255,.95);box-shadow:0 28px 68px rgba(15,23,42,.24);backdrop-filter:blur(18px)}
 .office-results-sheet.expanded{max-height:72%}
-.office-sheet-grip{width:34px;height:4px;border-radius:999px;background:#d8e2ef;justify-self:center;margin-bottom:1px;cursor:grab;touch-action:none}.office-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px}.office-sheet-head strong{display:block;color:var(--headline);font-size:10.5px;font-weight:850}.office-sheet-head span{display:block;color:var(--muted);font-size:7.5px;margin-top:1px}
+.office-sheet-grip{position:relative;width:34px;height:4px;border-radius:999px;background:#d8e2ef;justify-self:center;margin-bottom:1px;cursor:grab;touch-action:none}.office-sheet-grip::before{content:"";position:absolute;inset:-16px -60px}.office-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px;cursor:grab;touch-action:none}.office-sheet-head strong{display:block;color:var(--headline);font-size:10.5px;font-weight:850}.office-sheet-head span{display:block;color:var(--muted);font-size:7.5px;margin-top:1px}
 .app-shell.offices-open .office-list{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;overflow-y:hidden;min-height:0;padding:1px 2px 5px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.app-shell.offices-open .office-list::-webkit-scrollbar{display:none}
-.app-shell.offices-open .office-card{flex:0 0 100%;width:100%;scroll-snap-align:center;grid-template-columns:42px 1fr auto;gap:6px;border-radius:11px;background:#fff;padding:6px;box-shadow:none}.app-shell.offices-open .office-photo{width:42px;height:38px;border-radius:8px}.app-shell.offices-open .office-card h3{font-size:9.5px;margin-bottom:1px}.app-shell.offices-open .office-address{font-size:7.5px;margin-bottom:4px;line-height:1.25}.app-shell.offices-open .office-links{gap:4px}.app-shell.offices-open .office-links button{height:21px;padding:0 6px;font-size:7.5px}.app-shell.offices-open .office-score{font-size:9px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:8px;padding-top:8px}
+.app-shell.offices-open .office-card{flex:0 0 100%;width:100%;scroll-snap-align:center;grid-template-columns:42px 1fr auto;gap:6px;border-radius:11px;background:#fff;padding:6px;box-shadow:none;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}.app-shell.offices-open .office-photo{width:42px;height:38px;border-radius:8px}.app-shell.offices-open .office-card h3{font-size:9.5px;margin-bottom:1px}.app-shell.offices-open .office-address{font-size:7.5px;margin-bottom:4px;line-height:1.25}.app-shell.offices-open .office-links{gap:4px}.app-shell.offices-open .office-links button{height:21px;padding:0 6px;font-size:7.5px}.app-shell.offices-open .office-score{font-size:9px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:8px;padding-top:8px}
 .office-sheet-dots{display:flex;justify-content:center;gap:5px;margin-top:-2px}.office-sheet-dots span{width:5px;height:5px;border-radius:50%;background:#d8e2ef;transition:background .2s,transform .2s}.office-sheet-dots span.active{background:var(--blue);transform:scale(1.3)}
 body.theme-dark .office-sheet-dots span{background:#1f2937}body.theme-dark .office-sheet-dots span.active{background:var(--blue)}
 .app-shell.offices-open .office-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0}.app-shell.offices-open .office-actions button{height:34px;border-radius:12px;font-size:10px}
@@ -3301,7 +3301,6 @@ function ensureOfficeMap(){
   }
   if(!officeMapInstance){
     officeMapInstance=L.map(officeMap,{zoomControl:false,attributionControl:true}).setView([-23.5617,-46.6559],12);
-    L.control.zoom({position:"bottomright"}).addTo(officeMapInstance);
     const isDarkMap=document.body.classList.contains("theme-dark");
     L.tileLayer(`https://{s}.basemaps.cartocdn.com/${isDarkMap?"dark_all":"light_all"}/{z}/{x}/{y}{r}.png`,{
       maxZoom:19,
@@ -3393,6 +3392,7 @@ if(officeList&&!officeList.dataset.swipeBound){
 function bindOfficeSheetSwipe(){
   const sheet=document.querySelector(".office-results-sheet");
   const grip=document.querySelector(".office-sheet-grip");
+  const head=document.querySelector(".office-sheet-head");
   if(!sheet||!grip||grip.dataset.swipeBound) return;
   grip.dataset.swipeBound="1";
   let dragging=false;
@@ -3408,20 +3408,23 @@ function bindOfficeSheetSwipe(){
     if(!dragging) return;
     const delta=pointY(event)-startY;
     if(Math.abs(delta)>6) moved=true;
-    if(delta<-28) sheet.classList.add("expanded");
-    else if(delta>28) sheet.classList.remove("expanded");
+    if(delta<-22) sheet.classList.add("expanded");
+    else if(delta>22) sheet.classList.remove("expanded");
   }
   function onEnd(){ dragging=false; }
-  grip.addEventListener("touchstart",onStart,{passive:true});
-  grip.addEventListener("touchmove",onMove,{passive:true});
-  grip.addEventListener("touchend",onEnd,{passive:true});
-  grip.addEventListener("mousedown",onStart);
-  window.addEventListener("mousemove",onMove);
-  window.addEventListener("mouseup",onEnd);
-  grip.addEventListener("click",()=>{
+  function onTap(){
     if(moved){ moved=false; return; }
     sheet.classList.toggle("expanded");
+  }
+  [grip,head].filter(Boolean).forEach((handle)=>{
+    handle.addEventListener("touchstart",onStart,{passive:true});
+    handle.addEventListener("touchmove",onMove,{passive:true});
+    handle.addEventListener("touchend",onEnd,{passive:true});
+    handle.addEventListener("mousedown",onStart);
+    handle.addEventListener("click",onTap);
   });
+  window.addEventListener("mousemove",onMove);
+  window.addEventListener("mouseup",onEnd);
 }
 bindOfficeSheetSwipe();
 function getOfficeServices(office){
@@ -3482,6 +3485,9 @@ function renderOffices(reset=false){
       focusOfficeCard(button.dataset.index);
       focusOfficeMarker(button.dataset.index);
       button.textContent="Contrair informações";
+      document.querySelector(".office-results-sheet")?.classList.add("expanded");
+    }else{
+      document.querySelector(".office-results-sheet")?.classList.remove("expanded");
     }
   }));
   officeList.querySelectorAll(".office-card").forEach((card)=>card.addEventListener("click",(event)=>{
@@ -3492,6 +3498,7 @@ function renderOffices(reset=false){
     document.getElementById(`officeDetail${button.dataset.index}`)?.classList.remove("show");
     const moreInfoButton=officeList.querySelector(`.more-info-btn[data-index="${button.dataset.index}"]`);
     if(moreInfoButton) moreInfoButton.textContent="Ver mais informações";
+    document.querySelector(".office-results-sheet")?.classList.remove("expanded");
   }));
   officeList.querySelectorAll(".call-btn").forEach((button)=>button.addEventListener("click",()=>window.location.href="tel:+5511999999999"));
   officeList.querySelectorAll(".reserve-detail").forEach((button)=>button.addEventListener("click",()=>{
