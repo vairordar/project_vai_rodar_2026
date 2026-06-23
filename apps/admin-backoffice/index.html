@@ -62,6 +62,15 @@ button,input,select{font:inherit}button{cursor:pointer}
 .export-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.export-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;display:grid;gap:8px}.export-card h4{font-size:12px}.export-card p{font-size:10px;color:var(--muted);line-height:1.4;min-height:42px}
 .empty{border:1px dashed var(--line-strong);border-radius:12px;padding:20px 14px;text-align:center;color:var(--muted);font-size:11px;line-height:1.45}
 .toast{position:fixed;right:22px;bottom:22px;max-width:320px;border:1px solid rgba(22,163,74,.28);border-radius:12px;background:#fff;box-shadow:0 18px 45px rgba(15,23,42,.18);padding:11px 13px;font-size:11px;font-weight:800;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+.edit-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(7,11,20,.5);z-index:60;padding:22px;overflow:auto}.edit-modal-backdrop.open{display:grid;place-items:center}
+.edit-modal{width:min(640px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:var(--shadow);padding:20px}
+.edit-modal h3{font-size:15px;margin-bottom:3px}.edit-modal p.hint{font-size:10px;color:var(--muted);margin-bottom:14px;line-height:1.4}
+.edit-modal .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}.edit-modal .field-grid .span2{grid-column:1/-1}
+.edit-modal textarea{width:100%;min-height:64px;border:1px solid var(--line-strong);border-radius:10px;background:var(--soft);padding:9px 11px;font-size:12px;outline:none;color:var(--text);resize:vertical}
+.edit-modal textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(7,92,255,.08)}
+.edit-modal .check-row{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--text)}.edit-modal .check-row input{width:16px;height:16px}
+.edit-modal .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+@media(max-width:560px){.edit-modal .field-grid{grid-template-columns:1fr}}
 @media(max-width:980px){  body{background:#fff}.app{padding:0;overflow:visible}.shell{min-height:100dvh;height:auto;border:0;border-radius:0;box-shadow:none;grid-template-columns:1fr}.side{position:fixed;left:0;top:0;bottom:0;width:min(310px,86vw);z-index:40;border-right:1px solid var(--line);box-shadow:24px 0 70px rgba(15,23,42,.22);transform:translateX(-105%);transition:.22s;overflow:auto}.side.open{transform:translateX(0)}.backdrop{display:block;pointer-events:none}.backdrop.open{pointer-events:auto}.menu-btn{display:inline-flex;flex:0 0 auto}.main{min-height:100dvh}.topbar{padding:12px 14px;position:sticky;top:0;z-index:30}.topbar h2{font-size:16px}.topbar p{max-width:48vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.content{padding:16px}.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.export-grid{grid-template-columns:1fr}.top-actions .btn.ghost{display:none}
 }
 @media(max-width:560px){.metrics{gap:6px}.metric{padding:9px;min-height:64px}.metric small{font-size:7.5px}.metric strong{font-size:20px}.logo-clean{width:74px}.panel-head{flex-direction:column}.bar-row{grid-template-columns:92px 1fr 38px}}
@@ -265,6 +274,44 @@ button,input,select{font:inherit}button{cursor:pointer}
 </section>
 <div class="toast" id="toast"></div>
 
+<div class="edit-modal-backdrop" id="workshopEditBackdrop">
+  <div class="edit-modal">
+    <h3>Editar oficina</h3>
+    <p class="hint">Todos os campos abaixo sao salvos direto na tabela da oficina. Se o endereco/CEP for alterado, as coordenadas do mapa sao recalculadas automaticamente.</p>
+    <form id="workshopEditForm">
+      <input type="hidden" id="weId">
+      <div class="field-grid">
+        <div class="field"><label>Nome (publico)</label><input id="weName" type="text" required></div>
+        <div class="field"><label>Razao social</label><input id="weLegalName" type="text"></div>
+        <div class="field"><label>CNPJ</label><input id="weCnpj" type="text"></div>
+        <div class="field"><label>Responsavel</label><input id="weResponsibleName" type="text"></div>
+        <div class="field"><label>Telefone (contato interno)</label><input id="weContactPhone" type="text"></div>
+        <div class="field"><label>Telefone (publico)</label><input id="wePhone" type="text"></div>
+        <div class="field"><label>WhatsApp</label><input id="weWhatsapp" type="text"></div>
+        <div class="field"><label>Email</label><input id="weEmail" type="email"></div>
+        <div class="field"><label>Tipo de negocio</label>
+          <select id="weBusinessType"><option value="workshop">Oficina</option><option value="parts_store">Loja de pecas</option><option value="both">Oficina + pecas</option></select>
+        </div>
+        <div class="field"><label>Categoria principal</label><input id="weCategory" type="text"></div>
+        <div class="field span2"><label>Servicos (separados por virgula)</label><input id="weServices" type="text"></div>
+        <div class="field span2"><label>Categorias de pecas (separadas por virgula)</label><input id="wePartsCategories" type="text"></div>
+        <div class="field"><label>CEP</label><input id="weCep" type="text"></div>
+        <div class="field"><label>Cidade</label><input id="weCity" type="text"></div>
+        <div class="field"><label>Bairro</label><input id="weNeighborhood" type="text"></div>
+        <div class="field"><label>Estado</label><input id="weState" type="text" maxlength="2"></div>
+        <div class="field span2"><label>Endereco completo</label><input id="weAddress" type="text"></div>
+        <div class="field span2"><label>Descricao</label><textarea id="weDescription"></textarea></div>
+        <div class="check-row"><input id="wePartsDelivery" type="checkbox"><label for="wePartsDelivery">Faz entrega de pecas</label></div>
+        <div class="check-row"><input id="wePartsPickup" type="checkbox"><label for="wePartsPickup">Retirada no local</label></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn secondary" type="button" id="weCancelBtn">Cancelar</button>
+        <button class="btn primary" type="submit">Salvar alteracoes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 const $=(id)=>document.getElementById(id);
 const titles={
@@ -411,13 +458,80 @@ function renderSubscriptions(){
 }
 function renderWorkshops(){
   const filtered=data.workshops.filter((w)=>state.workshopFilter==="all"||w.approval_status===state.workshopFilter||w.subscription_status===state.workshopFilter);
-  $("workshopRows").innerHTML=filtered.map((w)=>`<tr><td><b>${esc(w.name)}</b><small>${esc(w.legal_name||"-")}</small></td><td>${esc(w.responsible_name||"-")}<small>${esc(w.contact_phone||"-")}</small></td><td>${esc(w.cnpj||"-")}</td><td>${esc(w.neighborhood||"-")}<small>${esc(w.city||"-")} / ${esc(w.state||"-")}</small></td><td>${(w.categories||[]).map((c)=>`<span class="pill info">${esc(c)}</span>`).join(" ")}</td><td><span class="pill ${esc(w.approval_status)}">${esc(w.approval_status)}</span><small>${w.visible!==false?"Visivel":"Oculta"}</small></td><td><span class="pill ${esc(w.subscription_status)}">${esc(w.subscription_status)}</span><small style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px"><button class="btn success" data-approve="${esc(w.id)}" type="button">Aprovar</button><button class="btn danger" data-block="${esc(w.id)}" type="button">Bloquear</button><button class="btn secondary" data-pay="${esc(w.id)}" type="button">Pagamento</button><button class="btn secondary" data-message="${esc(w.id)}" data-message-type="workshop" type="button">Mensagem</button><button class="btn secondary" data-geocode="${esc(w.id)}" type="button" title="${w.latitude&&w.longitude?`Lat/Lng atual: ${w.latitude}, ${w.longitude}`:"Sem coordenadas cadastradas"}">${w.latitude&&w.longitude?"Recalcular localizacao":"Localizar no mapa"}</button></small></td></tr>`).join("");
+  $("workshopRows").innerHTML=filtered.map((w)=>`<tr><td><b>${esc(w.name)}</b><small>${esc(w.legal_name||"-")}</small></td><td>${esc(w.responsible_name||"-")}<small>${esc(w.contact_phone||"-")}</small></td><td>${esc(w.cnpj||"-")}</td><td>${esc(w.neighborhood||"-")}<small>${esc(w.city||"-")} / ${esc(w.state||"-")}</small></td><td>${(w.categories||[]).map((c)=>`<span class="pill info">${esc(c)}</span>`).join(" ")}</td><td><span class="pill ${esc(w.approval_status)}">${esc(w.approval_status)}</span><small>${w.visible!==false?"Visivel":"Oculta"}</small></td><td><span class="pill ${esc(w.subscription_status)}">${esc(w.subscription_status)}</span><small style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px"><button class="btn success" data-approve="${esc(w.id)}" type="button">Aprovar</button><button class="btn danger" data-block="${esc(w.id)}" type="button">Bloquear</button><button class="btn secondary" data-pay="${esc(w.id)}" type="button">Pagamento</button><button class="btn secondary" data-message="${esc(w.id)}" data-message-type="workshop" type="button">Mensagem</button><button class="btn secondary" data-geocode="${esc(w.id)}" type="button" title="${w.latitude&&w.longitude?`Lat/Lng atual: ${w.latitude}, ${w.longitude}`:"Sem coordenadas cadastradas"}">${w.latitude&&w.longitude?"Recalcular localizacao":"Localizar no mapa"}</button><button class="btn ghost" data-edit="${esc(w.id)}" type="button">Editar</button></small></td></tr>`).join("");
   $("workshopRows").querySelectorAll("[data-approve]").forEach((btn)=>btn.addEventListener("click",()=>setWorkshopStatus(btn.dataset.approve,"approved",true,true)));
   $("workshopRows").querySelectorAll("[data-block]").forEach((btn)=>btn.addEventListener("click",()=>setWorkshopStatus(btn.dataset.block,"blocked",false,false)));
   $("workshopRows").querySelectorAll("[data-pay]").forEach((btn)=>btn.addEventListener("click",()=>registerPayment(btn.dataset.pay)));
   $("workshopRows").querySelectorAll("[data-message]").forEach((btn)=>btn.addEventListener("click",()=>sendAdminMessage(btn.dataset.message,btn.dataset.messageType)));
   $("workshopRows").querySelectorAll("[data-geocode]").forEach((btn)=>btn.addEventListener("click",()=>geocodeWorkshop(btn.dataset.geocode)));
+  $("workshopRows").querySelectorAll("[data-edit]").forEach((btn)=>btn.addEventListener("click",()=>openWorkshopEditModal(btn.dataset.edit)));
 }
+function openWorkshopEditModal(workshopId){
+  const w=(data.workshops||[]).find((item)=>item.id===workshopId);
+  if(!w){toast("Oficina nao encontrada.");return}
+  $("weId").value=w.id;
+  $("weName").value=w.name||"";
+  $("weLegalName").value=w.legal_name||"";
+  $("weCnpj").value=w.cnpj||"";
+  $("weResponsibleName").value=w.responsible_name||"";
+  $("weContactPhone").value=w.contact_phone||"";
+  $("wePhone").value=w.phone||"";
+  $("weWhatsapp").value=w.whatsapp||"";
+  $("weEmail").value=w.email||"";
+  $("weBusinessType").value=w.business_type||"workshop";
+  $("weCategory").value=w.category||"";
+  $("weServices").value=(w.services||w.categories||[]).join(", ");
+  $("wePartsCategories").value=(w.parts_categories||[]).join(", ");
+  $("weCep").value=w.cep||w.zip_code||"";
+  $("weCity").value=w.city||"";
+  $("weNeighborhood").value=w.neighborhood||"";
+  $("weState").value=w.state||"";
+  $("weAddress").value=w.address||"";
+  $("weDescription").value=w.description||"";
+  $("wePartsDelivery").checked=Boolean(w.parts_delivery_enabled);
+  $("wePartsPickup").checked=Boolean(w.parts_pickup_enabled);
+  $("workshopEditBackdrop").classList.add("open");
+}
+function closeWorkshopEditModal(){$("workshopEditBackdrop").classList.remove("open")}
+function splitCommaList(value){return String(value||"").split(",").map((item)=>item.trim()).filter(Boolean)}
+async function saveWorkshopEdit(event){
+  event.preventDefault();
+  const workshopId=$("weId").value;
+  if(!workshopId)return;
+  const payload={
+    workshop_id:workshopId,
+    name:$("weName").value.trim(),
+    legal_name:$("weLegalName").value.trim(),
+    cnpj:$("weCnpj").value.trim(),
+    responsible_name:$("weResponsibleName").value.trim(),
+    contact_phone:$("weContactPhone").value.trim(),
+    phone:$("wePhone").value.trim(),
+    whatsapp:$("weWhatsapp").value.trim(),
+    email:$("weEmail").value.trim(),
+    business_type:$("weBusinessType").value,
+    category:$("weCategory").value.trim(),
+    services:splitCommaList($("weServices").value),
+    parts_categories:splitCommaList($("wePartsCategories").value),
+    cep:$("weCep").value.trim(),
+    city:$("weCity").value.trim(),
+    neighborhood:$("weNeighborhood").value.trim(),
+    state:$("weState").value.trim(),
+    address:$("weAddress").value.trim(),
+    description:$("weDescription").value.trim(),
+    parts_delivery_enabled:$("wePartsDelivery").checked,
+    parts_pickup_enabled:$("wePartsPickup").checked,
+  };
+  try{
+    await adminAction("updateWorkshopInfo",payload);
+    await loadAdminData();
+    renderAll();
+    closeWorkshopEditModal();
+    toast("Informacoes da oficina atualizadas.");
+  }catch(error){toast(error.message||"Nao foi possivel salvar as alteracoes.")}
+}
+$("workshopEditForm").addEventListener("submit",saveWorkshopEdit);
+$("weCancelBtn").addEventListener("click",closeWorkshopEditModal);
+$("workshopEditBackdrop").addEventListener("click",(event)=>{if(event.target===$("workshopEditBackdrop"))closeWorkshopEditModal()});
 async function geocodeWorkshop(workshopId){
   try{
     await adminAction("geocodeWorkshop",{workshop_id:workshopId});

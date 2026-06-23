@@ -16,6 +16,11 @@ const WORKSHOP_STATUS_MESSAGES = {
   blocked: 'Sua oficina foi bloqueada pela equipe Vai Rodar.',
 };
 
+const WORKSHOP_TEXT_FIELD_MAX = {
+  name: 160, legal_name: 180, cnpj: 32, responsible_name: 160, contact_phone: 60, phone: 60,
+  whatsapp: 60, email: 180, business_type: 30, description: 700, address: 240, neighborhood: 120,
+  city: 120, state: 40, cep: 20, zip_code: 20, category: 100,
+};
 const VALID_STATUSES = new Set(['pending', 'approved', 'rejected', 'blocked']);
 const VALID_LISTING_STATUSES = new Set(['pending_review', 'active', 'paused', 'sold', 'expired', 'rejected']);
 const VALID_OFFER_STATUSES = new Set(['active', 'inactive']);
@@ -348,6 +353,64 @@ exports.handler = async (event) => {
         workshopId,
         `Coordenadas recalculadas: ${geocoded.latitude}, ${geocoded.longitude}.`,
         geocoded
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'updateWorkshopInfo') {
+      const workshopId = cleanText(payload.workshop_id, 80);
+      if (!workshopId) return json(400, { success: false, error: 'workshop_id obrigatorio.' });
+
+      const update = {};
+      Object.keys(WORKSHOP_TEXT_FIELD_MAX).forEach((field) => {
+        if (payload[field] === undefined) return;
+        update[field] = cleanText(payload[field], WORKSHOP_TEXT_FIELD_MAX[field]) || null;
+      });
+      if (payload.services !== undefined) {
+        update.services = Array.isArray(payload.services) ? payload.services.map((item) => cleanText(item, 80)).filter(Boolean) : [];
+      }
+      if (payload.parts_categories !== undefined) {
+        update.parts_categories = Array.isArray(payload.parts_categories) ? payload.parts_categories.map((item) => cleanText(item, 80)).filter(Boolean) : [];
+      }
+      if (payload.parts_delivery_enabled !== undefined) update.parts_delivery_enabled = Boolean(payload.parts_delivery_enabled);
+      if (payload.parts_pickup_enabled !== undefined) update.parts_pickup_enabled = Boolean(payload.parts_pickup_enabled);
+      if (!update.name) return json(400, { success: false, error: 'Nome da oficina e obrigatorio.' });
+
+      if (!Object.keys(update).length) {
+        return json(400, { success: false, error: 'Nenhum campo valido para atualizar.' });
+      }
+
+      const addressFields = ['address', 'neighborhood', 'city', 'state', 'cep', 'zip_code'];
+      const addressChanged = addressFields.some((field) => update[field] !== undefined);
+      if (addressChanged) {
+        const currentRows = await supabaseRequest(
+          `/rest/v1/workshops?id=eq.${encodeURIComponent(workshopId)}&select=address,neighborhood,city,state,cep,zip_code`
+        );
+        const current = Array.isArray(currentRows) ? currentRows[0] : currentRows;
+        const merged = { ...current, ...update };
+        const geocoded = await geocodeAddress({
+          address: merged.address,
+          neighborhood: merged.neighborhood,
+          city: merged.city,
+          state: merged.state,
+          cep: merged.cep || merged.zip_code,
+        }).catch(() => null);
+        if (geocoded) {
+          update.latitude = geocoded.latitude;
+          update.longitude = geocoded.longitude;
+        }
+      }
+
+      const result = await supabaseRequest(`/rest/v1/workshops?id=eq.${encodeURIComponent(workshopId)}`, {
+        method: 'PATCH',
+        body: update,
+      });
+      await writeAudit(
+        'workshop_info_updated',
+        'workshops',
+        workshopId,
+        `Informacoes da oficina atualizadas: ${Object.keys(update).join(', ')}.`,
+        update
       );
       return json(200, { success: true, data: result });
     }
