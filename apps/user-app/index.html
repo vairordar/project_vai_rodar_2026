@@ -336,6 +336,11 @@ h1{
 }
 .ai-message-row{display:grid;grid-template-columns:30px 1fr;gap:9px;align-items:start;margin-bottom:10px}
 .ai-message-row .vr{width:28px;height:28px;border-radius:7px}
+.typing-dots{display:inline-flex;gap:4px;padding:4px 2px}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--muted);opacity:.35;animation:typingBlink 1.2s infinite ease-in-out}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes typingBlink{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}
 .flow-block{
   padding:10px 0;
   border-top:1px solid var(--line);
@@ -890,6 +895,11 @@ body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
 }
 .proposal-review textarea{min-height:86px;resize:vertical}
 .proposal-review .image-upload{height:38px;margin:0}
+.urgency-picker{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.urgency-btn{border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);padding:7px 4px;font-size:9px;font-weight:800;text-align:center;cursor:pointer;line-height:1.25}
+.urgency-btn[data-urgency="high"].active{border-color:#dc2626;background:rgba(220,38,38,.1);color:#dc2626}
+.urgency-btn[data-urgency="normal"].active{border-color:#d97706;background:rgba(217,119,6,.1);color:#d97706}
+.urgency-btn[data-urgency="low"].active{border-color:#16a34a;background:rgba(22,163,74,.1);color:#16a34a}
 .proposal-review-actions{display:grid;grid-template-columns:1fr;gap:7px}
 .proposal-review-error{display:none;color:#dc2626;font-size:9px;font-weight:700;text-align:center}
 .proposal-review-error.show{display:block}
@@ -2919,7 +2929,10 @@ let activeReservationOffice=null;
 let assistantConversation=[];
 let assistantLatestContext="";
 let assistantLatestTechnicalSummary="";
+let assistantLatestUrgency="normal";
+let selectedProposalUrgency="normal";
 let assistantLatestQuestions=[];
+let assistantPendingQuestions=[];
 let assistantLatestCategories=[];
 let assistantLastIntentType="serviceQuote";
 let userVehicles=[];
@@ -2993,9 +3006,24 @@ async function respondProposal(proposalId,status,quoteIndex){
     if(error) throw error;
     await loadMyServiceRequests();
     if(sentQuotes[quoteIndex]) openQuoteDetail(quoteIndex);
+    notifyProposalEvent(status==="accepted"?"proposal_accepted":"proposal_declined",proposalId);
   }catch(error){
     console.warn("[proposal-response]",error.message);
     alert("Não foi possível atualizar a proposta agora. Tente novamente.");
+  }
+}
+async function notifyProposalEvent(eventName,proposalId){
+  try{
+    const {data}=await sb.auth.getSession();
+    const token=data?.session?.access_token;
+    if(!token) return;
+    await fetch("/.netlify/functions/notify-event",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body:JSON.stringify({event:eventName,proposalId}),
+    });
+  }catch(error){
+    console.warn("[notify-event]",error.message);
   }
 }
 const notifications=[];
@@ -3215,6 +3243,7 @@ function resetAssistant(silent=false){
   assistantConversation=[];
   assistantLatestContext="";
   assistantLatestTechnicalSummary="";
+  assistantLatestUrgency="normal";
   assistantLatestQuestions=[];
   assistantLatestCategories=[];
   assistantLastIntentType="serviceQuote";
@@ -3335,7 +3364,7 @@ function updateOfficeMap(filtered){
     const index=offices.indexOf(office);
     const coords=officeCoordinates(office);
     if(!coords){
-      console.warn(`[Oficinas] "${office.name}" nao tem coordenadas reais cadastradas - pino omitido (sem dados falsos).`);
+      console.warn(`[Oficinas] "${office.name}" nao tem coordenadas reais cadastradas — pino omitido (sem dados falsos).`);
       return;
     }
     bounds.push(coords);
@@ -3649,8 +3678,7 @@ function assistantConversationHistoryText(){
   return `\n\nHistórico da conversa com o assistente:\n${lines.join("\n")}`;
 }
 function technicalSummaryForRequest(){
-  const historyText=assistantConversationHistoryText();
-  if(assistantLatestTechnicalSummary) return `${assistantLatestTechnicalSummary}${historyText}`;
+  if(assistantLatestTechnicalSummary) return assistantLatestTechnicalSummary;
   const original=proposalOriginalText();
   const context=assistantLatestContext||original;
   const categories=inferCategories(context).filter((name)=>allowedCategories.includes(name));
@@ -3699,6 +3727,7 @@ function openProposalConfirmation(){
   const technicalText=isPart?proposalDescriptionPlaceholder():technicalSummaryForRequest();
   const plateValue=isPart?partsPlate.value.trim().toUpperCase():plateInput.value.trim().toUpperCase();
   const addressValue=isPart?"":addressInput.value.trim();
+  selectedProposalUrgency=["high","normal","low"].includes(assistantLatestUrgency)?assistantLatestUrgency:"normal";
   overlay.classList.add("open");
   proposalPopup.innerHTML=`
     <button class="popup-close" id="proposalPopupCancel" type="button" aria-label="Fechar">×</button>
@@ -3708,6 +3737,11 @@ function openProposalConfirmation(){
       <div class="proposal-review-item"><small>Pedido inicial</small><p>${escapeHTML(original)}</p></div>
       <label class="proposal-review-item"><small>Placa do veículo</small><input id="proposalReviewPlate" value="${escapeHTML(plateValue)}" placeholder="ABC1D23" maxlength="7"><div id="proposalReviewRegisteredVehicles">${popupRegisteredVehiclesHTML()}</div><div class="vehicle-summary menu-vehicle" id="proposalReviewVehicle"></div></label>
       <label class="proposal-review-item"><small>${isPart?"Descrição para enviar":"Resumo técnico para oficinas"}</small><textarea id="proposalReviewDescription" placeholder="${escapeHTML(proposalDescriptionPlaceholder())}">${escapeHTML(isPart?original:technicalText)}</textarea></label>
+      <div class="proposal-review-item"><small>Urgência</small><div class="urgency-picker" id="proposalReviewUrgency">
+        <button class="urgency-btn${selectedProposalUrgency==="high"?" active":""}" data-urgency="high" type="button">Hoje</button>
+        <button class="urgency-btn${selectedProposalUrgency==="normal"?" active":""}" data-urgency="normal" type="button">Esta semana</button>
+        <button class="urgency-btn${selectedProposalUrgency==="low"?" active":""}" data-urgency="low" type="button">Sem pressa</button>
+      </div></div>
       <label class="proposal-review-item"><small>Endereço ou localização</small><div class="location-input-wrap"><input id="proposalReviewAddress" value="${escapeHTML(addressValue)}" placeholder="Rua, número, bairro"><button class="inline-location" id="proposalReviewLocation" type="button" aria-label="Usar localização"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button></div></label>
       <label class="image-upload">Adicionar fotos opcional<input id="proposalReviewPhotos" type="file" accept="image/*" multiple hidden></label>
       <div class="proposal-review-error" id="proposalReviewError">Complete placa, descrição e localização antes de enviar.</div>
@@ -3716,6 +3750,12 @@ function openProposalConfirmation(){
   proposalPopup.classList.add("open");
   document.getElementById("proposalPopupCancel").addEventListener("click",closeProposalPopup);
   document.getElementById("proposalReviewSend").addEventListener("click",sendReviewedProposal);
+  document.getElementById("proposalReviewUrgency").addEventListener("click",(event)=>{
+    const button=event.target.closest("[data-urgency]");
+    if(!button) return;
+    selectedProposalUrgency=button.dataset.urgency;
+    document.querySelectorAll("#proposalReviewUrgency .urgency-btn").forEach((item)=>item.classList.toggle("active",item===button));
+  });
   document.getElementById("proposalReviewLocation").addEventListener("click",async()=>{await applyCurrentLocation(document.getElementById("proposalReviewAddress"),document.getElementById("proposalReviewLocation"));});
   const popupPlate=document.getElementById("proposalReviewPlate");
   popupPlate.addEventListener("input",()=>{popupPlate.value=popupPlate.value.toUpperCase();updateProposalPopupVehicle(popupPlate.value);});
@@ -3744,7 +3784,9 @@ async function sendReviewedProposal(){
   const finalDescription=(description.value.trim()||original||proposalDescriptionPlaceholder()).trim();
   let requestId=null;
   try{
-    requestId=await createServiceRequestRecord({isPart,vehicle,description:finalDescription,address:address.value.trim(),original,locationData:getLocationPayload(address)});
+    requestId=await createServiceRequestRecord({isPart,vehicle,description:finalDescription,address:address.value.trim(),original,locationData:getLocationPayload(address),urgency:selectedProposalUrgency});
+    const photoInput=document.getElementById("proposalReviewPhotos");
+    if(requestId&&photoInput?.files?.length) await uploadRequestPhotos(requestId,photoInput.files);
   }catch(err){
     proposalPopup.innerHTML=`
       <div class="proposal-popup-icon">×</div>
@@ -3777,6 +3819,7 @@ function openPartsReviewPopup(){
   const selected=partsList.querySelectorAll(".parts-check:checked").length;
   if(selected<1) return;
   assistantLastIntentType="partQuote";
+  selectedProposalUrgency="normal";
   const vehicle=vehicleFromAnyPlate(partsPlate.value);
   const query=partsQuery.value.trim();
   overlay.classList.add("open");
@@ -4729,10 +4772,11 @@ function proposalCategory(isPart,text){
   if(isPart) return "Peças";
   return inferCategories(text||"").find((name)=>allowedCategories.includes(name))||"Diagnóstico";
 }
-async function createServiceRequestRecord({isPart,vehicle,description,address,original,locationData={}}){
+async function createServiceRequestRecord({isPart,vehicle,description,address,original,locationData={},urgency="normal"}){
   if(!sb||!currentUser) return null;
   const vehicleId=await ensureVehicleRecord(vehicle);
   const text=description||original||"Solicitação criada pelo assistente Vai Rodar.";
+  const safeUrgency=["high","normal","low"].includes(urgency)?urgency:"normal";
   try{
     const {data,error}=await sb.from("service_requests").insert({
       user_id:currentUser.id,
@@ -4748,7 +4792,8 @@ async function createServiceRequestRecord({isPart,vehicle,description,address,or
       selected_business_ids:[],
       address:locationData.address||address||"",
       latitude:locationData.latitude,
-      longitude:locationData.longitude
+      longitude:locationData.longitude,
+      urgency:safeUrgency
     }).select("id").single();
     if(error) throw error;
     await loadUserVehicleListings();
@@ -4756,6 +4801,28 @@ async function createServiceRequestRecord({isPart,vehicle,description,address,or
   }catch(error){
     console.error("[Service request]",error.message);
     throw error;
+  }
+}
+async function uploadRequestPhotos(requestId,files){
+  if(!sb||!currentUser||!requestId||!files||!files.length) return;
+  const list=[...files].slice(0,6);
+  const photos=[];
+  for(let index=0;index<list.length;index++){
+    const file=list[index];
+    try{
+      const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+      const path=`${currentUser.id}/${requestId}/${Date.now()}-${index}-${safeName}`;
+      const{error:uploadError}=await sb.storage.from("request-photos").upload(path,file,{upsert:false});
+      if(uploadError) throw uploadError;
+      const{data:{publicUrl}}=sb.storage.from("request-photos").getPublicUrl(path);
+      photos.push({request_id:requestId,image_url:publicUrl,sort_order:index});
+    }catch(uploadErr){
+      console.warn("[Request photo upload]",uploadErr.message);
+    }
+  }
+  if(photos.length){
+    const{error}=await sb.from("request_photos").insert(photos);
+    if(error) console.warn("[Request photos]",error.message);
   }
 }
 function parseMoney(value){
@@ -4939,12 +5006,12 @@ function renderCars(){
       <div class="car-result-actions"><button class="offer-car" data-index="${index}">Enviar proposta</button><button class="message-car" data-index="${index}">Enviar mensagem</button></div></div>
     </article>
   `).join("");
-  carsList.querySelectorAll(".offer-car").forEach((button)=>button.addEventListener("click",()=>openCarPopup(Number(button.dataset.index),true)));
-  carsList.querySelectorAll(".message-car").forEach((button)=>button.addEventListener("click",()=>openCarPopup(Number(button.dataset.index),false)));
   carsList.querySelectorAll(".car-result").forEach((card)=>card.addEventListener("click",(event)=>{
     if(event.target.closest("button")) return;
     openCarDetail(Number(card.dataset.index));
   }));
+  carsList.querySelectorAll(".offer-car").forEach((button)=>button.addEventListener("click",()=>openCarPopup(Number(button.dataset.index),true)));
+  carsList.querySelectorAll(".message-car").forEach((button)=>button.addEventListener("click",()=>openCarPopup(Number(button.dataset.index),false)));
 }
 function openCarDetail(index){
   const car=verifiedCars[index];
@@ -4971,7 +5038,7 @@ async function openCarsView(){
 function openSellCarView(){
   goHome();
   screenShell.classList.add("sell-car-open");
-  sellPlate.value="";sellPrice.value="";sellMileage.value="";sellAddress.value="";sellDescription.value="";if(sellPhotos)sellPhotos.value="";sellVehicle.classList.remove("show");sellError.classList.remove("show");
+  sellPlate.value="";sellPrice.value="";sellMileage.value="";sellAddress.value="";sellAddress.dataset.city="";sellDescription.value="";if(sellPhotos)sellPhotos.value="";sellVehicle.classList.remove("show");sellError.classList.remove("show");
   renderRegisteredPlatePicker(sellRegisteredVehicles);
   appScroller.scrollTo({top:0,behavior:"smooth"});
 }
@@ -5407,9 +5474,13 @@ function applyAssistantIntent(intent,text,contextText,sourceInput){
   const validCategories=Array.isArray(intent.categories)
     ? intent.categories.map(normalizeAICategory).filter(n=>allowedCategories.includes(n))
     : [];
-  const questions=Array.isArray(intent.missingQuestions)?intent.missingQuestions.filter(Boolean).slice(0,3):[];
-  const assistantText=questions.length?`${intent.text}\n\nPara deixar a cotação melhor: ${questions.join(" ")}`:intent.text;
+  const allQuestions=Array.isArray(intent.missingQuestions)?intent.missingQuestions.filter(Boolean).slice(0,3):[];
+  const visibleQuestion=allQuestions[0]||"";
+  assistantPendingQuestions=allQuestions.slice(1);
+  const questions=visibleQuestion?[visibleQuestion]:[];
+  const assistantText=visibleQuestion?`${intent.text}\n\n${visibleQuestion}`:`${intent.text}\n\nPosso enviar essa solicitação para oficinas próximas agora?`;
   assistantLatestTechnicalSummary=intent.technicalSummary||assistantLatestTechnicalSummary;
+  assistantLatestUrgency=intent.urgency||assistantLatestUrgency;
   assistantLatestQuestions=questions;
   assistantLatestCategories=validCategories;
   if(assistantConversation.length===0){
@@ -5447,8 +5518,8 @@ function applyAssistantIntent(intent,text,contextText,sourceInput){
 function showAssistantLoading(text){
   problemBubble.textContent=text;
   categoryChips.innerHTML="";
-  assistantIntentTitle.textContent="Analisando...";
-  assistantIntentText.textContent="A IA está lendo seu problema.";
+  assistantIntentTitle.textContent="";
+  assistantIntentText.innerHTML='<span class="typing-dots"><span></span><span></span><span></span></span>';
   startOnlineQuote.textContent="Aguarde";
   assistantCard.classList.add("expanded","chat-mode","analyzing-message");
 }
@@ -5456,6 +5527,19 @@ function showAssistantLoading(text){
 function hideAssistantLoading(){
   assistantCard.classList.remove("analyzing-message");
 }
+
+function appendAssistantTyping(){
+  const row=document.createElement("div");
+  row.className="ai-message-row chat-extra assistant-typing-row";
+  row.innerHTML=`
+    <div class="vr"><img class="logo-mark" src="assets/vai_rodar_logo_transparent.png" alt="VR"></div>
+    <div class="ai-response"><span class="typing-dots"><span></span><span></span><span></span></span></div>`;
+  assistantThread.appendChild(row);
+  setTimeout(()=>{appScroller.scrollTo({top:assistantCard.offsetTop+assistantThread.scrollHeight,behavior:"smooth"});},20);
+  return row;
+}
+function wait(ms){return new Promise((resolve)=>setTimeout(resolve,ms));}
+function humanDelay(){return wait(900+Math.floor(Math.random()*500));}
 
 async function expandAssistant(sourceInput=problemInput){
   const text=sourceInput.value.trim();
@@ -5483,10 +5567,23 @@ async function expandAssistant(sourceInput=problemInput){
     setTimeout(()=>chatFollowInput.focus(),40);
     return;
   }
+  if(assistantConversation.length>0&&assistantPendingQuestions.length>0){
+    appendAssistantUserMessage(text);
+    assistantConversation.push({user:text,intent:assistantLastIntentType});
+    sourceInput.value="";
+    const typingRow=appendAssistantTyping();
+    await humanDelay();
+    typingRow.remove();
+    const nextQuestion=assistantPendingQuestions.shift();
+    appendAssistantSystemMessage("",nextQuestion);
+    setTimeout(()=>{appScroller.scrollTo({top:assistantCard.offsetTop+assistantThread.scrollHeight,behavior:"smooth"});if(chatFollowInput)chatFollowInput.focus();},40);
+    return;
+  }
   const contextText=assistantContextFor(text);
   assistantLatestContext=contextText;
   // Mostrar loading mientras llama a la IA
   if(assistantConversation.length===0) showAssistantLoading(text);
+  else{const typingRow=appendAssistantTyping();await humanDelay();typingRow.remove();}
   sourceInput.value="";
   // Llamada a OpenAI via Netlify Function
   const aiResult=await callAIDiagnose(contextText,
@@ -6088,17 +6185,10 @@ if('serviceWorker' in navigator && window.location.protocol !== 'file:'){
       .then(reg=>console.log('[SW] Registrado:',reg.scope))
       .catch(err=>console.warn('[SW] Falha:',err));
   });
-  let swRefreshing=false;
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{
-    if(swRefreshing) return;
-    swRefreshing=true;
-    window.location.reload();
-  });
 }
 </script>
 </body>
 </html>
-
 
 
 

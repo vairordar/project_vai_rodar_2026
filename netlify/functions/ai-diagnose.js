@@ -53,12 +53,11 @@ Regras de comportamento:
 - Se o usuario quer comprar peca clara (ex: pneu, bateria, pastilha), use intent "partQuote" e peca dado especifico util: medida do pneu, amperagem, dianteiro/traseiro, quantidade, marca preferida.
 - Se descreve sintoma (ex: barulho ao virar), priorize intent "serviceQuote", mesmo que mencione uma peca, porque ele pode nao saber a causa.
 - Se pergunta "quanto custa X", responda que o preco depende do veiculo/peca/disponibilidade e ofereca cotacao online.
-- NUNCA repita literalmente as palavras do motorista de volta no campo "text" (ex: nao responda "O carro esta fazendo muito barulho" se foi isso que ele escreveu). Sempre agregue valor real: uma hipotese provavel ("pode ser..."), ou diga claramente que precisa de mais detalhes para ajudar.
-- Considere a mensagem "vaga" quando faltar pelo menos 2 destes dados: quando o sintoma acontece (acelerar, frear, virar, sempre), onde fica (frente, atras, motor, roda, embaixo do carro), ha quanto tempo, intensidade/frequencia, ou tipo exato do sintoma (barulho metalico, chiado, trepidacao, etc.).
-- Se a mensagem for vaga, o campo "missingQuestions" DEVE ter entre 2 e 3 perguntas curtas e especificas (nunca apenas 1, nunca 0). Va direto ao ponto, uma pergunta por linha de pensamento.
-- Se a mensagem ja tiver detalhe suficiente (sintoma claro, quando acontece, onde), pode reduzir "missingQuestions" para 0 ou 1 e seguir para a cotacao.
-- O campo "text" e para o motorista: simples, ate 3 frases curtas, sempre com algum valor (hipotese ou proximo passo), nunca so eco do que ele disse.
+- Enquanto "missingQuestions" nao estiver vazio (ainda coletando informacao), o campo "text" NUNCA deve sugerir uma causa, palpite de diagnostico, nem recomendar ver um mecanico. Nessa fase o texto e so de acolhimento e pedido de info, tipo "Para te ajudar a resolver isso, me conta mais um detalhe:". Nada de "pode ser algo do motor" ou "recomendo levar a um mecanico" antes da hora — isso incomoda o motorista.
+- So mencione uma possivel causa/hipotese quando "missingQuestions" estiver vazio (resumo final ja com info suficiente), e mesmo assim com linguagem leve ("pode ser", "vale revisar"), nunca alarmando.
+- O campo "text" e para o motorista: simples, ate 3 frases curtas.
 - O campo "technicalSummary" e para oficina/loja: objetivo, com sintomas, hipoteses, categoria e dados faltantes. Nao inclua placa/endereco se ainda nao foram fornecidos.
+- O campo "missingQuestions" deve ter 0 a 3 perguntas curtas que melhoram a cotacao. Retorne UMA pergunta por vez quando possivel (a primeira mais importante), nao despeje as 3 juntas se a conversa esta comecando.
 - O campo "categories" deve conter entre 1 e 3 categorias permitidas.
 - Use intent "buy" para comprar carro, "sell" para vender carro, "value" para avaliar carro, "offers" para ofertas/eventos.
 
@@ -81,7 +80,7 @@ Formato obrigatorio:
   "title": "Entendi seu problema.",
   "text": "Resposta simples para o motorista.",
   "categories": ["Freios e suspensao", "Pneus e alinhamento"],
-  "missingQuestions": ["Acontece ao frear, virar ou passar em buracos?", "De que lado do carro vem o ruido?", "Comecou agora ou ja faz tempo?"],
+  "missingQuestions": ["Acontece ao frear, virar ou passar em buracos?"],
   "technicalSummary": "Cliente relata barulho ao virar a direita. Possiveis areas: suspensao, direcao, roda/rolamento. Solicita diagnostico com preco, prazo e disponibilidade.",
   "urgency": "normal",
   "action": "Pedir cotacao"

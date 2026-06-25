@@ -126,6 +126,9 @@ button{cursor:pointer}
 .pill.closed,.pill.declined,.pill.cancelled{background:#fee2e2;color:#b91c1c}
 .pill.completed{background:#e8f0ff;color:var(--blue)}
 .pill.info{background:#e8f0ff;color:var(--blue)}
+.pill.urgency-high{background:#fee2e2;color:#b91c1c}
+.pill.urgency-normal{background:#ffedd5;color:#c2410c}
+.pill.urgency-low{background:#dcfce7;color:#15803d}
 .tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .tags span{border:1px solid var(--line-strong);border-radius:999px;background:var(--soft);color:var(--blue);padding:4px 7px;font-size:8px;font-weight:800}
 .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
@@ -135,6 +138,15 @@ button{cursor:pointer}
 .detail-row small{font-size:8px;text-transform:uppercase;font-weight:850;color:var(--muted)}
 .detail-row b,.detail-row span{display:block;font-size:11px;line-height:1.35;margin-top:3px}
 .vehicle-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.compact-detail{display:grid;gap:10px}
+.compact-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.compact-header h3{font-size:13px;font-weight:800;margin:0}
+.compact-section{border:1px solid var(--line);border-radius:10px;background:var(--soft);padding:9px}
+.compact-section small{font-size:8px;text-transform:uppercase;font-weight:850;color:var(--muted)}
+.compact-section p{font-size:11px;line-height:1.4;margin:4px 0 0}
+.compact-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.request-photos{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.request-photos img{width:64px;height:64px;border-radius:8px;object-fit:cover;border:1px solid var(--line)}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .message-layout{display:grid;grid-template-columns:285px minmax(0,1fr);gap:13px}
 .thread-list{display:grid;gap:8px}
@@ -365,7 +377,7 @@ button{cursor:pointer}
 
         <section class="view" id="view-account">
           <div class="grid">
-            <section class="panel"><div class="panel-head"><div><h3>Conta da oficina</h3><p>Sessao e dados principais.</p></div></div><div class="detail-block" id="accountDetail"></div><div class="actions"><button class="btn secondary" id="resetPasswordBtn" type="button">Enviar reset de senha</button><button class="btn danger" id="signOutBtn" type="button">Sair</button></div></section>
+            <section class="panel"><div class="panel-head"><div><h3>Conta da oficina</h3><p>Sessao e dados principais.</p></div></div><div class="detail-block" id="accountDetail"></div><div class="actions"><button class="btn secondary" id="enablePushBtn" type="button">Ativar notificacoes no celular</button><button class="btn secondary" id="resetPasswordBtn" type="button">Enviar reset de senha</button><button class="btn danger" id="signOutBtn" type="button">Sair</button></div></section>
             <aside class="panel"><div class="panel-head"><div><h3>Checklist</h3><p>O que precisa estar pronto para operar.</p></div></div><div class="list"><div class="item"><h4>Perfil publico</h4><small>Nome, telefone, endereco e servicos.</small></div><div class="item"><h4>Propostas</h4><small>Responder pedidos com preco e prazo.</small></div><div class="item"><h4>Agenda</h4><small>Confirmar ou bloquear horarios.</small></div></div></aside>
           </div>
         </section>
@@ -376,10 +388,10 @@ button{cursor:pointer}
 
 <section class="modal" id="proposalModal">
   <form class="modal-card" id="proposalForm">
-    <div class="modal-head"><div><h3>Enviar proposta</h3><p id="proposalModalText">Responda com preco, prazo e observacoes.</p></div><button class="modal-close" id="proposalCloseBtn" type="button">x</button></div>
-    <div class="field"><label>Preco</label><input id="proposalPrice" type="number" min="0" step="0.01" placeholder="Ex.: 420.00"></div>
-    <div class="field"><label>Prazo</label><input id="proposalTime" placeholder="Ex.: Hoje 15h ou 2 horas"></div>
-    <div class="field"><label>Resposta ao usuario</label><textarea id="proposalMessage" placeholder="Explique o que esta incluido na proposta."></textarea></div>
+    <div class="modal-head"><div><h3>Enviar proposta</h3><p id="proposalModalText">Conte ao motorista o que pode ser feito. Preco e disponibilidade sao opcionais.</p></div><button class="modal-close" id="proposalCloseBtn" type="button">x</button></div>
+    <div class="field"><label>Resposta ao usuario *</label><textarea id="proposalMessage" placeholder="Explique o que esta incluido na proposta."></textarea></div>
+    <div class="field"><label>Preco (opcional)</label><input id="proposalPrice" type="number" min="0" step="0.01" placeholder="Ex.: 420.00"></div>
+    <div class="field"><label>Disponibilidade (opcional)</label><input id="proposalTime" placeholder="Ex.: Hoje 15h ou amanha de manha"></div>
     <button class="btn primary" id="proposalSubmitBtn" type="submit" style="width:100%">Enviar proposta</button>
     <div class="status-text" id="proposalStatus"></div>
   </form>
@@ -438,8 +450,8 @@ const demoStore={
   user:{id:"demo-workshop-user",email:DEMO_EMAIL},
   workshop:{id:"demo-workshop",owner_id:"demo-workshop-user",name:"Auto Center Vital Brasil",category:"Freios e suspensao",city:"Sao Paulo",state:"SP",address:"Rua Camargo, 221 - Butanta",whatsapp:"+55 11 99999-9999",email:DEMO_EMAIL,description:"Oficina especializada em freios, suspensao, pneus e revisao preventiva.",services:["Freios","Suspensao","Pneus","Revisao"],open:true,max_bookings_per_slot:3,slot_minutes:60},
   requests:[
-    {id:"demo-req-1",user_id:"demo-user-1",title:"Barulho nos freios",description:"Meu carro faz um ruido quando freio em baixa velocidade.",location:"Butanta, Sao Paulo",status:"open",category:"Freios e suspensao",created_at:new Date().toISOString(),vehicles:{brand:"Volkswagen",model:"T-Cross",year:"2021",plate:"ABC1D23",color:"Prata"},profiles:{id:"demo-user-1",name:"Mariana Alves",email:"mariana@email.com"}},
-    {id:"demo-req-2",user_id:"demo-user-2",title:"Troca de pneus",description:"Preciso cotar pneus 205/55 R16 e alinhamento.",location:"Pinheiros, Sao Paulo",status:"open",category:"Pneus",created_at:new Date(Date.now()-86400000).toISOString(),vehicles:{brand:"Honda",model:"Civic",year:"2019",plate:"DEF4G56",color:"Preto"},profiles:{id:"demo-user-2",name:"Rafael Lima",email:"rafael@email.com"}}
+    {id:"demo-req-1",user_id:"demo-user-1",title:"Barulho nos freios",description:"Meu carro faz um ruido quando freio em baixa velocidade.",location:"Butanta, Sao Paulo",status:"open",category:"Freios e suspensao",urgency:"high",created_at:new Date().toISOString(),vehicles:{brand:"Volkswagen",model:"T-Cross",year:"2021",plate:"ABC1D23",color:"Prata"},profiles:{id:"demo-user-1",name:"Mariana Alves",email:"mariana@email.com"}},
+    {id:"demo-req-2",user_id:"demo-user-2",title:"Troca de pneus",description:"Preciso cotar pneus 205/55 R16 e alinhamento.",location:"Pinheiros, Sao Paulo",status:"open",category:"Pneus",urgency:"low",created_at:new Date(Date.now()-86400000).toISOString(),vehicles:{brand:"Honda",model:"Civic",year:"2019",plate:"DEF4G56",color:"Preto"},profiles:{id:"demo-user-2",name:"Rafael Lima",email:"rafael@email.com"}}
   ],
   proposals:[],
   conversations:[{id:"demo-conv-1",user_id:"demo-user-1",workshop_id:"demo-workshop",updated_at:new Date().toISOString(),profiles:{id:"demo-user-1",name:"Mariana Alves",email:"mariana@email.com"}}],
@@ -454,11 +466,61 @@ function acceptsPartsRequests(){return ["parts_store","both"].includes(businessT
 function esc(value){return String(value??"").replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[char]));}
 function money(value){return Number(value||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
 function toast(text){$("toast").textContent=text;$("toast").classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>$("toast").classList.remove("show"),2200);}
+function urlBase64ToUint8Array(base64String){
+  const padding="=".repeat((4-base64String.length%4)%4);
+  const base64=(base64String+padding).replace(/-/g,"+").replace(/_/g,"/");
+  const rawData=window.atob(base64);
+  return Uint8Array.from([...rawData].map((char)=>char.charCodeAt(0)));
+}
+async function getPushPublicKey(){
+  const response=await fetch("/.netlify/functions/push-config");
+  if(!response.ok) throw new Error("push-config "+response.status);
+  const data=await response.json();
+  if(!data.enabled||!data.publicKey) throw new Error("VAPID_PUBLIC_KEY nao configurada");
+  return data.publicKey;
+}
+async function enablePushNotifications({silent=false}={}){
+  if(!state.user||!sb||!("serviceWorker" in navigator)||!("PushManager" in window)||!("Notification" in window)||window.location.protocol==="file:"){
+    if(!silent) toast("Notificacoes push funcionam apenas no site HTTPS depois do login.");
+    return false;
+  }
+  if(Notification.permission==="denied"){
+    if(!silent) toast("As notificacoes estao bloqueadas no navegador. Ative nas configuracoes do site.");
+    return false;
+  }
+  if(Notification.permission!=="granted"){
+    const permission=await Notification.requestPermission();
+    if(permission!=="granted"){
+      if(!silent) toast("Permissao de notificacao nao ativada.");
+      return false;
+    }
+  }
+  try{
+    const registration=await navigator.serviceWorker.ready;
+    const publicKey=await getPushPublicKey();
+    const existing=await registration.pushManager.getSubscription();
+    const subscription=existing||await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(publicKey)});
+    const {data}=await sb.auth.getSession();
+    const token=data?.session?.access_token;
+    if(!token) throw new Error("Sessao invalida");
+    const response=await fetch("/.netlify/functions/push-subscribe",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body:JSON.stringify({subscription:subscription.toJSON(),userAgent:navigator.userAgent,platform:/Android/i.test(navigator.userAgent)?"android":(/iPhone|iPad|iPod/i.test(navigator.userAgent)?"ios":"web")})
+    });
+    if(!response.ok) throw new Error("push-subscribe "+response.status);
+    if(!silent) toast("Notificacoes ativadas neste dispositivo.");
+    return true;
+  }catch(error){
+    if(!silent) toast(error.message||"Nao foi possivel ativar notificacoes.");
+    return false;
+  }
+}
 function openMobileMenu(){document.querySelector(".side")?.classList.add("open");$("mobileDrawerBackdrop")?.classList.add("open");}
 function closeMobileMenu(){document.querySelector(".side")?.classList.remove("open");$("mobileDrawerBackdrop")?.classList.remove("open");}
 function initials(name){return (name||"Oficina").split(/\s+/).slice(0,2).map((part)=>part[0]||"").join("").toUpperCase()||"VR";}
 function showAuth(){state.user=null;state.workshop=null;$("authScreen").style.display="grid";$("app").style.display="none";}
-function showApp(){ $("authScreen").style.display="none";$("app").style.display="block";renderShell();loadAll();}
+function showApp(){ $("authScreen").style.display="none";$("app").style.display="block";renderShell();loadAll();if(("Notification" in window)&&Notification.permission==="granted"){enablePushNotifications({silent:true}).catch((error)=>console.warn("[Push]",error.message));}}
 async function login(email,password,useDemoFallback){
   $("authStatus").textContent="";
   $("loginBtn").disabled=true;
@@ -514,7 +576,7 @@ async function loadAll(){
 }
 async function loadRequests(){
   try{
-    let query=sb.from("service_requests").select("id,user_id,vehicle_id,title,description,location,status,category,request_type,target_business_type,part_name,part_specs,selected_business_ids,created_at,vehicles(brand,model,year,plate,color),profiles(id,name,email)").order("created_at",{ascending:false}).limit(80);
+    let query=sb.from("service_requests").select("id,user_id,vehicle_id,title,description,location,status,category,request_type,target_business_type,part_name,part_specs,selected_business_ids,urgency,created_at,vehicles(brand,model,year,plate,color),profiles(id,name,email),request_photos(image_url,sort_order)").order("created_at",{ascending:false}).limit(80);
     if(acceptsServiceRequests()&&!acceptsPartsRequests())query=query.in("request_type",["service",null]);
     if(acceptsPartsRequests()&&!acceptsServiceRequests())query=query.eq("request_type","part_quote");
     if(acceptsServiceRequests()&&acceptsPartsRequests())query=query.in("request_type",["service","part_quote",null]);
@@ -600,17 +662,28 @@ function renderMetrics(){
   $("metricReservations").textContent=allReservations().length;
 }
 function requestVehicle(request){const v=request.vehicles||{};return [v.brand,v.model,v.year].filter(Boolean).join(" ")||"Veiculo nao informado";}
+const URGENCY_LABELS={high:"Hoje",normal:"Esta semana",low:"Sem pressa"};
+const URGENCY_RANK={high:0,normal:1,low:2};
+function urgencyBadge(request){
+  const value=URGENCY_RANK.hasOwnProperty(request.urgency)?request.urgency:"normal";
+  return `<span class="pill urgency-${esc(value)}">${esc(URGENCY_LABELS[value])}</span>`;
+}
 function renderRequests(){
   const list=$("requestsList");
   const declinedIds=new Set(state.proposals.filter((item)=>item.status==="declined").map((item)=>item.request_id));
-  const visibleRequests=state.requests.filter((item)=>!declinedIds.has(item.id));
+  const visibleRequests=state.requests.filter((item)=>!declinedIds.has(item.id)).slice().sort((a,b)=>{
+    const rankA=URGENCY_RANK.hasOwnProperty(a.urgency)?URGENCY_RANK[a.urgency]:1;
+    const rankB=URGENCY_RANK.hasOwnProperty(b.urgency)?URGENCY_RANK[b.urgency]:1;
+    if(rankA!==rankB) return rankA-rankB;
+    return new Date(b.created_at)-new Date(a.created_at);
+  });
   const pausedNotice=state.workshop?.open===false?'<div class="empty">Recebimento pausado para novas solicitacoes. As solicitacoes ja recebidas seguem disponiveis para responder, conversar e reservar.</div>':"";
   if(!visibleRequests.length){list.innerHTML=pausedNotice||'<div class="empty">Nenhuma solicitacao encontrada. Quando o usuario enviar uma cotacao, ela aparece aqui.</div>';$("requestDetail").innerHTML='<div class="empty">Sem solicitacao selecionada.</div>';return;}
   if(!state.activeRequest||!visibleRequests.some((item)=>item.id===state.activeRequest))state.activeRequest=visibleRequests[0].id;
   list.innerHTML=pausedNotice+visibleRequests.map((request)=>`<button class="item" data-request-id="${esc(request.id)}" type="button">
     <div class="item-head"><div><h4>${esc(request.profiles?.name||"Motorista")}</h4><small>${esc(request.title||"Solicitacao")} - ${new Date(request.created_at).toLocaleDateString("pt-BR")}</small></div><span class="pill ${esc(request.status||"open")}">${esc(request.status||"open")}</span></div>
     <p>${esc(request.description||request.location||"Sem descricao")}</p>
-    <div class="tags"><span>${request.request_type==="part_quote"?"Pedido de peca":"Servico"}</span><span>${esc(request.category||"Categoria IA")}</span><span>${esc(requestVehicle(request))}</span></div>
+    <div class="tags">${urgencyBadge(request)}<span>${request.request_type==="part_quote"?"Pedido de peca":"Servico"}</span><span>${esc(request.category||"Categoria IA")}</span><span>${esc(requestVehicle(request))}</span></div>
     <div class="actions"><span class="btn ghost">Ver detalhe</span><span class="btn primary">Enviar proposta</span><span class="btn secondary" data-decline-id="${esc(request.id)}">Recusar</span></div>
   </button>`).join("");
   list.querySelectorAll("[data-request-id]").forEach((button)=>button.addEventListener("click",()=>{state.activeRequest=button.dataset.requestId;renderRequestDetail();openProposal(button.dataset.requestId,false);}));
@@ -636,28 +709,44 @@ function renderRequestDetail(){
   const request=state.requests.find((item)=>item.id===state.activeRequest);
   if(!request){$("requestDetail").innerHTML='<div class="empty">Selecione uma solicitacao.</div>';return;}
   const v=request.vehicles||{};
-  $("requestDetail").innerHTML=`<div class="detail-row"><small>Usuario</small><b>${esc(request.profiles?.name||"Motorista")}</b><span>${esc(request.profiles?.email||"")}</span></div>
-  <div class="vehicle-grid">
-    <div class="detail-row"><small>Marca</small><b>${esc(v.brand||"-")}</b></div>
-    <div class="detail-row"><small>Modelo</small><b>${esc(v.model||"-")}</b></div>
-    <div class="detail-row"><small>Ano</small><b>${esc(v.year||"-")}</b></div>
-    <div class="detail-row"><small>Placa</small><b>${esc(v.plate||"-")}</b></div>
-  </div>
-  <div class="detail-row"><small>Tipo</small><b>${request.request_type==="part_quote"?"Cotacao de peca":"Servico de oficina"}</b><span>${esc(request.part_name||request.category||"")}</span></div>
-  <div class="detail-row"><small>Descricao</small><span>${esc(request.description||"-")}</span></div>
-  <div class="detail-row"><small>Localizacao</small><span>${esc(request.location||"-")}</span></div>
-  <div class="actions"><button class="btn primary" type="button" onclick="openProposal('${esc(request.id)}',true)">Enviar proposta</button><button class="btn secondary" type="button" onclick="createConversationFromRequest('${esc(request.id)}')">Abrir conversa</button><button class="btn secondary" type="button" onclick="declineRequest('${esc(request.id)}')">Recusar</button></div>`;
+  const vehicleLine=[v.brand,v.model,v.year].filter(Boolean).join(" ")||"Nao informado";
+  const photos=(request.request_photos||[]).slice().sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+  const photosHTML=photos.length
+    ? `<div class="compact-section"><small>Fotos</small><div class="request-photos">${photos.map((p)=>`<a href="${esc(p.image_url)}" target="_blank" rel="noopener"><img src="${esc(p.image_url)}" alt="Foto da solicitacao"></a>`).join("")}</div></div>`
+    : "";
+  $("requestDetail").innerHTML=`
+  <div class="compact-detail">
+    <div class="compact-header">
+      <h3>Solicitacao de ${esc(request.profiles?.name||"Motorista")}</h3>
+      ${urgencyBadge(request)}
+    </div>
+    <div class="compact-section"><small>Problema principal</small><p>${esc(request.title||(request.request_type==="part_quote"?"Cotacao de peca":"Servico para oficina"))}</p></div>
+    <div class="compact-section"><small>Resumo para oficina</small><p>${esc(request.description||"Sem descricao informada.")}</p></div>
+    <div class="compact-grid">
+      <div class="compact-section"><small>Veiculo</small><p>${esc(vehicleLine)}${v.plate?` · ${esc(v.plate)}`:""}</p></div>
+      <div class="compact-section"><small>Localizacao</small><p>${esc(request.location||"Nao informada")}</p></div>
+    </div>
+    ${photosHTML}
+    <div class="actions"><button class="btn primary" type="button" onclick="openProposal('${esc(request.id)}',true)">Enviar proposta</button><button class="btn secondary" type="button" onclick="createConversationFromRequest('${esc(request.id)}')">Abrir conversa</button><button class="btn secondary" type="button" onclick="declineRequest('${esc(request.id)}')">Recusar</button></div>
+  </div>`;
 }
 function renderProposalsCount(){renderMetrics();}
 function openProposal(requestId,force){if(!force&&window.innerWidth>960)return;state.activeRequest=requestId;const request=state.requests.find((item)=>item.id===requestId);$("proposalModalText").textContent=request?`${request.profiles?.name||"Motorista"} - ${request.title||"Solicitacao"}`:"Responda com preco e prazo.";$("proposalPrice").value="";$("proposalTime").value="";$("proposalMessage").value=request?.description?`Podemos avaliar: ${request.description}`:"";$("proposalStatus").textContent="";$("proposalModal").classList.add("open");}
 async function submitProposal(event){
   event.preventDefault();
-  const requestId=state.activeRequest;const message=$("proposalMessage").value.trim();const price=Number($("proposalPrice").value);const time=$("proposalTime").value.trim();
+  const requestId=state.activeRequest;const message=$("proposalMessage").value.trim();const priceRaw=$("proposalPrice").value.trim();const time=$("proposalTime").value.trim();
+  const price=priceRaw?Number(priceRaw):null;
   if(!state.workshop?.id){$("proposalStatus").textContent="Perfil da oficina nao encontrado.";return;}
-  if(!requestId||!message||!price||!time){$("proposalStatus").textContent="Preencha preco, prazo e resposta.";return;}
-  if(state.demoMode){demoStore.proposals.unshift({id:"demo-proposal-"+Date.now(),request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time,status:"pending",created_at:new Date().toISOString(),service_requests:{title:state.requests.find((item)=>item.id===requestId)?.title||"Solicitacao",location:state.requests.find((item)=>item.id===requestId)?.location||""}});$("proposalModal").classList.remove("open");toast("Proposta demo enviada.");await loadAll();return;}
+  if(!requestId||!message){$("proposalStatus").textContent="Escreva uma resposta para o motorista.";return;}
+  if(priceRaw&&(Number.isNaN(price)||price<0)){$("proposalStatus").textContent="Preco invalido.";return;}
+  if(state.demoMode){demoStore.proposals.unshift({id:"demo-proposal-"+Date.now(),request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time||null,status:"pending",created_at:new Date().toISOString(),service_requests:{title:state.requests.find((item)=>item.id===requestId)?.title||"Solicitacao",location:state.requests.find((item)=>item.id===requestId)?.location||""}});$("proposalModal").classList.remove("open");toast("Proposta demo enviada.");await loadAll();return;}
   $("proposalSubmitBtn").disabled=true;
-  try{const {data,error}=await sb.from("proposals").insert({request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time,status:"pending"}).select("id").single();if(error)throw error;notifyProposalEvent("proposal_created",data?.id);$("proposalModal").classList.remove("open");toast("Proposta enviada.");await loadProposals();renderMetrics();}catch(error){$("proposalStatus").textContent=error.message||"Erro ao enviar proposta.";}finally{$("proposalSubmitBtn").disabled=false;}
+  try{
+    const {data,error}=await sb.from("proposals").insert({request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time||null,status:"pending"}).select("id").single();
+    if(error)throw error;
+    $("proposalModal").classList.remove("open");toast("Proposta enviada.");await loadProposals();renderMetrics();
+    if(data?.id) notifyProposalEvent("proposal_created",data.id);
+  }catch(error){$("proposalStatus").textContent=error.message||"Erro ao enviar proposta.";}finally{$("proposalSubmitBtn").disabled=false;}
 }
 async function notifyProposalEvent(eventName,proposalId){
   try{
@@ -1114,6 +1203,7 @@ $("profileForm").addEventListener("submit",saveProfile);
 $("offerForm").addEventListener("submit",createOffer);
 $("signOutBtn").addEventListener("click",async()=>{if(state.channel)sb.removeChannel(state.channel);if(state.realtimeChannel)sb.removeChannel(state.realtimeChannel);state.channel=null;state.realtimeChannel=null;await sb.auth.signOut();showAuth();});
 $("resetPasswordBtn").addEventListener("click",async()=>{if(!state.user?.email)return;await sb.auth.resetPasswordForEmail(state.user.email);toast("E-mail de reset enviado.");});
+$("enablePushBtn").addEventListener("click",()=>enablePushNotifications());
 $("calendarMonthSelect").addEventListener("change",()=>{const [year,month]=$("calendarMonthSelect").value.split("-").map(Number);state.calendarDate=new Date(year,month-1,1);renderAgenda();});
 $("calendarWeekBtn").addEventListener("click",()=>{state.calendarMode="week";$("calendarWeekBtn").classList.add("active");$("calendarMonthBtn").classList.remove("active");renderAgenda();});
 $("calendarMonthBtn").addEventListener("click",()=>{state.calendarMode="month";$("calendarMonthBtn").classList.add("active");$("calendarWeekBtn").classList.remove("active");state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth(),1);renderAgenda();});
@@ -1121,8 +1211,14 @@ $("blockSlotBtn").addEventListener("click",openBlockModal);
 $("manualReservationBtn").addEventListener("click",()=>openManualReservationModal());
 sb.auth.onAuthStateChange(async(_event,session)=>{if(session?.user){state.user=session.user;const result=await loadWorkshop();if(!result.ok){showAuth();$("authStatus").textContent="Conta autenticada, mas nenhuma oficina foi encontrada para este e-mail. Verifique se o cadastro foi aprovado e se o owner_id esta vinculado ao usuario.";return;}showApp();}else showAuth();});
 (async()=>{const {data:{session}}=await sb.auth.getSession();if(session?.user){state.user=session.user;const result=await loadWorkshop();if(!result.ok){showAuth();$("authStatus").textContent="Conta autenticada, mas nenhuma oficina foi encontrada para este e-mail. Verifique se o cadastro foi aprovado e se o owner_id esta vinculado ao usuario.";return;}showApp();}else showAuth();})();
+if('serviceWorker' in navigator && window.location.protocol !== 'file:'){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg=>console.log('[SW] Registrado:',reg.scope))
+      .catch(err=>console.warn('[SW] Falha:',err));
+  });
+}
 </script>
 </body>
 </html>
-
 
