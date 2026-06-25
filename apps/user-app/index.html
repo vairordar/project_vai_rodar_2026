@@ -281,13 +281,13 @@ h1{
 .assistant-card.expanded .chat-composer{display:grid}
 .assistant-search input{
   min-width:0;
-  height:34px;
+  height:38px;
   border:1px solid var(--input-border);
   border-radius:999px;
   background:var(--bottom);
   color:var(--text);
   padding:0 12px;
-  font-size:9px;
+  font-size:14px;
   font-weight:500;
   outline:none;
 }
@@ -328,7 +328,7 @@ h1{
   color:#fff;
   border-radius:14px 14px 5px 14px;
   padding:10px 12px;
-  font-size:11px;
+  font-size:14px;
   line-height:1.45;
   font-weight:500;
   box-shadow:0 12px 24px rgba(7,92,255,.22);
@@ -373,12 +373,12 @@ h1{
   display:grid;
   gap:8px;
   box-shadow:0 8px 18px rgba(16,24,40,.06);
-  max-width:92%;
-  width:fit-content;
-  justify-self:start;
+  width:100%;
+  max-width:100%;
+  justify-self:stretch;
 }
-.ai-response strong{color:var(--text);font-size:10.5px;line-height:1.35;font-weight:650}
-.ai-response p{color:var(--text);font-size:10px;line-height:1.56;font-weight:450;white-space:pre-line;text-align:left;overflow-wrap:anywhere;margin:0}
+.ai-response strong{color:var(--text);font-size:14px;line-height:1.4;font-weight:650}
+.ai-response p{color:var(--text);font-size:14px;line-height:1.6;font-weight:450;white-space:pre-line;text-align:left;overflow-wrap:anywhere;margin:0}
 .ai-response-actions{display:flex;gap:7px;flex-wrap:wrap}
 .ai-action{
   height:32px;
@@ -2403,7 +2403,7 @@ body.theme-dark{
           <input id="accountPhone" placeholder="Telefone com DDD" autocomplete="tel" inputmode="tel">
           <input id="accountEmail" placeholder="E-mail" autocomplete="email" type="email" required>
           <input id="accountPassword" placeholder="Senha (mín. 6 caracteres)" type="password" autocomplete="new-password" required>
-          <input id="accountPlate" placeholder="Placa do carro" maxlength="7">
+          <input id="accountPlate" placeholder="Placa do carro (opcional)" maxlength="7">
           <label class="account-legal-consent" id="accountLegalBox"><input id="accountLegalConsent" type="checkbox"><span>Li e aceito os <a href="legal/termos.html" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="legal/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> da Vai Rodar.</span></label>
           <button class="create-account" type="submit" id="accountSubmitBtn">Criar conta</button>
         </form>
@@ -3669,14 +3669,6 @@ function proposalDescriptionPlaceholder(){
   }
   return "Descreva o problema. Ex.: faz barulho ao frear, acontece em baixa velocidade, começou há dois dias.";
 }
-function assistantConversationHistoryText(){
-  if(assistantConversation.length<2) return "";
-  const lines=assistantConversation.map((turn,index)=>{
-    const answer=turn.assistant?`\n   Resposta do assistente: ${turn.assistant}`:"";
-    return `${index+1}. Cliente: ${turn.user}${answer}`;
-  });
-  return `\n\nHistórico da conversa com o assistente:\n${lines.join("\n")}`;
-}
 function technicalSummaryForRequest(){
   if(assistantLatestTechnicalSummary) return assistantLatestTechnicalSummary;
   const original=proposalOriginalText();
@@ -3691,7 +3683,7 @@ function technicalSummaryForRequest(){
   if(normalized.includes("buraco")||normalized.includes("lombada")) symptomHints.push("aparece em irregularidades da via");
   if(normalized.includes("forte")) symptomHints.push("intensidade relatada como forte");
   const symptomText=symptomHints.length?` Observações: ${symptomHints.join("; ")}.`:"";
-  return `Cliente relata: ${original}. Áreas prováveis: ${categoryText}.${symptomText} Solicita diagnóstico e orçamento com preço, prazo e disponibilidade.${historyText}`;
+  return `Cliente relata: ${original}. Áreas prováveis: ${categoryText}.${symptomText} Solicita diagnóstico e orçamento com preço, prazo e disponibilidade.`;
 }
 function popupRegisteredVehiclesHTML(){
   if(!userVehicles.length) return "";
@@ -3727,6 +3719,8 @@ function openProposalConfirmation(){
   const technicalText=isPart?proposalDescriptionPlaceholder():technicalSummaryForRequest();
   const plateValue=isPart?partsPlate.value.trim().toUpperCase():plateInput.value.trim().toUpperCase();
   const addressValue=isPart?"":addressInput.value.trim();
+  const popupCategories=isPart?[]:(assistantLatestCategories.length?assistantLatestCategories:inferCategories(assistantLatestContext||original).filter((name)=>allowedCategories.includes(name)));
+  const categoriesHTML=popupCategories.length?`<div class="proposal-review-item"><small>Categorias identificadas</small><div class="category-chips">${popupCategories.map((name)=>`<button class="ai-chip" type="button" disabled>${categoryIcons[name]||categoryIcons.default}<span>${name}</span></button>`).join("")}</div></div>`:"";
   selectedProposalUrgency=["high","normal","low"].includes(assistantLatestUrgency)?assistantLatestUrgency:"normal";
   overlay.classList.add("open");
   proposalPopup.innerHTML=`
@@ -3735,6 +3729,7 @@ function openProposalConfirmation(){
     <p>Confira as informações antes de enviar.</p>
     <div class="proposal-review">
       <div class="proposal-review-item"><small>Pedido inicial</small><p>${escapeHTML(original)}</p></div>
+      ${categoriesHTML}
       <label class="proposal-review-item"><small>Placa do veículo</small><input id="proposalReviewPlate" value="${escapeHTML(plateValue)}" placeholder="ABC1D23" maxlength="7"><div id="proposalReviewRegisteredVehicles">${popupRegisteredVehiclesHTML()}</div><div class="vehicle-summary menu-vehicle" id="proposalReviewVehicle"></div></label>
       <label class="proposal-review-item"><small>${isPart?"Descrição para enviar":"Resumo técnico para oficinas"}</small><textarea id="proposalReviewDescription" placeholder="${escapeHTML(proposalDescriptionPlaceholder())}">${escapeHTML(isPart?original:technicalText)}</textarea></label>
       <div class="proposal-review-item"><small>Urgência</small><div class="urgency-picker" id="proposalReviewUrgency">
@@ -5364,13 +5359,12 @@ function bindRegisteredPlatePicker(container,input,summary,afterSelect){
 function assistantCategoriesHTML(text){
   return inferCategories(text).filter((name)=>allowedCategories.includes(name)).map((name)=>`<button class="ai-chip">${categoryIcons[name]||categoryIcons.default}<span>${name}</span></button>`).join("");
 }
-function renderAssistantExtraTurn(text,intent,contextText){
-  const userRow=document.createElement("div");
-  userRow.className="problem-row chat-extra";
-  const userBubble=document.createElement("div");
-  userBubble.className="problem-bubble";
-  userBubble.textContent=text;
-  userRow.appendChild(userBubble);
+function renderAssistantAITurn(intent,contextText){
+  const visibleQuestion=Array.isArray(intent.missingQuestions)&&intent.missingQuestions.length?intent.missingQuestions[0]:"";
+  if(visibleQuestion){
+    appendAssistantSystemMessage("",visibleQuestion);
+    return;
+  }
   const aiRow=document.createElement("div");
   aiRow.className="ai-message-row chat-extra";
   aiRow.dataset.context=contextText;
@@ -5384,12 +5378,12 @@ function renderAssistantExtraTurn(text,intent,contextText){
       ${actionHTML}
     </div>`;
   aiRow.querySelector("strong").textContent=intent.title;
-  const questions=Array.isArray(intent.missingQuestions)&&intent.missingQuestions.length
-    ? `\n\nPara deixar a cotação melhor: ${intent.missingQuestions.join(" ")}`
-    : "";
-  aiRow.querySelector("p").textContent=`${intent.text}${questions}`;
-  assistantThread.appendChild(userRow);
+  aiRow.querySelector("p").textContent=intent.text;
   assistantThread.appendChild(aiRow);
+}
+function renderAssistantExtraTurn(text,intent,contextText){
+  appendAssistantUserMessage(text);
+  renderAssistantAITurn(intent,contextText);
 }
 function revealAssistantCategories(){
   const chips=assistantLatestCategories.length
@@ -5470,15 +5464,19 @@ function assistantActionForType(type, fallback="Pedir cotação"){
   if(normalized==="offers") return "Ver ofertas";
   return "Pedir cotação";
 }
+function isPlateOrLocationQuestion(question){
+  const value=normalizeText(question||"");
+  return value.includes("placa")||value.includes("patente")||value.includes("endereco")||value.includes("localizacao")||value.includes("localizaçao");
+}
 function applyAssistantIntent(intent,text,contextText,sourceInput){
   const validCategories=Array.isArray(intent.categories)
     ? intent.categories.map(normalizeAICategory).filter(n=>allowedCategories.includes(n))
     : [];
-  const allQuestions=Array.isArray(intent.missingQuestions)?intent.missingQuestions.filter(Boolean).slice(0,3):[];
+  const allQuestions=Array.isArray(intent.missingQuestions)?intent.missingQuestions.filter(Boolean).filter(q=>!isPlateOrLocationQuestion(q)).slice(0,3):[];
   const visibleQuestion=allQuestions[0]||"";
   assistantPendingQuestions=allQuestions.slice(1);
   const questions=visibleQuestion?[visibleQuestion]:[];
-  const assistantText=visibleQuestion?`${intent.text}\n\n${visibleQuestion}`:`${intent.text}\n\nPosso enviar essa solicitação para oficinas próximas agora?`;
+  const assistantText=visibleQuestion?visibleQuestion:`${intent.text}\n\nPosso enviar essa solicitação para oficinas próximas agora?`;
   assistantLatestTechnicalSummary=intent.technicalSummary||assistantLatestTechnicalSummary;
   assistantLatestUrgency=intent.urgency||assistantLatestUrgency;
   assistantLatestQuestions=questions;
@@ -5494,7 +5492,7 @@ function applyAssistantIntent(intent,text,contextText,sourceInput){
     const assistantIntentActions=document.getElementById("assistantIntentActions");
     if(assistantIntentActions) assistantIntentActions.style.display=questions.length?"none":"";
   }else{
-    renderAssistantExtraTurn(text,{
+    renderAssistantAITurn({
       type:intent.type||intent.intent||"serviceQuote",
       title:intent.title,
       text:intent.text,
@@ -5583,7 +5581,11 @@ async function expandAssistant(sourceInput=problemInput){
   assistantLatestContext=contextText;
   // Mostrar loading mientras llama a la IA
   if(assistantConversation.length===0) showAssistantLoading(text);
-  else{const typingRow=appendAssistantTyping();await humanDelay();typingRow.remove();}
+  else{
+    appendAssistantUserMessage(text);
+    sourceInput.value="";
+    const typingRow=appendAssistantTyping();await humanDelay();typingRow.remove();
+  }
   sourceInput.value="";
   // Llamada a OpenAI via Netlify Function
   const aiResult=await callAIDiagnose(contextText,
@@ -5874,12 +5876,13 @@ accountForm.addEventListener("submit",async(event)=>{
     setAccountStatus("Informe um e-mail válido e senha com mínimo de 6 caracteres.");
     return;
   }
+  const signupPlateRaw=isSignUpMode?accountPlate.value.trim().toUpperCase():"";
   if(isSignUpMode){
-    const plateOk=isValidPlateFormat(accountPlate.value.trim().toUpperCase());
+    const plateOk=!signupPlateRaw||isValidPlateFormat(signupPlateRaw);
     const phoneOk=brazilPhoneDigits(accountPhone.value).length>=10;
     const nameOk=accountName.value.trim().length>=3;
     if(!plateOk||!phoneOk||!nameOk){
-      setAccountStatus("Complete nome, telefone e uma placa no formato ABC1D23 ou ABC1234.");
+      setAccountStatus("Complete nome e telefone. Se informar a placa, use o formato ABC1D23 ou ABC1234.");
       return;
     }
   }
@@ -5887,8 +5890,8 @@ accountForm.addEventListener("submit",async(event)=>{
   accountSubmitBtn.textContent=isSignUpMode?"Criando conta...":"Entrando...";
   try{
     if(isSignUpMode){
-      const signupPlate=accountPlate.value.trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
-      const signupVehicle=await lookupPlate(signupPlate).catch(()=>({plate:signupPlate,brand:"—",model:"—",year:"—",color:"—",valueFipe:"—"}));
+      const signupPlate=signupPlateRaw.replace(/[^A-Z0-9]/g,"");
+      const signupVehicle=signupPlate?await lookupPlate(signupPlate).catch(()=>({plate:signupPlate,brand:"—",model:"—",year:"—",color:"—",valueFipe:"—"})):null;
       const {data,error}=await sb.auth.signUp({
         email:accountEmail.value.trim(),
         password:accountPassword.value.trim(),
@@ -5897,7 +5900,7 @@ accountForm.addEventListener("submit",async(event)=>{
             full_name:accountName.value.trim(),
             phone:normalizeBrazilPhone(accountPhone.value),
             plate:signupPlate,
-            vehicles:[signupVehicle],
+            vehicles:signupVehicle?[signupVehicle]:[],
             terms_accepted_at:new Date().toISOString(),
             privacy_accepted_at:new Date().toISOString(),
             legal_version:"2026-06"
@@ -5906,7 +5909,7 @@ accountForm.addEventListener("submit",async(event)=>{
       });
       if(error) throw error;
       setLoggedIn(data?.session?.user||null);
-      if(data?.session?.user) await upsertUserVehicle(signupVehicle,"Conta criada e placa adicionada.");
+      if(data?.session?.user&&signupVehicle) await upsertUserVehicle(signupVehicle,"Conta criada e placa adicionada.");
       setAccountStatus(data?.session?"Conta criada. Bem-vindo ao Vai Rodar.":"Conta criada. Verifique seu e-mail para confirmar o acesso.",true);
     }else{
       const {data,error}=await sb.auth.signInWithPassword({

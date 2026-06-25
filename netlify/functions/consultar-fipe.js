@@ -21,6 +21,80 @@ const BEARER_TOKEN = process.env.APIBRASIL_BEARER_TOKEN;
 const DEVICE_TOKEN = process.env.APIBRASIL_DEVICE_TOKEN;
 const HOMOLOG = String(process.env.APIBRASIL_HOMOLOG || 'false').toLowerCase() === 'true';
 
+const SUPABASE_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
+
+// Cache de consultas de placa (tabela public.plate_lookups) para nao gastar
+// creditos da APIBrasil repetindo a mesma placa. So usa service role key,
+// nunca exposta ao frontend. Se as env vars nao estiverem configuradas, o
+// cache fica desativado e a function segue funcionando normalmente (so sem
+// economizar creditos).
+function supabaseRest(path, options = {}) {
+  return new Promise((resolve, reject) => {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return reject(new Error('Supabase cache config missing'));
+    const body = options.body ? JSON.stringify(options.body) : null;
+    const url = new URL(`${SUPABASE_URL}${path}`);
+    const req = https.request(
+      {
+        hostname: url.hostname,
+        path: `${url.pathname}${url.search}`,
+        method: options.method || 'GET',
+        headers: {
+          apikey: SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: options.prefer || 'return=representation',
+          ...(body ? { 'Content-Length': Buffer.byteLength(body) } : {}),
+        },
+      },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk) => (data += chunk));
+        res.on('end', () => {
+          let parsed = null;
+          try { parsed = data ? JSON.parse(data) : null; } catch { parsed = data; }
+          if (res.statusCode >= 400) {
+            reject(new Error(parsed?.message || parsed?.error || data || `Supabase ${res.statusCode}`));
+            return;
+          }
+          resolve(parsed);
+        });
+      }
+    );
+    req.on('error', reject);
+    req.setTimeout(8000, () => req.destroy(new Error('Supabase cache timeout')));
+    if (body) req.write(body);
+    req.end();
+  });
+}
+
+async function getCachedLookup(plate) {
+  try {
+    const rows = await supabaseRest(`/rest/v1/plate_lookups?plate=eq.${encodeURIComponent(plate)}&select=plate,found,vehicle,raw`);
+    return Array.isArray(rows) && rows[0] ? rows[0] : null;
+  } catch {
+    return null;
+  }
+}
+
+async function saveCachedLookup(plate, found, vehicle, raw) {
+  try {
+    await supabaseRest('/rest/v1/plate_lookups', {
+      method: 'POST',
+      prefer: 'return=minimal,resolution=merge-duplicates',
+      body: {
+        plate,
+        found,
+        vehicle: vehicle || null,
+        raw: raw || null,
+        updated_at: new Date().toISOString(),
+      },
+    });
+  } catch {
+    // Cache e' so uma otimizacao de custo; falha ao salvar nunca deve quebrar a consulta real.
+  }
+}
+
 function jsonResponse(statusCode, body) {
   return {
     statusCode,
@@ -168,6 +242,16 @@ exports.handler = async (event) => {
     return jsonResponse(400, { success: false, error: 'Placa invalida. Use formato ABC1234 ou ABC1D23.' });
   }
 
+  // 1. Cache primeiro: se ja consultamos essa placa antes (achou ou nao achou
+  // dado FIPE util), usa o resultado salvo e nao gasta credito de novo.
+  const cached = await getCachedLookup(plate);
+  if (cached) {
+    if (cached.found) {
+      return jsonResponse(200, { success: true, placa: plate, vehicle: cached.vehicle, raw: cached.raw, cached: true });
+    }
+    return jsonResponse(404, { success: false, error: 'Resposta sem dados FIPE.', raw: cached.raw, cached: true });
+  }
+
   if (!BEARER_TOKEN) {
     return jsonResponse(500, { success: false, error: 'APIBRASIL_BEARER_TOKEN not configured' });
   }
@@ -185,6 +269,8 @@ exports.handler = async (event) => {
 
     const data = apiResponse.body;
     if (apiResponse.statusCode >= 400 || data.error || data.success === false) {
+      // Erro transitorio (saldo, timeout, instabilidade da APIBrasil): NAO cacheia,
+      // pra nao guardar uma falha temporaria como se fosse "placa sem dados" pra sempre.
       return jsonResponse(apiResponse.statusCode >= 400 ? apiResponse.statusCode : 502, {
         success: false,
         error: isInsufficientBalance(data) ? 'Saldo insuficiente na APIBrasil.' : 'Erro na consulta APIBrasil',
@@ -196,9 +282,11 @@ exports.handler = async (event) => {
     const vehicle = extractVehicle(data, plate);
     const hasUsefulData = [vehicle.marca, vehicle.modelo, vehicle.valorFipe].some((item) => item && item !== 'â€”');
     if (!hasUsefulData) {
+      await saveCachedLookup(plate, false, null, data);
       return jsonResponse(404, { success: false, error: 'Resposta sem dados FIPE.', raw: data });
     }
 
+    await saveCachedLookup(plate, true, vehicle, data);
     return jsonResponse(200, {
       success: true,
       placa: plate,
@@ -212,4 +300,3 @@ exports.handler = async (event) => {
     });
   }
 };
-

@@ -388,9 +388,10 @@ button{cursor:pointer}
 
 <section class="modal" id="proposalModal">
   <form class="modal-card" id="proposalForm">
-    <div class="modal-head"><div><h3>Enviar proposta</h3><p id="proposalModalText">Conte ao motorista o que pode ser feito. Preco e disponibilidade sao opcionais.</p></div><button class="modal-close" id="proposalCloseBtn" type="button">x</button></div>
-    <div class="field"><label>Resposta ao usuario *</label><textarea id="proposalMessage" placeholder="Explique o que esta incluido na proposta."></textarea></div>
-    <div class="field"><label>Preco (opcional)</label><input id="proposalPrice" type="number" min="0" step="0.01" placeholder="Ex.: 420.00"></div>
+    <div class="modal-head"><div><h3>Enviar proposta</h3><p>Confira o caso antes de responder.</p></div><button class="modal-close" id="proposalCloseBtn" type="button">x</button></div>
+    <div class="compact-detail" id="proposalContextBox" style="margin-bottom:12px"></div>
+    <div class="field"><label>Descricao do servico que sera feito *</label><textarea id="proposalMessage" placeholder="Descreva o que vai ser avaliado/feito, podendo chamar o cliente pelo nome. Ex.: Ola {nome}, vamos verificar..."></textarea></div>
+    <div class="field"><label>Preco (opcional - se ainda nao tiver, deixe em branco)</label><input id="proposalPrice" type="number" min="0" step="0.01" placeholder="Ex.: 420.00"></div>
     <div class="field"><label>Disponibilidade (opcional)</label><input id="proposalTime" placeholder="Ex.: Hoje 15h ou amanha de manha"></div>
     <button class="btn primary" id="proposalSubmitBtn" type="submit" style="width:100%">Enviar proposta</button>
     <div class="status-text" id="proposalStatus"></div>
@@ -731,13 +732,32 @@ function renderRequestDetail(){
   </div>`;
 }
 function renderProposalsCount(){renderMetrics();}
-function openProposal(requestId,force){if(!force&&window.innerWidth>960)return;state.activeRequest=requestId;const request=state.requests.find((item)=>item.id===requestId);$("proposalModalText").textContent=request?`${request.profiles?.name||"Motorista"} - ${request.title||"Solicitacao"}`:"Responda com preco e prazo.";$("proposalPrice").value="";$("proposalTime").value="";$("proposalMessage").value=request?.description?`Podemos avaliar: ${request.description}`:"";$("proposalStatus").textContent="";$("proposalModal").classList.add("open");}
+function openProposal(requestId,force){
+  if(!force&&window.innerWidth>960)return;
+  state.activeRequest=requestId;
+  const request=state.requests.find((item)=>item.id===requestId);
+  const clientName=request?.profiles?.name||"Motorista";
+  const v=request?.vehicles||{};
+  const vehicleLine=[v.brand,v.model,v.year].filter(Boolean).join(" ")||"Nao informado";
+  $("proposalContextBox").innerHTML=request?`
+    <div class="compact-header"><h3>Cliente: ${esc(clientName)}</h3>${urgencyBadge(request)}</div>
+    <div class="compact-section"><small>Problema (analise da IA)</small><p>${esc(request.description||request.title||"Sem descricao informada.")}</p></div>
+    <div class="compact-grid">
+      <div class="compact-section"><small>Veiculo</small><p>${esc(vehicleLine)}${v.plate?` · ${esc(v.plate)}`:""}</p></div>
+      <div class="compact-section"><small>Localizacao</small><p>${esc(request.location||"Nao informada")}</p></div>
+    </div>`:"";
+  $("proposalPrice").value="";
+  $("proposalTime").value="";
+  $("proposalMessage").value="";
+  $("proposalStatus").textContent="";
+  $("proposalModal").classList.add("open");
+}
 async function submitProposal(event){
   event.preventDefault();
   const requestId=state.activeRequest;const message=$("proposalMessage").value.trim();const priceRaw=$("proposalPrice").value.trim();const time=$("proposalTime").value.trim();
   const price=priceRaw?Number(priceRaw):null;
   if(!state.workshop?.id){$("proposalStatus").textContent="Perfil da oficina nao encontrado.";return;}
-  if(!requestId||!message){$("proposalStatus").textContent="Escreva uma resposta para o motorista.";return;}
+  if(!requestId||message.length<10){$("proposalStatus").textContent="Descreva o servico que sera feito (resposta muito curta).";return;}
   if(priceRaw&&(Number.isNaN(price)||price<0)){$("proposalStatus").textContent="Preco invalido.";return;}
   if(state.demoMode){demoStore.proposals.unshift({id:"demo-proposal-"+Date.now(),request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time||null,status:"pending",created_at:new Date().toISOString(),service_requests:{title:state.requests.find((item)=>item.id===requestId)?.title||"Solicitacao",location:state.requests.find((item)=>item.id===requestId)?.location||""}});$("proposalModal").classList.remove("open");toast("Proposta demo enviada.");await loadAll();return;}
   $("proposalSubmitBtn").disabled=true;
