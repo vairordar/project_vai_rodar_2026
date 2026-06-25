@@ -657,7 +657,22 @@ async function submitProposal(event){
   if(!requestId||!message||!price||!time){$("proposalStatus").textContent="Preencha preco, prazo e resposta.";return;}
   if(state.demoMode){demoStore.proposals.unshift({id:"demo-proposal-"+Date.now(),request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time,status:"pending",created_at:new Date().toISOString(),service_requests:{title:state.requests.find((item)=>item.id===requestId)?.title||"Solicitacao",location:state.requests.find((item)=>item.id===requestId)?.location||""}});$("proposalModal").classList.remove("open");toast("Proposta demo enviada.");await loadAll();return;}
   $("proposalSubmitBtn").disabled=true;
-  try{const {error}=await sb.from("proposals").insert({request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time,status:"pending"});if(error)throw error;$("proposalModal").classList.remove("open");toast("Proposta enviada.");await loadProposals();renderMetrics();}catch(error){$("proposalStatus").textContent=error.message||"Erro ao enviar proposta.";}finally{$("proposalSubmitBtn").disabled=false;}
+  try{const {data,error}=await sb.from("proposals").insert({request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time,status:"pending"}).select("id").single();if(error)throw error;notifyProposalEvent("proposal_created",data?.id);$("proposalModal").classList.remove("open");toast("Proposta enviada.");await loadProposals();renderMetrics();}catch(error){$("proposalStatus").textContent=error.message||"Erro ao enviar proposta.";}finally{$("proposalSubmitBtn").disabled=false;}
+}
+async function notifyProposalEvent(eventName,proposalId){
+  try{
+    const {data}=await sb.auth.getSession();
+    const token=data?.session?.access_token;
+    if(!token){console.warn("[notify-event] sem token de sessao, abortando");return;}
+    const res=await fetch("/.netlify/functions/notify-event",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body:JSON.stringify({event:eventName,proposalId}),
+    });
+    const result=await res.json().catch(()=>null);
+    if(!res.ok){console.warn("[notify-event] falhou",res.status,result);return;}
+    console.info("[notify-event] ok",result);
+  }catch(error){console.warn("[notify-event] erro de rede",error.message);}
 }
 async function createConversationFromRequest(requestId){
   const request=state.requests.find((item)=>item.id===requestId);if(!request||!state.workshop?.id)return;
