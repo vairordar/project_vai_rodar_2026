@@ -1564,6 +1564,11 @@ body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
 .reservation-picker-list button{height:auto;margin:0;border:1px solid var(--line);border-radius:11px;background:var(--bottom);color:var(--text);padding:9px;text-align:left;font-size:9px;line-height:1.4}
 .reservation-picker-list button b{display:block;color:var(--headline);font-size:10px;margin-bottom:3px}
 .quote-item{grid-template-columns:1fr auto}
+.quote-item-side{display:flex;align-items:center;gap:6px}
+.quote-count-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;font-size:9px;font-weight:800;color:#fff}
+.quote-count-badge.is-blue{background:var(--blue)}
+.quote-count-badge.is-green{background:#16a34a}
+.workshop-proposal-address{display:block;color:var(--muted);font-size:8px;margin-top:5px}
 .status-pill{border-radius:999px;padding:5px 8px;font-size:8px;font-weight:800}
 .status-pill.waiting{background:#e8f0ff;color:var(--blue)}
 .status-pill.expired{background:#fff3cd;color:#a16207}
@@ -2957,11 +2962,30 @@ const partsStores=[];
 let chats=[];
 let messagesChannel=null;
 const sentQuotes=[];
+function haversineKm(lat1,lon1,lat2,lon2){
+  const a1=Number(lat1),o1=Number(lon1),a2=Number(lat2),o2=Number(lon2);
+  if(![a1,o1,a2,o2].every((v)=>Number.isFinite(v))) return null;
+  const toRad=(d)=>d*Math.PI/180;
+  const R=6371;
+  const dLat=toRad(a2-a1);
+  const dLon=toRad(o2-o1);
+  const sinLat=Math.sin(dLat/2);
+  const sinLon=Math.sin(dLon/2);
+  const a=sinLat*sinLat+Math.cos(toRad(a1))*Math.cos(toRad(a2))*sinLon*sinLon;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function quoteBriefSummary(text,maxLen=58){
+  const clean=String(text||"").replace(/\s+/g," ").trim();
+  if(!clean) return "Solicitação enviada";
+  const firstSentence=(clean.split(/(?<=[.!?])\s/)[0]||clean).trim();
+  const base=firstSentence.length&&firstSentence.length<=maxLen?firstSentence:clean;
+  return base.length>maxLen?`${base.slice(0,maxLen-1).trim()}…`:base;
+}
 async function loadMyServiceRequests(){
   if(!sb||!currentUser) return;
   try{
     const {data,error}=await sb.from("service_requests")
-      .select("id,title,description,location,status,created_at,vehicles(brand,model,year,plate),proposals(id,price,estimated_time,message,status,created_at,workshops(name))")
+      .select("id,title,description,category,location,status,created_at,latitude,longitude,vehicles(brand,model,year,plate),proposals(id,price,estimated_time,message,status,created_at,workshops(name,address,latitude,longitude))")
       .eq("user_id",currentUser.id)
       .order("created_at",{ascending:false})
       .limit(50);
@@ -2971,6 +2995,8 @@ async function loadMyServiceRequests(){
       const proposals=(req.proposals||[]).map((p)=>({
         id:p.id,
         name:p.workshops?.name||"Oficina parceira",
+        address:p.workshops?.address||"",
+        distanceKm:haversineKm(req.latitude,req.longitude,p.workshops?.latitude,p.workshops?.longitude),
         price:p.price!=null&&p.price!==""?`R$ ${p.price}`:"A combinar",
         estimatedTime:p.estimated_time||"",
         message:p.message||"",
@@ -2988,6 +3014,9 @@ async function loadMyServiceRequests(){
       sentQuotes.push({
         id:req.id,
         title:req.title||req.description||"Solicitação",
+        summary:quoteBriefSummary(req.description||req.title),
+        description:req.description||"",
+        category:req.category||"",
         vehicle:vehicle||"Veículo não informado",
         location:req.location||"",
         status,className,
@@ -4577,12 +4606,19 @@ async function notifyMessageEvent(conversationId,text){
 }
 function renderQuotes(){
   if(!sentQuotes.length){quotesList.innerHTML='<div class="account-empty">Ainda não há cotações reais.</div>';return;}
-  quotesList.innerHTML=sentQuotes.map((quote,index)=>`
+  quotesList.innerHTML=sentQuotes.map((quote,index)=>{
+    const count=quote.proposals.length;
+    const hasAccepted=quote.proposals.some((p)=>p.status==="accepted");
+    const badge=count?`<span class="quote-count-badge ${hasAccepted?"is-green":"is-blue"}">${count}</span>`:"";
+    return `
     <button class="quote-item" type="button" data-index="${index}">
-      <span><b>${quote.title}</b><p>🚗 ${quote.vehicle}<br>⌖ ${quote.location}</p></span>
-      <span class="status-pill ${quote.className}">${quote.status}</span>
+      <span><b>${quote.summary}</b><p>🚗 ${quote.vehicle}<br>⌖ ${quote.location}</p></span>
+      <span class="quote-item-side">
+        ${badge}
+        <span class="status-pill ${quote.className}">${quote.status}</span>
+      </span>
     </button>
-  `).join("");
+  `;}).join("");
   quotesList.querySelectorAll(".quote-item").forEach((button)=>button.addEventListener("click",()=>openQuoteDetail(Number(button.dataset.index))));
 }
 function openQuotes(){
@@ -5083,12 +5119,17 @@ function openQuoteDetail(index){
   quoteDetail.classList.add("show");
   quoteDetail.innerHTML=`
     <button class="drawer-back" type="button" id="quoteBack">← Minhas cotações</button>
-    <div class="quote-description"><small>DESCRIÇÃO</small><p>${quote.title}</p><span>🚗 ${quote.vehicle}<br>⌖ ${quote.location}</span></div>
+    <div class="quote-description">
+      <small>RESUMO DA SOLICITAÇÃO</small>
+      <p>${quote.summary}</p>
+      <span>🚗 ${quote.vehicle}<br>⌖ ${quote.location}${quote.category?`<br>🏷 ${quote.category}`:""}</span>
+    </div>
     <div class="flow-label">Propostas de oficinas <small>${proposals.length}</small></div>
     ${proposals.length?proposals.map((proposal)=>`
       <article class="workshop-proposal">
-        <div class="workshop-proposal-head"><div><h4>${proposal.name}</h4><small>Resposta recebida · ${proposal.time}</small></div><strong>${proposal.price}</strong></div>
-        <p>${proposal.message}</p>
+        <div class="workshop-proposal-head"><div><h4>${proposal.name}</h4><small>Resposta recebida · ${proposal.time}${proposal.distanceKm!=null?` · ${proposal.distanceKm.toFixed(1)} km`:""}</small></div><strong>${proposal.price}</strong></div>
+        ${proposal.address?`<small class="workshop-proposal-address">📍 ${proposal.address}</small>`:""}
+        <p>${proposal.message||"Oficina ainda não enviou uma mensagem detalhada."}</p>
         <div class="proposal-card-actions">
           ${proposal.status==="pending"
             ?`<button class="accept-quote" data-id="${proposal.id}">Aceitar proposta</button><button class="reject-quote" data-id="${proposal.id}">Recusar</button>`
@@ -5533,7 +5574,7 @@ function appendAssistantTyping(){
     <div class="vr"><img class="logo-mark" src="assets/vai_rodar_logo_transparent.png" alt="VR"></div>
     <div class="ai-response"><span class="typing-dots"><span></span><span></span><span></span></span></div>`;
   assistantThread.appendChild(row);
-  setTimeout(()=>{appScroller.scrollTo({top:assistantCard.offsetTop+assistantThread.scrollHeight,behavior:"smooth"});},20);
+  setTimeout(()=>{row.scrollIntoView({behavior:"smooth",block:"nearest"});},20);
   return row;
 }
 function wait(ms){return new Promise((resolve)=>setTimeout(resolve,ms));}
@@ -5574,24 +5615,31 @@ async function expandAssistant(sourceInput=problemInput){
     typingRow.remove();
     const nextQuestion=assistantPendingQuestions.shift();
     appendAssistantSystemMessage("",nextQuestion);
-    setTimeout(()=>{appScroller.scrollTo({top:assistantCard.offsetTop+assistantThread.scrollHeight,behavior:"smooth"});if(chatFollowInput)chatFollowInput.focus();},40);
+    setTimeout(()=>{
+      const lastRow=assistantThread.lastElementChild;
+      if(lastRow) lastRow.scrollIntoView({behavior:"smooth",block:"nearest"});
+      if(chatFollowInput)chatFollowInput.focus();
+    },40);
     return;
   }
   const contextText=assistantContextFor(text);
   assistantLatestContext=contextText;
   // Mostrar loading mientras llama a la IA
+  let activeTypingRow=null;
   if(assistantConversation.length===0) showAssistantLoading(text);
   else{
     appendAssistantUserMessage(text);
     sourceInput.value="";
-    const typingRow=appendAssistantTyping();await humanDelay();typingRow.remove();
+    activeTypingRow=appendAssistantTyping();
+    await humanDelay();
   }
   sourceInput.value="";
-  // Llamada a OpenAI via Netlify Function
+  // Llamada a OpenAI via Netlify Function (el "digitando" sigue visible durante toda a chamada real, sem buraco em branco)
   const aiResult=await callAIDiagnose(contextText,
     assistantConversation.map(t=>({user:t.user,assistant:t.assistant||""}))
   );
   hideAssistantLoading();
+  if(activeTypingRow) activeTypingRow.remove();
   // Usa resultado de la IA o fallback local
   const intent=aiResult
     ? {
