@@ -812,9 +812,9 @@ body.theme-dark .office-sheet-dots span{background:#1f2937}body.theme-dark .offi
 .app-shell.offices-open .office-results-sheet.selection-mode .office-actions{display:grid!important;grid-template-columns:1fr;margin-top:0}
 .app-shell.offices-open .office-results-sheet.selection-mode .load-more-offices{display:none!important}
 .app-shell.offices-open .leaflet-control-zoom{border:0!important;box-shadow:0 12px 30px rgba(15,23,42,.16)!important}.app-shell.offices-open .leaflet-control-zoom a{border:0!important;color:#0f172a!important}.app-shell.offices-open .leaflet-control-attribution{background:rgba(255,255,255,.65)!important}
-body.theme-dark .app-shell.offices-open .office-map-shell{background:#050607}
-body.theme-dark .app-shell.offices-open .office-map{background:#0b0e14}
-body.theme-dark .app-shell.offices-open .office-map::after{background:linear-gradient(180deg,rgba(5,6,7,.5) 0%,rgba(5,6,7,.14) 28%,rgba(5,6,7,0) 52%,rgba(5,6,7,.26) 100%)}
+body.theme-dark .app-shell.offices-open .office-map-shell{background:#eef3f8}
+body.theme-dark .app-shell.offices-open .office-map{background:#eef3f8}
+body.theme-dark .app-shell.offices-open .office-map::after{background:linear-gradient(180deg,rgba(248,250,252,.5) 0%,rgba(248,250,252,.14) 28%,rgba(248,250,252,0) 52%,rgba(248,250,252,.28) 100%)}
 body.theme-dark .app-shell.offices-open .office-ai-search,
 body.theme-dark .app-shell.offices-open .office-filters,
 body.theme-dark .office-filter-menu>summary,
@@ -822,7 +822,8 @@ body.theme-dark .office-map-chip,
 body.theme-dark .office-results-sheet,
 body.theme-dark .app-shell.offices-open .office-map-focus{
   border-color:rgba(7,92,255,.72);
-  background:rgba(6,9,14,.94);
+  background:rgba(8,11,17,.96);
+  color:#fff;
   box-shadow:0 22px 58px rgba(0,0,0,.46),0 0 0 1px rgba(7,92,255,.08);
 }
 body.theme-dark .app-shell.offices-open .office-ai-search input,
@@ -834,6 +835,36 @@ body.theme-dark .app-shell.offices-open .rating-panel{
   background:#080b11;
   color:#fff;
 }
+body.theme-dark .office-map-head h2,
+body.theme-dark .office-map-head p,
+body.theme-dark .office-selected-count,
+body.theme-dark .office-address,
+body.theme-dark .office-service-row small,
+body.theme-dark .office-map-chip,
+body.theme-dark .office-category-selected{
+  color:#fff;
+}
+body.theme-dark .office-category-selected,
+body.theme-dark .office-category-strip,
+body.theme-dark .office-open-subtle,
+body.theme-dark .office-list-toggle,
+body.theme-dark .office-accordion,
+body.theme-dark .office-schedule,
+body.theme-dark .office-service-row{
+  border-color:rgba(7,92,255,.52);
+  background:#080b11;
+  color:#fff;
+}
+body.theme-dark .office-category-chip{
+  color:#fff;
+}
+body.theme-dark .office-category-chip:hover{
+  background:rgba(7,92,255,.18);
+}
+body.theme-dark .office-select-check span{
+  border-color:rgba(7,92,255,.62);
+  background:#080b11;
+}
 body.theme-dark .app-shell.offices-open .office-card{
   border:1px solid rgba(7,92,255,.42);
   background:#08090b;
@@ -841,10 +872,10 @@ body.theme-dark .app-shell.offices-open .office-card{
 }
 body.theme-dark .app-shell.offices-open .office-card.map-active{border-color:var(--blue);box-shadow:0 14px 34px rgba(7,92,255,.2)}
 body.theme-dark .office-sheet-grip{background:#1d4ed8}
-body.theme-dark .app-shell.offices-open .leaflet-control-zoom a{background:#080b11!important;color:#fff!important}
-body.theme-dark .app-shell.offices-open .leaflet-control-attribution{background:rgba(6,9,14,.75)!important;color:#fff!important}
+body.theme-dark .app-shell.offices-open .leaflet-control-zoom a{background:#fff!important;color:#0f172a!important}
+body.theme-dark .app-shell.offices-open .leaflet-control-attribution{background:rgba(255,255,255,.72)!important;color:#334155!important}
 body.theme-dark .app-shell.offices-open .leaflet-popup-content-wrapper,
-body.theme-dark .app-shell.offices-open .leaflet-popup-tip{background:#080b11;color:#fff;border-color:rgba(7,92,255,.62)}
+body.theme-dark .app-shell.offices-open .leaflet-popup-tip{background:#080b11!important;color:#fff!important;border:1px solid rgba(7,92,255,.62)}
 body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
 @media(min-width:760px){.office-results-sheet{left:auto;right:12px;top:178px;bottom:12px;width:330px;max-height:none}.app-shell.offices-open .office-map-focus{top:104px}.office-map-top{right:auto;width:420px}.app-shell.offices-open .office-filters{width:380px}}
 @media(max-width:520px){.app-shell.offices-open .app{padding-top:68px;padding-bottom:0}.office-map-head h2{font-size:20px}.office-results-sheet{max-height:42%}.app-shell.offices-open .office-card{grid-template-columns:50px 1fr}.app-shell.offices-open .office-map-focus{top:108px}.app-shell.offices-open .office-filters{width:calc(100vw - 44px)}}
@@ -993,8 +1024,10 @@ body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
 .reservation-form label{color:var(--muted);font-size:8.5px;font-weight:800}
 .reservation-form select,.reservation-form input,.reservation-form textarea{width:100%;border:1px solid var(--input-border);border-radius:10px;background:var(--bottom);color:var(--text);padding:0 9px;font-size:10px;outline:none}
 .reservation-form select,.reservation-form input{height:34px}
+.reservation-form select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 14px) 14px,calc(100% - 9px) 14px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:24px}
 .reservation-form textarea{min-height:66px;padding:9px;resize:vertical}
-.reservation-date-time{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.reservation-date-time{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:end}
+.reservation-date-time>div{min-width:0}
 .price-offer{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .price-offer div{border:1px solid var(--line);border-radius:11px;background:var(--bottom);padding:8px}
 .price-offer small{display:block;color:var(--muted);font-size:8px;margin-bottom:5px}
@@ -3181,7 +3214,7 @@ body.theme-dark{
         <label>Veículo</label><select id="reservationVehicle"></select>
         <label>Detalhes do que você precisa</label><textarea id="reservationDetails" placeholder="Explique brevemente o serviço necessário..."></textarea>
         <div class="reservation-date-time">
-          <div><label>Data</label><input id="reservationDate" type="date"></div>
+          <div><label>Data</label><select id="reservationDate"></select></div>
           <div><label>Horário</label><select id="reservationTime"></select></div>
         </div>
       </div>
@@ -4036,8 +4069,7 @@ function ensureOfficeMap(){
   }
   if(!officeMapInstance){
     officeMapInstance=L.map(officeMap,{zoomControl:false,attributionControl:true}).setView([-23.5617,-46.6559],12);
-    const isDarkMap=document.body.classList.contains("theme-dark");
-    L.tileLayer(`https://{s}.basemaps.cartocdn.com/${isDarkMap?"dark_all":"light_all"}/{z}/{x}/{y}{r}.png`,{
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",{
       maxZoom:19,
       subdomains:"abcd",
       attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -5139,6 +5171,10 @@ function openOficinaOptionsModal(showBack){
 function closeOficinaOptionsModal(){
   document.getElementById("oficinaOptionsModal")?.classList.remove("show");
 }
+function appRoute(webPath,localPath){
+  if(window.location.protocol==="file:") return localPath;
+  return webPath;
+}
 function setLoggedIn(user){
   currentUser=user||null;
   accountLoggedOut.style.display=currentUser?"none":"block";
@@ -5542,6 +5578,19 @@ function closeReservations(){
 function reservationTimeOptions(){
   return ["08:00","09:00","10:00","10:30","11:00","14:00","15:00","16:00","17:00"].map((time)=>`<option>${time}</option>`).join("");
 }
+function reservationDateOptions(){
+  const labels=["Hoje","Amanhã"];
+  let html='<option value="">Escolha a data</option>';
+  for(let i=0;i<14;i++){
+    const date=new Date();
+    date.setDate(date.getDate()+i);
+    const value=[date.getFullYear(),String(date.getMonth()+1).padStart(2,"0"),String(date.getDate()).padStart(2,"0")].join("-");
+    const label=labels[i]||date.toLocaleDateString("pt-BR",{weekday:"short"});
+    const day=date.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+    html+=`<option value="${value}">${label}, ${day}</option>`;
+  }
+  return html;
+}
 function openReservationPopup(index,reservation=null,selectedService=""){
   activeReservationOffice=offices[index];
   const services=getOfficeServices(activeReservationOffice);
@@ -5555,7 +5604,11 @@ function openReservationPopup(index,reservation=null,selectedService=""){
   reservationVehicle.innerHTML=userVehicles.length
     ?userVehicles.map((vehicle,vehicleIndex)=>`<option value="${vehicleIndex}">${vehicle.plate} · ${vehicle.brand} ${vehicle.model}</option>`).join("")
     :'<option value="">Nenhum veículo cadastrado</option>';
-  reservationDetails.value=reservation?"Solicito alterar a data ou o horário desta reserva.":"";reservationDate.value="";reservationTime.innerHTML=reservationTimeOptions();reservationError.classList.remove("show");
+  reservationDetails.value=reservation?"Solicito alterar a data ou o horário desta reserva.":"";
+  reservationDate.innerHTML=reservationDateOptions();
+  reservationDate.value="";
+  reservationTime.innerHTML=reservationTimeOptions();
+  reservationError.classList.remove("show");
   overlay.classList.add("open");reservationPopup.classList.add("open");
 }
 function closeReservationPopup(){reservationPopup.classList.remove("open");overlay.classList.remove("open");}
@@ -6568,11 +6621,11 @@ document.getElementById("authSelectWorkshop")?.addEventListener("click",()=>{
 });
 document.getElementById("oficinaBtnPanel")?.addEventListener("click",()=>{
   closeOficinaOptionsModal();
-  window.location.href="/apps/workshop-app/";
+  window.location.href=appRoute("/oficinas/painel/","file:///C:/Users/joaqu/OneDrive/Documents/project_vai_rodar_2026/apps/workshop-app/index.html");
 });
 document.getElementById("oficinaBtnCadastro")?.addEventListener("click",()=>{
   closeOficinaOptionsModal();
-  openWorkshopRegister();
+  window.location.href=appRoute("/oficinas/cadastro/","file:///C:/Users/joaqu/OneDrive/Documents/project_vai_rodar_2026/apps/workshop-register-supabase/index.html");
 });
 document.getElementById("oficinaBtnBack")?.addEventListener("click",()=>{
   closeOficinaOptionsModal();
@@ -6732,8 +6785,8 @@ publishFeatured.addEventListener("click",closeVisibilityPopup);
 publishFree.addEventListener("click",closeVisibilityPopup);
 registerWorkshopBtn?.addEventListener("click",openWorkshopDemo);
 workshopDemoClose.addEventListener("click",closeWorkshopDemo);
-workshopDemoLink.addEventListener("click",()=>window.location.href="/oficinas/cadastro/");
-workshopBackofficeLink.addEventListener("click",()=>window.location.href="/oficinas/painel/");
+workshopDemoLink.addEventListener("click",()=>window.location.href=appRoute("/oficinas/cadastro/","file:///C:/Users/joaqu/OneDrive/Documents/project_vai_rodar_2026/apps/workshop-register-supabase/index.html"));
+workshopBackofficeLink.addEventListener("click",()=>window.location.href=appRoute("/oficinas/painel/","file:///C:/Users/joaqu/OneDrive/Documents/project_vai_rodar_2026/apps/workshop-app/index.html"));
 registerBackHome.addEventListener("click",goHome);
 registerUseLocation.addEventListener("click",async()=>{await applyCurrentLocation(registerAddress,registerUseLocation,(geo)=>{registerCity.value=geo.details?.city||registerCity.value;});});
 registerDays.addEventListener("change",()=>{const custom=registerDays.value==="Personalizado";simpleRegisterSchedule.style.display=custom?"none":"grid";customRegisterSchedule.classList.toggle("show",custom);});
