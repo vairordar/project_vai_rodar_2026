@@ -17,7 +17,7 @@
 <link rel="apple-touch-icon" href="assets/icon-180x180.png">
 <link rel="apple-touch-icon" sizes="152x152" href="assets/icon-152x152.png">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180x180.png">
-<meta name="description" content="Conecte seu carro à melhor oficina. Diagnóstico com IA, propostas e serviços automotivos.">
+<meta name="description" content="Conecte seu carro à melhor oficina. Diagnóstico com IA, cotações e serviços automotivos.">
 
 <!-- SEO / compartilhamento -->
 <link rel="canonical" href="https://vairodar.com.br/">
@@ -25,13 +25,13 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vai Rodar">
 <meta property="og:title" content="Vai Rodar — Conecte seu carro à melhor oficina">
-<meta property="og:description" content="Diagnóstico com IA, propostas e serviços automotivos com oficinas e comércios de peças verificados perto de você.">
+<meta property="og:description" content="Diagnóstico com IA, cotações e serviços automotivos com oficinas e comércios de peças verificados perto de você.">
 <meta property="og:url" content="https://vairodar.com.br/">
 <meta property="og:image" content="https://vairodar.com.br/assets/icon-512x512.png">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Vai Rodar — Conecte seu carro à melhor oficina">
-<meta name="twitter:description" content="Diagnóstico com IA, propostas e serviços automotivos com oficinas e comércios de peças verificados perto de você.">
+<meta name="twitter:description" content="Diagnóstico com IA, cotações e serviços automotivos com oficinas e comércios de peças verificados perto de você.">
 <meta name="twitter:image" content="https://vairodar.com.br/assets/icon-512x512.png">
 <script type="application/ld+json">
 {
@@ -253,14 +253,14 @@ h1{
   min-height:0;
   padding-bottom:14px;
 }
-.assist-head{display:grid;grid-template-columns:33px 1fr;gap:10px;align-items:center}
+.assist-head{display:grid;grid-template-columns:33px 1fr;gap:10px;align-items:start}
 .assistant-card .vr{width:30px;height:30px;border-radius:7px;font-size:15px}
 .assistant-card h2{
-  margin:0;
+  margin:1px 0 4px;
   color:var(--text);
-  font-size:15px;
-  line-height:1.18;
-  font-weight:850;
+  font-size:10px;
+  line-height:1.25;
+  font-weight:700;
 }
 .assistant-card p{
   max-width:196px;
@@ -588,7 +588,12 @@ h1{
   line-height:1.25;
   font-weight:750;
 }
-.workshop-rating{display:none!important}
+.workshop-rating{
+  color:var(--blue);
+  font-size:8px;
+  font-weight:750;
+  white-space:nowrap;
+}
 .workshop-meta{
   margin-top:3px;
   color:var(--muted);
@@ -711,18 +716,9 @@ h1{
 .message-btn{border:0;background:var(--blue);color:#fff}
 .more-info-btn{border:1px solid var(--blue);background:var(--button-bg);color:var(--blue)}
 .call-btn{border:1px solid #16a34a;background:transparent;color:#15803d}
-.office-category-prompt{display:grid;gap:7px;padding:9px;border:1.4px solid rgba(7,92,255,.5);border-radius:16px;background:rgba(255,255,255,.94);box-shadow:0 14px 34px rgba(15,23,42,.12),0 0 0 3px rgba(7,92,255,.035);backdrop-filter:blur(14px)}
-.office-category-prompt strong{color:var(--headline);font-size:12px;font-weight:850}
-.office-category-prompt div{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.office-category-prompt div::-webkit-scrollbar{display:none}
-.office-category-chip{height:29px;border:1px solid rgba(7,92,255,.42);border-radius:999px;background:#fff;color:var(--text);padding:0 10px;font-size:8.8px;font-weight:800;white-space:nowrap;cursor:pointer}
-.office-category-chip.active{background:linear-gradient(135deg,var(--blue),var(--blue2));border-color:var(--blue);color:#fff}
 .office-detail{display:none;grid-column:1 / -1;border-top:1px solid var(--line);padding:12px 2px 2px}
 .office-detail.show{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:14px}
 .office-detail h4{color:var(--headline);font-size:10px;font-weight:800;margin-bottom:6px}
-.office-accordion{border:1px solid rgba(7,92,255,.25);border-radius:12px;background:var(--bottom);overflow:hidden}
-.office-accordion+ .office-accordion{margin-top:7px}
-.office-accordion summary{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;color:var(--headline);font-size:10px;font-weight:850;cursor:pointer;list-style:none}.office-accordion summary::-webkit-details-marker{display:none}.office-accordion summary::after{content:"+";color:var(--blue);font-size:15px;font-weight:850}.office-accordion[open] summary::after{content:"−"}
-.office-accordion-body{padding:0 9px 9px}
 .office-schedule{display:grid;gap:0;border:1px solid var(--line);border-radius:10px;background:var(--bottom);overflow:hidden}
 .schedule-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:5px 7px;border-bottom:1px solid var(--line);color:var(--muted);font-size:8.5px;line-height:1.3}
 .schedule-row:last-child{border-bottom:0}
@@ -731,21 +727,11 @@ h1{
 .schedule-row.closed em{color:#dc2626}
 .office-services{display:flex;flex-wrap:wrap;align-content:start}
 .office-services span{border:1px solid var(--input-border);border-radius:999px;background:var(--bottom);color:var(--blue);padding:5px 7px;font-size:8px;font-weight:750}
-.office-service-list{display:grid;gap:7px}
-.office-service-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:7px;padding:8px;border:1px solid rgba(7,92,255,.2);border-radius:12px;background:#fff;color:var(--text)}
-.office-service-row strong{font-size:9px;line-height:1.2}.office-service-row small{display:block;color:var(--muted);font-size:7.5px;margin-top:2px}
-.office-service-price{color:var(--blue);font-size:9px;font-weight:850;white-space:nowrap}
-.service-reserve-btn{height:25px;border:0;border-radius:999px;background:var(--blue);color:#fff;padding:0 9px;font-size:8px;font-weight:850;cursor:pointer}
 .office-detail-actions{grid-column:1 / -1;display:grid;grid-template-columns:auto 1fr;gap:7px}
 .collapse-detail{height:32px;border:1px solid var(--input-border);border-radius:10px;background:var(--button-bg);color:var(--text);padding:0 11px;font-size:9px;font-weight:800;cursor:pointer}
 .reserve-detail{height:32px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-size:10px;font-weight:800;cursor:pointer}
-.office-score{display:none!important}
-.office-score span{display:none!important}
-.office-select-check{display:none;align-self:start;justify-self:end;cursor:pointer}
-.office-select-check input{position:absolute;opacity:0;pointer-events:none}
-.office-select-check span{width:24px;height:24px;border:1.6px solid rgba(7,92,255,.46);border-radius:8px;background:#fff;display:grid;place-items:center;box-shadow:0 8px 18px rgba(7,92,255,.08)}
-.office-select-check input:checked+span{background:var(--blue);border-color:var(--blue)}
-.office-select-check input:checked+span::after{content:"✓";color:#fff;font-size:14px;font-weight:900;line-height:1}
+.office-score{align-self:start;color:var(--blue);font-size:12px;font-weight:800;white-space:nowrap}
+.office-score span{color:#f4b400}
 .office-map-shell{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(240px,.82fr);gap:10px;border:1px solid var(--deal-border);border-radius:16px;background:var(--card);padding:10px;margin-bottom:12px;box-shadow:var(--card-shadow)}
 .office-map{min-height:270px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,rgba(7,92,255,.07),rgba(15,23,42,.04))}
 .office-map-side{display:grid;align-content:start;gap:8px;border-left:1px solid var(--line);padding-left:10px}
@@ -757,8 +743,8 @@ h1{
 .office-map-legend span:nth-child(2) i{background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.12)}
 .office-map-focus{height:34px;border:1px solid var(--blue);border-radius:11px;background:var(--button-bg);color:var(--blue);font-size:10px;font-weight:800;cursor:pointer}
 .office-map-empty{display:grid;place-items:center;min-height:270px;border:1px dashed var(--input-border);border-radius:12px;color:var(--muted);font-size:10px;line-height:1.4;text-align:center;padding:18px;background:var(--bottom)}
-.office-card.map-active{border-color:var(--blue);box-shadow:0 16px 38px rgba(7,92,255,.18),0 0 0 3px rgba(7,92,255,.08)}
-.leaflet-container{font:inherit}.leaflet-popup-content-wrapper{border:1.5px solid rgba(7,92,255,.62);box-shadow:0 18px 42px rgba(15,23,42,.22),0 0 0 4px rgba(7,92,255,.045)}.leaflet-popup-tip{border-left:1.5px solid rgba(7,92,255,.62);border-bottom:1.5px solid rgba(7,92,255,.62)}.leaflet-popup-content{font-family:Inter,Arial,sans-serif;font-size:11px;line-height:1.35}.leaflet-popup-content b{display:block;color:#07101f;margin-bottom:3px}.leaflet-control-attribution{font-size:8px}
+.office-card.map-active{border-color:var(--blue);box-shadow:0 14px 34px rgba(7,92,255,.12)}
+.leaflet-container{font:inherit}.leaflet-popup-content{font-family:Inter,Arial,sans-serif;font-size:11px;line-height:1.35}.leaflet-popup-content b{display:block;color:#07101f;margin-bottom:3px}.leaflet-control-attribution{font-size:8px}
 .office-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 .office-actions button{height:40px;border-radius:14px;font-size:12px;font-weight:750;cursor:pointer}
 .load-more-offices{border:1.2px solid var(--blue);background:var(--button-bg);color:var(--blue)}
@@ -771,46 +757,21 @@ h1{
 .app-shell.offices-open .office-map::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(248,250,252,.5) 0%,rgba(248,250,252,.14) 28%,rgba(248,250,252,0) 52%,rgba(248,250,252,.28) 100%);z-index:420}
 .office-map-top{position:absolute;top:12px;left:12px;right:12px;z-index:430;display:grid;gap:8px}
 .office-map-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.office-map-head h2{color:var(--headline);font-size:21px;line-height:1.05;font-weight:820;letter-spacing:-.35px}.office-map-head p{display:none}
+.office-map-head h2{color:var(--headline);font-size:21px;line-height:1.05;font-weight:820;letter-spacing:-.35px}.office-map-head p{color:var(--muted);font-size:9px;line-height:1.35;margin-top:3px;max-width:210px}
 .app-shell.offices-open .office-ai-search{margin:0;padding:6px;border:1px solid rgba(216,226,239,.92);border-radius:16px;background:rgba(255,255,255,.92);box-shadow:0 18px 42px rgba(15,23,42,.13);backdrop-filter:blur(14px)}
 .app-shell.offices-open .office-ai-search input{height:36px;background:#fff;border-color:#dbe5f2;font-size:10px}.app-shell.offices-open .office-ai-search button{width:36px;height:36px}
-.office-filter-menu{display:none}
-.app-shell.offices-open .office-filters{position:absolute;top:38px;left:0;width:min(330px,calc(100vw - 36px));display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:10px;border:1.5px solid rgba(7,92,255,.62);border-radius:16px;background:rgba(255,255,255,.96);box-shadow:0 24px 54px rgba(15,23,42,.18),0 0 0 4px rgba(7,92,255,.045);backdrop-filter:blur(16px)}
-.app-shell.offices-open .office-filters .office-filter:not([hidden]){grid-column:1 / -1}
+.office-filter-menu{justify-self:start;position:relative}.office-filter-menu>summary{height:32px;display:inline-flex;align-items:center;gap:7px;padding:0 12px;border:1px solid rgba(216,226,239,.95);border-radius:999px;background:rgba(255,255,255,.94);color:var(--text);font-size:10px;font-weight:800;box-shadow:0 12px 30px rgba(15,23,42,.12);cursor:pointer;list-style:none;backdrop-filter:blur(14px)}.office-filter-menu>summary::-webkit-details-marker{display:none}.office-filter-menu>summary::after{content:"▾";font-size:9px;color:var(--blue)}
+.app-shell.offices-open .office-filters{position:absolute;top:38px;left:0;width:min(330px,calc(100vw - 36px));display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:10px;border:1px solid rgba(216,226,239,.95);border-radius:16px;background:rgba(255,255,255,.96);box-shadow:0 24px 54px rgba(15,23,42,.18);backdrop-filter:blur(16px)}
 .app-shell.offices-open .location-filter-wrap{grid-column:1 / -1}.app-shell.offices-open .office-filter,.app-shell.offices-open .rating-filter summary,.app-shell.offices-open .clear-filters{height:34px;border-radius:11px;background:#f8fbff;font-size:9.5px}.app-shell.offices-open .clear-filters{grid-column:1 / -1;background:#fff}.app-shell.offices-open .rating-panel{top:38px;z-index:450;background:#fff}
-.app-shell.offices-open .office-map-focus{position:absolute;right:12px;top:110px;z-index:425;width:38px;height:38px;border:1.4px solid rgba(7,92,255,.55);border-radius:50%;background:rgba(255,255,255,.93);color:var(--blue);padding:0;font-size:0;box-shadow:0 12px 30px rgba(15,23,42,.13),0 0 0 3px rgba(7,92,255,.035);backdrop-filter:blur(14px);display:grid;place-items:center}.app-shell.offices-open .office-map-focus::before{content:"⌖";font-size:22px;line-height:1;font-weight:800}
-.office-map-controls{display:grid;gap:6px;position:relative}
-.office-category-select-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px;align-items:center}
-.office-category-toggle{height:34px;border:1.4px solid var(--blue);border-radius:999px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:0 13px;font-size:10px;font-weight:900;cursor:pointer;box-shadow:0 12px 30px rgba(7,92,255,.16)}
-.office-category-selected{height:34px;display:flex;align-items:center;min-width:0;border:1.4px solid rgba(7,92,255,.38);border-radius:999px;background:rgba(255,255,255,.94);color:var(--headline);padding:0 12px;font-size:9.5px;font-weight:850;box-shadow:0 10px 24px rgba(15,23,42,.1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.office-category-strip{display:none;position:absolute;top:40px;left:0;right:0;z-index:455;max-height:250px;overflow-y:auto;padding:6px;border:1.5px solid rgba(7,92,255,.62);border-radius:16px;background:rgba(255,255,255,.98);box-shadow:0 22px 48px rgba(15,23,42,.2),0 0 0 4px rgba(7,92,255,.045);backdrop-filter:blur(16px);scrollbar-width:thin}.office-category-strip.open{display:grid;gap:4px}
-.office-map-chip{height:36px;border:1.4px solid rgba(7,92,255,.5);border-radius:999px;background:rgba(255,255,255,.94);color:var(--text);padding:0 14px;font-size:10.5px;font-weight:850;box-shadow:0 12px 30px rgba(15,23,42,.12),0 0 0 3px rgba(7,92,255,.035);backdrop-filter:blur(14px);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
-.office-map-chip svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
-.office-map-chip.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-color:var(--blue)}
-.office-map-chip.active{border-color:rgba(7,92,255,.5);color:var(--blue);background:rgba(255,255,255,.98)}
-.office-map-chip.active::before{display:none}
-.office-category-chip{width:100%;min-height:32px;border:0;border-radius:11px;background:transparent;color:var(--text);padding:7px 10px;font-size:9.5px;font-weight:800;text-align:left;cursor:pointer}
-.office-category-chip:hover{background:rgba(7,92,255,.07)}
-.office-category-chip.active{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
-.office-open-subtle{justify-self:start;height:30px;padding:0 11px;font-size:9px;background:rgba(255,255,255,.86);box-shadow:0 8px 20px rgba(15,23,42,.08)}
-.office-results-sheet{position:absolute;left:10px;right:10px;bottom:10px;z-index:430;max-height:34%;transition:max-height .25s ease;display:grid;grid-template-rows:auto minmax(0,1fr);gap:6px;padding:7px;border:1.5px solid rgba(7,92,255,.62);border-radius:18px;background:rgba(255,255,255,.96);box-shadow:0 28px 68px rgba(15,23,42,.24),0 0 0 4px rgba(7,92,255,.045);backdrop-filter:blur(18px)}
+.app-shell.offices-open .office-map-focus{position:absolute;right:12px;top:138px;z-index:425;height:32px;border:1px solid rgba(216,226,239,.95);border-radius:999px;background:rgba(255,255,255,.93);color:var(--blue);padding:0 12px;font-size:9px;box-shadow:0 12px 30px rgba(15,23,42,.13);backdrop-filter:blur(14px)}
+.office-results-sheet{position:absolute;left:10px;right:10px;bottom:10px;z-index:430;max-height:34%;transition:max-height .25s ease;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;padding:7px;border:1px solid rgba(216,226,239,.96);border-radius:18px;background:rgba(255,255,255,.95);box-shadow:0 28px 68px rgba(15,23,42,.24);backdrop-filter:blur(18px)}
 .office-results-sheet.expanded{max-height:72%}
-.office-sheet-grip{position:relative;width:34px;height:4px;border-radius:999px;background:#d8e2ef;justify-self:center;margin-bottom:1px;cursor:grab;touch-action:none}.office-sheet-grip::before{content:"";position:absolute;inset:-16px -60px}.office-sheet-head{display:none}
-.office-list-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:1px 2px 4px}
-.office-list-toggle{height:30px;border:1.4px solid rgba(7,92,255,.55);border-radius:999px;background:#fff;color:var(--blue);padding:0 13px;font-size:9.5px;font-weight:900;cursor:pointer}
-.office-selected-count{color:var(--muted);font-size:8.5px;font-weight:800}
-.office-results-sheet.selection-mode{max-height:72%;grid-template-rows:auto auto minmax(0,1fr) auto}
-.office-results-sheet.selection-mode .office-list-toggle{background:linear-gradient(135deg,var(--blue),var(--blue2));border-color:var(--blue);color:#fff}
+.office-sheet-grip{position:relative;width:34px;height:4px;border-radius:999px;background:#d8e2ef;justify-self:center;margin-bottom:1px;cursor:grab;touch-action:none}.office-sheet-grip::before{content:"";position:absolute;inset:-16px -60px}.office-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px;cursor:grab;touch-action:none}.office-sheet-head strong{display:block;color:var(--headline);font-size:10.5px;font-weight:850}.office-sheet-head span{display:block;color:var(--muted);font-size:7.5px;margin-top:1px}
 .app-shell.offices-open .office-list{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;overflow-y:hidden;min-height:0;padding:1px 2px 5px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.app-shell.offices-open .office-list::-webkit-scrollbar{display:none}
-.app-shell.offices-open .office-card{flex:0 0 100%;width:100%;scroll-snap-align:center;grid-template-columns:48px 1fr;gap:9px;border:1.4px solid rgba(7,92,255,.38);border-radius:13px;background:#fff;padding:9px;box-shadow:0 14px 34px rgba(7,92,255,.1);max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}.app-shell.offices-open .office-photo{width:48px;height:44px;border-radius:10px}.app-shell.offices-open .office-card h3{font-size:10.5px;margin-bottom:2px;justify-content:flex-start;flex-wrap:wrap}.app-shell.offices-open .office-card h3 .office-score{display:inline-flex;align-items:center;gap:2px;margin-left:auto;font-size:9px}.app-shell.offices-open .office-address{font-size:8px;margin-bottom:6px;line-height:1.25}.app-shell.offices-open .office-links{gap:5px;flex-wrap:wrap}.app-shell.offices-open .office-links button{height:24px;padding:0 8px;font-size:8px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:8px;padding-top:8px}
-.app-shell.offices-open .office-results-sheet.selection-mode .office-list{display:flex;flex-direction:column;flex-wrap:nowrap;overflow-x:hidden;overflow-y:auto;scroll-snap-type:none;padding:1px 2px 8px}
-.app-shell.offices-open .office-results-sheet.selection-mode .office-card{flex:0 0 auto;width:100%;scroll-snap-align:none;grid-template-columns:50px minmax(0,1fr) 28px}
-.app-shell.offices-open .office-results-sheet.selection-mode .office-select-check{display:grid}
-.office-sheet-dots{display:none}
+.app-shell.offices-open .office-card{flex:0 0 100%;width:100%;scroll-snap-align:center;grid-template-columns:42px 1fr auto;gap:6px;border-radius:11px;background:#fff;padding:6px;box-shadow:none;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}.app-shell.offices-open .office-photo{width:42px;height:38px;border-radius:8px}.app-shell.offices-open .office-card h3{font-size:9.5px;margin-bottom:1px}.app-shell.offices-open .office-address{font-size:7.5px;margin-bottom:4px;line-height:1.25}.app-shell.offices-open .office-links{gap:4px}.app-shell.offices-open .office-links button{height:21px;padding:0 6px;font-size:7.5px}.app-shell.offices-open .office-score{font-size:9px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:8px;padding-top:8px}
+.office-sheet-dots{display:flex;justify-content:center;gap:5px;margin-top:-2px}.office-sheet-dots span{width:5px;height:5px;border-radius:50%;background:#d8e2ef;transition:background .2s,transform .2s}.office-sheet-dots span.active{background:var(--blue);transform:scale(1.3)}
 body.theme-dark .office-sheet-dots span{background:#1f2937}body.theme-dark .office-sheet-dots span.active{background:var(--blue)}
-.app-shell.offices-open .office-actions{display:none}
-.app-shell.offices-open .office-results-sheet.selection-mode .office-actions{display:grid!important;grid-template-columns:1fr;margin-top:0}
-.app-shell.offices-open .office-results-sheet.selection-mode .load-more-offices{display:none!important}
+.app-shell.offices-open .office-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0}.app-shell.offices-open .office-actions button{height:34px;border-radius:12px;font-size:10px}
 .app-shell.offices-open .leaflet-control-zoom{border:0!important;box-shadow:0 12px 30px rgba(15,23,42,.16)!important}.app-shell.offices-open .leaflet-control-zoom a{border:0!important;color:#0f172a!important}.app-shell.offices-open .leaflet-control-attribution{background:rgba(255,255,255,.65)!important}
 body.theme-dark .app-shell.offices-open .office-map-shell{background:#050607}
 body.theme-dark .app-shell.offices-open .office-map{background:#0b0e14}
@@ -818,7 +779,6 @@ body.theme-dark .app-shell.offices-open .office-map::after{background:linear-gra
 body.theme-dark .app-shell.offices-open .office-ai-search,
 body.theme-dark .app-shell.offices-open .office-filters,
 body.theme-dark .office-filter-menu>summary,
-body.theme-dark .office-map-chip,
 body.theme-dark .office-results-sheet,
 body.theme-dark .app-shell.offices-open .office-map-focus{
   border-color:rgba(7,92,255,.72);
@@ -844,10 +804,10 @@ body.theme-dark .office-sheet-grip{background:#1d4ed8}
 body.theme-dark .app-shell.offices-open .leaflet-control-zoom a{background:#080b11!important;color:#fff!important}
 body.theme-dark .app-shell.offices-open .leaflet-control-attribution{background:rgba(6,9,14,.75)!important;color:#fff!important}
 body.theme-dark .app-shell.offices-open .leaflet-popup-content-wrapper,
-body.theme-dark .app-shell.offices-open .leaflet-popup-tip{background:#080b11;color:#fff;border-color:rgba(7,92,255,.62)}
+body.theme-dark .app-shell.offices-open .leaflet-popup-tip{background:#080b11;color:#fff}
 body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
-@media(min-width:760px){.office-results-sheet{left:auto;right:12px;top:178px;bottom:12px;width:330px;max-height:none}.app-shell.offices-open .office-map-focus{top:104px}.office-map-top{right:auto;width:420px}.app-shell.offices-open .office-filters{width:380px}}
-@media(max-width:520px){.app-shell.offices-open .app{padding-top:68px;padding-bottom:0}.office-map-head h2{font-size:20px}.office-results-sheet{max-height:42%}.app-shell.offices-open .office-card{grid-template-columns:50px 1fr}.app-shell.offices-open .office-map-focus{top:108px}.app-shell.offices-open .office-filters{width:calc(100vw - 44px)}}
+@media(min-width:760px){.office-results-sheet{left:auto;right:12px;top:178px;bottom:12px;width:330px;max-height:none}.app-shell.offices-open .office-map-focus{top:128px}.office-map-top{right:auto;width:420px}.app-shell.offices-open .office-filters{width:380px}}
+@media(max-width:520px){.app-shell.offices-open .app{padding-top:68px;padding-bottom:0}.office-map-head h2{font-size:20px}.office-map-head p{max-width:190px}.office-results-sheet{max-height:42%}.app-shell.offices-open .office-card{grid-template-columns:50px 1fr}.app-shell.offices-open .office-score{grid-column:2;justify-self:start}.app-shell.offices-open .office-map-focus{top:134px}.app-shell.offices-open .office-filters{width:calc(100vw - 44px)}}
 .parts-intro{color:var(--muted);font-size:10px;line-height:1.45;margin:-3px 0 12px}
 .parts-form{display:grid;grid-template-columns:1fr 170px 42px;gap:8px;padding:9px;border:1.2px solid var(--blue);border-radius:16px;background:linear-gradient(180deg,var(--card),var(--card-soft));box-shadow:var(--card-shadow);margin-bottom:12px}
 .parts-form input{width:100%;min-width:0;height:38px;border:1px solid var(--input-border);border-radius:999px;background:var(--bottom);color:var(--text);padding:0 14px;font-size:11px;outline:none}
@@ -1087,102 +1047,6 @@ body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
   cursor:pointer;
 }
 .outline-btn svg{width:16px;height:16px;stroke:var(--blue)}
-#homeOfficesBtn{
-  background:var(--blue);
-  color:#fff;
-  border:none;
-}
-#homeOfficesBtn svg{stroke:#fff}
-.home-how{
-  margin:2px 0 18px;
-  padding:2px 4px 0;
-  background:transparent;
-}
-.home-how-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin:0 0 12px;
-}
-.home-how h3{
-  color:var(--headline);
-  font-size:17px;
-  font-weight:850;
-  margin:0;
-}
-.home-how-more{
-  border:0;
-  background:transparent;
-  color:var(--blue);
-  font-size:10px;
-  font-weight:800;
-  cursor:pointer;
-  white-space:nowrap;
-  padding:4px 0;
-}
-.home-how-steps{
-  display:grid;
-  grid-template-columns:1fr auto 1fr auto 1fr;
-  align-items:start;
-  gap:7px;
-}
-.home-how-step{
-  display:grid;
-  justify-items:center;
-  text-align:center;
-  gap:6px;
-}
-.home-how-icon{
-  width:46px;
-  height:46px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  position:relative;
-  background:rgba(7,92,255,.08);
-}
-.home-how-icon svg{
-  width:23px;
-  height:23px;
-  stroke:var(--blue);
-  stroke-width:2.2;
-  fill:none;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-}
-.home-how-number{
-  position:absolute;
-  left:-11px;
-  top:7px;
-  width:23px;
-  height:23px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:var(--blue);
-  color:#fff;
-  font-size:11px;
-  font-weight:850;
-}
-.home-how-step strong{
-  color:var(--text);
-  font-size:11px;
-  font-weight:850;
-  margin-top:1px;
-}
-.home-how-step p{
-  color:var(--muted);
-  font-size:10px;
-  line-height:1.25;
-  max-width:150px;
-}
-.home-how-line{
-  width:40px;
-  border-top:1.5px dashed var(--blue);
-  opacity:.8;
-  margin-top:23px;
-}
 .section-title{
   display:flex;
   align-items:center;
@@ -1577,8 +1441,8 @@ body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
 .account-legal-consent a:hover{text-decoration:underline}
 .account-status{min-height:14px;margin-top:8px;color:#dc2626;font-size:9px;font-weight:700;text-align:center}
 .account-status.success{color:#16a34a}
-.account-toggle{display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;font-size:11px;color:var(--muted);margin-top:12px}
-.account-toggle button{height:30px;border:1px solid rgba(7,92,255,.18);border-radius:999px;background:rgba(7,92,255,.08);color:var(--blue);font-size:12px;font-weight:800;cursor:pointer;padding:0 14px}
+.account-toggle{text-align:center;font-size:9px;color:var(--muted);margin-top:8px}
+.account-toggle button{background:none;border:none;color:var(--blue);font-size:9px;font-weight:700;cursor:pointer;padding:0}
 .account-user-info{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px;border:1px solid var(--input-border);border-radius:13px}
 .account-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .account-user-info strong{display:block;font-size:13px;color:var(--headline);font-weight:780;line-height:1.2}
@@ -1788,255 +1652,6 @@ body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
   font-weight:600;
   cursor:pointer;
 }
-/* --- Menu action button colors --- */
-.menu-action-primary{background:linear-gradient(135deg,var(--blue),var(--blue2)) !important;color:#fff !important;border-color:transparent !important;font-weight:700 !important}
-.menu-action-secondary{background:rgba(59,130,246,.12) !important;color:var(--blue) !important;border-color:rgba(59,130,246,.22) !important;font-weight:700 !important}
-.menu-action-yellow{background:rgba(245,158,11,.12) !important;color:#b45309 !important;border-color:rgba(245,158,11,.25) !important;font-weight:700 !important}
-.menu-divider{height:1px;background:var(--line);margin:4px 0;border:0}
-/* --- Home: preview de propostas recentes --- */
-#homeQuotesPreview{display:none;margin:18px 0 0;padding:0 16px 4px}
-#homeQuotesPreview.show{display:block}
-.hqp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.hqp-title{font-size:13px;font-weight:800;color:var(--headline)}
-.hqp-link{font-size:11px;color:var(--blue);font-weight:600;background:none;border:0;cursor:pointer;padding:0;text-decoration:none}
-.hqp-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;margin-bottom:10px;cursor:pointer;display:flex;flex-direction:column;gap:8px;transition:box-shadow .15s;-webkit-tap-highlight-color:transparent}
-.hqp-card:last-child{margin-bottom:0}
-.hqp-card:active{box-shadow:0 0 0 2px rgba(59,130,246,.35)}
-.hqp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.hqp-summary{font-size:13px;font-weight:700;color:var(--headline);line-height:1.3;flex:1}
-.hqp-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:800;flex-shrink:0;white-space:nowrap}
-.hqp-badge.is-blue{background:rgba(59,130,246,.14);color:var(--blue)}
-.hqp-badge.is-green{background:rgba(16,185,129,.14);color:#059669}
-.hqp-badge.is-yellow{background:rgba(245,158,11,.14);color:#b45309}
-.hqp-card:has(.is-blue){border-left:3px solid var(--blue);padding-left:11px}
-.hqp-card:has(.is-green){border-left:3px solid #059669;padding-left:11px}
-.hqp-card:has(.is-yellow){border-left:3px solid #d97706;padding-left:11px}
-.hqp-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.hqp-vehicle{font-size:10px;color:var(--muted);font-weight:500}
-.hqp-category{font-size:9px;font-weight:700;background:var(--bottom);color:var(--muted);padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
-.home-how-steps>.home-how-step:nth-child(1) .home-how-number{background:var(--blue)}
-.home-how-steps>.home-how-step:nth-child(3) .home-how-number{background:#d97706}
-.home-how-steps>.home-how-step:nth-child(5) .home-how-number{background:#059669}
-.home-app-banners{
-  margin:22px 0 0;
-  display:block;
-  overflow:hidden;
-}
-.home-app-banners.hidden{display:none}
-.home-app-track{
-  display:flex;
-  gap:12px;
-  overflow-x:auto;
-  scroll-snap-type:x mandatory;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-}
-.home-app-track::-webkit-scrollbar{display:none}
-.home-app-banner{
-  min-width:100%;
-  min-height:158px;
-  border:1px solid rgba(7,92,255,.22);
-  border-radius:24px;
-  padding:20px;
-  background:linear-gradient(135deg,rgba(7,92,255,.1),rgba(20,130,255,.035));
-  display:grid;
-  grid-template-columns:1.05fr .95fr;
-  align-items:center;
-  gap:16px;
-  overflow:hidden;
-  text-align:left;
-  scroll-snap-align:start;
-}
-.home-app-banner-icon{
-  width:56px;
-  height:56px;
-  border-radius:18px;
-  display:grid;
-  place-items:center;
-  background:rgba(7,92,255,.1);
-  color:var(--blue);
-}
-.home-app-banner-icon svg{width:31px;height:31px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.home-app-banner-copy{display:grid;gap:11px}
-.home-app-banner strong{display:block;color:var(--headline);font-size:22px;font-weight:880;line-height:1.04}
-.home-app-banner p{color:var(--muted);font-size:12px;line-height:1.45;margin:0}
-.home-app-banner.primary{background:linear-gradient(135deg,rgba(7,92,255,.13),rgba(20,130,255,.04));border-color:rgba(7,92,255,.34)}
-.home-app-banner.primary .home-app-banner-icon{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
-.home-app-visual{
-  min-height:112px;
-  border-radius:20px;
-  background:linear-gradient(145deg,rgba(7,92,255,.1),rgba(7,92,255,.02));
-  border:1px solid rgba(7,92,255,.13);
-  position:relative;
-  overflow:hidden;
-}
-.home-app-visual.map::before{
-  content:"";
-  position:absolute;
-  inset:12px;
-  border-radius:16px;
-  background:
-    linear-gradient(90deg,rgba(7,92,255,.1) 1px,transparent 1px),
-    linear-gradient(rgba(7,92,255,.1) 1px,transparent 1px);
-  background-size:28px 28px;
-  transform:rotate(-6deg) scale(1.08);
-}
-.home-map-pin{
-  position:absolute;
-  width:13px;
-  height:13px;
-  border-radius:50%;
-  background:var(--blue);
-  border:3px solid #fff;
-  box-shadow:0 8px 18px rgba(7,92,255,.28);
-}
-.home-map-pin:nth-child(1){left:28%;top:32%}
-.home-map-pin:nth-child(2){left:62%;top:44%;background:#059669}
-.home-map-pin:nth-child(3){left:46%;top:68%;background:#d97706}
-.home-app-visual.cards::before,.home-app-visual.cards::after{
-  content:"";
-  position:absolute;
-  width:74%;
-  height:36px;
-  left:18px;
-  border-radius:13px;
-  background:#fff;
-  border:1px solid rgba(7,92,255,.12);
-  box-shadow:0 10px 22px rgba(16,24,40,.08);
-}
-.home-app-visual.cards::before{top:24px}
-.home-app-visual.cards::after{top:68px;left:38px}
-.home-app-visual.track::before{
-  content:"";
-  position:absolute;
-  inset:20px 18px;
-  border-radius:18px;
-  background:radial-gradient(circle at 25% 45%,var(--blue) 0 8px,transparent 9px),radial-gradient(circle at 58% 35%,#059669 0 8px,transparent 9px),radial-gradient(circle at 76% 68%,#d97706 0 8px,transparent 9px),linear-gradient(90deg,transparent 22%,rgba(7,92,255,.35) 22% 59%,transparent 59%);
-}
-.home-app-dots{display:flex;justify-content:center;gap:6px;margin-top:10px}
-.home-app-dot{width:7px;height:7px;border-radius:999px;border:0;background:rgba(7,92,255,.22);padding:0}
-.home-app-dot.active{width:18px;background:var(--blue)}
-@media(max-width:520px){
-  .home-app-banner{min-height:146px;padding:16px;grid-template-columns:1fr .78fr;border-radius:22px}
-  .home-app-banner strong{font-size:18px}
-  .home-app-banner p{font-size:10.5px}
-  .home-app-banner-icon{width:46px;height:46px;border-radius:15px}
-  .home-app-banner-icon svg{width:26px;height:26px}
-  .home-app-visual{min-height:100px}
-}
-.tool-btn.active-nav{color:var(--blue)}
-.tool-btn.active-nav svg{stroke:var(--blue)}
-/* Header: botao contextual Entrar / usuario logueado */
-.header-auth-btn{
-  height:34px;
-  padding:0 14px;
-  border:1px solid transparent;
-  border-radius:999px;
-  background:linear-gradient(135deg,var(--blue),var(--blue2));
-  color:#fff;
-  font-size:12px;
-  font-weight:600;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  white-space:nowrap;
-  transition:border-color .15s;
-}
-.header-auth-btn:hover{border-color:rgba(255,255,255,.35)}
-.header-avatar{
-  width:22px;
-  height:22px;
-  border-radius:50%;
-  background:#fff;
-  color:var(--blue);
-  font-size:9px;
-  font-weight:800;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-shrink:0;
-}
-#headerUserLabel{
-  max-width:80px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-#authSelectModal,#oficinaOptionsModal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:310;
-  background:rgba(0,0,0,.55);
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-#authSelectModal.show,#oficinaOptionsModal.show{display:flex}
-.auth-modal-card{
-  background:var(--menu-bg);
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:26px 20px 22px;
-  width:100%;
-  max-width:360px;
-  text-align:center;
-}
-.auth-modal-card h3{
-  color:var(--headline);
-  font-size:17px;
-  font-weight:800;
-  margin:0 0 6px;
-}
-.auth-modal-card p{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.5;
-  margin:0 0 22px;
-}
-.auth-modal-actions{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.auth-modal-btn{
-  width:100%;
-  height:44px;
-  border-radius:12px;
-  font-size:13px;
-  font-weight:700;
-  cursor:pointer;
-  border:0;
-  transition:opacity .15s;
-}
-.auth-modal-btn:active{opacity:.85}
-.auth-modal-btn.primary{
-  background:linear-gradient(135deg,var(--blue),var(--blue2));
-  color:#fff;
-}
-.auth-modal-btn.secondary{
-  background:rgba(59,130,246,.12);
-  color:var(--blue);
-  border:1px solid rgba(59,130,246,.25);
-}
-.auth-modal-btn.neutral{
-  background:var(--bottom);
-  color:var(--muted);
-  border:1px solid var(--line);
-  font-weight:600;
-  font-size:12px;
-  height:38px;
-}
-.auth-modal-back{
-  background:none;
-  border:0;
-  color:var(--muted);
-  font-size:11px;
-  cursor:pointer;
-  margin-top:6px;
-  padding:4px 0;
-}
 body.theme-light{
   --bg:#fff;
   --header-fade:rgba(255,255,255,0);
@@ -2156,18 +1771,6 @@ body.theme-dark{
     margin:0 auto 24px;
     gap:14px;
   }
-  .home-how{
-    max-width:800px;
-    margin:0 auto 24px;
-    padding:0 18px;
-  }
-  .home-how h3{font-size:20px}
-  .home-how-icon{width:56px;height:56px}
-  .home-how-icon svg{width:26px;height:26px}
-  .home-how-number{width:26px;height:26px;font-size:12px}
-  .home-how-step strong{font-size:13px}
-  .home-how-step p{font-size:12px;max-width:180px}
-  .home-how-line{width:74px;margin-top:28px}
   .outline-btn{height:40px;font-size:12px;border-radius:11px}
   .outline-btn svg{width:18px;height:18px}
   .offers-section{
@@ -2277,78 +1880,12 @@ body.theme-dark{
   .app{padding-left:17px;padding-right:17px}
   .topbar{padding-left:17px;padding-right:17px}
   .bottom-tools{left:8px;right:8px}
-  .home-how-steps{gap:5px}
-  .home-how-line{width:18px}
-  .home-how-step p{font-size:9px}
-  .home-how-icon{width:38px;height:38px}
   .brand{gap:7px;font-size:14px}
   .workshop-cta{height:27px;padding:0 8px;font-size:9px}
   .top-actions{gap:5px}
   h1{font-size:24px}
   .deal{flex-basis:calc((100% - 12px) / 3)}
   .location-row,.image-row{grid-template-columns:1fr}
-}
-.prototype-hidden{display:none!important}
-.bottom-tools{
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  height:72px;
-  gap:5px;
-  padding:6px;
-}
-.tool-btn{
-  flex-direction:column;
-  justify-content:center;
-  gap:4px;
-  height:58px;
-  font-size:8.8px;
-  font-weight:850;
-  line-height:1.1;
-}
-.tool-btn span{
-  text-align:center;
-  white-space:normal;
-}
-.tool-btn svg{
-  width:24px;
-  height:24px;
-}
-#weeklyOffersCard{
-  flex:1 0 100%;
-  min-height:168px;
-  border-radius:22px;
-  position:relative;
-  overflow:hidden;
-}
-#weeklyOffersCard p{
-  position:relative;
-  z-index:2;
-  color:#fff;
-  font-size:22px;
-  line-height:1.05;
-  text-shadow:0 2px 14px rgba(0,0,0,.36);
-}
-#weeklyOffersCard .deal-logo{
-  display:none;
-}
-#weeklyOffersCard .deal-photo{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  opacity:1;
-  z-index:0;
-}
-#weeklyOffersCard::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(90deg,rgba(4,9,22,.76),rgba(4,9,22,.24) 58%,rgba(4,9,22,.08));
-  z-index:1;
-}
-#weeklyOffersCard .arrow{
-  z-index:2;
-  background:rgba(255,255,255,.92);
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2382,10 +1919,7 @@ body.theme-dark{
             <span class="notif-badge" id="topNotifBadge" style="display:none"></span>
             Notificações
           </button>
-          <button class="header-auth-btn" id="topAuthBtn" aria-label="Entrar ou ver conta">
-            <span id="headerAvatar" class="header-avatar" style="display:none"></span>
-            <span id="headerUserLabel">Entrar</span>
-          </button>
+          <button class="workshop-cta" id="registerWorkshopBtn">Oficinas mecânicas</button>
           <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">
             <span class="hamb"><i></i><i></i><i></i></span>
           </button>
@@ -2393,14 +1927,15 @@ body.theme-dark{
       </header>
 
       <div class="home-view">
-      <h1>Seu carro deu problema?<br>Receba propostas de oficinas próximas</h1>
-      <p class="lead">Conte o que aconteceu e compare preço, prazo e disponibilidade.</p>
+      <h1>Descreva seu problema e encontre a solução</h1>
+      <p class="lead">Conte o que você precisa e te ajudamos em um instante.</p>
 
       <section class="assistant-card" aria-label="Assistente Vai Rodar">
         <div class="assist-head">
           <div class="vr"><img class="logo-mark" src="assets/vai_rodar_logo_transparent.png" alt="VR"></div>
           <div>
             <h2>Como podemos te ajudar hoje?</h2>
+            <p>Descreva o problema do seu carro ou a peça que procura.</p>
           </div>
         </div>
         <div class="assistant-search">
@@ -2417,11 +1952,11 @@ body.theme-dark{
             <div class="ai-message-row" id="assistantActionBlock">
               <div class="vr"><img class="logo-mark" src="assets/vai_rodar_logo_transparent.png" alt="VR"></div>
               <div class="ai-response">
-                <strong id="assistantIntentTitle">Vamos preparar sua proposta online.</strong>
+                <strong id="assistantIntentTitle">Vamos preparar sua cotação online.</strong>
                 <div class="category-chips" id="categoryChips"></div>
                 <p id="assistantIntentText">Os preços variam conforme veículo, peças e disponibilidade. Envie uma solicitação para oficinas responderem com preço e horário.</p>
                 <div class="ai-response-actions" id="assistantIntentActions">
-                  <button class="ai-action" id="startOnlineQuote" type="button">Enviar proposta online</button><button class="ai-action secondary" id="continueAssistantChat" type="button">Continuar conversando</button>
+                  <button class="ai-action" id="startOnlineQuote" type="button">Fazer cotação online</button><button class="ai-action secondary" id="continueAssistantChat" type="button">Continuar conversando</button>
                 </div>
               </div>
             </div>
@@ -2436,8 +1971,8 @@ body.theme-dark{
             <div class="flow-label">Oficinas próximas em Butantã</div>
             <div class="workshop-list" id="workshopList"></div>
             <div class="quote-actions">
-              <button class="quote-btn" id="quoteSelectedBtn">Enviar para selecionadas</button>
-              <button class="quote-btn primary" id="quoteAllBtn">Enviar para as 5</button>
+              <button class="quote-btn" id="quoteSelectedBtn">Cotizar selecionadas</button>
+              <button class="quote-btn primary" id="quoteAllBtn">Cotizar com as 5</button>
             </div>
           </div>
           <div class="flow-block proposal-only proposal-category-block">
@@ -2481,109 +2016,40 @@ body.theme-dark{
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 21s7-5.3 7-12a7 7 0 1 0-14 0c0 6.7 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
           Buscar oficinas
         </button>
-        <button class="outline-btn" id="homeOffersBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 12v8H4v-8"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7Z"/><path d="M12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7Z"/></svg>
-          Ofertas e Promoções
-        </button>
-        <button class="outline-btn prototype-hidden" id="homePartsBtn">
+        <button class="outline-btn" id="homePartsBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 6h15l-2 8H8L6 3H3"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
           Buscar peça
         </button>
       </div>
 
-      <section class="home-how" aria-label="Como funciona">
-        <div class="home-how-head">
-          <h3>Como funciona</h3>
-          <button class="home-how-more" id="homeHowMore" type="button">Saiba mais</button>
-        </div>
-        <div class="home-how-steps">
-          <div class="home-how-step">
-            <div class="home-how-icon">
-              <span class="home-how-number">1</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg>
-            </div>
-            <strong>Descreva</strong>
-          </div>
-          <div class="home-how-line"></div>
-          <div class="home-how-step">
-            <div class="home-how-icon">
-              <span class="home-how-number">2</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
-            </div>
-            <strong>Receba propostas</strong>
-          </div>
-          <div class="home-how-line"></div>
-          <div class="home-how-step">
-            <div class="home-how-icon">
-              <span class="home-how-number">3</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-5"/></svg>
-            </div>
-            <strong>Escolha a melhor</strong>
-          </div>
-        </div>
-        <div class="home-app-banners" id="homeAppBanners">
-          <div class="home-app-track" id="homeAppTrack">
-            <button class="home-app-banner primary" id="homeBannerProposal" type="button">
-              <span class="home-app-banner-copy">
-                <span class="home-app-banner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg></span>
-                <span><strong>Envie uma proposta</strong><p>Conte o problema e receba respostas de oficinas próximas.</p></span>
-              </span>
-              <span class="home-app-visual cards" aria-hidden="true"></span>
-            </button>
-            <button class="home-app-banner" id="homeBannerOffices" type="button">
-              <span class="home-app-banner-copy">
-                <span class="home-app-banner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
-                <span><strong>Busque oficinas</strong><p>Veja no mapa, filtre serviços e fale direto com quem atende.</p></span>
-              </span>
-              <span class="home-app-visual map" aria-hidden="true"><i class="home-map-pin"></i><i class="home-map-pin"></i><i class="home-map-pin"></i></span>
-            </button>
-            <button class="home-app-banner" id="homeBannerAccount" type="button">
-              <span class="home-app-banner-copy">
-                <span class="home-app-banner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg></span>
-                <span><strong>Acompanhe tudo</strong><p>Propostas, mensagens e reservas ficam salvas na sua conta.</p></span>
-              </span>
-              <span class="home-app-visual track" aria-hidden="true"></span>
-            </button>
-          </div>
-          <div class="home-app-dots" aria-hidden="true"><button class="home-app-dot active" type="button"></button><button class="home-app-dot" type="button"></button><button class="home-app-dot" type="button"></button></div>
-        </div>
-      </section>
-
-      <div id="homeQuotesPreview">
-        <div class="hqp-head">
-          <span class="hqp-title">Minhas propostas</span>
-          <button class="hqp-link" id="hqpSeeAll">Ver todas →</button>
-        </div>
-        <div id="hqpList"></div>
-      </div>
-
-      <section class="offers-section prototype-hidden" id="offersSection">
+      <section class="offers-section" id="offersSection">
         <div class="section-title">
           <h3>Ofertas e parceiros</h3>
           <a href="#" id="allBenefitsLink">Ver todas ›</a>
         </div>
         <div class="carousel" id="carousel">
-          <article class="deal prototype-hidden" id="promotionsCard" role="button" tabindex="0">
+          <article class="deal" id="promotionsCard" role="button" tabindex="0">
             <img class="deal-logo" src="assets/pirelli-logo.svg" alt="Pirelli">
             <p>Promoções</p>
             <img class="deal-photo" src="https://images.pexels.com/photos/16685597/pexels-photo-16685597.jpeg?auto=compress&cs=tinysrgb&w=300&h=420&fit=crop" alt="">
             <div class="arrow"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13"/><path d="m13 7 5 5-5 5"/></svg></div>
           </article>
-          <article class="deal prototype-hidden" id="eventsCard" role="button" tabindex="0">
+          <article class="deal" id="eventsCard" role="button" tabindex="0">
             <img class="deal-logo" src="assets/goodyear-logo.svg" alt="Goodyear">
             <p>Eventos<br>automotivos</p>
             <img class="deal-photo" src="https://images.pexels.com/photos/20303832/pexels-photo-20303832.jpeg?auto=compress&cs=tinysrgb&w=300&h=420&fit=crop" alt="">
             <div class="arrow"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13"/><path d="m13 7 5 5-5 5"/></svg></div>
           </article>
           <article class="deal" id="weeklyOffersCard" role="button" tabindex="0">
+            <img class="deal-logo" src="assets/yokohama-logo.svg" alt="Yokohama">
             <p>Ofertas da<br>semana</p>
-            <img class="deal-photo" src="https://images.pexels.com/photos/3806288/pexels-photo-3806288.jpeg?auto=compress&cs=tinysrgb&w=900&h=420&fit=crop&sat=-20" alt="">
+            <img class="deal-photo" src="https://images.pexels.com/photos/16685597/pexels-photo-16685597.jpeg?auto=compress&cs=tinysrgb&w=300&h=420&fit=crop&sat=-30" alt="">
             <div class="arrow"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13"/><path d="m13 7 5 5-5 5"/></svg></div>
           </article>
         </div>
       </section>
 
-      <section class="market-section prototype-hidden">
+      <section class="market-section">
         <div class="section-title">
           <h3>Compra e venda de carros</h3>
           <a href="#">Explorar ›</a>
@@ -2622,36 +2088,33 @@ body.theme-dark{
               <div><h2>Oficinas</h2><p>Escolha um serviço e veja opções próximas no mapa.</p></div>
               <button class="back-home" id="backHomeBtn">Voltar</button>
             </div>
-            <input id="officeSearchInput" type="hidden" value="">
-            <div class="office-map-controls">
-              <div class="office-category-select-row">
-                <button class="office-category-toggle" id="officeCategoryToggle" type="button">Categorias</button>
-                <div class="office-category-selected" id="officeCategorySelected">Todas as categorias</div>
-              </div>
-              <div class="office-category-strip" id="officeCategoryQuick"></div>
-              <button class="office-map-chip office-open-subtle" id="officeOpenQuick" type="button">Aberto agora</button>
-              <button class="office-map-chip office-open-subtle" id="officeHomeQuick" type="button">A domicílio</button>
+            <div class="office-ai-search">
+              <input id="officeSearchInput" placeholder="Buscar serviço, bairro ou oficina">
+              <button id="officeSearchBtn" aria-label="Buscar oficinas">
+                <svg viewBox="0 0 24 24"><path d="M21.7 3.4 3.6 10.8c-1.2.5-1.1 2.2.1 2.5l6.4 1.6 1.6 6.3c.3 1.2 2 1.3 2.5.2l7.4-18.1c.3-.8-.4-1.5-1.2-1.2ZM11 14l7.2-7.2-4.7 11.5-1.1-4.4L8 12.8 19.5 8.1 12.3 15.3 11 14Z"/></svg>
+              </button>
             </div>
-            <button id="officeSearchBtn" type="button" hidden aria-label="Buscar oficinas"></button>
             <details class="office-filter-menu" id="officeFilterMenu">
-              <summary style="display:none">Filtros</summary>
+              <summary>Filtros</summary>
               <div class="office-filters">
-                <input class="office-filter" id="officeLocationFilter" type="hidden" value="">
-                <button class="inline-location" id="useOfficeLocation" type="button" hidden aria-label="Usar localização"></button>
-                <select class="office-filter" id="officeOpenFilter" hidden aria-label="Aberto"><option value="all">Todos</option><option value="open">Aberto agora</option></select>
-                <select class="office-filter" id="officeCategoryFilter" aria-label="Categoria"><option value="">Todas as categorias</option></select>
-                <details class="rating-filter" id="ratingFilter" hidden><summary>Avaliação</summary><div class="rating-panel"><label><input type="checkbox" value="4.8"> 4.8 ou mais</label><label><input type="checkbox" value="4.6"> 4.6 ou mais</label><label><input type="checkbox" value="4.4"> 4.4 ou mais</label></div></details>
+                <div class="location-filter-wrap">
+                  <input class="office-filter" id="officeLocationFilter" placeholder="Localização ou endereço">
+                  <button class="inline-location" id="useOfficeLocation" type="button" aria-label="Usar localização"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+                </div>
+                <select class="office-filter" id="officeOpenFilter" aria-label="Aberto"><option value="all">Todos</option><option value="open">Aberto agora</option></select>
+                <select class="office-filter" id="officeCategoryFilter" aria-label="Categoria"><option value="">Serviço</option></select>
+                <details class="rating-filter" id="ratingFilter"><summary>Avaliação</summary><div class="rating-panel"><label><input type="checkbox" value="4.8"> 4.8 ou mais</label><label><input type="checkbox" value="4.6"> 4.6 ou mais</label><label><input type="checkbox" value="4.4"> 4.4 ou mais</label></div></details>
                 <button class="clear-filters" id="clearOfficeFilters" type="button">Limpar</button>
               </div>
             </details>
           </div>
+          <button class="office-map-focus" id="officeMapFocus" type="button">Centralizar</button>
           <div class="office-results-sheet">
             <div class="office-sheet-grip"></div>
             <div class="office-sheet-head"><div><strong>Oficinas encontradas</strong><span>Toque no mapa ou escolha abaixo</span></div></div>
-            <div class="office-list-tools"><button class="office-list-toggle" id="officeListModeBtn" type="button">Lista</button><span class="office-selected-count" id="officeSelectedCount">Selecione oficinas</span></div>
             <div class="office-list" id="officeList"></div>
             <div class="office-sheet-dots" id="officeSheetDots"></div>
-            <div class="office-actions"><button class="load-more-offices" id="loadMoreOffices" hidden>Ver mais</button><button class="send-office-proposals" id="sendOfficeProposals">Enviar proposta</button></div>
+            <div class="office-actions"><button class="load-more-offices" id="loadMoreOffices">Ver mais</button><button class="send-office-proposals" id="sendOfficeProposals">Enviar propostas</button></div>
           </div>
         </div>
       </section>
@@ -2799,7 +2262,7 @@ body.theme-dark{
         </div>
       </section>
 
-      <section class="quick-evaluation-view prototype-hidden" aria-label="Avaliação rápida">
+      <section class="quick-evaluation-view" aria-label="Avaliação rápida">
         <div class="offices-hero">
           <div><h2>Avaliação rápida</h2><p>Informe os dados do carro para receber uma estimativa ilustrativa baseada em exemplos de mercado.</p></div>
           <button class="back-home" id="evaluationBackHome">Voltar ao início</button>
@@ -2841,86 +2304,58 @@ body.theme-dark{
       <section class="how-view" aria-label="Como funciona">
         <div class="how-panel">
           <h2>Como funciona</h2>
+          <p>O Vai Rodar ajuda o motorista de duas formas: você pode enviar uma proposta para várias oficinas ao mesmo tempo ou fazer uma busca específica para escolher uma oficina por filtros, IA e avaliação.</p>
           <div class="how-grid">
             <div class="how-step featured">
-              <strong>1. Enviar proposta pelo chat</strong>
-              <p>O chat é o caminho principal para quem não sabe exatamente o que precisa. Você escreve o sintoma ou a necessidade, por exemplo: "meu carro faz barulho ao virar" ou "preciso revisar os freios". A IA organiza o pedido em uma solicitação clara para as oficinas.</p>
+              <strong>1. Enviar proposta</strong>
+              <p>Você escreve o problema no assistente, por exemplo: "meu carro faz barulho ao frear" ou "preciso trocar os pneus no Butantã". A IA entende o pedido e sugere categorias como Freios e suspensão, Pneus e alinhamento ou Revisão geral.</p>
               <ul>
-                <li>A IA identifica categorias prováveis, como freios, suspensão, pneus, elétrica ou revisão.</li>
-                <li>Antes de enviar, você confirma placa, localização e pode adicionar fotos para melhorar a análise.</li>
-                <li>A solicitação chega para oficinas compatíveis, que respondem com preço, prazo e disponibilidade.</li>
-                <li>Você compara as respostas, conversa com a oficina e escolhe a melhor proposta.</li>
+                <li>Depois você informa placa e localização; fotos são opcionais, mas deixam o pedido mais claro.</li>
+                <li>Com esses dados, a proposta chega mais precisa para várias oficinas próximas.</li>
+                <li>As oficinas respondem com preço, prazo e disponibilidade; você pode conversar, comparar e reservar por aqui mesmo.</li>
               </ul>
-              <div class="how-pill-row"><span class="how-pill">Diagnóstico simples</span><span class="how-pill">Pedido técnico para oficina</span><span class="how-pill">Comparar propostas</span><span class="how-pill">Menos ligações</span></div>
+              <div class="how-pill-row"><span class="how-pill">IA identifica categorias</span><span class="how-pill">Placa e localização</span><span class="how-pill">Fotos opcionais</span><span class="how-pill">Reserva online</span></div>
             </div>
             <div class="how-step featured">
-              <strong>2. Buscar oficinas no mapa</strong>
-              <p>Se você prefere escolher uma oficina diretamente, use Buscar oficinas. A tela mostra um mapa com oficinas próximas e uma lista sincronizada para comparar opções com mais controle.</p>
+              <strong>2. Busca específica</strong>
+              <p>Quando você já sabe o que procura, entra em Buscar oficinas ou Todas as oficinas. Pode usar a busca com IA, escrever bairro, problema ou categoria, e combinar filtros para achar as melhores opções.</p>
               <ul>
-                <li>Filtre por necessidade: freios, pneus, suspensão, revisão, elétrica e outros serviços.</li>
-                <li>Busque por bairro, endereço, categoria ou nome da oficina.</li>
-            <li>Veja detalhes da oficina, serviços oferecidos e localização no mapa.</li>
-                <li>Você pode contactar a oficina, enviar mensagem ou tentar agendar um horário.</li>
+                <li>Filtros disponíveis: localização ou endereço, aberto agora, categoria e melhores avaliações.</li>
+                <li>Você pode falar com uma oficina individualmente ou mandar uma mesma mensagem para várias selecionadas.</li>
+                <li>Sem filtros, mostramos primeiro as oficinas com melhor avaliação.</li>
               </ul>
-              <div class="how-pill-row"><span class="how-pill">Mapa de oficinas</span><span class="how-pill">Filtros por serviço</span><span class="how-pill">Contato direto</span><span class="how-pill">Agendamento</span></div>
+              <div class="how-pill-row"><span class="how-pill">Filtros rápidos</span><span class="how-pill">Busca por IA</span><span class="how-pill">Mensagem individual</span><span class="how-pill">Mensagem para várias</span></div>
             </div>
-            <div class="how-step">
-              <strong>3. Ofertas e promoções</strong>
-              <p>Em Ofertas e Promoções você vê campanhas publicadas por oficinas parceiras, como descontos de revisão, troca de pneus, alinhamento ou serviços sazonais. A ideia é encontrar oportunidades sem precisar procurar oficina por oficina.</p>
-              <div class="how-pill-row"><span class="how-pill">Ofertas da semana</span><span class="how-pill">Promoções de oficinas</span><span class="how-pill">Serviços em destaque</span></div>
-            </div>
-            <div class="how-step">
-              <strong>4. Minha conta</strong>
-              <p>Complete seu perfil com telefone, dados pessoais e placas dos veículos. Quando a placa já está salva, você pode usá-la nas solicitações sem preencher tudo de novo.</p>
-              <ul>
-                <li>Adicione nome, telefone e e-mail.</li>
-                <li>Cadastre uma ou mais placas.</li>
-                <li>Use seus veículos salvos ao pedir proposta ou agendar.</li>
-              </ul>
-            </div>
-            <div class="how-step">
-              <strong>5. Mensagens e propostas</strong>
-              <p>Mensagens concentra conversas com oficinas. Minhas propostas mostra as respostas recebidas para você comparar preço, prazo e disponibilidade antes de decidir.</p>
-              <div class="how-pill-row"><span class="how-pill">Conversas</span><span class="how-pill">Propostas recebidas</span><span class="how-pill">Histórico</span></div>
-            </div>
-            <div class="how-step">
-              <strong>6. Notificações e reservas</strong>
-              <p>Notificações avisa quando houver resposta, proposta, confirmação ou atualização importante. Reservas reúne horários solicitados e confirmados para você acompanhar tudo em um só lugar.</p>
-              <div class="how-pill-row"><span class="how-pill">Avisos importantes</span><span class="how-pill">Reservas pendentes</span><span class="how-pill">Confirmações</span></div>
-            </div>
-            <div class="how-step featured">
-              <strong>Para começar bem</strong>
-              <p>O app funciona melhor quando seu perfil está completo. Assim as oficinas recebem informações suficientes para responder rápido e com menos perguntas.</p>
-              <ul>
-                <li>Crie sua conta ou entre com Google.</li>
-                <li>Informe telefone com DDD.</li>
-                <li>Adicione sua placa principal.</li>
-                <li>Use o chat para descrever o problema ou abra Buscar oficinas para escolher no mapa.</li>
-              </ul>
-            </div>
+            <div class="how-step featured"><strong>3. Compra e venda de carros</strong><p>Em Comprar carros, você pesquisa com IA ou filtros manuais, compara opções e pode enviar uma proposta ou mensagem diretamente ao vendedor. Em Venda assistida, informa a placa, confirma os dados do veículo, adiciona fotos, preço e localização para publicar seu carro no marketplace Vai Rodar.</p><div class="how-pill-row"><span class="how-pill">Comprar carros</span><span class="how-pill">Busca por IA</span><span class="how-pill">Venda assistida</span><span class="how-pill">Fotos obrigatórias</span></div></div>
+            <div class="how-step featured"><strong>4. Serviços de emergência</strong><p>Para casos urgentes, você escolhe o serviço, informa localização e placa, vê o preço estimado e pode comprar imediatamente.</p></div>
+            <div class="how-step featured"><strong>5. Ofertas e promoções</strong><p>A página também mostra promoções de pneus, parceiros e oportunidades especiais para cuidar melhor do seu carro.</p></div>
           </div>
           <div class="how-actions"><button class="back-home" id="howBackHome">Voltar ao início</button></div>
         </div>
       </section>
     </main>
 
-    <div class="bottom-tools" aria-label="Ferramentas rápidas" id="bottomNav">
-      <button class="tool-btn active-nav" id="mobileHomeBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5Z"/><path d="M9 21V12h6v9"/></svg>
-        <span>Início</span>
-      </button>
-      <button class="tool-btn" id="mobileCotacoesBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"/><path d="M9 12h6M9 16h4"/></svg>
-        <span class="notif-badge" id="mobileCotacoesBadge" style="display:none"></span>
-        <span>Propostas</span>
-      </button>
-      <button class="tool-btn" id="mobileMessagesNavBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg>
-        <span>Mensagens</span>
-      </button>
+    <div class="bottom-tools" aria-label="Ferramentas rápidas">
       <button class="tool-btn" id="mobileAccountBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg>
-        <span>Conta</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg>
+        <span>Minha Conta</span>
+      </button>
+      <button class="tool-btn" id="mobileHowBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        <span>Como funciona</span>
+      </button>
+      <button class="tool-btn emergency" id="mobileEmergencyBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v5"/><path d="M12 18h.01"/></svg>
+        <span>Emergência</span>
+      </button>
+      <button class="tool-btn" id="mobilePromoBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7Z"/><path d="M12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7Z"/></svg>
+        <span>Promoções</span>
+      </button>
+      <button class="tool-btn" id="mobileNotificationsBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+        <span class="notif-badge" id="mobileNotifBadge" style="display:none"></span>
+        <span>Notificações</span>
       </button>
     </div>
     <div class="pwa-install-backdrop" id="pwaInstallBackdrop"></div>
@@ -2996,7 +2431,7 @@ body.theme-dark{
         <div class="account-modules" id="accountModules">
           <button class="account-module-btn" type="button" data-account-module="personal"><span><b>Dados pessoais</b><span>Nome, telefone, e-mail e senha.</span></span></button>
           <button class="account-module-btn" type="button" data-account-module="plates"><span><b>Minhas placas</b><span>Adicione, consulte ou remova veículos salvos.</span></span></button>
-          <button class="account-module-btn prototype-hidden" type="button" data-account-module="listings"><span><b>Meus veículos à venda</b><span>Acompanhe anúncios publicados, pausados ou vendidos.</span></span></button>
+          <button class="account-module-btn" type="button" data-account-module="listings"><span><b>Meus veículos à venda</b><span>Acompanhe anúncios publicados, pausados ou vendidos.</span></span></button>
         </div>
         <div class="account-subpanel" id="accountPersonalModule">
           <button class="account-back" type="button" data-account-back>← Minha conta</button>
@@ -3065,9 +2500,9 @@ body.theme-dark{
         </div>
       </div>
     </section>
-    <section class="drawer-panel" id="quotesPanel" aria-label="Minhas propostas">
+    <section class="drawer-panel" id="quotesPanel" aria-label="Minhas cotações">
       <div class="drawer-head">
-        <div><h3>Minhas propostas</h3><p>Acompanhe propostas enviadas e compare oficinas.</p></div>
+        <div><h3>Minhas cotações</h3><p>Acompanhe propostas enviadas e compare oficinas.</p></div>
         <button class="drawer-close" id="quotesClose" aria-label="Fechar">×</button>
       </div>
       <div class="quotes-overview" id="quotesOverview">
@@ -3138,27 +2573,6 @@ body.theme-dark{
     <section class="proposal-popup" id="registerSuccessPopup" aria-label="Cadastro recebido">
       <div class="proposal-popup-icon">✓</div><h3>Cadastro recebido!</h3><p>Nossa equipe vai entrar em contato pelo seu WhatsApp em até 48 horas para confirmar seu acesso antecipado.</p><button id="registerSuccessClose" type="button">Entendido</button>
     </section>
-    <div id="authSelectModal" role="dialog" aria-modal="true">
-      <div class="auth-modal-card">
-        <h3>Como quer continuar?</h3>
-        <p>Escolha o seu perfil para acessar a experiência certa.</p>
-        <div class="auth-modal-actions">
-          <button class="auth-modal-btn primary" id="authSelectMotorist">Sou motorista</button>
-          <button class="auth-modal-btn secondary" id="authSelectWorkshop">Tenho uma oficina</button>
-        </div>
-      </div>
-    </div>
-    <div id="oficinaOptionsModal" role="dialog" aria-modal="true">
-      <div class="auth-modal-card">
-        <h3>Oficina no Vai Rodar</h3>
-        <p>Entre no seu painel ou cadastre sua oficina para começar a receber propostas.</p>
-        <div class="auth-modal-actions">
-          <button class="auth-modal-btn primary" id="oficinaBtnPanel">Entrar no painel</button>
-          <button class="auth-modal-btn secondary" id="oficinaBtnCadastro">Cadastrar minha oficina</button>
-          <button class="auth-modal-back" id="oficinaBtnBack">← Voltar</button>
-        </div>
-      </div>
-    </div>
     <section class="proposal-popup" id="workshopDemoPopup" aria-label="Oficinas mecânicas">
       <button class="popup-close" id="workshopDemoClose" type="button" aria-label="Fechar">×</button>
       <h3>Oficinas mecânicas</h3>
@@ -3204,17 +2618,13 @@ body.theme-dark{
       <button class="close" id="closeMenu" aria-label="Fechar">×</button>
       <h4>Vai Rodar</h4>
       <div class="menu-list">
-        <button id="menuProposalBtn" class="menu-action-primary">Enviar proposta</button>
-        <button id="menuOfficesBtn" class="menu-action-secondary">Buscar oficinas</button>
-        <div class="menu-divider" role="separator"></div>
-        <button id="menuQuotesBtn">Minhas propostas</button>
+        <button id="menuOfficesBtn">Todas as oficinas</button>
+        <button id="menuProposalBtn">Enviar proposta</button>
+        <button id="menuPartsBtn">Peças</button>
+        <button id="menuQuotesBtn">Minhas cotações</button>
         <button id="menuMessagesBtn">Mensagens</button>
         <button id="menuReservationsBtn">Reservas</button>
         <button id="menuAccountBtn">Minha conta</button>
-        <div class="menu-divider" role="separator"></div>
-        <button id="menuHowBtn" class="menu-action-yellow">Saber mais</button>
-        <div class="menu-divider" role="separator"></div>
-        <button id="menuWorkshopBtn" class="menu-action-secondary">Tenho uma oficina</button>
       </div>
       <div class="theme-switch" aria-label="Selecionar cor">
         <button class="active" data-theme="light">Claro</button>
@@ -3258,9 +2668,9 @@ const workshopList=document.getElementById("workshopList");
 const quoteSelectedBtn=document.getElementById("quoteSelectedBtn");
 const quoteAllBtn=document.getElementById("quoteAllBtn");
 const homeOfficesBtn=document.getElementById("homeOfficesBtn");
-const homeOffersBtn=document.getElementById("homeOffersBtn");
 const homePartsBtn=document.getElementById("homePartsBtn");
 const menuOfficesBtn=document.getElementById("menuOfficesBtn");
+const menuPartsBtn=document.getElementById("menuPartsBtn");
 const backHomeBtn=document.getElementById("backHomeBtn");
 const officeSearchInput=document.getElementById("officeSearchInput");
 const officeSearchBtn=document.getElementById("officeSearchBtn");
@@ -3268,10 +2678,6 @@ const officeLocationFilter=document.getElementById("officeLocationFilter");
 const useOfficeLocation=document.getElementById("useOfficeLocation");
 const officeOpenFilter=document.getElementById("officeOpenFilter");
 const officeCategoryFilter=document.getElementById("officeCategoryFilter");
-const officeCategoryToggle=document.getElementById("officeCategoryToggle");
-const officeCategorySelected=document.getElementById("officeCategorySelected");
-const officeCategoryQuick=document.getElementById("officeCategoryQuick");
-const officeHomeQuick=document.getElementById("officeHomeQuick");
 const ratingFilter=document.getElementById("ratingFilter");
 const clearOfficeFilters=document.getElementById("clearOfficeFilters");
 const officeList=document.getElementById("officeList");
@@ -3280,10 +2686,7 @@ const officeMap=document.getElementById("officeMap");
 const officeMapFocus=document.getElementById("officeMapFocus");
 const loadMoreOffices=document.getElementById("loadMoreOffices");
 const sendOfficeProposals=document.getElementById("sendOfficeProposals");
-const officeListModeBtn=document.getElementById("officeListModeBtn");
-const officeSelectedCount=document.getElementById("officeSelectedCount");
 const howLink=document.getElementById("howLink");
-const homeHowMore=document.getElementById("homeHowMore");
 const howBackHome=document.getElementById("howBackHome");
 const promoLink=document.getElementById("promoLink");
 const offersSection=document.getElementById("offersSection");
@@ -3297,9 +2700,8 @@ const benefitsSubtitle=document.getElementById("benefitsSubtitle");
 const benefitsSearch=document.getElementById("benefitsSearch");
 const benefitsCategory=document.getElementById("benefitsCategory");
 const benefitsList=document.getElementById("benefitsList");
-const mobileHomeBtn=document.getElementById("mobileHomeBtn");
-const mobileCotacoesBtn=document.getElementById("mobileCotacoesBtn");
-const mobileMessagesNavBtn=document.getElementById("mobileMessagesNavBtn");
+const mobileHowBtn=document.getElementById("mobileHowBtn");
+const mobilePromoBtn=document.getElementById("mobilePromoBtn");
 const topEmergencyBtn=document.getElementById("topEmergencyBtn");
 const mobileEmergencyBtn=document.getElementById("mobileEmergencyBtn");
 const emergencyPanel=document.getElementById("emergencyPanel");
@@ -3394,7 +2796,6 @@ const proposalPopupTitle=document.getElementById("proposalPopupTitle");
 const proposalPopupText=document.getElementById("proposalPopupText");
 const proposalPopupClose=document.getElementById("proposalPopupClose");
 const menuMessagesBtn=document.getElementById("menuMessagesBtn");
-const menuHowBtn=document.getElementById("menuHowBtn");
 const menuQuotesBtn=document.getElementById("menuQuotesBtn");
 const messagesPanel=document.getElementById("messagesPanel");
 const messagesClose=document.getElementById("messagesClose");
@@ -3527,8 +2928,6 @@ const workshopDemoClose=document.getElementById("workshopDemoClose");
 const workshopDemoLink=document.getElementById("workshopDemoLink");
 const workshopBackofficeLink=document.getElementById("workshopBackofficeLink");
 let visibleOfficeCount=7;
-let officeDetailsFollowSwipe=false;
-let officeListSelectionMode=false;
 let selectedEmergency=null;
 let activeChatIndex=0;
 let activeReservationOffice=null;
@@ -3541,15 +2940,13 @@ let assistantLatestQuestions=[];
 let assistantPendingQuestions=[];
 let assistantLatestCategories=[];
 let assistantLastIntentType="serviceQuote";
-let selectedProposalCategory="";
-let officeProposalContext=null;
 let userVehicles=[];
 let userVehicleListings=[];
 const plateCache={};
 const workshops=[
   {name:"Butantã Pneus Express",rating:"4.8",distance:"1,2 km",meta:"Pneus, alinhamento e balanceamento. Atende hoje.",detail:"Trabalha com troca de pneus, calibragem, rodízio, alinhamento 3D e orçamento por WhatsApp."},
   {name:"Auto Center Vital Brasil",rating:"4.7",distance:"1,8 km",meta:"Especialista em pneus e suspensão.",detail:"Boa opção para ruídos ao girar, troca de pneus, pivôs, terminais e revisão de suspensão."},
-  {name:"Pneus Raposo Service",rating:"4.6",distance:"2,4 km",meta:"Proposta rápida para marcas nacionais.",detail:"Recebe pedido online e retorna com disponibilidade de pneus por medida."},
+  {name:"Pneus Raposo Service",rating:"4.6",distance:"2,4 km",meta:"Cotação rápida para marcas nacionais.",detail:"Recebe pedido online e retorna com disponibilidade de pneus por medida."},
   {name:"Oficina São Remo Car",rating:"4.5",distance:"2,7 km",meta:"Pneus, freios e manutenção preventiva.",detail:"Indicado quando o problema combina pneus com barulho, freio ou direção."},
   {name:"AlinhaCar Butantã",rating:"4.9",distance:"3,1 km",meta:"Alinhamento, balanceamento e geometria.",detail:"Foco em vibração, carro puxando para lado e desgaste irregular dos pneus."}
 ];
@@ -3627,7 +3024,6 @@ async function loadMyServiceRequests(){
       });
     });
     renderQuotes();
-    renderHomeQuotesPreview();
   }catch(error){
     console.warn("[quotes]",error.message);
   }
@@ -3811,9 +3207,7 @@ const allowedCategories=[
   "Pneus e alinhamento",
   "Diagnóstico computadorizado",
   "Vidros e acessórios",
-  "Blindagem",
-  "Lavagem e estética",
-  "Chaveiro automotivo"
+  "Blindagem"
 ];
 const aiCategoryAliases={
   "Revisao geral / Manutencao preventiva":"Revisão geral / Manutenção preventiva",
@@ -3830,83 +3224,10 @@ function normalizeAICategory(name){
 function populateOfficeCategoryFilter(){
   if(!officeCategoryFilter) return;
   const current=officeCategoryFilter.value;
-  officeCategoryFilter.innerHTML=`<option value="">Todas as categorias</option>${allowedCategories.map((category)=>`<option value="${category}">${category}</option>`).join("")}`;
+  officeCategoryFilter.innerHTML=`<option value="">Serviço</option>${allowedCategories.map((category)=>`<option value="${category}">${category}</option>`).join("")}`;
   if(allowedCategories.includes(current)) officeCategoryFilter.value=current;
 }
 populateOfficeCategoryFilter();
-const officeQuickCategories=[
-  {label:"Revisão",value:"Revisão geral / Manutenção preventiva"},
-  {label:"Óleo",value:"Troca de óleo e filtros"},
-  {label:"Freios",value:"Freios e suspensão"},
-  {label:"Pneus",value:"Pneus e alinhamento"},
-  {label:"Elétrica",value:"Elétrica automotiva"},
-  {label:"Ar-condicionado",value:"Ar-condicionado"},
-  {label:"Funilaria",value:"Funilaria e pintura"},
-  {label:"Lavagem",value:"Lavagem e estética"},
-  {label:"Chaveiro",value:"Chaveiro automotivo"}
-];
-const officeServiceCatalog={
-  "Lavagem e estética":[
-    {name:"Lavagem externa",price:"R$ 50",desc:"Carroceria, rodas e acabamento externo"},
-    {name:"Lavagem interna",price:"R$ 120",desc:"Aspiração, painel, vidros e detalhes internos"},
-    {name:"Lavagem completa",price:"R$ 200",desc:"Pacote externo + interno"},
-    {name:"Higienização",price:"R$ 280",desc:"Limpeza profunda de bancos e tecidos"}
-  ],
-  "Freios e suspensão":[
-    {name:"Diagnóstico de freios",price:"R$ 80",desc:"Inspeção de pastilhas, discos e fluido"},
-    {name:"Troca de pastilhas",price:"Sob consulta",desc:"Mão de obra e peça conforme veículo"},
-    {name:"Revisão de suspensão",price:"R$ 120",desc:"Buchas, amortecedores, bandejas e ruídos"}
-  ],
-  "Pneus e alinhamento":[
-    {name:"Alinhamento",price:"R$ 90",desc:"Ajuste de direção e geometria"},
-    {name:"Balanceamento",price:"R$ 80",desc:"Jogo de rodas"},
-    {name:"Rodízio de pneus",price:"R$ 60",desc:"Troca de posição dos pneus"}
-  ],
-  "Troca de óleo e filtros":[
-    {name:"Troca de óleo",price:"Sob consulta",desc:"Óleo conforme especificação do veículo"},
-    {name:"Filtro de óleo",price:"Sob consulta",desc:"Peça e troca"},
-    {name:"Pacote óleo + filtros",price:"Sob consulta",desc:"Óleo, filtro de óleo, ar e cabine"}
-  ],
-  "Elétrica automotiva":[
-    {name:"Teste de bateria",price:"R$ 40",desc:"Carga, alternador e partida"},
-    {name:"Diagnóstico elétrico",price:"R$ 120",desc:"Scanner e inspeção de falhas"},
-    {name:"Troca de bateria",price:"Sob consulta",desc:"Bateria conforme amperagem"}
-  ],
-  "Ar-condicionado":[
-    {name:"Diagnóstico do ar",price:"R$ 90",desc:"Pressão, vazamento e funcionamento"},
-    {name:"Carga de gás",price:"Sob consulta",desc:"Conforme capacidade do sistema"},
-    {name:"Higienização do ar",price:"R$ 120",desc:"Limpeza e odor interno"}
-  ],
-  "Revisão geral / Manutenção preventiva":[
-    {name:"Check-up preventivo",price:"R$ 120",desc:"Itens básicos de segurança"},
-    {name:"Revisão antes de viagem",price:"R$ 180",desc:"Freios, pneus, fluídos e bateria"},
-    {name:"Scanner automotivo",price:"R$ 100",desc:"Leitura de falhas eletrônicas"}
-  ],
-  "Funilaria e pintura":[
-    {name:"Avaliação de funilaria",price:"Grátis",desc:"Orçamento por foto ou presencial"},
-    {name:"Polimento técnico",price:"R$ 250",desc:"Remoção de marcas leves"},
-    {name:"Retoque de pintura",price:"Sob consulta",desc:"Conforme área danificada"}
-  ],
-  "Chaveiro automotivo":[
-    {name:"Cópia de chave",price:"Sob consulta",desc:"Modelo simples ou codificado"},
-    {name:"Chave codificada",price:"Sob consulta",desc:"Programação conforme veículo"},
-    {name:"Abertura técnica",price:"R$ 150",desc:"Atendimento sem danificar o veículo"}
-  ]
-};
-function serviceItemsForCategory(category){
-  return officeServiceCatalog[category]||[
-    {name:category||"Diagnóstico automotivo",price:"Sob consulta",desc:"Oficina confirma preço, prazo e disponibilidade"},
-    {name:"Avaliação técnica",price:"Sob consulta",desc:"Diagnóstico conforme sintomas informados"}
-  ];
-}
-function renderOfficeCategoryQuick(){
-  if(!officeCategoryQuick) return;
-  const active=officeCategoryFilter.value;
-  if(officeCategorySelected) officeCategorySelected.textContent=active||"Todas as categorias";
-  const items=[{label:"Todas",value:""},...allowedCategories.map((category)=>({label:category,value:category}))];
-  officeCategoryQuick.innerHTML=items.map((item)=>`<button class="office-category-chip ${item.value===active?"active":""}" type="button" data-category="${item.value}">${item.label}</button>`).join("");
-}
-renderOfficeCategoryQuick();
 function inferCategories(text){
   const value=text.toLowerCase();
   if(value.includes("óleo")||value.includes("oleo")||value.includes("filtro")) return ["Troca de óleo e filtros","Revisão geral / Manutenção preventiva"];
@@ -3958,9 +3279,9 @@ function resetAssistant(silent=false){
   assistantThread.querySelectorAll(".chat-extra").forEach((node)=>node.remove());
   categoryChips.innerHTML="";
   proposalCategoryChips.innerHTML="";
-  assistantIntentTitle.textContent="Vamos preparar sua proposta online.";
+  assistantIntentTitle.textContent="Vamos preparar sua cotação online.";
   assistantIntentText.textContent="Os preços variam conforme veículo, peças e disponibilidade. Envie uma solicitação para oficinas responderem com preço e horário.";
-  startOnlineQuote.textContent="Enviar proposta online";
+  startOnlineQuote.textContent="Fazer cotação online";
   startOnlineQuote.dataset.intent="serviceQuote";
   registeredVehicles.innerHTML="";
   workshopList.innerHTML="";
@@ -3983,18 +3304,21 @@ function normalizeText(value){
 }
 function getFilteredOffices(){
   const query=normalizeText(officeSearchInput.value.trim());
+  const location=normalizeText(officeLocationFilter.value.trim());
   const category=officeCategoryFilter.value;
   const onlyOpen=officeOpenFilter.value==="open";
-  const onlyHome=officeHomeQuick?.classList.contains("active");
+  const selectedRatings=[...ratingFilter.querySelectorAll("input:checked")].map((input)=>Number(input.value));
+  const minRating=selectedRatings.length?Math.max(...selectedRatings):0;
   return offices
     .filter((office)=>{
       const haystack=normalizeText(`${office.name} ${office.address} ${office.category}`);
       return (!query||haystack.includes(query)||query.includes("pneu")&&office.category==="Pneus e alinhamento"||query.includes("freio")&&office.category==="Freios e suspensão")
-        &&(!category||office.category===category||(Array.isArray(office.services)&&office.services.includes(category))||office.category==="Serviços automotivos")
+        &&(!location||normalizeText(office.address).includes(location))
+        &&(!category||office.category===category||(Array.isArray(office.services)&&office.services.includes(category)))
         &&(!onlyOpen||office.open)
-        &&(!onlyHome||office.homeService||office.atHome||office.mobileService||normalizeText(office.serviceMode||"").includes("domicilio"));
+        &&office.rating>=minRating;
     })
-    .sort((a,b)=>String(a.name).localeCompare(String(b.name),"pt-BR"));
+    .sort((a,b)=>b.rating-a.rating);
 }
 async function loadPublicOffices(){
   if(!sb) return;
@@ -4013,7 +3337,6 @@ async function loadPublicOffices(){
       img:row.photo_url||"assets/vai_rodar_logo_transparent.png",
       services:Array.isArray(row.categories)?row.categories:[],
       businessType:row.business_type||"workshop",
-      homeService:Boolean(row.home_service||row.at_home||row.mobile_service||normalizeText(row.service_mode||"").includes("domicilio")),
       latitude:Number.isFinite(Number(row.latitude))?Number(row.latitude):null,
       longitude:Number.isFinite(Number(row.longitude))?Number(row.longitude):null
     })));
@@ -4046,28 +3369,13 @@ function ensureOfficeMap(){
   setTimeout(()=>officeMapInstance.invalidateSize(),80);
   return officeMapInstance;
 }
-function showOfficeDetail(index){
-  officeList.querySelectorAll(".office-detail.show").forEach((item)=>item.classList.remove("show"));
-  officeList.querySelectorAll(".more-info-btn").forEach((item)=>item.textContent="Detalhes");
-  const detail=document.getElementById(`officeDetail${index}`);
-  if(detail) detail.classList.add("show");
-  const button=officeList.querySelector(`.more-info-btn[data-index="${index}"]`);
-  if(button) button.textContent="Fechar";
-  document.querySelector(".office-results-sheet")?.classList.add("expanded");
-}
-function hideOfficeDetails(){
-  officeDetailsFollowSwipe=false;
-  officeList.querySelectorAll(".office-detail.show").forEach((item)=>item.classList.remove("show"));
-  officeList.querySelectorAll(".more-info-btn").forEach((item)=>item.textContent="Detalhes");
-  document.querySelector(".office-results-sheet")?.classList.remove("expanded");
-}
 function focusOfficeCard(index){
   const card=officeList.querySelector(`[data-office-index="${index}"]`);
   if(!card) return;
   officeList.querySelectorAll(".office-card").forEach((item)=>item.classList.remove("map-active"));
   card.classList.add("map-active");
-  officeDetailsFollowSwipe=true;
-  showOfficeDetail(index);
+  const detail=document.getElementById(`officeDetail${index}`);
+  if(detail) detail.classList.add("show");
   card.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});
   renderOfficeSheetDots(index);
 }
@@ -4115,29 +3423,7 @@ function renderOfficeSheetDots(activeIndex){
   if(cards.length<2){ officeSheetDots.innerHTML=""; return; }
   officeSheetDots.innerHTML=cards.map((card,position)=>`<span class="${card.dataset.officeIndex===String(activeIndex)?"active":""}"></span>`).join("");
 }
-function selectedOfficeIndexes(){
-  return [...officeList.querySelectorAll(".office-select-check input:checked")]
-    .map((input)=>Number(input.value))
-    .filter((index)=>Number.isFinite(index));
-}
-function updateOfficeSelectionCount(){
-  if(!officeSelectedCount) return;
-  const count=selectedOfficeIndexes().length;
-  officeSelectedCount.textContent=officeListSelectionMode
-    ? count?`${count} selecionada${count>1?"s":""}`:"Selecione oficinas"
-    :"Toque em Lista para selecionar";
-  if(sendOfficeProposals) sendOfficeProposals.disabled=officeListSelectionMode&&!count;
-}
-function setOfficeSelectionMode(active){
-  officeListSelectionMode=Boolean(active);
-  const sheet=document.querySelector(".office-results-sheet");
-  sheet?.classList.toggle("selection-mode",officeListSelectionMode);
-  if(officeListModeBtn) officeListModeBtn.textContent=officeListSelectionMode?"Fechar lista":"Lista";
-  if(officeListSelectionMode) sheet?.classList.add("expanded");
-  updateOfficeSelectionCount();
-}
 function handleOfficeListScroll(){
-  if(officeListSelectionMode) return;
   clearTimeout(officeListScrollTimer);
   officeListScrollTimer=setTimeout(()=>{
     const cards=[...officeList.querySelectorAll(".office-card")];
@@ -4155,7 +3441,6 @@ function handleOfficeListScroll(){
     closest.classList.add("map-active");
     focusOfficeMarker(closest.dataset.officeIndex);
     renderOfficeSheetDots(closest.dataset.officeIndex);
-    if(officeDetailsFollowSwipe) showOfficeDetail(closest.dataset.officeIndex);
   },110);
 }
 if(officeList&&!officeList.dataset.swipeBound){
@@ -4206,53 +3491,45 @@ function getOfficeServices(office){
   return [office.category,...extras];
 }
 function renderOffices(reset=false){
-  if(reset){
-    visibleOfficeCount=7;
-    officeDetailsFollowSwipe=false;
-  }
+  if(reset) visibleOfficeCount=7;
   const filtered=getFilteredOffices();
   if(!filtered.length){
     updateOfficeMap(filtered);
     officeList.innerHTML='<div class="empty">Não foram encontradas oficinas para estes filtros.</div>';
     loadMoreOffices.style.display="none";
     sendOfficeProposals.style.display="none";
-    setOfficeSelectionMode(false);
     return;
   }
   sendOfficeProposals.style.display="block";
   updateOfficeMap(filtered);
-  const visible=officeListSelectionMode?filtered:filtered.slice(0,visibleOfficeCount);
+  const visible=filtered.slice(0,visibleOfficeCount);
   officeList.innerHTML=visible.map((office)=>{
     const index=offices.indexOf(office);
     const services=getOfficeServices(office);
-    const filteredService=officeCategoryFilter.value||services[0]||office.category;
-    const serviceItems=serviceItemsForCategory(filteredService);
     return `
     <article class="office-card" data-office-index="${index}">
       <img class="office-photo" src="${office.img}" alt="">
       <div>
-        <h3>${office.name}<span class="open-dot" title="${office.open?"Aberto":"Fechado"}"></span><span class="office-score"><span>★</span> ${office.rating.toFixed(1)}</span></h3>
+        <h3>${office.name}<span class="open-dot" title="${office.open?"Aberto":"Fechado"}"></span></h3>
         <div class="office-address">${office.address}</div>
         <div class="office-links">
-          <button class="message-btn" type="button">Mensagem</button>
+          <button class="message-btn" type="button">Enviar mensagem</button>
           <button class="call-btn" type="button">Chamar</button>
-          <button class="more-info-btn" type="button" data-index="${index}">Detalhes</button>
+          <button class="more-info-btn" type="button" data-index="${index}">Ver mais informações</button>
         </div>
       </div>
-      <label class="office-select-check" title="Selecionar oficina"><input type="checkbox" value="${index}" aria-label="Selecionar ${office.name}"><span></span></label>
+      <div class="office-score"><span>★</span> ${office.rating.toFixed(1)}</div>
       <section class="office-detail" id="officeDetail${index}">
-        <details class="office-accordion"><summary>Horários</summary><div class="office-accordion-body"><div class="office-schedule"><span class="schedule-row"><b>Segunda</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Terça</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Quarta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Quinta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Sexta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Sábado</b><em>09:00 - 13:00</em></span><span class="schedule-row closed"><b>Domingo</b><em>Fechado</em></span></div></div></details>
-        <details class="office-accordion" open><summary>Serviços</summary><div class="office-accordion-body"><div class="office-service-list">${serviceItems.map((service)=>`<div class="office-service-row"><div><strong>${service.name}</strong><small>${service.desc}</small></div><span class="office-service-price">${service.price}</span><button class="service-reserve-btn" type="button" data-index="${index}" data-service="${service.name}">Reservar</button></div>`).join("")}</div></div></details>
-        <details class="office-accordion"><summary>Contato</summary><div class="office-accordion-body"><div class="office-detail-actions"><button class="collapse-detail" type="button" data-index="${index}">Fechar</button><button class="reserve-detail" type="button" data-index="${index}">Agendar</button></div></div></details>
+        <div><h4>Horários de atendimento</h4><div class="office-schedule"><span class="schedule-row"><b>Segunda</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Terça</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Quarta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Quinta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Sexta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Sábado</b><em>09:00 - 13:00</em></span><span class="schedule-row closed"><b>Domingo</b><em>Fechado</em></span></div></div>
+        <div><h4>Serviços oferecidos</h4><div class="office-services">${services.map((service)=>`<span>${service}</span>`).join("")}</div></div>
+        <div class="office-detail-actions"><button class="collapse-detail" type="button" data-index="${index}">Contrair informações</button><button class="reserve-detail" type="button" data-index="${index}">Agendar reserva</button></div>
       </section>
     </article>
   `}).join("")||'<div class="form-error show">Não foram encontradas oficinas para estes filtros.</div>';
-  loadMoreOffices.style.display=!officeListSelectionMode&&visibleOfficeCount<filtered.length?"block":"none";
-  setOfficeSelectionMode(officeListSelectionMode);
+  loadMoreOffices.style.display=visibleOfficeCount<filtered.length?"block":"none";
   renderOfficeSheetDots(offices.indexOf(visible[0]));
-  officeList.querySelectorAll(".office-select-check input").forEach((input)=>input.addEventListener("change",updateOfficeSelectionCount));
   officeList.querySelectorAll(".message-btn").forEach((button)=>button.addEventListener("click",()=>{
-    hideOfficeDetails();
+    officeList.querySelectorAll(".office-detail.show").forEach((detail)=>detail.classList.remove("show"));
     const card=button.closest(".office-card");
     const office=offices[Number(card?.dataset.officeIndex)];
     openConversationWithWorkshop(office?.id,office?.name);
@@ -4260,12 +3537,15 @@ function renderOffices(reset=false){
   officeList.querySelectorAll(".more-info-btn").forEach((button)=>button.addEventListener("click",()=>{
     const detail=document.getElementById(`officeDetail${button.dataset.index}`);
     const isOpen=detail?.classList.contains("show");
+    officeList.querySelectorAll(".office-detail.show").forEach((item)=>item.classList.remove("show"));
+    officeList.querySelectorAll(".more-info-btn").forEach((item)=>item.textContent="Ver mais informações");
     if(!isOpen){
-      officeDetailsFollowSwipe=true;
       focusOfficeCard(button.dataset.index);
       focusOfficeMarker(button.dataset.index);
+      button.textContent="Contrair informações";
+      document.querySelector(".office-results-sheet")?.classList.add("expanded");
     }else{
-      hideOfficeDetails();
+      document.querySelector(".office-results-sheet")?.classList.remove("expanded");
     }
   }));
   officeList.querySelectorAll(".office-card").forEach((card)=>card.addEventListener("click",(event)=>{
@@ -4273,17 +3553,15 @@ function renderOffices(reset=false){
     focusOfficeMarker(card.dataset.officeIndex);
   }));
   officeList.querySelectorAll(".collapse-detail").forEach((button)=>button.addEventListener("click",()=>{
-    hideOfficeDetails();
+    document.getElementById(`officeDetail${button.dataset.index}`)?.classList.remove("show");
+    const moreInfoButton=officeList.querySelector(`.more-info-btn[data-index="${button.dataset.index}"]`);
+    if(moreInfoButton) moreInfoButton.textContent="Ver mais informações";
+    document.querySelector(".office-results-sheet")?.classList.remove("expanded");
   }));
   officeList.querySelectorAll(".call-btn").forEach((button)=>button.addEventListener("click",()=>window.location.href="tel:+5511999999999"));
   officeList.querySelectorAll(".reserve-detail").forEach((button)=>button.addEventListener("click",()=>{
-    hideOfficeDetails();
+    officeList.querySelectorAll(".office-detail.show").forEach((detail)=>detail.classList.remove("show"));
     openReservationPopup(Number(button.dataset.index));
-  }));
-  officeList.querySelectorAll(".service-reserve-btn").forEach((button)=>button.addEventListener("click",()=>{
-    const serviceName=button.dataset.service||"";
-    hideOfficeDetails();
-    openReservationPopup(Number(button.dataset.index),null,serviceName);
   }));
 }
 async function openOfficesView(){
@@ -4294,7 +3572,6 @@ async function openOfficesView(){
   screenShell.classList.remove("how-open","parts-open","proposal-open");
   screenShell.classList.add("offices-open");
   visibleOfficeCount=7;
-  setOfficeSelectionMode(false);
   await loadPublicOffices();
   renderOffices(true);
   appScroller.scrollTo({top:0,behavior:"smooth"});
@@ -4303,7 +3580,6 @@ async function openOfficesView(){
 function closeOfficesView(){
   screenShell.classList.remove("offices-open","parts-open");
   screenShell.classList.remove("how-open");
-  setOfficeSelectionMode(false);
   appScroller.scrollTo({top:0,behavior:"smooth"});
 }
 function resetParts(){
@@ -4415,7 +3691,7 @@ function proposalOriginalText(){
 function proposalDescriptionPlaceholder(){
   const context=normalizeText(assistantLatestContext||proposalOriginalText());
   if(assistantLastIntentType==="partQuote"&&(context.includes("pneu")||context.includes("neumatic")||context.includes("llanta"))){
-    return "Ex.: Preciso de pneus. Medida 205/55 R16. Enviar marca, preço unitário, disponibilidade e prazo.";
+    return "Ex.: Preciso cotar pneus. Medida 205/55 R16. Enviar marca, preço unitário, disponibilidade e prazo.";
   }
   if(assistantLastIntentType==="partQuote"){
     return "Descreva a peça desejada, marca/modelo se souber, lado dianteiro/traseiro quando aplicar, e qualquer detalhe importante.";
@@ -4466,19 +3742,14 @@ function escapeHTML(value){
 }
 function openProposalConfirmation(){
   clearTimeout(proposalConfirmationTimer);
-  const isOfficeListProposal=Boolean(officeProposalContext);
-  const original=isOfficeListProposal?"Proposta para oficinas selecionadas":proposalOriginalText();
+  const original=proposalOriginalText();
   const isPart=assistantLastIntentType==="partQuote";
   const title=isPart?"Revisar solicitação de peça":"Revisar solicitação para oficinas";
-  const technicalText=isOfficeListProposal?"":isPart?proposalDescriptionPlaceholder():technicalSummaryForRequest();
+  const technicalText=isPart?proposalDescriptionPlaceholder():technicalSummaryForRequest();
   const plateValue=isPart?partsPlate.value.trim().toUpperCase():plateInput.value.trim().toUpperCase();
   const addressValue=isPart?"":addressInput.value.trim();
-  const popupCategories=isPart?[]:officeProposalContext?.category?[officeProposalContext.category]:(assistantLatestCategories.length?assistantLatestCategories:inferCategories(assistantLatestContext||original).filter((name)=>allowedCategories.includes(name)));
-  selectedProposalCategory=popupCategories[0]||"";
+  const popupCategories=isPart?[]:(assistantLatestCategories.length?assistantLatestCategories:inferCategories(assistantLatestContext||original).filter((name)=>allowedCategories.includes(name)));
   const categoriesHTML=popupCategories.length?`<div class="proposal-review-item"><small>Categorias identificadas</small><div class="category-chips">${popupCategories.map((name)=>`<button class="ai-chip" type="button" disabled>${categoryIcons[name]||categoryIcons.default}<span>${name}</span></button>`).join("")}</div></div>`:"";
-  const officesHTML=isOfficeListProposal?`<div class="proposal-review-item"><small>Oficinas selecionadas</small><p>${escapeHTML(officeProposalContext.names.join(", "))}</p></div>`:"";
-  const descriptionLabel=isOfficeListProposal?"O que você precisa?":isPart?"Descrição para enviar":"Resumo técnico para oficinas";
-  const descriptionPlaceholder=isOfficeListProposal?"Escreva o que você precisa. Ex.: preciso trocar pastilhas de freio, ouvir um barulho ao frear, revisar ar-condicionado ou fazer lavagem completa.":proposalDescriptionPlaceholder();
   selectedProposalUrgency=["high","normal","low"].includes(assistantLatestUrgency)?assistantLatestUrgency:"normal";
   overlay.classList.add("open");
   proposalPopup.innerHTML=`
@@ -4488,9 +3759,8 @@ function openProposalConfirmation(){
     <div class="proposal-review">
       <div class="proposal-review-item"><small>Pedido inicial</small><p>${escapeHTML(original)}</p></div>
       ${categoriesHTML}
-      ${officesHTML}
       <label class="proposal-review-item"><small>Placa do veículo</small><input id="proposalReviewPlate" value="${escapeHTML(plateValue)}" placeholder="ABC1D23" maxlength="7"><div id="proposalReviewRegisteredVehicles">${popupRegisteredVehiclesHTML()}</div><div class="vehicle-summary menu-vehicle" id="proposalReviewVehicle"></div></label>
-      <label class="proposal-review-item"><small>${descriptionLabel}</small><textarea id="proposalReviewDescription" placeholder="${escapeHTML(descriptionPlaceholder)}">${escapeHTML(isPart?original:technicalText)}</textarea></label>
+      <label class="proposal-review-item"><small>${isPart?"Descrição para enviar":"Resumo técnico para oficinas"}</small><textarea id="proposalReviewDescription" placeholder="${escapeHTML(proposalDescriptionPlaceholder())}">${escapeHTML(isPart?original:technicalText)}</textarea></label>
       <div class="proposal-review-item"><small>Urgência</small><div class="urgency-picker" id="proposalReviewUrgency">
         <button class="urgency-btn${selectedProposalUrgency==="high"?" active":""}" data-urgency="high" type="button">Hoje</button>
         <button class="urgency-btn${selectedProposalUrgency==="normal"?" active":""}" data-urgency="normal" type="button">Esta semana</button>
@@ -4499,7 +3769,7 @@ function openProposalConfirmation(){
       <label class="proposal-review-item"><small>Endereço ou localização</small><div class="location-input-wrap"><input id="proposalReviewAddress" value="${escapeHTML(addressValue)}" placeholder="Rua, número, bairro"><button class="inline-location" id="proposalReviewLocation" type="button" aria-label="Usar localização"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button></div></label>
       <label class="image-upload">Adicionar fotos opcional<input id="proposalReviewPhotos" type="file" accept="image/*" multiple hidden></label>
       <div class="proposal-review-error" id="proposalReviewError">Complete placa, descrição e localização antes de enviar.</div>
-      <div class="proposal-review-actions"><button id="proposalReviewSend" type="button">${isPart?"Enviar solicitação de peça":"Enviar proposta para oficinas"}</button></div>
+      <div class="proposal-review-actions"><button id="proposalReviewSend" type="button">${isPart?"Enviar solicitação de peça":"Enviar cotação para oficinas"}</button></div>
     </div>`;
   proposalPopup.classList.add("open");
   document.getElementById("proposalPopupCancel").addEventListener("click",closeProposalPopup);
@@ -4522,7 +3792,7 @@ function openProposalConfirmation(){
   if(plateValue) updateProposalPopupVehicle(plateValue);
 }
 async function sendReviewedProposal(){
-  if(!requireUserAccount("Crie sua conta para que as oficinas possam responder sua proposta.")) return;
+  if(!requireUserAccount("Crie sua conta para que as oficinas possam responder sua cotação.")) return;
   const description=document.getElementById("proposalReviewDescription");
   const address=document.getElementById("proposalReviewAddress");
   const plate=document.getElementById("proposalReviewPlate");
@@ -4538,7 +3808,7 @@ async function sendReviewedProposal(){
   const finalDescription=(description.value.trim()||original||proposalDescriptionPlaceholder()).trim();
   let requestId=null;
   try{
-    requestId=await createServiceRequestRecord({isPart,vehicle,description:finalDescription,address:address.value.trim(),original,locationData:getLocationPayload(address),urgency:selectedProposalUrgency,selectedBusinessIds:officeProposalContext?.officeIds||[]});
+    requestId=await createServiceRequestRecord({isPart,vehicle,description:finalDescription,address:address.value.trim(),original,locationData:getLocationPayload(address),urgency:selectedProposalUrgency});
     const photoInput=document.getElementById("proposalReviewPhotos");
     if(requestId&&photoInput?.files?.length) await uploadRequestPhotos(requestId,photoInput.files);
   }catch(err){
@@ -4561,7 +3831,7 @@ async function sendReviewedProposal(){
       <p>${requestId?"Pedido registrado no Vai Rodar. ":""}${isPart?"Sua solicitação foi enviada para fornecedores de peças.":"Sua solicitação foi enviada para oficinas próximas."} Você receberá respostas com preço e disponibilidade.</p>
       <button id="proposalPopupClose" type="button">Entendido</button>`;
     document.getElementById("proposalPopupClose").addEventListener("click",closeProposalPopup);
-    if(requestId){sentQuotes.unshift({id:requestId,title:finalDescription,summary:quoteBriefSummary(finalDescription),category:selectedProposalCategory,vehicle:vehicleDescription(vehicle),location:address.value.trim(),status:"Aguardando",className:"waiting",proposals:[]});renderQuotes();renderHomeQuotesPreview();}
+    if(requestId){sentQuotes.unshift({id:requestId,title:finalDescription,vehicle:vehicleDescription(vehicle),location:address.value.trim(),status:"Aguardando",className:"waiting"});renderQuotes();}
     renderNotifications();
   },1200);
 }
@@ -4599,8 +3869,6 @@ function closeProposalPopup(){
   clearTimeout(proposalConfirmationTimer);
   proposalPopup.classList.remove("open");
   overlay.classList.remove("open");
-  officeProposalContext=null;
-  selectedProposalCategory="";
   resetAssistant(true);
   closeMenuProposalView();
 }
@@ -4962,7 +4230,7 @@ async function removeUserVehicleByPlate(plate){
 function renderAccountPlates(){
   if(!accountPlatesList) return;
   if(!userVehicles.length){
-    accountPlatesList.innerHTML='<div class="account-empty">Ainda não há placas cadastradas. Adicione sua placa para usar em propostas.</div>';
+    accountPlatesList.innerHTML='<div class="account-empty">Ainda não há placas cadastradas. Adicione sua placa para usar em cotações, peças e avaliações.</div>';
     return;
   }
   accountPlatesList.innerHTML=userVehicles.map((vehicle)=>`
@@ -5107,44 +4375,10 @@ async function saveUserProfileMeta(extraMeta={},successMessage="Dados atualizado
   setLoggedIn(data?.user||{...currentUser,user_metadata:nextMeta});
   setAccountStatus(successMessage,true);
 }
-function updateHeaderAuth(user){
-  const btn=document.getElementById("topAuthBtn");
-  const avatar=document.getElementById("headerAvatar");
-  const label=document.getElementById("headerUserLabel");
-  if(!btn||!avatar||!label) return;
-  if(user){
-    const meta=user.user_metadata||{};
-    const name=(meta.full_name||meta.name||user.email||"").split(" ")[0];
-    avatar.textContent=(name.charAt(0)||"V").toUpperCase();
-    avatar.style.display="flex";
-    label.textContent=name||"Conta";
-    btn.onclick=()=>openAccount();
-  }else{
-    avatar.style.display="none";
-    label.textContent="Entrar";
-    btn.onclick=()=>openAuthSelectModal();
-  }
-}
-function openAuthSelectModal(){
-  document.getElementById("authSelectModal")?.classList.add("show");
-}
-function closeAuthSelectModal(){
-  document.getElementById("authSelectModal")?.classList.remove("show");
-}
-function openOficinaOptionsModal(showBack){
-  const back=document.getElementById("oficinaBtnBack");
-  if(back) back.style.display=showBack?"block":"none";
-  document.getElementById("oficinaOptionsModal")?.classList.add("show");
-}
-function closeOficinaOptionsModal(){
-  document.getElementById("oficinaOptionsModal")?.classList.remove("show");
-}
 function setLoggedIn(user){
   currentUser=user||null;
   accountLoggedOut.style.display=currentUser?"none":"block";
   accountLoggedIn.style.display=currentUser?"block":"none";
-  updateHeaderAuth(user);
-  document.getElementById("homeAppBanners")?.classList.toggle("hidden",!!currentUser);
   if(currentUser){
     const meta=currentUser.user_metadata||{};
     const name=meta.full_name||meta.name||currentUser.email?.split("@")[0]||"Motorista";
@@ -5176,11 +4410,9 @@ function setLoggedIn(user){
     }
     refreshUnreadNotifCount();
     subscribeNotificationsChannel();
-    loadMyServiceRequests();
     return;
   }
   topAccountLabel.textContent="Criar conta";
-  document.getElementById("homeQuotesPreview")?.classList.remove("show");
   userVehicles=[];
   userVehicleListings=[];
   chats=[];
@@ -5196,7 +4428,6 @@ function setLoggedIn(user){
 async function initAuth(){
   if(!sb){
     console.warn("[Supabase] SDK nao carregado.");
-    updateHeaderAuth(null);
     return;
   }
   const {data}=await sb.auth.getSession();
@@ -5374,7 +4605,7 @@ async function notifyMessageEvent(conversationId,text){
   }
 }
 function renderQuotes(){
-  if(!sentQuotes.length){quotesList.innerHTML='<div class="account-empty">Ainda não há propostas reais.</div>';return;}
+  if(!sentQuotes.length){quotesList.innerHTML='<div class="account-empty">Ainda não há cotações reais.</div>';return;}
   quotesList.innerHTML=sentQuotes.map((quote,index)=>{
     const count=quote.proposals.length;
     const hasAccepted=quote.proposals.some((p)=>p.status==="accepted");
@@ -5390,39 +4621,8 @@ function renderQuotes(){
   `;}).join("");
   quotesList.querySelectorAll(".quote-item").forEach((button)=>button.addEventListener("click",()=>openQuoteDetail(Number(button.dataset.index))));
 }
-function renderHomeQuotesPreview(){
-  const preview=document.getElementById("homeQuotesPreview");
-  const list=document.getElementById("hqpList");
-  if(!preview||!list) return;
-  if(!currentUser||!sentQuotes.length){preview.classList.remove("show");return;}
-  const recent=sentQuotes.slice(0,3);
-  preview.classList.add("show");
-  list.innerHTML=recent.map((q,i)=>{
-    const proposals=q.proposals||[];
-    const count=proposals.length;
-    const hasAccepted=proposals.some((p)=>p.status==="accepted");
-    const badgeClass=hasAccepted?"is-green":count?"is-blue":"is-yellow";
-    const badgeLabel=count?`${count} proposta${count>1?"s":""}`:"Aguardando";
-    const vehicle=q.vehicle||"Veículo não informado";
-    return `<div class="hqp-card" data-index="${i}" role="button" tabindex="0">
-      <div class="hqp-top">
-        <span class="hqp-summary">${q.summary||q.title||"Proposta"}</span>
-        <span class="hqp-badge ${badgeClass}">${badgeLabel}</span>
-      </div>
-      <div class="hqp-meta">
-        <span class="hqp-vehicle">🚗 ${vehicle}</span>
-        ${q.category?`<span class="hqp-category">${q.category}</span>`:""}
-      </div>
-    </div>`;
-  }).join("");
-  list.querySelectorAll(".hqp-card").forEach((card)=>{
-    const open=()=>{openQuotes();openQuoteDetail(Number(card.dataset.index));};
-    card.addEventListener("click",open);
-    card.addEventListener("keydown",(event)=>{if(event.key==="Enter"){event.preventDefault();open();}});
-  });
-}
 function openQuotes(){
-  if(!requireUserAccount("Entre para acompanhar suas propostas.")) return;
+  if(!requireUserAccount("Entre para acompanhar suas cotações.")) return;
   closeMenu();
   closeEmergency();
   closeAccount();
@@ -5542,16 +4742,14 @@ function closeReservations(){
 function reservationTimeOptions(){
   return ["08:00","09:00","10:00","10:30","11:00","14:00","15:00","16:00","17:00"].map((time)=>`<option>${time}</option>`).join("");
 }
-function openReservationPopup(index,reservation=null,selectedService=""){
+function openReservationPopup(index,reservation=null){
   activeReservationOffice=offices[index];
   const services=getOfficeServices(activeReservationOffice);
   const filteredService=officeCategoryFilter.value;
-  const displayServices=[...new Set([...serviceItemsForCategory(filteredService||services[0]||activeReservationOffice?.category).map((item)=>item.name),...services])];
   reservationOfficeName.textContent=activeReservationOffice.name;
-  reservationService.innerHTML=displayServices.map((service)=>`<option>${service}</option>`).join("");
-  if(selectedService&&displayServices.includes(selectedService)) reservationService.value=selectedService;
-  else if(filteredService&&displayServices.includes(filteredService)) reservationService.value=filteredService;
-  if(reservation&&displayServices.includes(reservation.service)) reservationService.value=reservation.service;
+  reservationService.innerHTML=services.map((service)=>`<option>${service}</option>`).join("");
+  if(filteredService&&services.includes(filteredService)) reservationService.value=filteredService;
+  if(reservation&&services.includes(reservation.service)) reservationService.value=reservation.service;
   reservationVehicle.innerHTML=userVehicles.length
     ?userVehicles.map((vehicle,vehicleIndex)=>`<option value="${vehicleIndex}">${vehicle.plate} · ${vehicle.brand} ${vehicle.model}</option>`).join("")
     :'<option value="">Nenhum veículo cadastrado</option>';
@@ -5603,10 +4801,9 @@ async function ensureVehicleRecord(vehicle){
 }
 function proposalCategory(isPart,text){
   if(isPart) return "Peças";
-  if(selectedProposalCategory) return selectedProposalCategory;
   return inferCategories(text||"").find((name)=>allowedCategories.includes(name))||"Diagnóstico";
 }
-async function createServiceRequestRecord({isPart,vehicle,description,address,original,locationData={},urgency="normal",selectedBusinessIds=[]}){
+async function createServiceRequestRecord({isPart,vehicle,description,address,original,locationData={},urgency="normal"}){
   if(!sb||!currentUser) return null;
   const vehicleId=await ensureVehicleRecord(vehicle);
   const text=description||original||"Solicitação criada pelo assistente Vai Rodar.";
@@ -5615,7 +4812,7 @@ async function createServiceRequestRecord({isPart,vehicle,description,address,or
     const {data,error}=await sb.from("service_requests").insert({
       user_id:currentUser.id,
       vehicle_id:vehicleId,
-      title:isPart?"Proposta de peça":"Solicitação para oficinas",
+      title:isPart?"Cotação de peça":"Solicitação para oficinas",
       description:text,
       category:proposalCategory(isPart,text),
       location:address||"",
@@ -5623,7 +4820,7 @@ async function createServiceRequestRecord({isPart,vehicle,description,address,or
       target_business_type:isPart?"parts_store":"workshop",
       part_name:isPart?original||text:null,
       part_specs:isPart?{raw_text:text,vehicle:vehicleDescription(vehicle)}:{},
-      selected_business_ids:selectedBusinessIds,
+      selected_business_ids:[],
       address:locationData.address||address||"",
       latitude:locationData.latitude,
       longitude:locationData.longitude,
@@ -5921,7 +5118,7 @@ function openQuoteDetail(index){
   quotesOverview.style.display="none";
   quoteDetail.classList.add("show");
   quoteDetail.innerHTML=`
-    <button class="drawer-back" type="button" id="quoteBack">← Minhas propostas</button>
+    <button class="drawer-back" type="button" id="quoteBack">← Minhas cotações</button>
     <div class="quote-description">
       <small>RESUMO DA SOLICITAÇÃO</small>
       <p>${quote.summary}</p>
@@ -5962,30 +5159,30 @@ function updateEmergencyPrice(){
 function buildAssistantAdvice(value){
   const urgent=value.includes("nao freia")||value.includes("não freia")||value.includes("sin freno")||value.includes("sin frenos")||value.includes("humo")||value.includes("fumaça")||value.includes("fumaca")||value.includes("temperatura")||value.includes("superaquece")||value.includes("sobrecalienta")||value.includes("luz oleo")||value.includes("luz óleo")||value.includes("olor quemado")||value.includes("cheiro queimado");
   if(value.includes("freio")||value.includes("freno")||value.includes("frenos")||value.includes("pastilha")||value.includes("pastilla")||value.includes("pastillas")||value.includes("trav")||value.includes("disco")){
-    return {area:"freios",title:"Pode ser algo no sistema de freios.",simple:"Não precisa saber se é pastilha, disco ou regulagem. O mais provável é que alguma parte do freio precise de revisão.",risk:urgent?"Evite rodar até revisar. Freio é item de segurança.":"Se o barulho aparece ao frear, é melhor revisar logo para não aumentar o dano.",next:"O caminho mais seguro é pedir uma proposta de revisão/reparo, não de peça específica."};
+    return {area:"freios",title:"Pode ser algo no sistema de freios.",simple:"Não precisa saber se é pastilha, disco ou regulagem. O mais provável é que alguma parte do freio precise de revisão.",risk:urgent?"Evite rodar até revisar. Freio é item de segurança.":"Se o barulho aparece ao frear, é melhor revisar logo para não aumentar o dano.",next:"O caminho mais seguro é pedir uma cotação de revisão/reparo, não de peça específica."};
   }
   if(value.includes("bateria")||value.includes("partida")||value.includes("ligar")||value.includes("arranque")){
-    return {area:"elétrica",title:"Pode ser bateria ou sistema elétrico.",simple:"Pode ser bateria fraca, alternador carregando pouco ou mau contato. Um teste rápido normalmente separa o que é troca do que é ajuste.",risk:"Se o carro falha para ligar, pode te deixar parado de repente.",next:"Vale pedir uma proposta de verificação elétrica com possível troca de bateria se necessário."};
+    return {area:"elétrica",title:"Pode ser bateria ou sistema elétrico.",simple:"Pode ser bateria fraca, alternador carregando pouco ou mau contato. Um teste rápido normalmente separa o que é troca do que é ajuste.",risk:"Se o carro falha para ligar, pode te deixar parado de repente.",next:"Vale cotar uma verificação elétrica com possível troca de bateria se necessário."};
   }
   if(value.includes("pneu")||value.includes("neumatico")||value.includes("alinhamento")||value.includes("balanceamento")){
-    return {area:"pneus",title:"Pode ser pneu, alinhamento ou balanceamento.",simple:"Quando vibra, puxa para um lado ou gasta pneu irregular, geralmente não é uma única peça: é uma revisão do conjunto.",risk:"Rodar assim pode gastar mais pneus e reduzir estabilidade.",next:"O ideal é pedir proposta para alinhamento/balanceamento e revisão dos pneus."};
+    return {area:"pneus",title:"Pode ser pneu, alinhamento ou balanceamento.",simple:"Quando vibra, puxa para um lado ou gasta pneu irregular, geralmente não é uma única peça: é uma revisão do conjunto.",risk:"Rodar assim pode gastar mais pneus e reduzir estabilidade.",next:"O ideal é cotar alinhamento/balanceamento e revisão dos pneus."};
   }
   if(value.includes("giro")||value.includes("girar")||value.includes("virar")||value.includes("curva")||value.includes("direcao")||value.includes("direção")){
-    return {area:"direção",title:"Pode estar ligado à direção ou suspensão.",simple:"Se acontece ao girar ou fazer curva, pode ser direção, suspensão, junta, rolamento ou algo raspando.",risk:"É melhor revisar antes que vire perda de estabilidade ou desgaste maior.",next:"O caminho certo é pedir proposta para uma revisão direcionada de direção/suspensão."};
+    return {area:"direção",title:"Pode estar ligado à direção ou suspensão.",simple:"Se acontece ao girar ou fazer curva, pode ser direção, suspensão, junta, rolamento ou algo raspando.",risk:"É melhor revisar antes que vire perda de estabilidade ou desgaste maior.",next:"O caminho certo é cotar uma revisão direcionada de direção/suspensão."};
   }
   if(value.includes("oleo")||value.includes("óleo")||value.includes("vazamento")||value.includes("fumaca")||value.includes("fumaça")){
-    return {area:"motor",title:"Pode envolver óleo, vazamento ou motor.",simple:"Aqui o importante é não adivinhar peça. Primeiro precisa confirmar nível, vazamento e sinais no painel.",risk:urgent?"Se tem fumaça, cheiro forte ou luz de óleo, evite rodar. Pode virar dano caro.":"Se há vazamento ou cheiro, revisar cedo evita problema maior.",next:"Convém pedir proposta para diagnóstico/revisão de motor antes de trocar qualquer item."};
+    return {area:"motor",title:"Pode envolver óleo, vazamento ou motor.",simple:"Aqui o importante é não adivinhar peça. Primeiro precisa confirmar nível, vazamento e sinais no painel.",risk:urgent?"Se tem fumaça, cheiro forte ou luz de óleo, evite rodar. Pode virar dano caro.":"Se há vazamento ou cheiro, revisar cedo evita problema maior.",next:"Convém cotar um diagnóstico/revisão de motor antes de trocar qualquer item."};
   }
   if(value.includes("luz")||value.includes("painel")||value.includes("check")||value.includes("injeção")||value.includes("injecao")){
-    return {area:"diagnóstico",title:"A luz do painel precisa de leitura.",simple:"Pode ser sensor, elétrica, injeção ou algo simples. O scanner mostra o caminho certo antes de gastar com peça errada.",risk:"Se a luz pisca, perde força ou o carro trepida, é melhor revisar logo.",next:"O melhor primeiro passo é pedir proposta para diagnóstico computadorizado."};
+    return {area:"diagnóstico",title:"A luz do painel precisa de leitura.",simple:"Pode ser sensor, elétrica, injeção ou algo simples. O scanner mostra o caminho certo antes de gastar com peça errada.",risk:"Se a luz pisca, perde força ou o carro trepida, é melhor revisar logo.",next:"O melhor primeiro passo é cotar diagnóstico computadorizado."};
   }
   if(value.includes("barulho")||value.includes("ruido")||value.includes("ruído")||value.includes("ruidos")||value.includes("sonido")||value.includes("faz som")){
-    return {area:"ruído",title:"O barulho indica que algo precisa ser revisado.",simple:"Pode vir de freios, suspensão, correias ou motor. O detalhe mais importante é quando acontece: freando, virando, acelerando ou passando em buracos.",risk:"Ignorar barulho costuma transformar ajuste simples em reparo maior.",next:"Vale pedir proposta para uma revisão direcionada para identificar a origem."};
+    return {area:"ruído",title:"O barulho indica que algo precisa ser revisado.",simple:"Pode vir de freios, suspensão, correias ou motor. O detalhe mais importante é quando acontece: freando, virando, acelerando ou passando em buracos.",risk:"Ignorar barulho costuma transformar ajuste simples em reparo maior.",next:"Vale cotar uma revisão direcionada para identificar a origem."};
   }
   if(value.includes("ar condicionado")||value.includes("ar-condicionado")||value.includes("ar frio")){
-    return {area:"ar-condicionado",title:"Pode ser manutenção ou reparo no ar.",simple:"Pode ser carga do sistema, filtro, compressor ou vazamento. Uma revisão rápida mostra se é simples ou se precisa reparar.",risk:"Normalmente não é urgente, mas pode piorar se houver vazamento.",next:"O ideal é pedir proposta para revisão de ar-condicionado."};
+    return {area:"ar-condicionado",title:"Pode ser manutenção ou reparo no ar.",simple:"Pode ser carga do sistema, filtro, compressor ou vazamento. Uma revisão rápida mostra se é simples ou se precisa reparar.",risk:"Normalmente não é urgente, mas pode piorar se houver vazamento.",next:"O ideal é cotar uma revisão de ar-condicionado."};
   }
-  return {area:"geral",title:"Dá para fazer uma triagem inicial.",simple:"Você não precisa saber o nome da peça. Eu organizo o problema e envio para oficinas compatíveis entenderem o caso.",risk:"Quanto mais claro o sintoma, menor o risco de orçamento errado.",next:"Com placa e localização, a proposta fica mais precisa."};
+  return {area:"geral",title:"Dá para fazer uma triagem inicial.",simple:"Você não precisa saber o nome da peça. Eu organizo o problema e envio para oficinas compatíveis entenderem o caso.",risk:"Quanto mais claro o sintoma, menor o risco de orçamento errado.",next:"Com placa e localização, a cotação fica mais precisa."};
 }
 function formatAssistantAdvice(advice,question){
   return `${advice.simple}\n\n${advice.risk}\n\n${advice.next} ${question}`;
@@ -6081,11 +5278,11 @@ function detectAssistantIntent(text){
   if(valueWords.some((word)=>value.includes(word))) return {type:"value",title:"Posso te ajudar a estimar o valor.",text:"Para uma avaliação inicial, eu preciso da placa, quilometragem e estado geral. Quer abrir a avaliação rápida agora?",categories:["Revisao geral / Manutencao preventiva"],missingQuestions:["Qual a quilometragem atual?", "O carro tem algum detalhe importante?"],technicalSummary:localTechnicalSummary(text,"value",["Revisao geral / Manutencao preventiva"]),action:"Avaliar veículo"};
   if(sellWords.some((word)=>value.includes(word))&&value.includes("carro")) return {type:"sell",title:"Entendi que você quer vender o carro.",text:"Posso usar a placa para preencher os dados principais e deixar o anúncio quase pronto. Quer começar por aí?",categories:["Revisao geral / Manutencao preventiva"],missingQuestions:["Qual preço você pretende pedir?", "Você tem fotos do veículo?"],technicalSummary:localTechnicalSummary(text,"sell",["Revisao geral / Manutencao preventiva"]),action:"Publicar veículo"};
   if(purchaseIntent&&!describesSymptom) return {...purchaseIntent,categories,missingQuestions:localMissingQuestions("partQuote",text),technicalSummary:localTechnicalSummary(text,"partQuote",categories)};
-  if(talksAboutPiece&&asksForPiece&&!describesSymptom) return {type:"partQuote",title:"Vamos confirmar a peça certa antes de comprar.",text:"Para evitar comprar peça errada, o melhor é pedir proposta usando a placa e, se possível, medida/código da peça.",categories,missingQuestions:localMissingQuestions("partQuote",text),technicalSummary:localTechnicalSummary(text,"partQuote",categories),action:"Buscar peça"};
+  if(talksAboutPiece&&asksForPiece&&!describesSymptom) return {type:"partQuote",title:"Vamos confirmar a peça certa antes de comprar.",text:"Para evitar comprar peça errada, o melhor é cotar usando a placa e, se possível, medida/código da peça.",categories,missingQuestions:localMissingQuestions("partQuote",text),technicalSummary:localTechnicalSummary(text,"partQuote",categories),action:"Buscar peça"};
   if(wantsCarBuy) return {type:"buy",title:"Entendi, você quer procurar um carro.",text:"Posso abrir a busca com filtros iniciais a partir do que você escreveu. Quer ver opções disponíveis?",categories:["Revisao geral / Manutencao preventiva"],missingQuestions:["Qual faixa de preço?", "Busca automático ou manual?"],technicalSummary:localTechnicalSummary(text,"buy",["Revisao geral / Manutencao preventiva"]),action:"Ver carros disponíveis"};
   if(offerWords.some((word)=>value.includes(word))) return {type:"offers",title:"Posso mostrar ofertas relacionadas.",text:"Tenho promoções, eventos e oportunidades ativas. Quer ver o que está disponível agora?",categories:["Revisao geral / Manutencao preventiva"],missingQuestions:[],technicalSummary:localTechnicalSummary(text,"offers",["Revisao geral / Manutencao preventiva"]),action:"Ver ofertas"};
-  if(talksAboutService) return {type:"serviceQuote",title:advice.title||"Entendi seu problema.",text:`${advice.simple}\n\nPara evitar orçamento errado, posso montar uma proposta técnica para oficinas próximas.`,categories,missingQuestions:localMissingQuestions("serviceQuote",text),technicalSummary:localTechnicalSummary(text,"serviceQuote",categories),action:"Pedir proposta"};
-  return {type:"serviceQuote",title:"Entendi sua mensagem.",text:"Posso organizar isso para uma oficina avaliar melhor. Me conte quando acontece e se é leve, médio ou forte.",categories,missingQuestions:localMissingQuestions("serviceQuote",text),technicalSummary:localTechnicalSummary(text,"serviceQuote",categories),action:"Pedir proposta"};
+  if(talksAboutService) return {type:"serviceQuote",title:advice.title||"Entendi seu problema.",text:`${advice.simple}\n\nPara evitar orçamento errado, posso montar uma cotação técnica para oficinas próximas.`,categories,missingQuestions:localMissingQuestions("serviceQuote",text),technicalSummary:localTechnicalSummary(text,"serviceQuote",categories),action:"Pedir cotação"};
+  return {type:"serviceQuote",title:"Entendi sua mensagem.",text:"Posso organizar isso para uma oficina avaliar melhor. Me conte quando acontece e se é leve, médio ou forte.",categories,missingQuestions:localMissingQuestions("serviceQuote",text),technicalSummary:localTechnicalSummary(text,"serviceQuote",categories),action:"Pedir cotação"};
 }
 function assistantMessageHasOwnSignal(text){
   const value=normalizeText(text);
@@ -6277,7 +5474,9 @@ function startAssistantQuoteWithAnalysis(){
   },1800);
 }
 function handleAssistantIntent(intent){
-  if(intent==="buy"||intent==="sell"||intent==="value"){startAssistantQuoteWithAnalysis();return;}
+  if(intent==="buy"){openCarsView();return;}
+  if(intent==="sell"){openSellCarView();return;}
+  if(intent==="value"){openQuickEvaluation();return;}
   if(intent==="offers"){openBenefitsView("promotions");return;}
   startAssistantQuoteWithAnalysis();
 }
@@ -6297,12 +5496,14 @@ async function callAIDiagnose(message,conversation){
   }
 }
 
-function assistantActionForType(type, fallback="Pedir proposta"){
+function assistantActionForType(type, fallback="Pedir cotação"){
   const normalized=type||"serviceQuote";
   if(normalized==="partQuote") return "Buscar peça";
-  if(normalized==="buy"||normalized==="sell"||normalized==="value") return "Pedir proposta";
+  if(normalized==="buy") return "Ver carros";
+  if(normalized==="sell") return "Publicar veículo";
+  if(normalized==="value") return "Avaliar veículo";
   if(normalized==="offers") return "Ver ofertas";
-  return "Pedir proposta";
+  return "Pedir cotação";
 }
 function isPlateOrLocationQuestion(question){
   const value=normalizeText(question||"");
@@ -6538,10 +5739,10 @@ menuProposalSend.addEventListener("click",()=>{
 });
 proposalPopupClose.addEventListener("click",closeProposalPopup);
 homeOfficesBtn.addEventListener("click",openOfficesView);
-homeOffersBtn.addEventListener("click",(event)=>openBenefitsView("weekly",event));
 menuOfficesBtn.addEventListener("click",openOfficesView);
 backHomeBtn.addEventListener("click",closeOfficesView);
 homePartsBtn.addEventListener("click",openPartsView);
+menuPartsBtn.addEventListener("click",openPartsView);
 partsBackHome.addEventListener("click",closePartsView);
 partsSearchBtn.addEventListener("click",searchParts);
 partsQuery.addEventListener("keydown",(event)=>{if(event.key==="Enter"){event.preventDefault();searchParts();}});
@@ -6552,60 +5753,11 @@ partsSendAll.addEventListener("click",()=>{
   openPartsReviewPopup();
 });
 howLink.addEventListener("click",openHowView);
-homeHowMore.addEventListener("click",openHowView);
-menuHowBtn.addEventListener("click",()=>{closeMenu();openHowView();});
-document.getElementById("menuWorkshopBtn")?.addEventListener("click",()=>{
-  closeMenu();
-  openOficinaOptionsModal(false);
-});
-document.getElementById("authSelectMotorist")?.addEventListener("click",()=>{
-  closeAuthSelectModal();
-  openAccount();
-});
-document.getElementById("authSelectWorkshop")?.addEventListener("click",()=>{
-  closeAuthSelectModal();
-  openOficinaOptionsModal(true);
-});
-document.getElementById("oficinaBtnPanel")?.addEventListener("click",()=>{
-  closeOficinaOptionsModal();
-  window.location.href="/apps/workshop-app/";
-});
-document.getElementById("oficinaBtnCadastro")?.addEventListener("click",()=>{
-  closeOficinaOptionsModal();
-  openWorkshopRegister();
-});
-document.getElementById("oficinaBtnBack")?.addEventListener("click",()=>{
-  closeOficinaOptionsModal();
-  openAuthSelectModal();
-});
-document.getElementById("authSelectModal")?.addEventListener("click",(e)=>{
-  if(e.target===document.getElementById("authSelectModal")) closeAuthSelectModal();
-});
-document.getElementById("oficinaOptionsModal")?.addEventListener("click",(e)=>{
-  if(e.target===document.getElementById("oficinaOptionsModal")) closeOficinaOptionsModal();
-});
-document.getElementById("hqpSeeAll")?.addEventListener("click",openQuotes);
-document.getElementById("homeBannerProposal")?.addEventListener("click",()=>problemInput?.focus());
-document.getElementById("homeBannerOffices")?.addEventListener("click",openOfficesView);
-document.getElementById("homeBannerAccount")?.addEventListener("click",()=>{
-  setAuthMode(true);
-  openAccount();
-});
-document.getElementById("homeAppTrack")?.addEventListener("scroll",(event)=>{
-  const track=event.currentTarget;
-  const index=Math.round(track.scrollLeft/Math.max(1,track.clientWidth));
-  document.querySelectorAll(".home-app-dot").forEach((dot,dotIndex)=>dot.classList.toggle("active",dotIndex===index));
-},{passive:true});
-function setBottomNavActive(buttonId){
-  document.querySelectorAll(".tool-btn").forEach((button)=>button.classList.remove("active-nav"));
-  document.getElementById(buttonId)?.classList.add("active-nav");
-}
-mobileHomeBtn?.addEventListener("click",()=>{goHome();setBottomNavActive("mobileHomeBtn");});
-mobileCotacoesBtn?.addEventListener("click",()=>{openQuotes();setBottomNavActive("mobileCotacoesBtn");});
-mobileMessagesNavBtn?.addEventListener("click",()=>{openMessages();setBottomNavActive("mobileMessagesNavBtn");});
+mobileHowBtn.addEventListener("click",openHowView);
 howBackHome.addEventListener("click",closeHowView);
 promoLink.addEventListener("click",scrollToPromos);
-allBenefitsLink.addEventListener("click",(event)=>openBenefitsView("weekly",event));
+mobilePromoBtn.addEventListener("click",scrollToPromos);
+allBenefitsLink.addEventListener("click",(event)=>openBenefitsView("promotions",event));
 benefitsBackHome.addEventListener("click",goHome);
 benefitsSearch.addEventListener("input",renderBenefits);
 benefitsCategory.addEventListener("input",renderBenefits);
@@ -6613,10 +5765,10 @@ bindBenefitCard(promotionsCard,"promotions");
 bindBenefitCard(eventsCard,"events");
 bindBenefitCard(weeklyOffersCard,"weekly");
 topEmergencyBtn.addEventListener("click",openEmergency);
-mobileEmergencyBtn?.addEventListener("click",openEmergency);
+mobileEmergencyBtn.addEventListener("click",openEmergency);
 emergencyClose.addEventListener("click",closeEmergency);
 topAccountBtn.addEventListener("click",openAccount);
-mobileAccountBtn.addEventListener("click",()=>{openAccount();setBottomNavActive("mobileAccountBtn");});
+mobileAccountBtn.addEventListener("click",openAccount);
 menuAccountBtn.addEventListener("click",openAccount);
 accountClose.addEventListener("click",closeAccount);
 menuMessagesBtn.addEventListener("click",openMessages);
@@ -6628,7 +5780,7 @@ menuQuotesBtn.addEventListener("click",openQuotes);
 quotesClose.addEventListener("click",closeQuotes);
 newQuote.addEventListener("click",()=>{closeQuotes();openMenuProposalView();});
 topNotificationsBtn.addEventListener("click",openNotifications);
-mobileNotificationsBtn?.addEventListener("click",openNotifications);
+mobileNotificationsBtn.addEventListener("click",openNotifications);
 notificationsClose.addEventListener("click",closeNotifications);
 notificationList.addEventListener("click",(event)=>{
   if(event.target.closest("[data-enable-push]")){
@@ -6730,7 +5882,7 @@ carDetailOffer.addEventListener("click",()=>{closeCarDetailPopup();openCarPopup(
 carDetailMessage.addEventListener("click",()=>{closeCarDetailPopup();openCarPopup(Number(carDetailMessage.dataset.index),false);});
 publishFeatured.addEventListener("click",closeVisibilityPopup);
 publishFree.addEventListener("click",closeVisibilityPopup);
-registerWorkshopBtn?.addEventListener("click",openWorkshopDemo);
+registerWorkshopBtn.addEventListener("click",openWorkshopDemo);
 workshopDemoClose.addEventListener("click",closeWorkshopDemo);
 workshopDemoLink.addEventListener("click",()=>window.location.href="/oficinas/cadastro/");
 workshopBackofficeLink.addEventListener("click",()=>window.location.href="/oficinas/painel/");
@@ -6925,7 +6077,7 @@ buyEmergency.addEventListener("click",()=>{
   emergencyStatus.textContent="Serviço comprado. Um prestador entrará em contato agora.";
   setTimeout(closeEmergency,900);
 });
-officeMapFocus?.addEventListener("click",centerOfficeMap);
+officeMapFocus.addEventListener("click",centerOfficeMap);
 officeSearchBtn.addEventListener("click",()=>renderOffices(true));
 officeSearchInput.addEventListener("keydown",(event)=>{
   if(event.key==="Enter"){
@@ -6933,36 +6085,7 @@ officeSearchInput.addEventListener("keydown",(event)=>{
     renderOffices(true);
   }
 });
-document.getElementById("officeOpenQuick")?.addEventListener("click",(event)=>{
-  const isOpen=officeOpenFilter.value==="open";
-  officeOpenFilter.value=isOpen?"all":"open";
-  event.currentTarget.classList.toggle("active",!isOpen);
-  renderOffices(true);
-});
-officeHomeQuick?.addEventListener("click",(event)=>{
-  event.currentTarget.classList.toggle("active");
-  renderOffices(true);
-});
-officeCategoryToggle?.addEventListener("click",()=>{
-  officeCategoryQuick?.classList.toggle("open");
-});
-document.addEventListener("click",(event)=>{
-  if(!officeCategoryQuick?.classList.contains("open")) return;
-  if(event.target.closest(".office-category-select-row")||event.target.closest("#officeCategoryQuick")) return;
-  officeCategoryQuick.classList.remove("open");
-});
-officeCategoryQuick?.addEventListener("click",(event)=>{
-  const button=event.target.closest(".office-category-chip");
-  if(!button) return;
-  officeCategoryFilter.value=button.dataset.category||"";
-  renderOfficeCategoryQuick();
-  officeCategoryQuick.classList.remove("open");
-  renderOffices(true);
-});
-[officeLocationFilter,officeOpenFilter,officeCategoryFilter].forEach((control)=>control.addEventListener("input",()=>{
-  if(control===officeCategoryFilter) renderOfficeCategoryQuick();
-  renderOffices(true);
-}));
+[officeLocationFilter,officeOpenFilter,officeCategoryFilter].forEach((control)=>control.addEventListener("input",()=>renderOffices(true)));
 ratingFilter.querySelectorAll("input").forEach((control)=>control.addEventListener("change",()=>renderOffices(true)));
 useOfficeLocation.addEventListener("click",async()=>{await applyCurrentLocation(officeLocationFilter,useOfficeLocation,()=>renderOffices(true));renderOffices(true);});
 carsUseLocation.addEventListener("click",async()=>{await applyCurrentLocation(carsLocation,carsUseLocation);});
@@ -6971,44 +6094,16 @@ clearOfficeFilters.addEventListener("click",()=>{
   officeSearchInput.value="";
   officeLocationFilter.value="";
   officeOpenFilter.value="all";
-  document.getElementById("officeOpenQuick")?.classList.remove("active");
-  officeHomeQuick?.classList.remove("active");
   officeCategoryFilter.value="";
-  renderOfficeCategoryQuick();
   ratingFilter.querySelectorAll("input").forEach((input)=>input.checked=false);
   ratingFilter.open=false;
-  setOfficeSelectionMode(false);
   renderOffices(true);
-});
-officeListModeBtn?.addEventListener("click",()=>{
-  setOfficeSelectionMode(!officeListSelectionMode);
-  renderOffices(false);
 });
 loadMoreOffices.addEventListener("click",()=>{
   visibleOfficeCount+=7;
   renderOffices();
 });
-sendOfficeProposals.addEventListener("click",()=>{
-  const selected=selectedOfficeIndexes();
-  const category=officeCategoryFilter.value;
-  if(!category){
-    if(officeSelectedCount) officeSelectedCount.textContent="Escolha uma categoria primeiro";
-    officeCategoryQuick?.classList.add("open");
-    return;
-  }
-  if(!selected.length){
-    updateOfficeSelectionCount();
-    return;
-  }
-  const selectedOffices=selected.map((index)=>offices[index]).filter(Boolean);
-  const names=selectedOffices.map((office)=>office.name).filter(Boolean);
-  officeProposalContext={category,names,officeIds:selectedOffices.map((office)=>office.id).filter(Boolean)};
-  assistantLastIntentType="serviceQuote";
-  assistantLatestCategories=[category];
-  assistantLatestContext=`Categoria selecionada: ${category}. Oficinas selecionadas: ${names.join(", ")}.`;
-  assistantLatestTechnicalSummary="";
-  openProposalConfirmation();
-});
+sendOfficeProposals.addEventListener("click",closeOfficesView);
 problemSend.addEventListener("click",()=>expandAssistant(problemInput));
 problemInput.addEventListener("keydown",(event)=>{
   if(event.key==="Enter"){
