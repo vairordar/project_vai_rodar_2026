@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -735,7 +735,6 @@ h1{
 .office-service-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:7px;padding:8px;border:1px solid rgba(7,92,255,.2);border-radius:12px;background:#fff;color:var(--text)}
 .office-service-row strong{font-size:9px;line-height:1.2}.office-service-row small{display:block;color:var(--muted);font-size:7.5px;margin-top:2px}
 .office-service-price{color:var(--blue);font-size:9px;font-weight:850;white-space:nowrap}
-.office-service-empty{min-height:42px;border:1px dashed rgba(7,92,255,.28);border-radius:12px;background:rgba(7,92,255,.025)}
 .service-reserve-btn{height:25px;border:0;border-radius:999px;background:var(--blue);color:#fff;padding:0 9px;font-size:8px;font-weight:850;cursor:pointer}
 .office-detail-actions{grid-column:1 / -1;display:grid;grid-template-columns:auto 1fr;gap:7px}
 .collapse-detail{height:32px;border:1px solid var(--input-border);border-radius:10px;background:var(--button-bg);color:var(--text);padding:0 11px;font-size:9px;font-weight:800;cursor:pointer}
@@ -770,27 +769,21 @@ h1{
 .app-shell.offices-open .office-map-shell{position:relative;width:100%;height:100%;display:block;margin:0;padding:0;border:0;border-radius:0;background:#eef3f8;box-shadow:none;overflow:hidden}
 .app-shell.offices-open .office-map{position:absolute;inset:0;min-height:0;width:100%;height:100%;border:0;border-radius:0;background:#eef3f8}
 .app-shell.offices-open .office-map::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(248,250,252,.5) 0%,rgba(248,250,252,.14) 28%,rgba(248,250,252,0) 52%,rgba(248,250,252,.28) 100%);z-index:420}
-.office-map-top{position:absolute;top:8px;left:18px;right:18px;z-index:430;display:grid;gap:9px}
-.office-map-head{display:flex;align-items:center;justify-content:flex-start;gap:10px}
-.office-map-head h2{color:var(--headline);font-size:28px;line-height:1.05;font-weight:860;letter-spacing:-.45px}.office-map-head p{display:none}
-.app-shell.offices-open .office-ai-search{height:38px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;display:grid;grid-template-columns:minmax(0,1fr) 34px;align-items:center;gap:6px}
-.office-search-icon{display:none}
-.app-shell.offices-open .office-ai-search input{width:100%;min-width:0;height:38px;border:1px solid var(--input-border);border-radius:999px;background:var(--bottom);color:var(--text);padding:0 12px;font-size:14px;font-weight:500;outline:none}.app-shell.offices-open .office-ai-search input::placeholder{color:var(--placeholder);font-weight:500}
-.office-search-copy{display:grid;min-width:0}.office-search-copy small{display:none}
-.app-shell.offices-open .office-ai-search button{width:34px;height:34px;border-radius:50%;box-shadow:0 9px 20px rgba(7,92,255,.32)}.app-shell.offices-open .office-ai-search button svg{width:17px;height:17px}
-.office-filter-menu{display:none!important}
-.clear-filters{display:none!important}
-.app-shell.offices-open .office-filter,.app-shell.offices-open .rating-filter{display:none!important}
+.office-map-top{position:absolute;top:12px;left:12px;right:12px;z-index:430;display:grid;gap:8px}
+.office-map-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.office-map-head h2{color:var(--headline);font-size:21px;line-height:1.05;font-weight:820;letter-spacing:-.35px}.office-map-head p{display:none}
+.app-shell.offices-open .office-ai-search{margin:0;padding:6px;border:1px solid rgba(216,226,239,.92);border-radius:16px;background:rgba(255,255,255,.92);box-shadow:0 18px 42px rgba(15,23,42,.13);backdrop-filter:blur(14px)}
+.app-shell.offices-open .office-ai-search input{height:36px;background:#fff;border-color:#dbe5f2;font-size:10px}.app-shell.offices-open .office-ai-search button{width:36px;height:36px}
+.office-filter-menu{display:none}
+.app-shell.offices-open .office-filters{position:absolute;top:38px;left:0;width:min(330px,calc(100vw - 36px));display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:10px;border:1.5px solid rgba(7,92,255,.62);border-radius:16px;background:rgba(255,255,255,.96);box-shadow:0 24px 54px rgba(15,23,42,.18),0 0 0 4px rgba(7,92,255,.045);backdrop-filter:blur(16px)}
+.app-shell.offices-open .office-filters .office-filter:not([hidden]){grid-column:1 / -1}
+.app-shell.offices-open .location-filter-wrap{grid-column:1 / -1}.app-shell.offices-open .office-filter,.app-shell.offices-open .rating-filter summary,.app-shell.offices-open .clear-filters{height:34px;border-radius:11px;background:#f8fbff;font-size:9.5px}.app-shell.offices-open .clear-filters{grid-column:1 / -1;background:#fff}.app-shell.offices-open .rating-panel{top:38px;z-index:450;background:#fff}
 .app-shell.offices-open .office-map-focus{position:absolute;right:12px;top:110px;z-index:425;width:38px;height:38px;border:1.4px solid rgba(7,92,255,.55);border-radius:50%;background:rgba(255,255,255,.93);color:var(--blue);padding:0;font-size:0;box-shadow:0 12px 30px rgba(15,23,42,.13),0 0 0 3px rgba(7,92,255,.035);backdrop-filter:blur(14px);display:grid;place-items:center}.app-shell.offices-open .office-map-focus::before{content:"⌖";font-size:22px;line-height:1;font-weight:800}
-.office-map-controls{display:grid;gap:10px;position:relative}
-.office-quick-cats{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0 1px}.office-quick-cats::-webkit-scrollbar{display:none}
-.office-quick-cat{flex:0 0 76px;min-height:94px;border:1px solid rgba(216,226,239,.95);border-radius:14px;background:rgba(255,255,255,.94);box-shadow:0 13px 28px rgba(15,23,42,.1);display:grid;place-items:center;align-content:center;gap:4px;padding:7px 4px;color:var(--headline);font-size:9.5px;font-weight:850;line-height:1.12;text-align:center;cursor:pointer}.office-quick-cat img{width:48px;height:48px;display:block;object-fit:contain}.office-quick-cat span{display:flex;align-items:flex-start;justify-content:center;width:100%;min-height:22px;white-space:normal;overflow-wrap:anywhere}.office-quick-cat.active{border-color:var(--blue);box-shadow:0 12px 28px rgba(7,92,255,.18),0 0 0 3px rgba(7,92,255,.08)}
-.office-filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.office-clear-quick{height:34px;border:1.2px solid var(--blue);border-radius:999px;background:rgba(255,255,255,.94);color:var(--blue);padding:0 13px;font-size:10.5px;font-weight:850;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.08)}.office-clear-quick[hidden]{display:none!important}
-.office-category-select-row{display:none!important;gap:8px;align-items:center;position:relative}
-.office-category-toggle{height:34px;border:1.2px solid rgba(216,226,239,.95);border-radius:999px;background:rgba(255,255,255,.94);color:var(--headline);padding:0 14px;font-size:11px;font-weight:850;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.09);display:inline-flex;align-items:center;gap:7px}.office-category-toggle svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round}
-.office-category-selected{display:none}
-.office-category-strip{display:none;position:absolute;top:42px;left:0;z-index:455;width:min(330px,calc(100vw - 36px));max-height:250px;overflow-y:auto;padding:6px;border:1.5px solid rgba(7,92,255,.62);border-radius:16px;background:rgba(255,255,255,.98);box-shadow:0 22px 48px rgba(15,23,42,.2),0 0 0 4px rgba(7,92,255,.045);backdrop-filter:blur(16px);scrollbar-width:thin}.office-category-strip.open{display:grid;gap:4px}
+.office-map-controls{display:grid;gap:6px;position:relative}
+.office-category-select-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px;align-items:center}
+.office-category-toggle{height:34px;border:1.4px solid var(--blue);border-radius:999px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:0 13px;font-size:10px;font-weight:900;cursor:pointer;box-shadow:0 12px 30px rgba(7,92,255,.16)}
+.office-category-selected{height:34px;display:flex;align-items:center;min-width:0;border:1.4px solid rgba(7,92,255,.38);border-radius:999px;background:rgba(255,255,255,.94);color:var(--headline);padding:0 12px;font-size:9.5px;font-weight:850;box-shadow:0 10px 24px rgba(15,23,42,.1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.office-category-strip{display:none;position:absolute;top:40px;left:0;right:0;z-index:455;max-height:250px;overflow-y:auto;padding:6px;border:1.5px solid rgba(7,92,255,.62);border-radius:16px;background:rgba(255,255,255,.98);box-shadow:0 22px 48px rgba(15,23,42,.2),0 0 0 4px rgba(7,92,255,.045);backdrop-filter:blur(16px);scrollbar-width:thin}.office-category-strip.open{display:grid;gap:4px}
 .office-map-chip{height:36px;border:1.4px solid rgba(7,92,255,.5);border-radius:999px;background:rgba(255,255,255,.94);color:var(--text);padding:0 14px;font-size:10.5px;font-weight:850;box-shadow:0 12px 30px rgba(15,23,42,.12),0 0 0 3px rgba(7,92,255,.035);backdrop-filter:blur(14px);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
 .office-map-chip svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
 .office-map-chip.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-color:var(--blue)}
@@ -799,19 +792,17 @@ h1{
 .office-category-chip{width:100%;min-height:32px;border:0;border-radius:11px;background:transparent;color:var(--text);padding:7px 10px;font-size:9.5px;font-weight:800;text-align:left;cursor:pointer}
 .office-category-chip:hover{background:rgba(7,92,255,.07)}
 .office-category-chip.active{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
-.office-open-subtle{justify-self:start;height:34px;padding:0 14px;font-size:10px;background:rgba(255,255,255,.94);box-shadow:0 8px 20px rgba(15,23,42,.08);border-color:rgba(216,226,239,.95);color:var(--headline)}
-.office-open-subtle.active{color:var(--blue);border-color:rgba(7,92,255,.52)}
-.office-results-sheet{position:absolute;left:12px;right:12px;bottom:10px;z-index:430;max-height:34%;transition:max-height .25s ease;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px;padding:9px;border:1px solid rgba(216,226,239,.95);border-radius:22px;background:rgba(255,255,255,.97);box-shadow:0 28px 68px rgba(15,23,42,.2);backdrop-filter:blur(18px)}
+.office-open-subtle{justify-self:start;height:30px;padding:0 11px;font-size:9px;background:rgba(255,255,255,.86);box-shadow:0 8px 20px rgba(15,23,42,.08)}
+.office-results-sheet{position:absolute;left:10px;right:10px;bottom:10px;z-index:430;max-height:34%;transition:max-height .25s ease;display:grid;grid-template-rows:auto minmax(0,1fr);gap:6px;padding:7px;border:1.5px solid rgba(7,92,255,.62);border-radius:18px;background:rgba(255,255,255,.96);box-shadow:0 28px 68px rgba(15,23,42,.24),0 0 0 4px rgba(7,92,255,.045);backdrop-filter:blur(18px)}
 .office-results-sheet.expanded{max-height:72%}
 .office-sheet-grip{position:relative;width:34px;height:4px;border-radius:999px;background:#d8e2ef;justify-self:center;margin-bottom:1px;cursor:grab;touch-action:none}.office-sheet-grip::before{content:"";position:absolute;inset:-16px -60px}.office-sheet-head{display:none}
-.office-list-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 4px 2px;border:1px solid rgba(216,226,239,.75);border-radius:14px;background:rgba(255,255,255,.68)}
-.office-list-toggle{height:30px;border:0;border-radius:999px;background:transparent;color:var(--blue);padding:0 7px;font-size:0;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:8px}.office-list-toggle::before{content:"";width:17px;height:17px;background:currentColor;mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M4 7h16v2H4zm0 4h16v2H4zm0 4h16v2H4z"/></svg>') center/contain no-repeat}.office-list-toggle::after{content:"Lista";font-size:10px}
-.office-selected-count{color:var(--text);font-size:10px;font-weight:800;margin-right:auto}.office-selected-count::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--blue);margin-right:8px;vertical-align:middle}
-.offices-view.open .office-sheet-head{display:none}
+.office-list-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:1px 2px 4px}
+.office-list-toggle{height:30px;border:1.4px solid rgba(7,92,255,.55);border-radius:999px;background:#fff;color:var(--blue);padding:0 13px;font-size:9.5px;font-weight:900;cursor:pointer}
+.office-selected-count{color:var(--muted);font-size:8.5px;font-weight:800}
 .office-results-sheet.selection-mode{max-height:72%;grid-template-rows:auto auto minmax(0,1fr) auto}
 .office-results-sheet.selection-mode .office-list-toggle{background:linear-gradient(135deg,var(--blue),var(--blue2));border-color:var(--blue);color:#fff}
 .app-shell.offices-open .office-list{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;overflow-y:hidden;min-height:0;padding:1px 2px 5px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}.app-shell.offices-open .office-list::-webkit-scrollbar{display:none}
-.app-shell.offices-open .office-card{flex:0 0 100%;width:100%;scroll-snap-align:center;grid-template-columns:58px 1fr;gap:11px;border:1px solid rgba(216,226,239,.95);border-radius:15px;background:#fff;padding:10px;box-shadow:0 14px 34px rgba(7,92,255,.08);max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}.app-shell.offices-open .office-photo{width:58px;height:58px;border-radius:10px}.app-shell.offices-open .office-card h3{font-size:13px;margin-bottom:3px;justify-content:flex-start;flex-wrap:wrap}.app-shell.offices-open .office-card h3 .office-score{display:none}.app-shell.offices-open .office-address{font-size:10px;margin-bottom:8px;line-height:1.28}.app-shell.offices-open .office-links{gap:7px;flex-wrap:wrap}.app-shell.offices-open .office-links button{height:30px;padding:0 10px;font-size:9.5px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:8px;padding-top:8px}
+.app-shell.offices-open .office-card{flex:0 0 100%;width:100%;scroll-snap-align:center;grid-template-columns:48px 1fr;gap:9px;border:1.4px solid rgba(7,92,255,.38);border-radius:13px;background:#fff;padding:9px;box-shadow:0 14px 34px rgba(7,92,255,.1);max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}.app-shell.offices-open .office-photo{width:48px;height:44px;border-radius:10px}.app-shell.offices-open .office-card h3{font-size:10.5px;margin-bottom:2px;justify-content:flex-start;flex-wrap:wrap}.app-shell.offices-open .office-card h3 .office-score{display:inline-flex;align-items:center;gap:2px;margin-left:auto;font-size:9px}.app-shell.offices-open .office-address{font-size:8px;margin-bottom:6px;line-height:1.25}.app-shell.offices-open .office-links{gap:5px;flex-wrap:wrap}.app-shell.offices-open .office-links button{height:24px;padding:0 8px;font-size:8px}.app-shell.offices-open .office-detail.show{grid-column:1 / -1;grid-template-columns:1fr;gap:8px;padding-top:8px}
 .app-shell.offices-open .office-results-sheet.selection-mode .office-list{display:flex;flex-direction:column;flex-wrap:nowrap;overflow-x:hidden;overflow-y:auto;scroll-snap-type:none;padding:1px 2px 8px}
 .app-shell.offices-open .office-results-sheet.selection-mode .office-card{flex:0 0 auto;width:100%;scroll-snap-align:none;grid-template-columns:50px minmax(0,1fr) 28px}
 .app-shell.offices-open .office-results-sheet.selection-mode .office-select-check{display:grid}
@@ -821,16 +812,18 @@ body.theme-dark .office-sheet-dots span{background:#1f2937}body.theme-dark .offi
 .app-shell.offices-open .office-results-sheet.selection-mode .office-actions{display:grid!important;grid-template-columns:1fr;margin-top:0}
 .app-shell.offices-open .office-results-sheet.selection-mode .load-more-offices{display:none!important}
 .app-shell.offices-open .leaflet-control-zoom{border:0!important;box-shadow:0 12px 30px rgba(15,23,42,.16)!important}.app-shell.offices-open .leaflet-control-zoom a{border:0!important;color:#0f172a!important}.app-shell.offices-open .leaflet-control-attribution{background:rgba(255,255,255,.65)!important}
-body.theme-dark .app-shell.offices-open .office-map-shell{background:#050607}
-body.theme-dark .app-shell.offices-open .office-map{background:#0b0e14}
-body.theme-dark .app-shell.offices-open .office-map::after{background:linear-gradient(180deg,rgba(5,6,7,.5) 0%,rgba(5,6,7,.14) 28%,rgba(5,6,7,0) 52%,rgba(5,6,7,.26) 100%)}
+body.theme-dark .app-shell.offices-open .office-map-shell{background:#eef3f8}
+body.theme-dark .app-shell.offices-open .office-map{background:#eef3f8}
+body.theme-dark .app-shell.offices-open .office-map::after{background:linear-gradient(180deg,rgba(248,250,252,.5) 0%,rgba(248,250,252,.14) 28%,rgba(248,250,252,0) 52%,rgba(248,250,252,.28) 100%)}
+body.theme-dark .app-shell.offices-open .office-ai-search,
 body.theme-dark .app-shell.offices-open .office-filters,
 body.theme-dark .office-filter-menu>summary,
 body.theme-dark .office-map-chip,
 body.theme-dark .office-results-sheet,
 body.theme-dark .app-shell.offices-open .office-map-focus{
   border-color:rgba(7,92,255,.72);
-  background:rgba(6,9,14,.94);
+  background:rgba(8,11,17,.96);
+  color:#fff;
   box-shadow:0 22px 58px rgba(0,0,0,.46),0 0 0 1px rgba(7,92,255,.08);
 }
 body.theme-dark .app-shell.offices-open .office-ai-search input,
@@ -842,6 +835,36 @@ body.theme-dark .app-shell.offices-open .rating-panel{
   background:#080b11;
   color:#fff;
 }
+body.theme-dark .office-map-head h2,
+body.theme-dark .office-map-head p,
+body.theme-dark .office-selected-count,
+body.theme-dark .office-address,
+body.theme-dark .office-service-row small,
+body.theme-dark .office-map-chip,
+body.theme-dark .office-category-selected{
+  color:#fff;
+}
+body.theme-dark .office-category-selected,
+body.theme-dark .office-category-strip,
+body.theme-dark .office-open-subtle,
+body.theme-dark .office-list-toggle,
+body.theme-dark .office-accordion,
+body.theme-dark .office-schedule,
+body.theme-dark .office-service-row{
+  border-color:rgba(7,92,255,.52);
+  background:#080b11;
+  color:#fff;
+}
+body.theme-dark .office-category-chip{
+  color:#fff;
+}
+body.theme-dark .office-category-chip:hover{
+  background:rgba(7,92,255,.18);
+}
+body.theme-dark .office-select-check span{
+  border-color:rgba(7,92,255,.62);
+  background:#080b11;
+}
 body.theme-dark .app-shell.offices-open .office-card{
   border:1px solid rgba(7,92,255,.42);
   background:#08090b;
@@ -849,73 +872,11 @@ body.theme-dark .app-shell.offices-open .office-card{
 }
 body.theme-dark .app-shell.offices-open .office-card.map-active{border-color:var(--blue);box-shadow:0 14px 34px rgba(7,92,255,.2)}
 body.theme-dark .office-sheet-grip{background:#1d4ed8}
-body.theme-dark .app-shell.offices-open .leaflet-control-zoom a{background:#080b11!important;color:#fff!important}
-body.theme-dark .app-shell.offices-open .leaflet-control-attribution{background:rgba(6,9,14,.75)!important;color:#fff!important}
+body.theme-dark .app-shell.offices-open .leaflet-control-zoom a{background:#fff!important;color:#0f172a!important}
+body.theme-dark .app-shell.offices-open .leaflet-control-attribution{background:rgba(255,255,255,.72)!important;color:#334155!important}
 body.theme-dark .app-shell.offices-open .leaflet-popup-content-wrapper,
-body.theme-dark .app-shell.offices-open .leaflet-popup-tip{background:#080b11;color:#fff;border-color:rgba(7,92,255,.62)}
+body.theme-dark .app-shell.offices-open .leaflet-popup-tip{background:#080b11!important;color:#fff!important;border:1px solid rgba(7,92,255,.62)}
 body.theme-dark .app-shell.offices-open .leaflet-popup-content b{color:#fff}
-body.theme-dark .home-service-icon,
-body.theme-dark .office-quick-cat img{
-  border-radius:50%;
-  background:transparent;
-  box-shadow:none;
-}
-body.theme-dark .office-category-prompt,
-body.theme-dark .office-quick-cat,
-body.theme-dark .office-clear-quick,
-body.theme-dark .office-category-toggle,
-body.theme-dark .office-category-strip,
-body.theme-dark .office-open-subtle,
-body.theme-dark .office-list-tools,
-body.theme-dark .office-service-row,
-body.theme-dark .office-select-check span{
-  border-color:rgba(7,92,255,.48);
-  background:#090d14;
-  color:#fff;
-  box-shadow:0 12px 28px rgba(0,0,0,.28);
-}
-body.theme-dark .office-quick-cat.active,
-body.theme-dark .office-map-chip.active,
-body.theme-dark .office-open-subtle.active{
-  border-color:var(--blue);
-  background:#0b1730;
-  color:#fff;
-  box-shadow:0 0 0 3px rgba(7,92,255,.12),0 12px 28px rgba(0,0,0,.3);
-}
-body.theme-dark .office-category-chip{color:#fff}
-body.theme-dark .office-category-chip:hover{background:rgba(7,92,255,.15)}
-body.theme-dark .office-category-chip.active{background:linear-gradient(135deg,var(--blue),var(--blue2))}
-body.theme-dark .office-accordion,
-body.theme-dark .office-schedule,
-body.theme-dark .office-service-empty{
-  border-color:rgba(7,92,255,.36);
-  background:#080b11;
-}
-body.theme-dark .office-accordion summary,
-body.theme-dark .office-service-row strong,
-body.theme-dark .schedule-row strong{color:#fff}
-body.theme-dark .schedule-row,
-body.theme-dark .office-address,
-body.theme-dark .office-service-row small{color:#aab4c4}
-body.theme-dark .app-shell.offices-open .office-card,
-body.theme-dark .office-results-sheet,
-body.theme-dark .office-list-tools{border-color:rgba(7,92,255,.5)}
-body.theme-dark .app-shell.offices-open .office-ai-search input{
-  border-color:rgba(7,92,255,.62);
-  background:#080b11;
-  color:#fff;
-  box-shadow:0 10px 26px rgba(0,0,0,.22);
-}
-body.theme-dark .app-shell.offices-open .office-ai-search input::placeholder{color:#8e98a8}
-body.theme-dark .app-shell.offices-open .office-map{background:#e9eef5}
-body.theme-dark .app-shell.offices-open .office-map::after{
-  background:linear-gradient(180deg,rgba(5,6,7,.12) 0%,rgba(5,6,7,0) 34%,rgba(5,6,7,.08) 100%);
-  pointer-events:none;
-}
-body.theme-dark .app-shell.offices-open .leaflet-control-attribution{
-  background:rgba(255,255,255,.82)!important;
-  color:#334155!important;
-}
 @media(min-width:760px){.office-results-sheet{left:auto;right:12px;top:178px;bottom:12px;width:330px;max-height:none}.app-shell.offices-open .office-map-focus{top:104px}.office-map-top{right:auto;width:420px}.app-shell.offices-open .office-filters{width:380px}}
 @media(max-width:520px){.app-shell.offices-open .app{padding-top:68px;padding-bottom:0}.office-map-head h2{font-size:20px}.office-results-sheet{max-height:42%}.app-shell.offices-open .office-card{grid-template-columns:50px 1fr}.app-shell.offices-open .office-map-focus{top:108px}.app-shell.offices-open .office-filters{width:calc(100vw - 44px)}}
 .parts-intro{color:var(--muted);font-size:10px;line-height:1.45;margin:-3px 0 12px}
@@ -1063,8 +1024,10 @@ body.theme-dark .app-shell.offices-open .leaflet-control-attribution{
 .reservation-form label{color:var(--muted);font-size:8.5px;font-weight:800}
 .reservation-form select,.reservation-form input,.reservation-form textarea{width:100%;border:1px solid var(--input-border);border-radius:10px;background:var(--bottom);color:var(--text);padding:0 9px;font-size:10px;outline:none}
 .reservation-form select,.reservation-form input{height:34px}
+.reservation-form select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 14px) 14px,calc(100% - 9px) 14px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:24px}
 .reservation-form textarea{min-height:66px;padding:9px;resize:vertical}
-.reservation-date-time{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.reservation-date-time{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:end}
+.reservation-date-time>div{min-width:0}
 .price-offer{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .price-offer div{border:1px solid var(--line);border-radius:11px;background:var(--bottom);padding:8px}
 .price-offer small{display:block;color:var(--muted);font-size:8px;margin-bottom:5px}
@@ -1656,28 +1619,14 @@ body.theme-dark .app-shell.offices-open .leaflet-control-attribution{
 .account-signout{width:100%;height:40px;border:1px solid var(--input-border);border-radius:12px;background:transparent;color:var(--text);font-size:11px;font-weight:700;cursor:pointer;margin-top:8px}
 .account-section{display:grid;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
 .account-section-title{font-size:9px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.02em}
-.account-inline{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
-.account-mini-btn{height:44px;border:1.4px solid var(--blue);border-radius:14px;background:var(--button-bg);color:var(--blue);font-size:11px;font-weight:850;cursor:pointer;padding:0 16px}
+.account-inline{display:grid;grid-template-columns:1fr auto;gap:8px}
+.account-mini-btn{height:40px;border:1px solid var(--blue);border-radius:12px;background:var(--button-bg);color:var(--blue);font-size:10px;font-weight:800;cursor:pointer;padding:0 12px}
 .account-mini-btn.solid{background:var(--blue);color:#fff;border-color:var(--blue)}
-.account-plates{display:grid;gap:8px}
-.account-plates-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.account-plates-head b{font-size:11px;color:var(--headline);font-weight:850}
-.account-plates-count{border:1px solid rgba(7,92,255,.18);border-radius:999px;background:rgba(7,92,255,.08);color:var(--blue);font-size:10px;font-weight:900;padding:5px 9px;white-space:nowrap}
-.account-plates-track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:1px 2px 8px;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
-.account-plates-track::-webkit-scrollbar{display:none}
-.account-plate-row{flex:0 0 100%;scroll-snap-align:start;display:grid;gap:11px;padding:13px;border:1.2px solid var(--input-border);border-radius:16px;background:linear-gradient(180deg,var(--bottom),var(--card-soft));box-shadow:0 10px 26px rgba(15,23,42,.06)}
-.mercosul-plate{position:relative;justify-self:center;width:min(100%,260px);height:78px;border:2px solid #111827;border-radius:9px;background:#fff;color:#05070d;box-shadow:0 8px 18px rgba(15,23,42,.12);overflow:hidden;display:grid;place-items:center;padding-top:15px}
-.mercosul-plate::before{content:"BRASIL";position:absolute;left:0;right:0;top:0;height:18px;background:#0b63f6;color:#fff;font-size:7px;font-weight:900;letter-spacing:.12em;display:grid;place-items:center}
-.mercosul-plate::after{content:"BR";position:absolute;right:8px;top:3px;color:#fff;font-size:6px;font-weight:900;letter-spacing:.05em}
-.mercosul-plate b{font-size:28px;line-height:1;font-weight:950;letter-spacing:.06em;font-family:Arial Black,Inter,Arial,sans-serif}
-.account-plate-info{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.account-plate-info strong{display:block;font-size:13px;color:var(--headline);line-height:1.25;font-weight:850}
-.account-plate-info small{display:block;font-size:10.5px;color:var(--muted);line-height:1.35;margin-top:3px}
-.account-plate-row button{border:0;border-radius:999px;background:#fee2e2;color:#dc2626;font-size:10px;font-weight:900;cursor:pointer;padding:8px 10px;white-space:nowrap}
-.account-add-plate-box{display:grid;gap:8px;margin-top:2px}
-.account-add-plate-box label{color:var(--text);font-size:11px;font-weight:850}
-.account-add-plate-box input{height:50px;border-radius:14px!important;font-size:14px!important;letter-spacing:.04em;text-transform:uppercase}
-.account-add-help{color:var(--muted);font-size:10px;line-height:1.3;margin-top:-3px}
+.account-plates{display:grid;gap:7px}
+.account-plate-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:1px solid var(--input-border);border-radius:12px;background:var(--bottom)}
+.account-plate-row b{font-size:11px;color:var(--headline)}
+.account-plate-row small{display:block;font-size:8px;color:var(--muted);margin-top:2px}
+.account-plate-row button{border:0;background:transparent;color:#dc2626;font-size:9px;font-weight:850;cursor:pointer}
 .account-empty{color:var(--muted);font-size:9px;line-height:1.35}
 .account-listings{display:grid;gap:8px}
 .account-listing-row{display:grid;gap:8px;padding:10px;border:1px solid var(--input-border);border-radius:12px;background:var(--bottom)}
@@ -1716,8 +1665,8 @@ body.theme-dark .app-shell.offices-open .leaflet-control-attribution{
 .account-security-head b{display:block;color:var(--headline);font-size:11px;font-weight:820;line-height:1.2}
 .account-security-head span{display:block;color:var(--muted);font-size:8px;line-height:1.35;margin-top:2px}
 .account-security-row{display:grid;grid-template-columns:1fr auto;gap:8px}
-@media(max-width:520px){.account-profile-grid,.account-security-row{grid-template-columns:1fr}.account-profile-actions{display:grid}.account-field input{height:40px}.account-inline{grid-template-columns:1fr}.account-mini-btn{width:100%}}
-  .account-plate-row small span{display:block;margin-top:1px}
+@media(max-width:520px){.account-profile-grid,.account-security-row{grid-template-columns:1fr}.account-profile-actions{display:grid}.account-field input{height:40px}}
+.account-plate-row small span{display:block;margin-top:1px}
 .drawer-panel{
   position:absolute;
   left:18px;
@@ -1739,30 +1688,27 @@ body.theme-dark .app-shell.offices-open .leaflet-control-attribution{
 .drawer-panel.open{transform:translateY(0);opacity:1;pointer-events:all}
 .drawer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
 .drawer-head h3{color:var(--headline);font-size:19px;line-height:1.1;font-weight:780}
-.drawer-head p{color:var(--muted);font-size:11.5px;line-height:1.4;margin-top:4px}
+.drawer-head p{color:var(--muted);font-size:9.5px;line-height:1.4;margin-top:4px}
 .drawer-close{width:30px;height:30px;border:0;border-radius:50%;background:var(--button-bg);color:var(--text);font-size:18px;cursor:pointer}
 .chat-list,.quotes-list{display:grid;gap:8px}
 .chat-item,.quote-item{width:100%;display:grid;grid-template-columns:38px 1fr auto;gap:9px;align-items:center;border:1px solid var(--line);border-radius:13px;background:var(--bottom);padding:9px;text-align:left;color:var(--text);cursor:pointer}
 .chat-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(7,92,255,.12);color:var(--blue);font-size:12px;font-weight:800}
-.chat-item b,.quote-item b{display:block;font-size:13px;line-height:1.25}
-.chat-item p,.quote-item p{color:var(--muted);font-size:11px;line-height:1.35;margin-top:3px}
-.chat-time{color:var(--muted);font-size:10px;align-self:start}
+.chat-item b,.quote-item b{display:block;font-size:10.5px;line-height:1.2}
+.chat-item p,.quote-item p{color:var(--muted);font-size:8.5px;line-height:1.3;margin-top:3px}
+.chat-time{color:var(--muted);font-size:8px;align-self:start}
 .unread{display:inline-grid;place-items:center;width:16px;height:16px;margin-top:5px;border-radius:50%;background:var(--blue);color:#fff;font-size:8px;font-weight:800;float:right}
 .chat-room,.quote-detail{display:none}
 .chat-room.show,.quote-detail.show{display:block}
-.drawer-back{border:0;background:transparent;color:var(--blue);font-size:12px;font-weight:800;cursor:pointer;margin-bottom:10px}
+.drawer-back{border:0;background:transparent;color:var(--blue);font-size:10px;font-weight:800;cursor:pointer;margin-bottom:10px}
 .chat-room-title{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px}
-.chat-room-title b{color:var(--text);font-size:15px}
-.chat-room-title span{display:block;color:#16a34a;font-size:10.5px;margin-top:2px}
-.chat-actions{display:flex;gap:8px;margin:0 0 10px}
-.chat-action-btn{height:36px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--blue),#2589ff);color:#fff;padding:0 14px;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 10px 20px rgba(7,92,255,.18)}
-.chat-messages{display:grid;gap:8px;max-height:310px;overflow-y:auto;padding:4px}
-.bubble{max-width:84%;border-radius:13px;padding:9px 11px;font-size:12px;line-height:1.45}
+.chat-room-title b{color:var(--text);font-size:12px}
+.chat-room-title span{display:block;color:#16a34a;font-size:8px;margin-top:2px}
+.chat-messages{display:grid;gap:7px;max-height:250px;overflow-y:auto;padding:4px}
+.bubble{max-width:82%;border-radius:13px;padding:8px 9px;font-size:9px;line-height:1.4}
 .bubble.them{background:var(--bottom);color:var(--text);border:1px solid var(--line)}
 .bubble.me{justify-self:end;background:var(--blue);color:#fff}
-.chat-reserve-cta{display:block;width:100%;margin-top:8px;border:0;border-radius:999px;background:var(--blue);color:#fff;padding:9px 12px;font-size:12px;font-weight:850;cursor:pointer}
 .chat-compose{display:grid;grid-template-columns:1fr 34px;gap:7px;margin-top:10px}
-.chat-compose input{height:38px;border:1px solid var(--input-border);border-radius:999px;background:var(--bottom);color:var(--text);padding:0 12px;font-size:12px;outline:none}
+.chat-compose input{height:35px;border:1px solid var(--input-border);border-radius:999px;background:var(--bottom);color:var(--text);padding:0 11px;font-size:10px;outline:none}
 .chat-compose button{width:34px;height:34px;border:0;border-radius:50%;background:var(--blue);display:grid;place-items:center;cursor:pointer}
 .chat-compose svg{width:16px;height:16px;fill:#fff}
 .quotes-top{display:flex;justify-content:flex-end;margin-bottom:10px}
@@ -1786,54 +1732,37 @@ body.theme-dark .app-shell.offices-open .leaflet-control-attribution{
 .reservation-picker-list{display:grid;gap:7px;margin-top:12px}
 .reservation-picker-list button{height:auto;margin:0;border:1px solid var(--line);border-radius:11px;background:var(--bottom);color:var(--text);padding:9px;text-align:left;font-size:9px;line-height:1.4}
 .reservation-picker-list button b{display:block;color:var(--headline);font-size:10px;margin-bottom:3px}
-.quote-item{position:relative;grid-template-columns:1fr;padding:13px 54px 13px 13px;align-items:start}
-.quote-item-main{display:grid;gap:7px;min-width:0}
-.quote-item-title{display:block;color:var(--headline);font-size:15px;font-weight:850;line-height:1.25}
-.quote-item-vehicle{display:block;color:var(--muted);font-size:12px;font-weight:700;line-height:1.3}
-.quote-item-side{display:flex;align-items:center;gap:7px;margin-top:2px}
-.quote-count-badge{position:absolute;top:9px;right:10px;display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:24px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:900;color:#fff}
+.quote-item{grid-template-columns:1fr auto}
+.quote-item-side{display:flex;align-items:center;gap:6px}
+.quote-count-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;font-size:9px;font-weight:800;color:#fff}
 .quote-count-badge.is-blue{background:var(--blue)}
-.quote-count-badge.is-green{background:#facc15;color:#111827}
+.quote-count-badge.is-green{background:#16a34a}
 .workshop-proposal-address{display:block;color:var(--muted);font-size:8px;margin-top:5px}
-.status-pill{border-radius:999px;padding:7px 11px;font-size:10px;font-weight:850}
+.status-pill{border-radius:999px;padding:5px 8px;font-size:8px;font-weight:800}
 .status-pill.waiting{background:#e8f0ff;color:var(--blue)}
-.status-pill.received{background:var(--blue);color:#fff}
-.status-pill.accepted{background:#facc15;color:#111827}
-.status-pill.closed{background:#fff7cc;color:#854d0e}
 .status-pill.expired{background:#fff3cd;color:#a16207}
 .status-pill.cancelled{background:#fee2e2;color:#dc2626}
-.quote-expired-section{display:grid;gap:8px;margin-top:10px}
-.quote-expired-toggle{width:100%;height:42px;border:1.4px solid rgba(7,92,255,.28);border-radius:14px;background:var(--bottom);color:var(--headline);display:flex;align-items:center;justify-content:space-between;padding:0 13px;font-size:13px;font-weight:850;cursor:pointer}
-.quote-expired-toggle span{color:var(--blue);font-size:18px;line-height:1}
-.quote-expired-list{display:none;gap:8px}
-.quote-expired-list.open{display:grid}
-.quote-description{border:1px solid var(--line);border-radius:15px;background:var(--bottom);padding:13px;margin-bottom:12px}
-.quote-description small{display:block;color:var(--muted);font-size:10px;font-weight:850;margin-bottom:7px}
-.quote-description p{color:var(--text);font-size:14px;line-height:1.45;font-weight:750}
-.quote-description span{display:block;color:var(--muted);font-size:12px;line-height:1.4;margin-top:9px}
-.workshop-proposal{border:1px solid var(--line);border-radius:15px;background:var(--bottom);padding:13px;margin-top:10px}
-.workshop-proposal-head{display:flex;justify-content:space-between;gap:10px}
-.workshop-proposal h4{color:var(--text);font-size:14px;line-height:1.25}
-.workshop-proposal strong{color:var(--headline);font-size:18px;white-space:nowrap}
-.workshop-proposal p{color:var(--muted);font-size:12px;line-height:1.45;margin:9px 0}
-.workshop-proposal small{color:var(--muted);font-size:10px;line-height:1.35}
-.proposal-card-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:10px}
-.proposal-card-actions button{height:34px;border-radius:11px;font-size:9px;font-weight:850;cursor:pointer}
-.accept-quote{border:0;background:#facc15;color:#111827}
+.quote-description{border:1px solid var(--line);border-radius:13px;background:var(--bottom);padding:10px;margin-bottom:10px}
+.quote-description small{display:block;color:var(--muted);font-size:8px;font-weight:800;margin-bottom:5px}
+.quote-description p{color:var(--text);font-size:10px;line-height:1.4}
+.quote-description span{display:block;color:var(--muted);font-size:8.5px;margin-top:7px}
+.workshop-proposal{border:1px solid var(--line);border-radius:13px;background:var(--bottom);padding:10px;margin-top:8px}
+.workshop-proposal-head{display:flex;justify-content:space-between;gap:8px}
+.workshop-proposal h4{color:var(--text);font-size:11px}
+.workshop-proposal strong{color:var(--headline);font-size:14px;white-space:nowrap}
+.workshop-proposal p{color:var(--muted);font-size:8.5px;line-height:1.4;margin:7px 0}
+.workshop-proposal small{color:var(--muted);font-size:8px}
+.proposal-card-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:8px}
+.proposal-card-actions button{height:29px;border-radius:9px;font-size:7.8px;font-weight:800;cursor:pointer}
+.accept-quote{border:0;background:#16a34a;color:#fff}
 .reject-quote{border:1px solid #dc2626;background:transparent;color:#dc2626}
 .message-quote{border:1px solid var(--blue);background:transparent;color:var(--blue)}
-.notifications-toolbar{display:flex;justify-content:flex-end;margin-bottom:8px}
-.clear-notifications{height:30px;border:1px solid var(--input-border);border-radius:999px;background:var(--button-bg);color:var(--blue);padding:0 12px;font-size:10px;font-weight:850;cursor:pointer}
 .notification-list{display:grid;gap:8px}
-.notification-item{position:relative;display:grid;grid-template-columns:34px 1fr;gap:9px;border:1px solid var(--line);border-radius:13px;background:var(--bottom);padding:10px 34px 10px 10px}
+.notification-item{display:grid;grid-template-columns:34px 1fr;gap:9px;border:1px solid var(--line);border-radius:13px;background:var(--bottom);padding:10px}
 .notification-icon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:800}
 .notification-icon.quote{background:rgba(22,163,74,.12);color:#16a34a}
 .notification-icon.car{background:rgba(7,92,255,.12);color:var(--blue)}
 .notification-icon.message{background:rgba(245,158,11,.14);color:#b45309}
-.notification-icon.system,.notification-icon.promo{background:rgba(7,92,255,.1);color:var(--blue)}
-.notification-icon svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.notification-delete{position:absolute;top:8px;right:8px;width:22px;height:22px;border:0;border-radius:50%;background:rgba(15,23,42,.06);color:var(--muted);font-size:14px;font-weight:800;line-height:1;cursor:pointer}
-.notification-delete:hover{background:rgba(220,38,38,.12);color:#dc2626}
 .notification-item b{display:block;color:var(--text);font-size:10.5px;line-height:1.35}
 .notification-item p{color:var(--muted);font-size:8.5px;line-height:1.35;margin-top:3px}
 .notification-item time{display:block;color:var(--blue);font-size:8px;font-weight:750;margin-top:5px}
@@ -1900,69 +1829,27 @@ body.theme-dark .app-shell.offices-open .leaflet-control-attribution{
 /* --- Home: preview de propostas recentes --- */
 #homeQuotesPreview{display:none;margin:18px 0 0;padding:0 16px 4px}
 #homeQuotesPreview.show{display:block}
-.hqp-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 12px}
-.hqp-title{font-size:17px;font-weight:850;color:var(--headline);letter-spacing:0}
+.hqp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.hqp-title{font-size:13px;font-weight:800;color:var(--headline)}
 .hqp-link{font-size:11px;color:var(--blue);font-weight:600;background:none;border:0;cursor:pointer;padding:0;text-decoration:none}
-.hqp-card{background:var(--card);border:1.5px solid rgba(0,92,255,.22);border-radius:18px;padding:16px;margin-bottom:10px;cursor:pointer;display:flex;flex-direction:column;gap:12px;transition:box-shadow .15s,transform .15s;-webkit-tap-highlight-color:transparent;box-shadow:0 14px 30px rgba(15,23,42,.06)}
+.hqp-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;margin-bottom:10px;cursor:pointer;display:flex;flex-direction:column;gap:8px;transition:box-shadow .15s;-webkit-tap-highlight-color:transparent}
 .hqp-card:last-child{margin-bottom:0}
-.hqp-card:active{box-shadow:0 0 0 2px rgba(59,130,246,.35);transform:scale(.99)}
-.hqp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.hqp-summary{font-size:15px;font-weight:900;color:var(--headline);line-height:1.25;flex:1}
-.hqp-badge{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:900;flex-shrink:0;white-space:nowrap}
+.hqp-card:active{box-shadow:0 0 0 2px rgba(59,130,246,.35)}
+.hqp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.hqp-summary{font-size:13px;font-weight:700;color:var(--headline);line-height:1.3;flex:1}
+.hqp-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:800;flex-shrink:0;white-space:nowrap}
 .hqp-badge.is-blue{background:rgba(59,130,246,.14);color:var(--blue)}
-.hqp-badge.is-green{background:rgba(250,204,21,.26);color:#854d0e}
+.hqp-badge.is-green{background:rgba(16,185,129,.14);color:#059669}
 .hqp-badge.is-yellow{background:rgba(245,158,11,.14);color:#b45309}
-.hqp-card:has(.is-blue){border-left:5px solid var(--blue);padding-left:14px}
-.hqp-card:has(.is-green){border-left:5px solid #facc15;padding-left:14px}
-.hqp-card:has(.is-yellow){border-left:5px solid #facc15;padding-left:14px}
+.hqp-card:has(.is-blue){border-left:3px solid var(--blue);padding-left:11px}
+.hqp-card:has(.is-green){border-left:3px solid #059669;padding-left:11px}
+.hqp-card:has(.is-yellow){border-left:3px solid #d97706;padding-left:11px}
 .hqp-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.hqp-vehicle{font-size:12px;color:var(--muted);font-weight:650}
-.hqp-category{font-size:10px;font-weight:800;background:var(--bottom);color:var(--muted);padding:3px 8px;border-radius:999px;border:1px solid var(--line)}
-.hqp-action{align-self:flex-start;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;background:var(--blue);color:#fff;font-size:12px;font-weight:900;padding:9px 14px;cursor:pointer}
-.home-services{
-  margin:18px 0 18px;
-  padding:2px 4px 0;
-}
-.home-services h3{
-  color:var(--headline);
-  font-size:17px;
-  font-weight:850;
-  margin:0 0 12px;
-}
-.home-service-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:16px 12px;
-  padding:2px 0 8px;
-}
-.home-service-grid::-webkit-scrollbar{display:none}
-.home-service-btn{
-  width:100%;
-  border:0;
-  background:transparent;
-  border-radius:12px;
-  padding:0;
-  min-height:98px;
-  display:grid;
-  justify-items:center;
-  align-content:start;
-  gap:7px;
-  color:var(--headline);
-  font-size:11.5px;
-  font-weight:850;
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
-.home-service-btn:active{transform:scale(.96)}
-.home-service-icon{width:72px;height:72px;display:block;object-fit:contain}
-.home-service-btn span:last-child{
-  padding:0 2px;
-  line-height:1.15;
-  text-align:center;
-}
+.hqp-vehicle{font-size:10px;color:var(--muted);font-weight:500}
+.hqp-category{font-size:9px;font-weight:700;background:var(--bottom);color:var(--muted);padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
 .home-how-steps>.home-how-step:nth-child(1) .home-how-number{background:var(--blue)}
-.home-how-steps>.home-how-step:nth-child(3) .home-how-number{background:var(--blue)}
-.home-how-steps>.home-how-step:nth-child(5) .home-how-number{background:#facc15;color:#111827}
+.home-how-steps>.home-how-step:nth-child(3) .home-how-number{background:#d97706}
+.home-how-steps>.home-how-step:nth-child(5) .home-how-number{background:#059669}
 .home-app-banners{
   margin:22px 0 0;
   display:block;
@@ -2242,39 +2129,6 @@ body.theme-dark{
   --pager:#2d333e;
   --brand-color:#ffcc00;
   --card-shadow:0 13px 32px rgba(0,92,255,.08);
-  background:#02040a;
-}
-body.theme-dark .theme-switch{
-  border-color:#252c38;
-  background:#090d14;
-  box-shadow:0 14px 32px rgba(0,0,0,.3);
-}
-body.theme-dark .theme-switch button{color:#aab4c4}
-body.theme-dark .theme-switch button.active{color:#fff}
-body.theme-dark .pwa-install-banner{
-  border-color:rgba(7,92,255,.46);
-  background:rgba(8,11,17,.97);
-  box-shadow:0 30px 78px rgba(0,0,0,.58);
-}
-body.theme-dark .home-app-banner{
-  border-color:rgba(7,92,255,.42);
-  background:linear-gradient(135deg,rgba(7,92,255,.17),rgba(8,11,17,.96));
-}
-body.theme-dark .home-app-visual.cards::before,
-body.theme-dark .home-app-visual.cards::after{
-  border-color:rgba(7,92,255,.38);
-  background:#101722;
-  box-shadow:0 10px 22px rgba(0,0,0,.32);
-}
-body.theme-dark .app-shell.offices-open .back-home{
-  border-color:rgba(7,92,255,.48);
-  background:#080b11;
-  color:#fff;
-  box-shadow:0 12px 28px rgba(0,0,0,.3);
-}
-body.theme-dark .account-listing-actions button.danger{
-  border-color:rgba(239,68,68,.48);
-  background:#1a0d11;
 }
 @media(min-width:900px){
   body{
@@ -2282,9 +2136,6 @@ body.theme-dark .account-listing-actions button.danger{
     align-items:center;
     padding:22px;
     background:linear-gradient(135deg,#edf2f8 0%,#f8fafc 48%,#e9eff7 100%);
-  }
-  body.theme-dark{
-    background:linear-gradient(135deg,#02040a 0%,#080c14 50%,#02040a 100%);
   }
   .stage{
     width:min(1180px,100%);
@@ -2301,10 +2152,14 @@ body.theme-dark .account-listing-actions button.danger{
     padding:22px 34px 14px;
   }
   .brand{font-size:17px}
-  .desktop-nav{display:none}
+  .desktop-nav{
+    display:flex;
+    align-items:center;
+    gap:30px;
+    margin-left:auto;
+    margin-right:18px;
+  }
   .desktop-top-tool{display:flex}
-  #topEmergencyBtn,
-  #topAccountBtn{display:none}
   .vr{width:36px;height:36px;border-radius:9px}
   .workshop-cta{height:34px;padding:0 15px;font-size:12px;border-radius:10px}
   .menu-btn{width:38px;height:38px}
@@ -2340,15 +2195,6 @@ body.theme-dark .account-listing-actions button.danger{
     padding:0 18px;
   }
   .home-how h3{font-size:20px}
-  .hqp-title{font-size:20px}
-  .home-services{
-    max-width:800px;
-    margin:0 auto 24px;
-    padding:0 18px;
-  }
-  .home-services h3{font-size:20px}
-  .home-service-grid{gap:20px 18px}
-  .home-service-icon{width:78px;height:78px}
   .home-how-icon{width:56px;height:56px}
   .home-how-icon svg{width:26px;height:26px}
   .home-how-number{width:26px;height:26px;font-size:12px}
@@ -2399,158 +2245,12 @@ body.theme-dark .account-listing-actions button.danger{
     right:34px;
     top:90px;
     bottom:auto;
-    width:520px;
+    width:440px;
     max-height:calc(100% - 120px);
   }
   .side-menu{
     top:84px;
     right:28px;
-  }
-  .app-shell.offices-open .topbar{
-    height:78px;
-    padding:22px 34px 14px;
-    z-index:650;
-  }
-  .app-shell.offices-open .desktop-nav,
-  .app-shell.offices-open .desktop-top-tool{
-    display:none;
-  }
-  .app-shell.offices-open .top-actions{
-    flex:0 0 auto;
-    min-width:0;
-  }
-  .app-shell.offices-open .menu-btn{
-    position:relative;
-    top:auto;
-    right:auto;
-    flex:0 0 38px;
-    width:38px;
-    height:38px;
-    border-radius:12px;
-    background:transparent;
-  }
-  .app-shell.offices-open .app{
-    padding:96px 26px 26px;
-    overflow:hidden;
-  }
-  .app-shell.offices-open .offices-view{
-    max-width:1120px;
-    width:100%;
-    height:100%;
-    margin:0 auto;
-  }
-  .app-shell.offices-open .office-map-shell{
-    height:100%;
-    min-height:0;
-    border:1px solid var(--deal-border);
-    border-radius:22px;
-    background:var(--card);
-    box-shadow:var(--card-shadow);
-    overflow:hidden;
-  }
-  .app-shell.offices-open .office-map{
-    border-radius:22px;
-  }
-  .app-shell.offices-open .office-map-top{
-    top:12px;
-    left:20px;
-    right:auto;
-    width:clamp(360px,42vw,500px);
-  }
-  .app-shell.offices-open .office-map-head{
-    align-items:center;
-  }
-  .app-shell.offices-open .office-map-head h2{
-    font-size:30px;
-    letter-spacing:-.5px;
-  }
-  .app-shell.offices-open .office-map-head p{
-    display:block;
-    margin-top:5px;
-    max-width:330px;
-    color:var(--text);
-    font-size:12px;
-    line-height:1.35;
-    font-weight:650;
-  }
-  .app-shell.offices-open .back-home{
-    height:38px;
-    padding:0 16px;
-    border-radius:999px;
-    background:rgba(255,255,255,.95);
-    box-shadow:0 12px 28px rgba(15,23,42,.12);
-  }
-  .app-shell.offices-open .office-category-select-row{
-    grid-template-columns:150px minmax(0,1fr);
-  }
-  .app-shell.offices-open .office-category-toggle,
-  .app-shell.offices-open .office-category-selected,
-  .app-shell.offices-open .office-map-chip{
-    height:40px;
-    font-size:12px;
-  }
-  .app-shell.offices-open .office-open-subtle{
-    height:36px;
-    font-size:11px;
-  }
-  .app-shell.offices-open .office-map-focus{
-    right:414px;
-    top:20px;
-  }
-  .app-shell.offices-open .office-results-sheet{
-    left:auto;
-    right:20px;
-    top:88px;
-    bottom:20px;
-    width:380px;
-    max-height:none;
-    grid-template-rows:auto auto minmax(0,1fr) auto;
-    padding:10px;
-    border-radius:20px;
-  }
-  .app-shell.offices-open .office-sheet-grip{
-    display:none;
-  }
-  .app-shell.offices-open .office-list-tools{
-    padding:0 2px 6px;
-  }
-  .app-shell.offices-open .office-list{
-    display:flex;
-    flex-direction:column;
-    flex-wrap:nowrap;
-    gap:8px;
-    overflow-x:hidden;
-    overflow-y:auto;
-    padding:2px 2px 8px;
-    scroll-snap-type:none;
-  }
-  .app-shell.offices-open .office-card{
-    flex:0 0 auto;
-    width:100%;
-    scroll-snap-align:none;
-    max-height:none;
-    overflow:visible;
-    grid-template-columns:54px minmax(0,1fr);
-    gap:10px;
-    padding:10px;
-    border-radius:15px;
-  }
-  .app-shell.offices-open .office-photo{
-    width:54px;
-    height:50px;
-  }
-  .app-shell.offices-open .office-card h3{
-    font-size:12px;
-  }
-  .app-shell.offices-open .office-address{
-    font-size:9.5px;
-  }
-  .app-shell.offices-open .office-links button{
-    height:28px;
-    font-size:9px;
-  }
-  .app-shell.offices-open .office-detail.show{
-    gap:10px;
   }
 }
 @media(max-width:520px){
@@ -2854,63 +2554,40 @@ body.theme-dark .account-listing-actions button.danger{
             <strong>Escolha a melhor</strong>
           </div>
         </div>
-      </section>
-
-      <section class="home-services" id="homeOtherServices" aria-label="Serviços mais solicitados">
-        <h3>Serviços mais solicitados</h3>
-        <div class="home-service-grid">
-          <button class="home-service-btn" type="button" data-office-category="Troca de óleo e filtros">
-            <img class="home-service-icon" src="assets/service-icons/troca-oleo-filtros.png" alt="">
-            <span>Óleo e filtros</span>
-          </button>
-          <button class="home-service-btn" type="button" data-office-category="Freios e suspensão">
-            <img class="home-service-icon" src="assets/service-icons/freios.png" alt="">
-            <span>Freios</span>
-          </button>
-          <button class="home-service-btn" type="button" data-office-category="Pneus e alinhamento">
-            <img class="home-service-icon" src="assets/service-icons/pneus.png" alt="">
-            <span>Pneus</span>
-          </button>
-          <button class="home-service-btn" type="button" data-office-category="Ar-condicionado">
-            <img class="home-service-icon" src="assets/service-icons/ar-condicionado.png" alt="">
-            <span>Ar-condicionado</span>
-          </button>
-          <button class="home-service-btn" type="button" data-office-category="Lavagem e estética">
-            <img class="home-service-icon" src="assets/service-icons/estetica-automotiva.png" alt="">
-            <span>Estética automotiva</span>
-          </button>
-          <button class="home-service-btn" type="button" data-office-category="Elétrica automotiva">
-            <img class="home-service-icon" src="assets/service-icons/bateria-eletrica.png" alt="">
-            <span>Bateria e elétrica</span>
-          </button>
+        <div class="home-app-banners" id="homeAppBanners">
+          <div class="home-app-track" id="homeAppTrack">
+            <button class="home-app-banner primary" id="homeBannerProposal" type="button">
+              <span class="home-app-banner-copy">
+                <span class="home-app-banner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg></span>
+                <span><strong>Envie uma proposta</strong><p>Conte o problema e receba respostas de oficinas próximas.</p></span>
+              </span>
+              <span class="home-app-visual cards" aria-hidden="true"></span>
+            </button>
+            <button class="home-app-banner" id="homeBannerOffices" type="button">
+              <span class="home-app-banner-copy">
+                <span class="home-app-banner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <span><strong>Busque oficinas</strong><p>Veja no mapa, filtre serviços e fale direto com quem atende.</p></span>
+              </span>
+              <span class="home-app-visual map" aria-hidden="true"><i class="home-map-pin"></i><i class="home-map-pin"></i><i class="home-map-pin"></i></span>
+            </button>
+            <button class="home-app-banner" id="homeBannerAccount" type="button">
+              <span class="home-app-banner-copy">
+                <span class="home-app-banner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg></span>
+                <span><strong>Acompanhe tudo</strong><p>Propostas, mensagens e reservas ficam salvas na sua conta.</p></span>
+              </span>
+              <span class="home-app-visual track" aria-hidden="true"></span>
+            </button>
+          </div>
+          <div class="home-app-dots" aria-hidden="true"><button class="home-app-dot active" type="button"></button><button class="home-app-dot" type="button"></button><button class="home-app-dot" type="button"></button></div>
         </div>
       </section>
 
-      <div class="home-app-banners" id="homeAppBanners">
-        <div class="home-app-track" id="homeAppTrack">
-          <button class="home-app-banner primary" id="homeBannerProposal" type="button">
-            <span class="home-app-banner-copy">
-              <span class="home-app-banner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg></span>
-              <span><strong>Envie uma proposta</strong><p>Conte o problema e receba respostas de oficinas próximas.</p></span>
-            </span>
-            <span class="home-app-visual cards" aria-hidden="true"></span>
-          </button>
-          <button class="home-app-banner" id="homeBannerOffices" type="button">
-            <span class="home-app-banner-copy">
-              <span class="home-app-banner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
-              <span><strong>Busque oficinas</strong><p>Veja no mapa, filtre serviços e fale direto com quem atende.</p></span>
-            </span>
-            <span class="home-app-visual map" aria-hidden="true"><i class="home-map-pin"></i><i class="home-map-pin"></i><i class="home-map-pin"></i></span>
-          </button>
-          <button class="home-app-banner" id="homeBannerAccount" type="button">
-            <span class="home-app-banner-copy">
-              <span class="home-app-banner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg></span>
-              <span><strong>Acompanhe tudo</strong><p>Propostas, mensagens e reservas ficam salvas na sua conta.</p></span>
-            </span>
-            <span class="home-app-visual track" aria-hidden="true"></span>
-          </button>
+      <div id="homeQuotesPreview">
+        <div class="hqp-head">
+          <span class="hqp-title">Minhas propostas</span>
+          <button class="hqp-link" id="hqpSeeAll">Ver todas →</button>
         </div>
-        <div class="home-app-dots" aria-hidden="true"><button class="home-app-dot active" type="button"></button><button class="home-app-dot" type="button"></button><button class="home-app-dot" type="button"></button></div>
+        <div id="hqpList"></div>
       </div>
 
       <section class="offers-section prototype-hidden" id="offersSection">
@@ -2976,44 +2653,30 @@ body.theme-dark .account-listing-actions button.danger{
           <div class="office-map-top">
             <div class="office-map-head">
               <div><h2>Oficinas</h2><p>Escolha um serviço e veja opções próximas no mapa.</p></div>
+              <button class="back-home" id="backHomeBtn">Voltar</button>
             </div>
-            <div class="office-ai-search">
-              <div class="office-search-copy">
-                <input id="officeSearchInput" placeholder="Escreva seu problema..." autocomplete="off" aria-label="Buscar oficina">
-              </div>
-              <button id="officeSearchBtn" type="button" aria-label="Buscar oficinas"><svg viewBox="0 0 24 24"><path d="M21.7 3.4 3.6 10.8c-1.2.5-1.1 2.2.1 2.5l6.4 1.6 1.6 6.3c.3 1.2 2 1.3 2.5.2l7.4-18.1c.3-.8-.4-1.5-1.2-1.2ZM11 14l7.2-7.2-4.7 11.5-1.1-4.4L8 12.8 19.5 8.1 12.3 15.3 11 14Z"/></svg></button>
-            </div>
+            <input id="officeSearchInput" type="hidden" value="">
             <div class="office-map-controls">
-              <div class="office-quick-cats" id="officeQuickCards">
-                <button class="office-quick-cat" type="button" data-category="Revisão geral / Manutenção preventiva"><img src="assets/service-icons/mechanica-geral.png" alt=""><span>Mecânica geral</span></button>
-                <button class="office-quick-cat" type="button" data-category="Troca de óleo e filtros"><img src="assets/service-icons/troca-oleo-filtros.png" alt=""><span>Óleo e filtros</span></button>
-                <button class="office-quick-cat" type="button" data-category="Freios e suspensão"><img src="assets/service-icons/freios.png" alt=""><span>Freios</span></button>
-                <button class="office-quick-cat" type="button" data-category="Pneus e alinhamento"><img src="assets/service-icons/pneus.png" alt=""><span>Pneus</span></button>
-                <button class="office-quick-cat" type="button" data-category="Elétrica automotiva"><img src="assets/service-icons/bateria-eletrica.png" alt=""><span>Bateria e elétrica</span></button>
-                <button class="office-quick-cat" type="button" data-category="Ar-condicionado"><img src="assets/service-icons/ar-condicionado.png" alt=""><span>Ar-condicionado</span></button>
-                <button class="office-quick-cat" type="button" data-category="Funilaria e pintura"><img src="assets/service-icons/funilaria-pintura.png" alt=""><span>Funilaria e pintura</span></button>
-                <button class="office-quick-cat" type="button" data-category="Lavagem e estética"><img src="assets/service-icons/estetica-automotiva.png" alt=""><span>Estética automotiva</span></button>
-                <button class="office-quick-cat" type="button" data-category="Vidros e acessórios"><img src="assets/service-icons/vidros-parabrisas.png" alt=""><span>Vidros e para-brisas</span></button>
-                <button class="office-quick-cat" type="button" data-category="Vidros e acessórios"><img src="assets/service-icons/acessorios.png" alt=""><span>Acessórios</span></button>
-              </div>
-              <div class="office-filter-row">
-                <div class="office-category-select-row">
-                <button class="office-category-toggle" id="officeCategoryToggle" type="button"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M7 12h10"/><path d="M10 17h4"/></svg>Filtros</button>
+              <div class="office-category-select-row">
+                <button class="office-category-toggle" id="officeCategoryToggle" type="button">Categorias</button>
                 <div class="office-category-selected" id="officeCategorySelected">Todas as categorias</div>
-                <div class="office-category-strip" id="officeCategoryQuick"></div>
-                </div>
-                <button class="office-map-chip office-open-subtle" id="officeOpenQuick" type="button">Aberto agora</button>
-                <button class="office-map-chip office-open-subtle" id="officeHomeQuick" type="button">A domicílio</button>
-                <button class="office-clear-quick" id="clearOfficeFilters" type="button" hidden>Limpar</button>
               </div>
+              <div class="office-category-strip" id="officeCategoryQuick"></div>
+              <button class="office-map-chip office-open-subtle" id="officeOpenQuick" type="button">Aberto agora</button>
+              <button class="office-map-chip office-open-subtle" id="officeHomeQuick" type="button">A domicílio</button>
             </div>
-            <div class="office-filter-menu" id="officeFilterMenu" hidden>
-              <input class="office-filter" id="officeLocationFilter" type="hidden" value="">
-              <button class="inline-location" id="useOfficeLocation" type="button" hidden aria-label="Usar localização"></button>
-              <select class="office-filter" id="officeOpenFilter" hidden aria-label="Aberto"><option value="all">Todos</option><option value="open">Aberto agora</option></select>
-              <select class="office-filter" id="officeCategoryFilter" hidden aria-label="Categoria"><option value="">Todas as categorias</option></select>
-              <details class="rating-filter" id="ratingFilter" hidden><summary>Avaliação</summary><div class="rating-panel"><label><input type="checkbox" value="4.8"> 4.8 ou mais</label><label><input type="checkbox" value="4.6"> 4.6 ou mais</label><label><input type="checkbox" value="4.4"> 4.4 ou mais</label></div></details>
-            </div>
+            <button id="officeSearchBtn" type="button" hidden aria-label="Buscar oficinas"></button>
+            <details class="office-filter-menu" id="officeFilterMenu">
+              <summary style="display:none">Filtros</summary>
+              <div class="office-filters">
+                <input class="office-filter" id="officeLocationFilter" type="hidden" value="">
+                <button class="inline-location" id="useOfficeLocation" type="button" hidden aria-label="Usar localização"></button>
+                <select class="office-filter" id="officeOpenFilter" hidden aria-label="Aberto"><option value="all">Todos</option><option value="open">Aberto agora</option></select>
+                <select class="office-filter" id="officeCategoryFilter" aria-label="Categoria"><option value="">Todas as categorias</option></select>
+                <details class="rating-filter" id="ratingFilter" hidden><summary>Avaliação</summary><div class="rating-panel"><label><input type="checkbox" value="4.8"> 4.8 ou mais</label><label><input type="checkbox" value="4.6"> 4.6 ou mais</label><label><input type="checkbox" value="4.4"> 4.4 ou mais</label></div></details>
+                <button class="clear-filters" id="clearOfficeFilters" type="button">Limpar</button>
+              </div>
+            </details>
           </div>
           <div class="office-results-sheet">
             <div class="office-sheet-grip"></div>
@@ -3061,21 +2724,22 @@ body.theme-dark .account-listing-actions button.danger{
       <section class="proposal-view" aria-label="Enviar proposta">
         <div class="offices-hero">
           <div>
-            <h2>Seu carro deu problema?<br>Receba propostas de oficinas próximas</h2>
-            <p>Conte o que aconteceu e compare preço, prazo e disponibilidade.</p>
+            <h2>Enviar proposta</h2>
+            <p>Conte o problema do seu carro. A IA organiza o pedido para oficinas próximas responderem com preço e disponibilidade.</p>
           </div>
           <button class="back-home" id="menuProposalBack">Voltar ao início</button>
         </div>
-        <div class="assistant-card menu-proposal-card">
+        <div class="proposal-panel">
           <div class="assist-head">
             <div class="vr"><img class="logo-mark" src="assets/vai_rodar_logo_transparent.png" alt="VR"></div>
             <div>
               <h2>Como podemos te ajudar hoje?</h2>
+              <p>Descreva seu problema para a IA identificar as categorias certas.</p>
             </div>
           </div>
-          <div class="assistant-search">
-            <input id="menuProposalQuery" placeholder="Escreva seu problema...">
-            <button class="assistant-send" id="menuProposalAnalyze" aria-label="Enviar">
+          <div class="proposal-ai-search">
+            <input id="menuProposalQuery" placeholder="Ex.: meu carro faz barulho ao frear">
+            <button id="menuProposalAnalyze" aria-label="Analisar problema">
               <svg viewBox="0 0 24 24"><path d="M21.7 3.4 3.6 10.8c-1.2.5-1.1 2.2.1 2.5l6.4 1.6 1.6 6.3c.3 1.2 2 1.3 2.5.2l7.4-18.1c.3-.8-.4-1.5-1.2-1.2ZM11 14l7.2-7.2-4.7 11.5-1.1-4.4L8 12.8 19.5 8.1 12.3 15.3 11 14Z"/></svg>
             </button>
           </div>
@@ -3274,10 +2938,9 @@ body.theme-dark .account-listing-actions button.danger{
     </main>
 
     <div class="bottom-tools" aria-label="Ferramentas rápidas" id="bottomNav">
-      <button class="tool-btn active-nav" id="mobileNotificationsBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
-        <span class="notif-badge" id="mobileNotifBadge" style="display:none"></span>
-        <span>Notificações</span>
+      <button class="tool-btn active-nav" id="mobileHomeBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5Z"/><path d="M9 21V12h6v9"/></svg>
+        <span>Início</span>
       </button>
       <button class="tool-btn" id="mobileCotacoesBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"/><path d="M9 12h6M9 16h4"/></svg>
@@ -3406,13 +3069,9 @@ body.theme-dark .account-listing-actions button.danger{
           <button class="account-back" type="button" data-account-back>← Minha conta</button>
           <div class="account-section-title">Minhas placas</div>
           <div class="account-plates" id="accountPlatesList"></div>
-          <div class="account-add-plate-box">
-            <label for="accountNewPlate">Placa do veículo</label>
-            <div class="account-inline">
-            <input id="accountNewPlate" placeholder="Ex.: ABC1D23" maxlength="7">
+          <div class="account-inline">
+            <input id="accountNewPlate" placeholder="Adicionar placa" maxlength="7">
             <button class="account-mini-btn" id="accountAddPlate" type="button">Adicionar</button>
-            </div>
-            <div class="account-add-help">Informe a placa para buscar automaticamente os dados do veículo.</div>
           </div>
         </div>
         <div class="account-subpanel" id="accountListingsModule">
@@ -3455,7 +3114,6 @@ body.theme-dark .account-listing-actions button.danger{
         <div><h3>Notificações</h3><p>Novidades sobre propostas, mensagens e seus veículos.</p></div>
         <button class="drawer-close" id="notificationsClose" aria-label="Fechar">×</button>
       </div>
-      <div class="notifications-toolbar"><button class="clear-notifications" id="clearNotifications" type="button">Limpar tudo</button></div>
       <div class="notification-list" id="notificationList"></div>
     </section>
     <section class="drawer-panel" id="reservationsPanel" aria-label="Reservas">
@@ -3556,7 +3214,7 @@ body.theme-dark .account-listing-actions button.danger{
         <label>Veículo</label><select id="reservationVehicle"></select>
         <label>Detalhes do que você precisa</label><textarea id="reservationDetails" placeholder="Explique brevemente o serviço necessário..."></textarea>
         <div class="reservation-date-time">
-          <div><label>Data</label><input id="reservationDate" type="date"></div>
+          <div><label>Data</label><select id="reservationDate"></select></div>
           <div><label>Horário</label><select id="reservationTime"></select></div>
         </div>
       </div>
@@ -3646,9 +3304,7 @@ const officeCategoryFilter=document.getElementById("officeCategoryFilter");
 const officeCategoryToggle=document.getElementById("officeCategoryToggle");
 const officeCategorySelected=document.getElementById("officeCategorySelected");
 const officeCategoryQuick=document.getElementById("officeCategoryQuick");
-const officeQuickCards=document.getElementById("officeQuickCards");
 const officeHomeQuick=document.getElementById("officeHomeQuick");
-const officeFilterMenu=document.getElementById("officeFilterMenu");
 const ratingFilter=document.getElementById("ratingFilter");
 const clearOfficeFilters=document.getElementById("clearOfficeFilters");
 const officeList=document.getElementById("officeList");
@@ -3674,6 +3330,7 @@ const benefitsSubtitle=document.getElementById("benefitsSubtitle");
 const benefitsSearch=document.getElementById("benefitsSearch");
 const benefitsCategory=document.getElementById("benefitsCategory");
 const benefitsList=document.getElementById("benefitsList");
+const mobileHomeBtn=document.getElementById("mobileHomeBtn");
 const mobileCotacoesBtn=document.getElementById("mobileCotacoesBtn");
 const mobileMessagesNavBtn=document.getElementById("mobileMessagesNavBtn");
 const topEmergencyBtn=document.getElementById("topEmergencyBtn");
@@ -3794,7 +3451,6 @@ const topNotifBadge=document.getElementById("topNotifBadge");
 const mobileNotifBadge=document.getElementById("mobileNotifBadge");
 const notificationsPanel=document.getElementById("notificationsPanel");
 const notificationsClose=document.getElementById("notificationsClose");
-const clearNotifications=document.getElementById("clearNotifications");
 const notificationList=document.getElementById("notificationList");
 const pwaInstallBackdrop=document.getElementById("pwaInstallBackdrop");
 const pwaInstallBanner=document.getElementById("pwaInstallBanner");
@@ -3906,7 +3562,6 @@ const workshopBackofficeLink=document.getElementById("workshopBackofficeLink");
 let visibleOfficeCount=7;
 let officeDetailsFollowSwipe=false;
 let officeListSelectionMode=false;
-let officeResultCount=0;
 let selectedEmergency=null;
 let activeChatIndex=0;
 let activeReservationOffice=null;
@@ -4038,12 +3693,7 @@ async function notifyProposalEvent(eventName,proposalId){
   }
 }
 const notifications=[];
-const notificationIcons={
-  quote:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5 5L4 17v3h3l5.7-5.7a4 4 0 0 0 5-5l-2.4 2.4-2.8-2.8 2.2-2.6Z"/></svg>',
-  message:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>',
-  system:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>',
-  promo:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2z"/><path d="M12 22V7M12 7H8.5a2.5 2.5 0 1 1 0-5C12 2 12 7 12 7ZM12 7h3.5a2.5 2.5 0 1 0 0-5C12 2 12 7 12 7Z"/></svg>'
-};
+const notificationIcons={quote:"🛠",message:"💬",system:"🔔",promo:"🎁"};
 function notificationTimeAgo(iso){
   if(!iso) return "";
   const diffMs=Date.now()-new Date(iso).getTime();
@@ -4286,9 +3936,6 @@ function renderOfficeCategoryQuick(){
   if(!officeCategoryQuick) return;
   const active=officeCategoryFilter.value;
   if(officeCategorySelected) officeCategorySelected.textContent=active||"Todas as categorias";
-  officeQuickCards?.querySelectorAll(".office-quick-cat").forEach((button)=>{
-    button.classList.toggle("active",button.dataset.category===active);
-  });
   const items=[{label:"Todas",value:""},...allowedCategories.map((category)=>({label:category,value:category}))];
   officeCategoryQuick.innerHTML=items.map((item)=>`<button class="office-category-chip ${item.value===active?"active":""}" type="button" data-category="${item.value}">${item.label}</button>`).join("");
 }
@@ -4367,45 +4014,15 @@ function resetAssistant(silent=false){
 function normalizeText(value){
   return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 }
-const officeSearchStopWords=new Set(["a","as","o","os","de","da","das","do","dos","e","em","no","na","nos","nas","ao","aos","para","por","com","um","uma","meu","minha","carro","veiculo","quero","preciso","trocar","arrumar","consertar","servico","oficina","quando","que","faz","esta","sinto","sente"]);
-const officeSearchSynonyms=[
-  {terms:["mecanica","mecanico","revisao","manutencao","barulho","ruido","chiado","vibracao","trepidacao","treme","tremendo"],targets:["revisao geral","manutencao preventiva","motor e transmissao"]},
-  {terms:["oleo","lubrificante","filtro"],targets:["troca de oleo e filtros"]},
-  {terms:["freio","freios","pastilha","pastilhas","disco","discos"],targets:["freios e suspensao"]},
-  {terms:["suspensao","amortecedor","mola","direcao"],targets:["freios e suspensao","revisao geral"]},
-  {terms:["pneu","pneus","roda","rodas","alinhamento","balanceamento"],targets:["pneus e alinhamento"]},
-  {terms:["bateria","eletrica","eletrico","alternador","partida","farol","luz"],targets:["eletrica automotiva"]},
-  {terms:["ar","climatizacao","gelando","refrigeracao"],targets:["ar-condicionado"]},
-  {terms:["funilaria","pintura","batida","amassado","lataria"],targets:["funilaria e pintura"]},
-  {terms:["lavagem","limpeza","estetica","detailing","polimento","higienizacao"],targets:["lavagem e estetica"]},
-  {terms:["vidro","vidros","parabrisa","para-brisa"],targets:["vidros e acessorios"]},
-  {terms:["acessorio","acessorios","som","multimidia","alarme"],targets:["vidros e acessorios"]},
-  {terms:["scanner","diagnostico","injecao","painel"],targets:["diagnostico computadorizado","eletrica automotiva"]}
-];
-let officeAISearchCategory="";
-function officeMatchesSearch(haystack,rawQuery){
-  const normalizedQuery=normalizeText(rawQuery).replace(/[^a-z0-9\s-]/g," ");
-  const tokens=normalizedQuery.split(/\s+/).filter((token)=>token.length>1&&!officeSearchStopWords.has(token));
-  if(!tokens.length) return !normalizedQuery.trim()||haystack.includes(normalizedQuery.trim());
-  return tokens.every((token)=>{
-    if(haystack.includes(token)) return true;
-    return officeSearchSynonyms.some((group)=>{
-      const related=group.terms.some((term)=>term.includes(token)||token.includes(term));
-      return related&&group.targets.some((target)=>haystack.includes(normalizeText(target)));
-    });
-  });
-}
 function getFilteredOffices(){
-  const query=officeAISearchCategory?"":officeSearchInput.value.trim();
+  const query=normalizeText(officeSearchInput.value.trim());
   const category=officeCategoryFilter.value;
   const onlyOpen=officeOpenFilter.value==="open";
   const onlyHome=officeHomeQuick?.classList.contains("active");
   return offices
     .filter((office)=>{
-      const serviceText=Array.isArray(office.services)?office.services.join(" "):"";
-      const catalogText=getOfficeRealServiceItems(office,category||office.category).map((item)=>`${item.name} ${item.desc||""}`).join(" ");
-      const haystack=normalizeText(`${office.name} ${office.address} ${office.category} ${serviceText} ${catalogText}`);
-      return officeMatchesSearch(haystack,query)
+      const haystack=normalizeText(`${office.name} ${office.address} ${office.category}`);
+      return (!query||haystack.includes(query)||query.includes("pneu")&&office.category==="Pneus e alinhamento"||query.includes("freio")&&office.category==="Freios e suspensão")
         &&(!category||office.category===category||(Array.isArray(office.services)&&office.services.includes(category))||office.category==="Serviços automotivos")
         &&(!onlyOpen||office.open)
         &&(!onlyHome||office.homeService||office.atHome||office.mobileService||normalizeText(office.serviceMode||"").includes("domicilio"));
@@ -4452,7 +4069,7 @@ function ensureOfficeMap(){
   }
   if(!officeMapInstance){
     officeMapInstance=L.map(officeMap,{zoomControl:false,attributionControl:true}).setView([-23.5617,-46.6559],12);
-    L.tileLayer(`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png`,{
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",{
       maxZoom:19,
       subdomains:"abcd",
       attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -4463,7 +4080,7 @@ function ensureOfficeMap(){
 }
 function showOfficeDetail(index){
   officeList.querySelectorAll(".office-detail.show").forEach((item)=>item.classList.remove("show"));
-  officeList.querySelectorAll(".more-info-btn").forEach((item)=>item.textContent="Ver oficina");
+  officeList.querySelectorAll(".more-info-btn").forEach((item)=>item.textContent="Detalhes");
   const detail=document.getElementById(`officeDetail${index}`);
   if(detail) detail.classList.add("show");
   const button=officeList.querySelector(`.more-info-btn[data-index="${index}"]`);
@@ -4473,7 +4090,7 @@ function showOfficeDetail(index){
 function hideOfficeDetails(){
   officeDetailsFollowSwipe=false;
   officeList.querySelectorAll(".office-detail.show").forEach((item)=>item.classList.remove("show"));
-  officeList.querySelectorAll(".more-info-btn").forEach((item)=>item.textContent="Ver oficina");
+  officeList.querySelectorAll(".more-info-btn").forEach((item)=>item.textContent="Detalhes");
   document.querySelector(".office-results-sheet")?.classList.remove("expanded");
 }
 function focusOfficeCard(index){
@@ -4540,7 +4157,7 @@ function updateOfficeSelectionCount(){
   const count=selectedOfficeIndexes().length;
   officeSelectedCount.textContent=officeListSelectionMode
     ? count?`${count} selecionada${count>1?"s":""}`:"Selecione oficinas"
-    :`${officeResultCount||0} oficina${officeResultCount===1?"":"s"} próxima${officeResultCount===1?"":"s"}`;
+    :"Toque em Lista para selecionar";
   if(sendOfficeProposals) sendOfficeProposals.disabled=officeListSelectionMode&&!count;
 }
 function setOfficeSelectionMode(active){
@@ -4617,34 +4234,16 @@ function bindOfficeSheetSwipe(){
 bindOfficeSheetSwipe();
 function getOfficeServices(office){
   if(Array.isArray(office.services)&&office.services.length) return office.services;
-  return office.category?[office.category]:[];
-}
-function getOfficeRealServiceItems(office,category){
-  const direct=Array.isArray(office.serviceItems)?office.serviceItems:Array.isArray(office.service_items)?office.service_items:[];
-  const catalog=office.serviceCatalog||office.service_catalog||null;
-  const fromCatalog=catalog&&category&&Array.isArray(catalog[category])?catalog[category]:[];
-  const items=direct.length?direct:fromCatalog;
-  return items
-    .map((item)=>typeof item==="string"?{name:item,price:"",desc:""}:item)
-    .filter((item)=>item&&item.name&&(!category||!item.category||item.category===category));
+  const extras=office.category==="Pneus e alinhamento"?["Bateria","Balanceamento"]:office.category==="Freios e suspensão"?["Revisão geral","Troca de óleo e filtros"]:["Bateria","Diagnóstico computadorizado"];
+  return [office.category,...extras];
 }
 function renderOffices(reset=false){
   if(reset){
     visibleOfficeCount=7;
     officeDetailsFollowSwipe=false;
   }
-  const hasOfficeFilters=Boolean(
-    officeSearchInput.value.trim()
-    ||officeCategoryFilter.value
-    ||officeOpenFilter.value==="open"
-    ||officeHomeQuick?.classList.contains("active")
-    ||officeLocationFilter.value.trim()
-    ||Array.from(ratingFilter.querySelectorAll("input")).some((input)=>input.checked)
-  );
-  clearOfficeFilters.hidden=!hasOfficeFilters;
   const filtered=getFilteredOffices();
   if(!filtered.length){
-    officeResultCount=0;
     updateOfficeMap(filtered);
     officeList.innerHTML='<div class="empty">Não foram encontradas oficinas para estes filtros.</div>';
     loadMoreOffices.style.display="none";
@@ -4653,17 +4252,13 @@ function renderOffices(reset=false){
     return;
   }
   sendOfficeProposals.style.display="block";
-  officeResultCount=filtered.length;
   updateOfficeMap(filtered);
   const visible=officeListSelectionMode?filtered:filtered.slice(0,visibleOfficeCount);
   officeList.innerHTML=visible.map((office)=>{
     const index=offices.indexOf(office);
     const services=getOfficeServices(office);
     const filteredService=officeCategoryFilter.value||services[0]||office.category;
-    const serviceItems=getOfficeRealServiceItems(office,filteredService);
-    const serviceRows=serviceItems.length
-      ?serviceItems.map((service)=>`<div class="office-service-row"><div><strong>${service.name}</strong>${service.desc?`<small>${service.desc}</small>`:""}</div>${service.price?`<span class="office-service-price">${service.price}</span>`:""}<button class="service-reserve-btn" type="button" data-index="${index}" data-service="${service.name}">Reservar</button></div>`).join("")
-      :`<div class="office-service-empty"></div>`;
+    const serviceItems=serviceItemsForCategory(filteredService);
     return `
     <article class="office-card" data-office-index="${index}">
       <img class="office-photo" src="${office.img}" alt="">
@@ -4673,13 +4268,13 @@ function renderOffices(reset=false){
         <div class="office-links">
           <button class="message-btn" type="button">Mensagem</button>
           <button class="call-btn" type="button">Chamar</button>
-          <button class="more-info-btn" type="button" data-index="${index}">Ver oficina</button>
+          <button class="more-info-btn" type="button" data-index="${index}">Detalhes</button>
         </div>
       </div>
       <label class="office-select-check" title="Selecionar oficina"><input type="checkbox" value="${index}" aria-label="Selecionar ${office.name}"><span></span></label>
       <section class="office-detail" id="officeDetail${index}">
         <details class="office-accordion"><summary>Horários</summary><div class="office-accordion-body"><div class="office-schedule"><span class="schedule-row"><b>Segunda</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Terça</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Quarta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Quinta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Sexta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Sábado</b><em>09:00 - 13:00</em></span><span class="schedule-row closed"><b>Domingo</b><em>Fechado</em></span></div></div></details>
-        <details class="office-accordion" open><summary>Serviços</summary><div class="office-accordion-body"><div class="office-service-list">${serviceRows}</div></div></details>
+        <details class="office-accordion" open><summary>Serviços</summary><div class="office-accordion-body"><div class="office-service-list">${serviceItems.map((service)=>`<div class="office-service-row"><div><strong>${service.name}</strong><small>${service.desc}</small></div><span class="office-service-price">${service.price}</span><button class="service-reserve-btn" type="button" data-index="${index}" data-service="${service.name}">Reservar</button></div>`).join("")}</div></div></details>
         <details class="office-accordion"><summary>Contato</summary><div class="office-accordion-body"><div class="office-detail-actions"><button class="collapse-detail" type="button" data-index="${index}">Fechar</button><button class="reserve-detail" type="button" data-index="${index}">Agendar</button></div></div></details>
       </section>
     </article>
@@ -4736,39 +4331,6 @@ async function openOfficesView(){
   renderOffices(true);
   appScroller.scrollTo({top:0,behavior:"smooth"});
   setTimeout(()=>officeSearchInput.focus(),160);
-}
-async function openOfficesWithCategory(category){
-  await openOfficesView();
-  if(officeCategoryFilter&&allowedCategories.includes(category)){
-    officeAISearchCategory="";
-    officeSearchInput.value="";
-    officeCategoryFilter.value=category;
-    renderOfficeCategoryQuick();
-    renderOffices(true);
-  }
-}
-async function runOfficeSmartSearch(){
-  const query=officeSearchInput.value.trim();
-  officeAISearchCategory="";
-  renderOffices(true);
-  if(!query||getFilteredOffices().length) return;
-  officeSearchBtn.disabled=true;
-  officeSearchBtn.setAttribute("aria-busy","true");
-  try{
-    const aiResult=await callAIDiagnose(`Encontre oficinas adequadas para esta necessidade: ${query}`,[]);
-    const category=(Array.isArray(aiResult?.categories)?aiResult.categories:[])
-      .map(normalizeAICategory)
-      .find((item)=>allowedCategories.includes(item));
-    if(category){
-      officeAISearchCategory=category;
-      officeCategoryFilter.value=category;
-      renderOfficeCategoryQuick();
-    }
-    renderOffices(true);
-  }finally{
-    officeSearchBtn.disabled=false;
-    officeSearchBtn.removeAttribute("aria-busy");
-  }
 }
 function closeOfficesView(){
   screenShell.classList.remove("offices-open","parts-open");
@@ -5435,37 +4997,12 @@ function renderAccountPlates(){
     accountPlatesList.innerHTML='<div class="account-empty">Ainda não há placas cadastradas. Adicione sua placa para usar em propostas.</div>';
     return;
   }
-  accountPlatesList.innerHTML=`
-    <div class="account-plates-head">
-      <b>Veículos cadastrados</b>
-      <span class="account-plates-count" id="accountPlatesCount">1/${userVehicles.length}</span>
-    </div>
-    <div class="account-plates-track" id="accountPlatesTrack">
-      ${userVehicles.map((vehicle)=>`
+  accountPlatesList.innerHTML=userVehicles.map((vehicle)=>`
     <div class="account-plate-row">
-      <div class="mercosul-plate"><b>${vehicle.plate}</b></div>
-      <div class="account-plate-info">
-        <div>
-          <strong>${vehicle.brand} ${vehicle.model}</strong>
-          <small>${vehicle.year} · ${vehicle.color}</small>
-        </div>
-        <button type="button" data-remove-plate="${vehicle.plate}">Remover</button>
-      </div>
+      <div><b>${vehicle.plate}</b><small>${vehicle.brand} ${vehicle.model}<span>${vehicle.year} · ${vehicle.color}</span></small></div>
+      <button type="button" data-remove-plate="${vehicle.plate}">Remover</button>
     </div>
-      `).join("")}
-    </div>
-  `;
-  const track=document.getElementById("accountPlatesTrack");
-  const count=document.getElementById("accountPlatesCount");
-  if(track&&count){
-    const updateCount=()=>{
-      const cardWidth=track.querySelector(".account-plate-row")?.getBoundingClientRect().width||track.clientWidth||1;
-      const current=Math.min(userVehicles.length,Math.max(1,Math.round(track.scrollLeft/cardWidth)+1));
-      count.textContent=`${current}/${userVehicles.length}`;
-    };
-    track.addEventListener("scroll",()=>requestAnimationFrame(updateCount),{passive:true});
-    updateCount();
-  }
+  `).join("");
 }
 function listingStatusLabel(status){
   const labels={active:"Publicado",pending_review:"Em revisão",paused:"Pausado",sold:"Vendido",rejected:"Rejeitado"};
@@ -5634,6 +5171,10 @@ function openOficinaOptionsModal(showBack){
 function closeOficinaOptionsModal(){
   document.getElementById("oficinaOptionsModal")?.classList.remove("show");
 }
+function appRoute(webPath,localPath){
+  if(window.location.protocol==="file:") return localPath;
+  return webPath;
+}
 function setLoggedIn(user){
   currentUser=user||null;
   accountLoggedOut.style.display=currentUser?"none":"block";
@@ -5701,10 +5242,6 @@ async function initAuth(){
 function chatInitials(name){
   return (name||"OF").split(" ").filter(Boolean).slice(0,2).map((word)=>word[0]).join("").toUpperCase()||"OF";
 }
-function knownWorkshopName(workshopId,fallback="Oficina parceira"){
-  const match=offices.find((office)=>String(office.id||"")===String(workshopId||""));
-  return match?.name||fallback;
-}
 async function loadUserConversations(){
   if(!sb||!currentUser){chats=[];return;}
   try{
@@ -5714,7 +5251,7 @@ async function loadUserConversations(){
       .order("updated_at",{ascending:false});
     if(error) throw error;
     chats=(data||[]).map((row)=>{
-      const name=row.workshops?.name||knownWorkshopName(row.workshop_id);
+      const name=row.workshops?.name||"Oficina";
       return {
         id:row.id,
         workshopId:row.workshop_id,
@@ -5768,17 +5305,10 @@ function closeMessages(){
   unsubscribeChatChannel();
   if(!sideMenu.classList.contains("open")&&!emergencyPanel.classList.contains("open")&&!accountPanel.classList.contains("open")&&!quotesPanel.classList.contains("open")&&!notificationsPanel.classList.contains("open")) overlay.classList.remove("open");
 }
-function renderChatBubble(who,text){
-  const rawText=String(text||"");
-  const isReserveAction=who==="them"&&rawText.includes("[RESERVA_CTA]");
-  const cleanText=rawText.replace("[RESERVA_CTA]","").trim()||"A oficina enviou um convite para você escolher um horário de atendimento.";
-  const safeText=escapeHTML(cleanText);
-  return `<div class="bubble ${who}">${safeText}${isReserveAction?'<button class="chat-reserve-cta" type="button" data-chat-reserve="true">Criar reserva</button>':""}</div>`;
-}
 function renderChatMessages(){
   const chat=chats[activeChatIndex];
   if(!chat) return;
-  chatMessages.innerHTML=chat.messages.map(([who,text])=>renderChatBubble(who,text)).join("")||'<div class="account-empty">Nenhuma mensagem ainda. Escreva para a oficina.</div>';
+  chatMessages.innerHTML=chat.messages.map(([who,text])=>`<div class="bubble ${who}">${text}</div>`).join("")||'<div class="account-empty">Nenhuma mensagem ainda. Escreva para a oficina.</div>';
   chatMessages.scrollTop=chatMessages.scrollHeight;
 }
 async function loadChatMessages(chat){
@@ -5816,32 +5346,14 @@ async function openChat(index){
   await loadChatMessages(chat);
   setTimeout(()=>chatInput.focus(),80);
 }
-function scheduleFromActiveChat(){
-  const chat=chats[activeChatIndex];
-  if(!chat) return;
-  let index=offices.findIndex((office)=>String(office.id||"")===String(chat.workshopId||"")||office.name===chat.name);
-  if(index<0){
-    offices.push({
-      id:chat.workshopId,
-      name:chat.name||"Oficina parceira",
-      category:"Serviço automotivo",
-      services:["Serviço a combinar"],
-      serviceCatalog:[],
-      address:"Endereço da oficina",
-    });
-    index=offices.length-1;
-  }
-  openReservationPopup(index);
-}
 async function openConversationWithWorkshop(workshopId,workshopName){
   if(!workshopId) return;
   if(!requireUserAccount("Entre para conversar com a oficina.")) return;
   closeMenu();closeEmergency();closeAccount();closeQuotes();closeNotifications();
   chatList.style.display="none";
   chatRoom.classList.add("show");
-  const displayName=workshopName||knownWorkshopName(workshopId);
-  chatRoomAvatar.textContent=chatInitials(displayName);
-  chatRoomName.textContent=displayName;
+  chatRoomAvatar.textContent=chatInitials(workshopName);
+  chatRoomName.textContent=workshopName||"Oficina";
   chatMessages.innerHTML='<div class="account-empty">Abrindo conversa...</div>';
   overlay.classList.add("open");
   messagesPanel.classList.add("open");
@@ -5854,8 +5366,7 @@ async function openConversationWithWorkshop(workshopId,workshopName){
     await loadUserConversations();
     let index=chats.findIndex((chat)=>chat.id===data.id);
     if(index===-1){
-      const name=workshopName||knownWorkshopName(workshopId);
-      chats.unshift({id:data.id,workshopId,name,initials:chatInitials(name),time:new Date().toLocaleDateString("pt-BR"),unread:0,lastMessage:"Toque para abrir a conversa",messages:[]});
+      chats.unshift({id:data.id,workshopId,name:workshopName||"Oficina",initials:chatInitials(workshopName),time:new Date().toLocaleDateString("pt-BR"),unread:0,lastMessage:"Toque para abrir a conversa",messages:[]});
       index=0;
     }
     await openChat(index);
@@ -5900,84 +5411,48 @@ async function notifyMessageEvent(conversationId,text){
 }
 function renderQuotes(){
   if(!sentQuotes.length){quotesList.innerHTML='<div class="account-empty">Ainda não há propostas reais.</div>';return;}
-  const indexedQuotes=sentQuotes.map((quote,index)=>({quote,index}));
-  const expiredQuotes=indexedQuotes.filter(({quote})=>isQuoteExpired(quote));
-  const activeQuotes=indexedQuotes.filter(({quote})=>!isQuoteExpired(quote));
-  const renderQuoteCard=({quote,index})=>{
+  quotesList.innerHTML=sentQuotes.map((quote,index)=>{
     const count=quote.proposals.length;
     const hasAccepted=quote.proposals.some((p)=>p.status==="accepted");
     const badge=count?`<span class="quote-count-badge ${hasAccepted?"is-green":"is-blue"}">${count}</span>`:"";
-    const vehicle=quote.vehicle||"Veículo não informado";
     return `
     <button class="quote-item" type="button" data-index="${index}">
-      ${badge}
-      <span class="quote-item-main">
-        <span class="quote-item-title">${escapeHTML(quote.summary||quote.title||"Solicitação")}</span>
-        <span class="quote-item-vehicle">${escapeHTML(vehicle)}</span>
-        <span class="quote-item-side">
-          <span class="status-pill ${quote.className}">${escapeHTML(quote.status)}</span>
-        </span>
+      <span><b>${quote.summary}</b><p>🚗 ${quote.vehicle}<br>⌖ ${quote.location}</p></span>
+      <span class="quote-item-side">
+        ${badge}
+        <span class="status-pill ${quote.className}">${quote.status}</span>
       </span>
     </button>
-  `;
-  };
-  const activeHTML=activeQuotes.length?activeQuotes.map(renderQuoteCard).join(""):'<div class="account-empty">Não há propostas ativas no momento.</div>';
-  const expiredHTML=expiredQuotes.length?`
-    <div class="quote-expired-section">
-      <button class="quote-expired-toggle" type="button" id="expiredQuotesToggle">Propostas vencidas <span>+</span></button>
-      <div class="quote-expired-list" id="expiredQuotesList">
-        ${expiredQuotes.map(renderQuoteCard).join("")}
-      </div>
-    </div>
-  `:"";
-  quotesList.innerHTML=activeHTML+expiredHTML;
+  `;}).join("");
   quotesList.querySelectorAll(".quote-item").forEach((button)=>button.addEventListener("click",()=>openQuoteDetail(Number(button.dataset.index))));
-  const expiredToggle=document.getElementById("expiredQuotesToggle");
-  const expiredList=document.getElementById("expiredQuotesList");
-  if(expiredToggle&&expiredList){
-    expiredToggle.addEventListener("click",()=>{
-      const open=expiredList.classList.toggle("open");
-      expiredToggle.querySelector("span").textContent=open?"-":"+";
-    });
-  }
-}
-function isQuoteExpired(quote){
-  const value=`${quote?.status||""} ${quote?.className||""}`.toLowerCase();
-  return value.includes("venc")||value.includes("expir")||value.includes("encerr")||value.includes("closed")||value.includes("cancel");
 }
 function renderHomeQuotesPreview(){
   const preview=document.getElementById("homeQuotesPreview");
   const list=document.getElementById("hqpList");
   if(!preview||!list) return;
   if(!currentUser||!sentQuotes.length){preview.classList.remove("show");return;}
-  const recent=sentQuotes.filter((q)=>!isQuoteExpired(q));
-  if(!recent.length){preview.classList.remove("show");return;}
+  const recent=sentQuotes.slice(0,3);
   preview.classList.add("show");
-  const quoteWithProposal=recent.find((q)=>(q.proposals||[]).length);
-  const quote=quoteWithProposal||recent[0];
-  const originalIndex=sentQuotes.indexOf(quote);
-  const proposals=quote.proposals||[];
-  const totalProposals=recent.reduce((sum,item)=>sum+(item.proposals||[]).length,0);
-  const hasAccepted=proposals.some((p)=>p.status==="accepted");
-  const badgeClass=hasAccepted?"is-green":proposals.length?"is-blue":"is-yellow";
-  const badgeLabel=proposals.length?`${proposals.length} proposta${proposals.length>1?"s":""}`:`${recent.length} em andamento`;
-  const title=proposals.length
-    ? `Você tem ${totalProposals||proposals.length} proposta${(totalProposals||proposals.length)>1?"s":""} para revisar`
-    : `${recent.length} ${recent.length>1?"solicitações":"solicitação"} em andamento`;
-  const vehicle=quote.vehicle||"Veículo não informado";
-  list.innerHTML=`<div class="hqp-card" data-index="${originalIndex}" role="button" tabindex="0">
-    <div class="hqp-top">
-      <span class="hqp-summary">${escapeHTML(title)}</span>
-      <span class="hqp-badge ${badgeClass}">${escapeHTML(badgeLabel)}</span>
-    </div>
-    <div class="hqp-meta">
-      <span class="hqp-vehicle">${escapeHTML(vehicle)}</span>
-      ${quote.category?`<span class="hqp-category">${escapeHTML(quote.category)}</span>`:""}
-    </div>
-    <button class="hqp-action" type="button">Ver propostas</button>
-  </div>`;
+  list.innerHTML=recent.map((q,i)=>{
+    const proposals=q.proposals||[];
+    const count=proposals.length;
+    const hasAccepted=proposals.some((p)=>p.status==="accepted");
+    const badgeClass=hasAccepted?"is-green":count?"is-blue":"is-yellow";
+    const badgeLabel=count?`${count} proposta${count>1?"s":""}`:"Aguardando";
+    const vehicle=q.vehicle||"Veículo não informado";
+    return `<div class="hqp-card" data-index="${i}" role="button" tabindex="0">
+      <div class="hqp-top">
+        <span class="hqp-summary">${q.summary||q.title||"Proposta"}</span>
+        <span class="hqp-badge ${badgeClass}">${badgeLabel}</span>
+      </div>
+      <div class="hqp-meta">
+        <span class="hqp-vehicle">🚗 ${vehicle}</span>
+        ${q.category?`<span class="hqp-category">${q.category}</span>`:""}
+      </div>
+    </div>`;
+  }).join("");
   list.querySelectorAll(".hqp-card").forEach((card)=>{
-    const open=()=>{openQuotes();if(quoteWithProposal) openQuoteDetail(Number(card.dataset.index));};
+    const open=()=>{openQuotes();openQuoteDetail(Number(card.dataset.index));};
     card.addEventListener("click",open);
     card.addEventListener("keydown",(event)=>{if(event.key==="Enter"){event.preventDefault();open();}});
   });
@@ -6005,7 +5480,6 @@ function renderNotifications(){
   const pushCta=canPrompt
     ? '<button class="outline-btn" type="button" data-enable-push style="margin-top:10px;width:100%">Ativar notificações no celular</button>'
     : "";
-  if(clearNotifications) clearNotifications.style.display=notifications.length?"inline-flex":"none";
   if(!notifications.length){
     notificationList.innerHTML=`<div class="account-empty">Ainda não há notificações reais.${pushCta}</div>`;
     return;
@@ -6013,31 +5487,9 @@ function renderNotifications(){
   notificationList.innerHTML=notifications.map((item,index)=>`
     <article class="notification-item" data-index="${index}"${item.link?' style="cursor:pointer"':""}>
       <span class="notification-icon ${item.type}">${item.icon}</span>
-      <div><b>${escapeHTML(item.title)}</b><p>${escapeHTML(item.detail)}</p><time>${item.time}</time></div>
-      <button class="notification-delete" type="button" data-delete-notification="${index}" aria-label="Remover notificação">×</button>
+      <div><b>${item.title}</b><p>${item.detail}</p><time>${item.time}</time></div>
     </article>
   `).join("")+pushCta;
-}
-async function deleteNotification(index){
-  const item=notifications[Number(index)];
-  if(!item) return;
-  notifications.splice(Number(index),1);
-  renderNotifications();
-  updateNotifBadge(notifications.some((notification)=>!notification.read));
-  if(sb&&currentUser&&item.id){
-    try{await sb.from("notifications").delete().eq("id",item.id).eq("user_id",currentUser.id);}
-    catch(error){console.warn("[notification-delete]",error.message);}
-  }
-}
-async function clearAllNotifications(){
-  const ids=notifications.map((item)=>item.id).filter(Boolean);
-  notifications.length=0;
-  renderNotifications();
-  updateNotifBadge(false);
-  if(sb&&currentUser&&ids.length){
-    try{await sb.from("notifications").delete().in("id",ids).eq("user_id",currentUser.id);}
-    catch(error){console.warn("[notifications-clear]",error.message);}
-  }
 }
 function urlBase64ToUint8Array(base64String){
   const padding="=".repeat((4-base64String.length%4)%4);
@@ -6126,13 +5578,24 @@ function closeReservations(){
 function reservationTimeOptions(){
   return ["08:00","09:00","10:00","10:30","11:00","14:00","15:00","16:00","17:00"].map((time)=>`<option>${time}</option>`).join("");
 }
+function reservationDateOptions(){
+  const labels=["Hoje","Amanhã"];
+  let html='<option value="">Escolha a data</option>';
+  for(let i=0;i<14;i++){
+    const date=new Date();
+    date.setDate(date.getDate()+i);
+    const value=[date.getFullYear(),String(date.getMonth()+1).padStart(2,"0"),String(date.getDate()).padStart(2,"0")].join("-");
+    const label=labels[i]||date.toLocaleDateString("pt-BR",{weekday:"short"});
+    const day=date.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+    html+=`<option value="${value}">${label}, ${day}</option>`;
+  }
+  return html;
+}
 function openReservationPopup(index,reservation=null,selectedService=""){
   activeReservationOffice=offices[index];
   const services=getOfficeServices(activeReservationOffice);
   const filteredService=officeCategoryFilter.value;
-  const realServiceItems=getOfficeRealServiceItems(activeReservationOffice,filteredService||services[0]||activeReservationOffice?.category).map((item)=>item.name);
-  const displayServices=[...new Set([...realServiceItems,...services].filter(Boolean))];
-  if(!displayServices.length) displayServices.push("Serviço a combinar");
+  const displayServices=[...new Set([...serviceItemsForCategory(filteredService||services[0]||activeReservationOffice?.category).map((item)=>item.name),...services])];
   reservationOfficeName.textContent=activeReservationOffice.name;
   reservationService.innerHTML=displayServices.map((service)=>`<option>${service}</option>`).join("");
   if(selectedService&&displayServices.includes(selectedService)) reservationService.value=selectedService;
@@ -6141,13 +5604,14 @@ function openReservationPopup(index,reservation=null,selectedService=""){
   reservationVehicle.innerHTML=userVehicles.length
     ?userVehicles.map((vehicle,vehicleIndex)=>`<option value="${vehicleIndex}">${vehicle.plate} · ${vehicle.brand} ${vehicle.model}</option>`).join("")
     :'<option value="">Nenhum veículo cadastrado</option>';
-  reservationDetails.value=reservation?"Solicito alterar a data ou o horário desta reserva.":"";reservationDate.value="";reservationTime.innerHTML=reservationTimeOptions();reservationError.classList.remove("show");
+  reservationDetails.value=reservation?"Solicito alterar a data ou o horário desta reserva.":"";
+  reservationDate.innerHTML=reservationDateOptions();
+  reservationDate.value="";
+  reservationTime.innerHTML=reservationTimeOptions();
+  reservationError.classList.remove("show");
   overlay.classList.add("open");reservationPopup.classList.add("open");
 }
-function closeReservationPopup(){
-  reservationPopup.classList.remove("open");
-  if(!sideMenu.classList.contains("open")&&!emergencyPanel.classList.contains("open")&&!accountPanel.classList.contains("open")&&!messagesPanel.classList.contains("open")&&!quotesPanel.classList.contains("open")&&!notificationsPanel.classList.contains("open")&&!reservationsPanel.classList.contains("open")) overlay.classList.remove("open");
-}
+function closeReservationPopup(){reservationPopup.classList.remove("open");overlay.classList.remove("open");}
 function closeReservationPicker(){reservationPickerPopup.classList.remove("open");overlay.classList.remove("open");}
 function openReservationPicker(){
   const confirmed=reservations.filter((item)=>item.className==="confirmed");
@@ -6513,15 +5977,15 @@ function openQuoteDetail(index){
     <button class="drawer-back" type="button" id="quoteBack">← Minhas propostas</button>
     <div class="quote-description">
       <small>RESUMO DA SOLICITAÇÃO</small>
-      <p>${escapeHTML(quote.summary||quote.title||"Solicitação")}</p>
-      <span>${escapeHTML(quote.vehicle||"Veículo não informado")}${quote.category?`<br>${escapeHTML(quote.category)}`:""}</span>
+      <p>${quote.summary}</p>
+      <span>🚗 ${quote.vehicle}<br>⌖ ${quote.location}${quote.category?`<br>🏷 ${quote.category}`:""}</span>
     </div>
     <div class="flow-label">Propostas de oficinas <small>${proposals.length}</small></div>
     ${proposals.length?proposals.map((proposal)=>`
       <article class="workshop-proposal">
-        <div class="workshop-proposal-head"><div><h4>${escapeHTML(proposal.name)}</h4><small>Resposta recebida · ${escapeHTML(proposal.time||"")}${proposal.distanceKm!=null?` · ${proposal.distanceKm.toFixed(1)} km`:""}</small></div><strong>${escapeHTML(proposal.price)}</strong></div>
-        ${proposal.address?`<small class="workshop-proposal-address">${escapeHTML(proposal.address)}</small>`:""}
-        <p>${escapeHTML(proposal.message||"Oficina ainda não enviou uma mensagem detalhada.")}</p>
+        <div class="workshop-proposal-head"><div><h4>${proposal.name}</h4><small>Resposta recebida · ${proposal.time}${proposal.distanceKm!=null?` · ${proposal.distanceKm.toFixed(1)} km`:""}</small></div><strong>${proposal.price}</strong></div>
+        ${proposal.address?`<small class="workshop-proposal-address">📍 ${proposal.address}</small>`:""}
+        <p>${proposal.message||"Oficina ainda não enviou uma mensagem detalhada."}</p>
         <div class="proposal-card-actions">
           ${proposal.status==="pending"
             ?`<button class="accept-quote" data-id="${proposal.id}">Aceitar proposta</button><button class="reject-quote" data-id="${proposal.id}">Recusar</button>`
@@ -7129,7 +6593,7 @@ proposalPopupClose.addEventListener("click",closeProposalPopup);
 homeOfficesBtn.addEventListener("click",openOfficesView);
 homeOffersBtn.addEventListener("click",(event)=>openBenefitsView("weekly",event));
 menuOfficesBtn.addEventListener("click",openOfficesView);
-backHomeBtn?.addEventListener("click",closeOfficesView);
+backHomeBtn.addEventListener("click",closeOfficesView);
 homePartsBtn.addEventListener("click",openPartsView);
 partsBackHome.addEventListener("click",closePartsView);
 partsSearchBtn.addEventListener("click",searchParts);
@@ -7157,11 +6621,11 @@ document.getElementById("authSelectWorkshop")?.addEventListener("click",()=>{
 });
 document.getElementById("oficinaBtnPanel")?.addEventListener("click",()=>{
   closeOficinaOptionsModal();
-  window.location.href="/oficinas/painel/";
+  window.location.href=appRoute("/oficinas/painel/","file:///C:/Users/joaqu/OneDrive/Documents/project_vai_rodar_2026/apps/workshop-app/index.html");
 });
 document.getElementById("oficinaBtnCadastro")?.addEventListener("click",()=>{
   closeOficinaOptionsModal();
-  openWorkshopRegister();
+  window.location.href=appRoute("/oficinas/cadastro/","file:///C:/Users/joaqu/OneDrive/Documents/project_vai_rodar_2026/apps/workshop-register-supabase/index.html");
 });
 document.getElementById("oficinaBtnBack")?.addEventListener("click",()=>{
   closeOficinaOptionsModal();
@@ -7174,9 +6638,6 @@ document.getElementById("oficinaOptionsModal")?.addEventListener("click",(e)=>{
   if(e.target===document.getElementById("oficinaOptionsModal")) closeOficinaOptionsModal();
 });
 document.getElementById("hqpSeeAll")?.addEventListener("click",openQuotes);
-document.querySelectorAll(".home-service-btn").forEach((button)=>{
-  button.addEventListener("click",()=>openOfficesWithCategory(button.dataset.officeCategory||""));
-});
 document.getElementById("homeBannerProposal")?.addEventListener("click",()=>problemInput?.focus());
 document.getElementById("homeBannerOffices")?.addEventListener("click",openOfficesView);
 document.getElementById("homeBannerAccount")?.addEventListener("click",()=>{
@@ -7192,6 +6653,7 @@ function setBottomNavActive(buttonId){
   document.querySelectorAll(".tool-btn").forEach((button)=>button.classList.remove("active-nav"));
   document.getElementById(buttonId)?.classList.add("active-nav");
 }
+mobileHomeBtn?.addEventListener("click",()=>{goHome();setBottomNavActive("mobileHomeBtn");});
 mobileCotacoesBtn?.addEventListener("click",()=>{openQuotes();setBottomNavActive("mobileCotacoesBtn");});
 mobileMessagesNavBtn?.addEventListener("click",()=>{openMessages();setBottomNavActive("mobileMessagesNavBtn");});
 howBackHome.addEventListener("click",closeHowView);
@@ -7213,25 +6675,17 @@ accountClose.addEventListener("click",closeAccount);
 menuMessagesBtn.addEventListener("click",openMessages);
 messagesClose.addEventListener("click",closeMessages);
 chatBack.addEventListener("click",()=>{unsubscribeChatChannel();chatRoom.classList.remove("show");chatList.style.display="grid";renderChats();});
-chatMessages.addEventListener("click",(event)=>{if(event.target.closest("[data-chat-reserve]")) scheduleFromActiveChat();});
 chatSend.addEventListener("click",sendChatMessage);
 chatInput.addEventListener("keydown",(event)=>{if(event.key==="Enter"){event.preventDefault();sendChatMessage();}});
 menuQuotesBtn.addEventListener("click",openQuotes);
 quotesClose.addEventListener("click",closeQuotes);
 newQuote.addEventListener("click",()=>{closeQuotes();openMenuProposalView();});
 topNotificationsBtn.addEventListener("click",openNotifications);
-mobileNotificationsBtn?.addEventListener("click",()=>{openNotifications();setBottomNavActive("mobileNotificationsBtn");});
+mobileNotificationsBtn?.addEventListener("click",openNotifications);
 notificationsClose.addEventListener("click",closeNotifications);
-clearNotifications?.addEventListener("click",clearAllNotifications);
 notificationList.addEventListener("click",(event)=>{
   if(event.target.closest("[data-enable-push]")){
     enablePushNotifications().catch((error)=>setAccountStatus(error.message||"Não foi possível ativar notificações."));
-    return;
-  }
-  const deleteButton=event.target.closest("[data-delete-notification]");
-  if(deleteButton){
-    event.stopPropagation();
-    deleteNotification(deleteButton.dataset.deleteNotification);
     return;
   }
   const item=event.target.closest(".notification-item");
@@ -7331,8 +6785,8 @@ publishFeatured.addEventListener("click",closeVisibilityPopup);
 publishFree.addEventListener("click",closeVisibilityPopup);
 registerWorkshopBtn?.addEventListener("click",openWorkshopDemo);
 workshopDemoClose.addEventListener("click",closeWorkshopDemo);
-workshopDemoLink.addEventListener("click",()=>window.location.href="/oficinas/cadastro/");
-workshopBackofficeLink.addEventListener("click",()=>window.location.href="/oficinas/painel/");
+workshopDemoLink.addEventListener("click",()=>window.location.href=appRoute("/oficinas/cadastro/","file:///C:/Users/joaqu/OneDrive/Documents/project_vai_rodar_2026/apps/workshop-register-supabase/index.html"));
+workshopBackofficeLink.addEventListener("click",()=>window.location.href=appRoute("/oficinas/painel/","file:///C:/Users/joaqu/OneDrive/Documents/project_vai_rodar_2026/apps/workshop-app/index.html"));
 registerBackHome.addEventListener("click",goHome);
 registerUseLocation.addEventListener("click",async()=>{await applyCurrentLocation(registerAddress,registerUseLocation,(geo)=>{registerCity.value=geo.details?.city||registerCity.value;});});
 registerDays.addEventListener("change",()=>{const custom=registerDays.value==="Personalizado";simpleRegisterSchedule.style.display=custom?"none":"grid";customRegisterSchedule.classList.toggle("show",custom);});
@@ -7525,22 +6979,12 @@ buyEmergency.addEventListener("click",()=>{
   setTimeout(closeEmergency,900);
 });
 officeMapFocus?.addEventListener("click",centerOfficeMap);
-officeSearchBtn.addEventListener("click",runOfficeSmartSearch);
+officeSearchBtn.addEventListener("click",()=>renderOffices(true));
 officeSearchInput.addEventListener("keydown",(event)=>{
   if(event.key==="Enter"){
     event.preventDefault();
-    runOfficeSmartSearch();
+    renderOffices(true);
   }
-});
-let officeSearchDebounce=0;
-officeSearchInput.addEventListener("input",()=>{
-  if(officeAISearchCategory&&officeCategoryFilter.value===officeAISearchCategory){
-    officeCategoryFilter.value="";
-    officeAISearchCategory="";
-    renderOfficeCategoryQuick();
-  }
-  clearTimeout(officeSearchDebounce);
-  officeSearchDebounce=setTimeout(()=>renderOffices(true),180);
 });
 document.getElementById("officeOpenQuick")?.addEventListener("click",(event)=>{
   const isOpen=officeOpenFilter.value==="open";
@@ -7552,22 +6996,12 @@ officeHomeQuick?.addEventListener("click",(event)=>{
   event.currentTarget.classList.toggle("active");
   renderOffices(true);
 });
-officeCategoryToggle?.addEventListener("click",(event)=>{
-  event.preventDefault();
-});
-officeQuickCards?.addEventListener("click",(event)=>{
-  const button=event.target.closest(".office-quick-cat");
-  if(!button) return;
-  officeAISearchCategory="";
-  officeSearchInput.value="";
-  officeCategoryFilter.value=button.dataset.category||"";
-  renderOfficeCategoryQuick();
-  officeCategoryQuick?.classList.remove("open");
-  renderOffices(true);
+officeCategoryToggle?.addEventListener("click",()=>{
+  officeCategoryQuick?.classList.toggle("open");
 });
 document.addEventListener("click",(event)=>{
   if(!officeCategoryQuick?.classList.contains("open")) return;
-  if(event.target.closest(".office-category-select-row")||event.target.closest("#officeCategoryQuick")||event.target.closest("#officeQuickCards")) return;
+  if(event.target.closest(".office-category-select-row")||event.target.closest("#officeCategoryQuick")) return;
   officeCategoryQuick.classList.remove("open");
 });
 officeCategoryQuick?.addEventListener("click",(event)=>{
@@ -7764,45 +7198,3 @@ if('serviceWorker' in navigator && window.location.protocol !== 'file:'){
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
