@@ -449,6 +449,7 @@ button{cursor:pointer}
                       <div class="day-schedule"><div class="day-name">Sabado</div><select class="sel"><option>07:00</option><option>08:00</option><option selected>09:00</option><option>10:00</option><option>12:00</option></select><select class="sel"><option selected>13:00</option><option>14:00</option><option>17:00</option><option>18:00</option></select><label class="closed-toggle"><input type="checkbox"><span>Fechado</span></label></div>
                       <div class="day-schedule"><div class="day-name">Domingo</div><select class="sel"><option>07:00</option><option>08:00</option><option selected>09:00</option><option>10:00</option><option>12:00</option></select><select class="sel"><option selected>13:00</option><option>14:00</option><option>17:00</option><option>18:00</option></select><label class="closed-toggle"><input type="checkbox" checked><span>Fechado</span></label></div>
                     </div>
+                    <button class="btn primary" id="saveScheduleBtn" type="button">Salvar horários</button>
                   </div>
                 </details>
 
@@ -461,33 +462,7 @@ button{cursor:pointer}
                       <p>O admin define quais categorias e subcategorias existem. A oficina escolhe quais subcategorias oferece dentro das categorias aprovadas.</p>
                     </div>
                     <div class="service-group-title">Subcategorias oferecidas</div>
-                    <div class="category-stack">
-                      <div class="category-box">
-                        <strong>Freios <span class="pill active">Categoria aprovada</span></strong>
-                        <div class="subcategory-list">
-                          <div class="subcategory-row"><span>Troca de pastilhas</span><input value="R$ 150" aria-label="Preco troca de pastilhas"><input value="2 horas" aria-label="Tempo troca de pastilhas"><button class="remove-mini" type="button">Apagar</button></div>
-                          <div class="subcategory-row"><span>Diagnostico de freios</span><input value="R$ 80" aria-label="Preco diagnostico de freios"><input value="1 hora" aria-label="Tempo diagnostico de freios"><button class="remove-mini" type="button">Apagar</button></div>
-                        </div>
-                        <div class="add-subcategory">
-                          <select aria-label="Subcategoria Freios"><option>Discos de freio</option><option>Fluido de freio</option><option>ABS / sistema eletronico</option></select>
-                          <input placeholder="R$ opcional">
-                          <input placeholder="Tempo opcional">
-                          <button class="btn secondary" type="button">Adicionar</button>
-                        </div>
-                      </div>
-                      <div class="category-box">
-                        <strong>Limpeza e detailing <span class="pill active">Categoria aprovada</span></strong>
-                        <div class="subcategory-list">
-                          <div class="subcategory-row"><span>Limpeza com vapor</span><input value="R$ 500" aria-label="Preco limpeza com vapor"><input value="1 dia" aria-label="Tempo limpeza com vapor"><button class="remove-mini" type="button">Apagar</button></div>
-                        </div>
-                        <div class="add-subcategory">
-                          <select aria-label="Subcategoria Limpeza"><option>Lavagem externa</option><option>Lavagem interna</option><option>Higienizacao completa</option></select>
-                          <input placeholder="R$ opcional">
-                          <input placeholder="Tempo opcional">
-                          <button class="btn secondary" type="button">Adicionar</button>
-                        </div>
-                      </div>
-                    </div>
+                    <div class="category-stack" id="serviceCatalog"><div class="empty">Carregando catálogo...</div></div>
                   </div>
                 </details>
               </div>
@@ -626,7 +601,7 @@ const DEMO_EMAIL="oficina.demo@vairodar.com.br";
 const DEMO_PASSWORD="VaiRodar2026!";
 const $=(id)=>document.getElementById(id);
 const $$=(selector)=>document.querySelectorAll(selector);
-const state={user:null,workshop:null,requests:[],proposals:[],conversations:[],messages:[],reservations:[],activeRequest:null,activeConversation:null,requestFilter:"open",calendarMode:"week",calendarDate:new Date(),channel:null,realtimeChannel:null,demoMode:false,backendReady:{blocks:false,offers:false,owner:false,manualReservations:false},localOffers:JSON.parse(localStorage.getItem("vr_workshop_offers")||"[]"),manualReservations:JSON.parse(localStorage.getItem("vr_manual_reservations")||"[]"),blockedSlots:JSON.parse(localStorage.getItem("vr_blocked_slots")||"[]"),ownerDetails:null};
+const state={user:null,workshop:null,requests:[],proposals:[],conversations:[],messages:[],reservations:[],serviceCategories:[],serviceSubcategories:[],workshopServices:[],serviceCatalogError:"",activeRequest:null,activeConversation:null,requestFilter:"open",calendarMode:"week",calendarDate:new Date(),channel:null,realtimeChannel:null,demoMode:false,backendReady:{blocks:false,offers:false,owner:false,manualReservations:false},localOffers:JSON.parse(localStorage.getItem("vr_workshop_offers")||"[]"),manualReservations:JSON.parse(localStorage.getItem("vr_manual_reservations")||"[]"),blockedSlots:JSON.parse(localStorage.getItem("vr_blocked_slots")||"[]"),ownerDetails:null};
 const demoStore={
   user:{id:"demo-workshop-user",email:DEMO_EMAIL},
   workshop:{id:"demo-workshop",owner_id:"demo-workshop-user",name:"Auto Center Vital Brasil",category:"Freios e suspensao",city:"Sao Paulo",state:"SP",address:"Rua Camargo, 221 - Butanta",whatsapp:"+55 11 99999-9999",email:DEMO_EMAIL,description:"Oficina especializada em freios, suspensao, pneus e revisao preventiva.",services:["Freios","Suspensao","Pneus","Revisao"],open:true,max_bookings_per_slot:3,slot_minutes:60},
@@ -752,12 +727,12 @@ function renderShell(){
 }
 async function loadAll(){
   if(state.demoMode){state.requests=[...demoStore.requests];state.proposals=[...demoStore.proposals];state.conversations=[...demoStore.conversations];state.reservations=[...demoStore.reservations];renderMetrics();renderRequests();renderThreads();renderAgenda();renderReservations();renderOffers();return;}
-  await Promise.all([loadRequests(),loadProposals(),loadConversations(),loadReservations(),loadBlocks(),loadOffers(),loadOwnerDetails()]);
+  await Promise.all([loadRequests(),loadProposals(),loadConversations(),loadReservations(),loadBlocks(),loadOffers(),loadOwnerDetails(),loadServiceCatalog()]);
   renderMetrics();renderRequests();renderProposalsCount();renderThreads();renderAgenda();renderReservations();renderOffers();renderAccount();subscribeRealtime();
 }
 async function loadRequests(){
   try{
-    let query=sb.from("service_requests").select("id,user_id,vehicle_id,title,description,location,status,category,request_type,target_business_type,part_name,part_specs,selected_business_ids,urgency,created_at,vehicles(brand,model,year,plate,color),profiles(id,name,email),request_photos(image_url,sort_order)").order("created_at",{ascending:false}).limit(80);
+    let query=sb.from("service_requests").select("id,user_id,vehicle_id,title,description,location,status,category,request_type,target_business_type,part_name,part_specs,selected_business_ids,urgency,home_service,created_at,vehicles(brand,model,year,plate,color),profiles(id,name,email),request_photos(image_url,sort_order)").order("created_at",{ascending:false}).limit(80);
     if(acceptsServiceRequests()&&!acceptsPartsRequests())query=query.in("request_type",["service",null]);
     if(acceptsPartsRequests()&&!acceptsServiceRequests())query=query.eq("request_type","part_quote");
     if(acceptsServiceRequests()&&acceptsPartsRequests())query=query.in("request_type",["service","part_quote",null]);
@@ -835,6 +810,31 @@ async function loadOwnerDetails(){
     console.warn("[owner details]",error.message);
     state.backendReady.owner=false;
   }
+}
+async function loadServiceCatalog(){
+  if(!state.workshop?.id)return;
+  state.serviceCatalogError="";
+  try{
+    const [categoriesResult,subcategoriesResult,servicesResult]=await Promise.all([
+      sb.from("service_categories").select("id,name,sort_order").eq("active",true).order("sort_order"),
+      sb.from("service_subcategories").select("id,category_id,name,sort_order").eq("active",true).order("sort_order"),
+      sb.from("workshop_services").select("id,category_id,subcategory_id,name,reference_price,duration,duration_unit,active").eq("workshop_id",state.workshop.id).order("created_at")
+    ]);
+    if(categoriesResult.error)throw categoriesResult.error;
+    if(subcategoriesResult.error)throw subcategoriesResult.error;
+    if(servicesResult.error)throw servicesResult.error;
+    state.serviceCategories=categoriesResult.data||[];
+    state.serviceSubcategories=subcategoriesResult.data||[];
+    state.workshopServices=(servicesResult.data||[]).filter((item)=>item.active!==false);
+  }catch(error){
+    console.warn("[service catalog]",error.message);
+    state.serviceCategories=[];
+    state.serviceSubcategories=[];
+    state.workshopServices=[];
+    state.serviceCatalogError=error.message||"Não foi possível carregar o catálogo.";
+  }
+  renderServiceCatalog();
+  renderProfilePreview();
 }
 function renderMetrics(){
   $("metricRequests").textContent=state.requests.filter((item)=>item.status==="open").length;
@@ -1229,7 +1229,79 @@ async function rescheduleReservation(id){
   }
 }
 function renderProfileForm(){
-  const w=state.workshop||{};$("profileName").value=w.name||"";$("profileCity").value=w.city||"";$("profileState").value=w.state||"";$("profileAddress").value=w.address||"";$("profileDescription").value=w.description||"";const services=w.services||[];const approvedCategories=[w.category,...services].filter(Boolean).slice(0,4);$("profileCategoryLocked").innerHTML=approvedCategories.length?`<div class="tags">${approvedCategories.map((category)=>`<span>${esc(category)}</span>`).join("")}</div>`:"<span>Sem categoria aprovada</span>";$("profileServicesLocked").innerHTML=approvedCategories.length?`<div class="tags">${approvedCategories.map((service)=>`<span>${esc(service)}</span>`).join("")}</div>`:"<span>Sem categorias aprovadas</span>";renderProfilePreview();
+  const w=state.workshop||{};
+  $("profileName").value=w.name||"";
+  $("profileCity").value=w.city||"";
+  $("profileState").value=w.state||"";
+  $("profileAddress").value=w.address||"";
+  $("profileDescription").value=w.description||"";
+  const approvedCategories=approvedWorkshopCategoryNames();
+  $("profileCategoryLocked").innerHTML=approvedCategories.length?`<div class="tags">${approvedCategories.map((category)=>`<span>${esc(category)}</span>`).join("")}</div>`:"<span>Sem categoria aprovada</span>";
+  $("profileServicesLocked").innerHTML=approvedCategories.length?`<div class="tags">${approvedCategories.map((service)=>`<span>${esc(service)}</span>`).join("")}</div>`:"<span>Sem categorias aprovadas</span>";
+  setProfileLogo(w.photo_url);
+  hydrateScheduleSelects();
+  applyWorkshopSchedule();
+  renderServiceCatalog();
+  renderProfilePreview();
+}
+function approvedWorkshopCategoryNames(){
+  const w=state.workshop||{};
+  return [...new Set([w.category,...(Array.isArray(w.services)?w.services:[])].filter(Boolean))];
+}
+function normalizeCatalogName(value){
+  return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+}
+const WORKSHOP_SCHEDULE_DAYS=["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"];
+function parseWorkshopSchedule(custom){
+  const result=new Map();
+  if(typeof custom!=="string")return result;
+  custom.split("|").forEach((entry)=>{
+    const splitAt=entry.indexOf(":");
+    if(splitAt===-1)return;
+    const day=entry.slice(0,splitAt).trim();
+    const value=entry.slice(splitAt+1).trim();
+    const match=value.match(/(\d{2}:\d{2})\s*(?:às|-)\s*(\d{2}:\d{2})/i);
+    result.set(normalizeCatalogName(day),match?{open:match[1],close:match[2],closed:false}:{closed:normalizeCatalogName(value).includes("fechado")});
+  });
+  return result;
+}
+function applyWorkshopSchedule(){
+  const values=parseWorkshopSchedule(state.workshop?.schedule?.custom);
+  document.querySelectorAll(".schedule-card .day-schedule").forEach((row,index)=>{
+    const day=WORKSHOP_SCHEDULE_DAYS[index];
+    const value=values.get(normalizeCatalogName(day));
+    if(!value)return;
+    const selects=row.querySelectorAll("select");
+    if(value.open&&selects[0])selects[0].value=value.open;
+    if(value.close&&selects[1])selects[1].value=value.close;
+    const closed=row.querySelector(".closed-toggle input");
+    if(closed)closed.checked=value.closed===true;
+  });
+}
+function buildWorkshopScheduleText(){
+  return [...document.querySelectorAll(".schedule-card .day-schedule")].map((row,index)=>{
+    const selects=row.querySelectorAll("select");
+    const closed=row.querySelector(".closed-toggle input")?.checked;
+    const day=WORKSHOP_SCHEDULE_DAYS[index]||`Dia ${index+1}`;
+    return closed?`${day}: Fechado`:`${day}: ${selects[0]?.value||"08:00"} às ${selects[1]?.value||"18:00"}`;
+  }).join(" | ");
+}
+async function saveWorkshopSchedule(){
+  if(!state.workshop?.id){toast("Perfil da oficina não encontrado.");return;}
+  const schedule={...(state.workshop.schedule||{}),custom:buildWorkshopScheduleText()};
+  if(state.demoMode){state.workshop.schedule=schedule;renderProfilePreview();toast("Horários atualizados no modo demo.");return;}
+  const button=$("saveScheduleBtn");
+  button.disabled=true;
+  try{
+    const{error}=await sb.from("workshops").update({schedule}).eq("id",state.workshop.id);
+    if(error)throw error;
+    state.workshop.schedule=schedule;
+    renderProfilePreview();
+    toast("Horários atualizados com sucesso.");
+  }catch(error){
+    console.error("[schedule]",error.message);
+    toast("Erro ao salvar horários: "+error.message);
+  }finally{button.disabled=false;}
 }
 function compactDayName(name){
   return String(name||"Dia").replace("-feira","").replace("Terca","Terca");
@@ -1272,14 +1344,60 @@ function renderProfilePreview(){
   $("previewMeta").textContent=[$("profileCity").value,$("profileState").value].filter(Boolean).join(" - ")||"Perfil publico";
   $("previewDesc").textContent=address;
   $("previewAddress").textContent=address;
+  setProfileLogo(state.workshop?.photo_url);
   renderPreviewHours();
   renderPreviewCategories();
+}
+function setProfileLogo(url){
+  const upload=document.querySelector(".logo-upload-preview");
+  const preview=document.querySelector(".office-public-logo");
+  const content=`<img src="${url?esc(url):"assets/vai_rodar_logo_transparent.png"}" alt="Logo da oficina">`;
+  if(upload)upload.innerHTML=content;
+  if(preview)preview.innerHTML=content;
 }
 function previewProfileLogo(file){
   if(!file)return;
   const url=URL.createObjectURL(file);
   document.querySelector(".logo-upload-preview").innerHTML=`<img src="${url}" alt="Logo da oficina">`;
   document.querySelector(".office-public-logo").innerHTML=`<img src="${url}" alt="Logo da oficina">`;
+}
+async function uploadProfileLogo(file){
+  if(!file)return;
+  if(!["image/png","image/jpeg"].includes(file.type)){
+    toast("Use uma imagem PNG ou JPEG.");
+    $("profileLogo").value="";
+    return;
+  }
+  if(file.size>2*1024*1024){
+    toast("O logo deve ter no máximo 2 MB.");
+    $("profileLogo").value="";
+    return;
+  }
+  previewProfileLogo(file);
+  if(state.demoMode){toast("Logo atualizado no modo demo.");return;}
+  if(!state.user?.id||!state.workshop?.id){
+    setProfileLogo(state.workshop?.photo_url);
+    toast("Não foi possível identificar a oficina.");
+    return;
+  }
+  const extension=file.type==="image/png"?"png":"jpg";
+  const path=`${state.user.id}/logo-${Date.now()}.${extension}`;
+  try{
+    const{error:uploadError}=await sb.storage.from("workshop-logos").upload(path,file,{contentType:file.type,upsert:false});
+    if(uploadError)throw uploadError;
+    const{data:publicData}=sb.storage.from("workshop-logos").getPublicUrl(path);
+    const photoUrl=publicData?.publicUrl;
+    if(!photoUrl)throw new Error("A URL pública do logo não foi gerada.");
+    const{error:updateError}=await sb.from("workshops").update({photo_url:photoUrl}).eq("id",state.workshop.id);
+    if(updateError)throw updateError;
+    state.workshop.photo_url=photoUrl;
+    setProfileLogo(photoUrl);
+    toast("Logo atualizado com sucesso.");
+  }catch(error){
+    console.error("[profile logo]",error.message);
+    setProfileLogo(state.workshop?.photo_url);
+    toast("Erro ao salvar logo: "+error.message);
+  }finally{$("profileLogo").value="";}
 }
 function halfHourOptions(selectedValue){
   const times=[];
@@ -1299,6 +1417,94 @@ function hydrateScheduleSelects(){
     });
   });
 }
+function categoryMatchesWorkshop(category){
+  const normalized=normalizeCatalogName(category.name);
+  const approved=approvedWorkshopCategoryNames().map(normalizeCatalogName);
+  return approved.some((name)=>normalized===name||normalized.includes(name)||name.includes(normalized))||state.workshopServices.some((service)=>service.category_id===category.id);
+}
+function formatServicePrice(value){
+  if(value==null||value==="")return "";
+  return `R$ ${Number(value).toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:2})}`;
+}
+function formatServiceDuration(duration,unit){
+  if(duration==null||duration==="")return "";
+  const number=Number(duration);
+  const label=unit==="days"?(number===1?"dia":"dias"):unit==="hours"?(number===1?"hora":"horas"):"min";
+  return `${number.toLocaleString("pt-BR",{maximumFractionDigits:2})} ${label}`;
+}
+function parseReferencePrice(value){
+  const normalized=String(value||"").replace(/[^\d,.-]/g,"").replace(/\.(?=\d{3}(?:\D|$))/g,"").replace(",",".");
+  if(!normalized)return null;
+  const number=Number(normalized);
+  return Number.isFinite(number)?number:null;
+}
+function parseServiceDuration(value){
+  const text=normalizeCatalogName(value);
+  const match=text.match(/(\d+(?:[.,]\d+)?)/);
+  if(!match)return{duration:null,duration_unit:null};
+  const duration=Number(match[1].replace(",","."));
+  const duration_unit=text.includes("dia")?"days":text.includes("hora")?"hours":"minutes";
+  return{duration,duration_unit};
+}
+function renderServiceCatalog(){
+  const stack=$("serviceCatalog");
+  if(!stack)return;
+  if(state.serviceCatalogError){stack.innerHTML=`<div class="empty">Erro ao carregar catálogo: ${esc(state.serviceCatalogError)}</div>`;return;}
+  const categories=state.serviceCategories.filter(categoryMatchesWorkshop);
+  if(!categories.length){stack.innerHTML='<div class="empty">Nenhuma categoria aprovada com subcategorias disponíveis.</div>';return;}
+  stack.innerHTML=categories.map((category)=>{
+    const services=state.workshopServices.filter((item)=>item.category_id===category.id);
+    const used=new Set(services.map((item)=>item.subcategory_id).filter(Boolean));
+    const options=state.serviceSubcategories.filter((item)=>item.category_id===category.id&&!used.has(item.id));
+    const rows=services.map((service)=>`<div class="subcategory-row" data-service-id="${esc(service.id)}"><span>${esc(service.name)}</span><input data-service-field="price" value="${esc(formatServicePrice(service.reference_price))}" placeholder="R$ opcional" aria-label="Preço ${esc(service.name)}"><input data-service-field="duration" value="${esc(formatServiceDuration(service.duration,service.duration_unit))}" placeholder="Tempo opcional" aria-label="Tempo ${esc(service.name)}"><button class="remove-mini" type="button">Apagar</button></div>`).join("");
+    const optionHTML=options.length?`<option value="">Selecione</option>${options.map((item)=>`<option value="${esc(item.id)}">${esc(item.name)}</option>`).join("")}`:'<option value="">Sem novas subcategorias</option>';
+    return `<div class="category-box" data-category-id="${esc(category.id)}"><strong>${esc(category.name)} <span class="pill active">Categoria aprovada</span></strong><div class="subcategory-list">${rows||'<div class="empty">Nenhum serviço adicionado.</div>'}</div><div class="add-subcategory"><select aria-label="Subcategoria ${esc(category.name)}">${optionHTML}</select><input placeholder="R$ opcional"><input placeholder="Tempo opcional"><button class="btn secondary" type="button" ${options.length?"":"disabled"}>Adicionar</button></div></div>`;
+  }).join("");
+  renderPreviewCategories();
+}
+async function addWorkshopService(form){
+  const box=form.closest(".category-box");
+  const select=form.querySelector("select");
+  const subcategory=state.serviceSubcategories.find((item)=>item.id===select?.value);
+  if(!subcategory||!box){toast("Selecione uma subcategoria.");return;}
+  const inputs=form.querySelectorAll("input");
+  const duration=parseServiceDuration(inputs[1]?.value);
+  const payload={workshop_id:state.workshop.id,category_id:box.dataset.categoryId,subcategory_id:subcategory.id,name:subcategory.name,reference_price:parseReferencePrice(inputs[0]?.value),duration:duration.duration,duration_unit:duration.duration_unit,active:true};
+  try{
+    if(state.demoMode){state.workshopServices.push({...payload,id:`demo-service-${Date.now()}`});}
+    else{
+      const{data,error}=await sb.from("workshop_services").insert(payload).select("id,category_id,subcategory_id,name,reference_price,duration,duration_unit,active").single();
+      if(error)throw error;
+      state.workshopServices.push(data);
+    }
+    renderServiceCatalog();
+    renderProfilePreview();
+    toast("Serviço adicionado.");
+  }catch(error){console.error("[workshop service insert]",error.message);toast("Erro ao adicionar serviço: "+error.message);}
+}
+async function deleteWorkshopService(row){
+  const id=row?.dataset.serviceId;
+  if(!id)return;
+  try{
+    if(!state.demoMode){const{error}=await sb.from("workshop_services").delete().eq("id",id);if(error)throw error;}
+    state.workshopServices=state.workshopServices.filter((item)=>item.id!==id);
+    renderServiceCatalog();
+    renderProfilePreview();
+    toast("Serviço apagado.");
+  }catch(error){console.error("[workshop service delete]",error.message);toast("Erro ao apagar serviço: "+error.message);}
+}
+async function updateWorkshopService(row){
+  const id=row?.dataset.serviceId;
+  if(!id)return;
+  const duration=parseServiceDuration(row.querySelector('[data-service-field="duration"]')?.value);
+  const payload={reference_price:parseReferencePrice(row.querySelector('[data-service-field="price"]')?.value),duration:duration.duration,duration_unit:duration.duration_unit};
+  try{
+    if(!state.demoMode){const{error}=await sb.from("workshop_services").update(payload).eq("id",id);if(error)throw error;}
+    const service=state.workshopServices.find((item)=>item.id===id);if(service)Object.assign(service,payload);
+    renderProfilePreview();
+    toast("Serviço atualizado.");
+  }catch(error){console.error("[workshop service update]",error.message);toast("Erro ao atualizar serviço: "+error.message);}
+}
 function bindSubcategoryControls(){
   const stack=document.querySelector(".category-stack");
   if(!stack||stack.dataset.ready==="true")return;
@@ -1306,30 +1512,21 @@ function bindSubcategoryControls(){
   stack.addEventListener("click",(event)=>{
     const removeButton=event.target.closest(".remove-mini");
     if(removeButton){
-      removeButton.closest(".subcategory-row")?.remove();
-      renderProfilePreview();
+      deleteWorkshopService(removeButton.closest(".subcategory-row"));
       return;
     }
     const addButton=event.target.closest(".add-subcategory .btn");
     if(!addButton)return;
     const form=addButton.closest(".add-subcategory");
-    const box=addButton.closest(".category-box");
-    const list=box?.querySelector(".subcategory-list");
-    const select=form?.querySelector("select");
-    const inputs=form?.querySelectorAll("input")||[];
-    const name=(select?.value||"").trim();
-    if(!list||!name){toast("Selecione uma subcategoria.");return;}
-    const price=(inputs[0]?.value||"R$ opcional").trim()||"R$ opcional";
-    const time=(inputs[1]?.value||"Tempo opcional").trim()||"Tempo opcional";
-    list.insertAdjacentHTML("beforeend",`<div class="subcategory-row"><span>${esc(name)}</span><input value="${esc(price)}" aria-label="Preco ${esc(name)}"><input value="${esc(time)}" aria-label="Tempo ${esc(name)}"><button class="remove-mini" type="button">Apagar</button></div>`);
-    inputs.forEach((input)=>input.value="");
-    renderProfilePreview();
+    addWorkshopService(form);
   });
   stack.addEventListener("input",(event)=>{
     if(event.target.closest(".subcategory-row,.add-subcategory"))renderProfilePreview();
   });
   stack.addEventListener("change",(event)=>{
-    if(event.target.closest(".subcategory-row,.add-subcategory"))renderProfilePreview();
+    const row=event.target.closest(".subcategory-row");
+    if(row)updateWorkshopService(row);
+    else if(event.target.closest(".add-subcategory"))renderProfilePreview();
   });
 }
 async function saveProfile(event){event.preventDefault();await requestProfileChange("perfil_publico",{name:$("profileName").value,city:$("profileCity").value,state:$("profileState").value,address:$("profileAddress").value,description:$("profileDescription").value},"Solicitacao de alteracao enviada ao admin Vai Rodar.");}
@@ -1560,7 +1757,8 @@ document.querySelectorAll(".schedule-card select,.schedule-card input,.subcatego
   el.addEventListener("input",renderProfilePreview);
   el.addEventListener("change",renderProfilePreview);
 });
-$("profileLogo").addEventListener("change",(event)=>previewProfileLogo(event.target.files?.[0]));
+$("profileLogo").addEventListener("change",(event)=>uploadProfileLogo(event.target.files?.[0]));
+$("saveScheduleBtn").addEventListener("click",saveWorkshopSchedule);
 bindSubcategoryControls();
 $("offerForm").addEventListener("submit",createOffer);
 $("signOutBtn").addEventListener("click",async()=>{if(state.channel)sb.removeChannel(state.channel);if(state.realtimeChannel)sb.removeChannel(state.realtimeChannel);state.channel=null;state.realtimeChannel=null;await sb.auth.signOut();showAuth();});

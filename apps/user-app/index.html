@@ -4416,7 +4416,7 @@ async function loadPublicOffices(){
   if(!sb) return;
   try{
     const {data,error}=await sb.from("public_workshops_search")
-      .select("id,name,address,city,neighborhood,category,categories,open,business_type,latitude,longitude")
+      .select("id,name,address,city,neighborhood,category,categories,open,business_type,latitude,longitude,photo_url,schedule,home_service,service_items")
       .limit(50);
     if(error) throw error;
     offices.splice(0,offices.length,...(data||[]).map((row)=>({
@@ -4431,7 +4431,14 @@ async function loadPublicOffices(){
       businessType:row.business_type||"workshop",
       homeService:Boolean(row.home_service||row.at_home||row.mobile_service||normalizeText(row.service_mode||"").includes("domicilio")),
       latitude:Number.isFinite(Number(row.latitude))?Number(row.latitude):null,
-      longitude:Number.isFinite(Number(row.longitude))?Number(row.longitude):null
+      longitude:Number.isFinite(Number(row.longitude))?Number(row.longitude):null,
+      schedule:row.schedule&&typeof row.schedule==="object"?row.schedule:{},
+      serviceItems:(Array.isArray(row.service_items)?row.service_items:[]).map((item)=>({
+        name:item.subcategory||item.name||"",
+        category:item.category||"",
+        desc:item.duration?`${Number(item.duration)} ${item.unit==="days"?(Number(item.duration)>1?"dias":"dia"):item.unit==="hours"?(Number(item.duration)>1?"horas":"hora"):"min"}`:"",
+        price:item.price!=null?`R$ ${Number(item.price).toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:2})}`:""
+      })).filter((item)=>item.name)
     })));
   }catch(error){
     console.warn("[Public workshops]",error.message);
@@ -4619,6 +4626,21 @@ function getOfficeServices(office){
   if(Array.isArray(office.services)&&office.services.length) return office.services;
   return office.category?[office.category]:[];
 }
+function officeScheduleRowsHTML(office){
+  const fallback='<span class="schedule-row"><b>Segunda</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Terça</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Quarta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Quinta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Sexta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Sábado</b><em>09:00 - 13:00</em></span><span class="schedule-row closed"><b>Domingo</b><em>Fechado</em></span>';
+  const custom=office.schedule&&typeof office.schedule.custom==="string"?office.schedule.custom.trim():"";
+  if(!custom) return fallback;
+  const rows=custom.split("|").map((entry)=>{
+    const splitAt=entry.indexOf(":");
+    if(splitAt===-1) return null;
+    const day=entry.slice(0,splitAt).trim().replace("-feira","");
+    const value=entry.slice(splitAt+1).trim().replace(" às "," - ");
+    if(!day||!value) return null;
+    const closed=normalizeText(value).includes("fechado");
+    return `<span class="schedule-row${closed?" closed":""}"><b>${day}</b><em>${value}</em></span>`;
+  }).filter(Boolean);
+  return rows.length?rows.join(""):fallback;
+}
 function getOfficeRealServiceItems(office,category){
   const direct=Array.isArray(office.serviceItems)?office.serviceItems:Array.isArray(office.service_items)?office.service_items:[];
   const catalog=office.serviceCatalog||office.service_catalog||null;
@@ -4678,7 +4700,7 @@ function renderOffices(reset=false){
       </div>
       <label class="office-select-check" title="Selecionar oficina"><input type="checkbox" value="${index}" aria-label="Selecionar ${office.name}"><span></span></label>
       <section class="office-detail" id="officeDetail${index}">
-        <details class="office-accordion"><summary>Horários</summary><div class="office-accordion-body"><div class="office-schedule"><span class="schedule-row"><b>Segunda</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Terça</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Quarta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Quinta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Sexta</b><em>08:00 - 18:00</em></span><span class="schedule-row"><b>Sábado</b><em>09:00 - 13:00</em></span><span class="schedule-row closed"><b>Domingo</b><em>Fechado</em></span></div></div></details>
+        <details class="office-accordion"><summary>Horários</summary><div class="office-accordion-body"><div class="office-schedule">${officeScheduleRowsHTML(office)}</div></div></details>
         <details class="office-accordion" open><summary>Serviços</summary><div class="office-accordion-body"><div class="office-service-list">${serviceRows}</div></div></details>
         <details class="office-accordion"><summary>Contato</summary><div class="office-accordion-body"><div class="office-detail-actions"><button class="collapse-detail" type="button" data-index="${index}">Fechar</button><button class="reserve-detail" type="button" data-index="${index}">Agendar</button></div></div></details>
       </section>
@@ -5008,7 +5030,7 @@ async function sendReviewedProposal(){
   const finalDescription=(description.value.trim()||original||proposalDescriptionPlaceholder()).trim();
   let requestId=null;
   try{
-    requestId=await createServiceRequestRecord({isPart,vehicle,description:finalDescription,address:address.value.trim(),original,locationData:getLocationPayload(address),urgency:selectedProposalUrgency,selectedBusinessIds:officeProposalContext?.officeIds||[]});
+    requestId=await createServiceRequestRecord({isPart,vehicle,description:finalDescription,address:address.value.trim(),original,locationData:getLocationPayload(address),urgency:selectedProposalUrgency,selectedBusinessIds:officeProposalContext?.officeIds||[],homeService:officeHomeQuick?.classList.contains("active")===true});
     const photoInput=document.getElementById("proposalReviewPhotos");
     if(requestId&&photoInput?.files?.length) await uploadRequestPhotos(requestId,photoInput.files);
   }catch(err){
@@ -6195,7 +6217,7 @@ function proposalCategory(isPart,text){
   if(selectedProposalCategory) return selectedProposalCategory;
   return inferCategories(text||"").find((name)=>allowedCategories.includes(name))||"Diagnóstico";
 }
-async function createServiceRequestRecord({isPart,vehicle,description,address,original,locationData={},urgency="normal",selectedBusinessIds=[]}){
+async function createServiceRequestRecord({isPart,vehicle,description,address,original,locationData={},urgency="normal",selectedBusinessIds=[],homeService=false}){
   if(!sb||!currentUser) return null;
   const vehicleId=await ensureVehicleRecord(vehicle);
   const text=description||original||"Solicitação criada pelo assistente Vai Rodar.";
@@ -6213,6 +6235,7 @@ async function createServiceRequestRecord({isPart,vehicle,description,address,or
       part_name:isPart?original||text:null,
       part_specs:isPart?{raw_text:text,vehicle:vehicleDescription(vehicle)}:{},
       selected_business_ids:selectedBusinessIds,
+      home_service:homeService===true,
       address:locationData.address||address||"",
       latitude:locationData.latitude,
       longitude:locationData.longitude,
