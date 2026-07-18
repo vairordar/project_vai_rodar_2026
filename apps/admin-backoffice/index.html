@@ -639,6 +639,15 @@ const emptyDataV2={workshops:[],dashboardSummary:[],subscriptions:[],payments:[]
 const appState={view:"overview",commerceTab:"pending",usersTab:"all",activityTab:"requests",selectedCategoryId:null,selectedConversationId:null,selectedWorkshopChatId:null,password:sessionStorage.getItem("vr_admin_password")||"",data:{...emptyDataV2},loading:false};
 const escV2=(value)=>String(value??"").replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));
 const asArray=(value)=>Array.isArray(value)?value:(value?[value]:[]);
+const collectionV2=(value)=>Array.isArray(value)?value:(Array.isArray(value?.data)?value.data:[]);
+function normalizeAdminDataV2(payload={}){
+  const normalized={...emptyDataV2,...(payload&&typeof payload==="object"?payload:{})};
+  Object.keys(emptyDataV2).forEach((key)=>{
+    if(Array.isArray(emptyDataV2[key])) normalized[key]=collectionV2(normalized[key]);
+  });
+  normalized.proposalSummary=normalized.proposalSummary&&typeof normalized.proposalSummary==="object"&&!Array.isArray(normalized.proposalSummary)?normalized.proposalSummary:null;
+  return normalized;
+}
 const first=(value)=>Array.isArray(value)?(value[0]||{}):(value||{});
 const dateBR=(value,withTime=false)=>{if(!value)return "-";const date=new Date(value);if(Number.isNaN(date.getTime()))return String(value);return new Intl.DateTimeFormat("pt-BR",withTime?{dateStyle:"short",timeStyle:"short"}:{dateStyle:"short"}).format(date)};
 const moneyBR=(value)=>Number.isFinite(Number(value))?new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(value)):"-";
@@ -656,7 +665,7 @@ function showAdminV2(){byId("authScreen").style.display="none";byId("app").style
 function openModal(title,hint,body,footer=""){byId("modalTitle").textContent=title;byId("modalHint").textContent=hint||"";byId("modalBody").innerHTML=body;byId("modalFooter").innerHTML=footer;byId("modalBackdrop").classList.add("open")}
 function closeModal(){byId("modalBackdrop").classList.remove("open");byId("modalBody").innerHTML="";byId("modalFooter").innerHTML=""}
 async function adminFetchV2(path,options={}){const response=await fetch(path,{...options,headers:{"Content-Type":"application/json","X-Admin-Password":appState.password,...(options.headers||{})}});const result=await response.json().catch(()=>({success:false,error:`Resposta invalida (${response.status}).`}));if(!response.ok||result.success===false)throw new Error(result.error||`Erro ${response.status}`);return result}
-async function loadAdminDataV2(){if(location.protocol==="file:"){appState.data={...emptyDataV2};renderAllV2();return true}setLoading(true);try{const result=await adminFetchV2("/.netlify/functions/admin-data");appState.data={...emptyDataV2,...(result.data||{})};renderAllV2();return true}catch(error){showToast(error.message||"Nao foi possivel carregar os dados.",true);return false}finally{setLoading(false)}}
+async function loadAdminDataV2(){if(location.protocol==="file:"){appState.data=normalizeAdminDataV2();renderAllV2();return true}setLoading(true);try{const result=await adminFetchV2("/.netlify/functions/admin-data");appState.data=normalizeAdminDataV2(result.data);renderAllV2();return true}catch(error){showToast(error.message||"Nao foi possivel carregar os dados.",true);return false}finally{setLoading(false)}}
 async function runAction(action,payload,successMessage){setLoading(true);try{const result=await adminFetchV2("/.netlify/functions/admin-action",{method:"POST",body:JSON.stringify({action,payload})});await loadAdminDataV2();if(successMessage)showToast(successMessage);return result}catch(error){showToast(error.message||"A acao nao foi concluida.",true);throw error}finally{setLoading(false)}}
 function workshopById(id){return appState.data.workshops.find((item)=>String(item.id)===String(id))||{}}
 function userById(id){return appState.data.adminUsers.find((item)=>String(item.id||item.user_id)===String(id))||{}}

@@ -15,6 +15,12 @@ async function readRequired(path, dataset) {
   }
 }
 
+function asList(value) {
+  if (Array.isArray(value)) return value;
+  if (Array.isArray(value?.data)) return value.data;
+  return [];
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: corsHeaders, body: '' };
   if (event.httpMethod !== 'GET') return json(405, { success: false, error: 'Method not allowed' });
@@ -81,33 +87,33 @@ exports.handler = async (event) => {
     return json(200, {
       success: true,
       data: {
-        workshops,
+        workshops: asList(workshops),
         dashboard: Array.isArray(dashboardRows) ? dashboardRows[0] || null : dashboardRows,
-        dashboardSummary: Array.isArray(dashboardRows) ? dashboardRows : (dashboardRows ? [dashboardRows] : []),
-        subscriptions,
-        payments,
-        topLocations,
-        topServices,
-        chatUsage,
-        analyticsEvents,
-        serviceRequests,
-        requestLifecycle,
-        requestEvents,
-        proposalMetrics,
+        dashboardSummary: asList(dashboardRows),
+        subscriptions: asList(subscriptions),
+        payments: asList(payments),
+        topLocations: asList(topLocations),
+        topServices: asList(topServices),
+        chatUsage: asList(chatUsage),
+        analyticsEvents: asList(analyticsEvents),
+        serviceRequests: asList(serviceRequests),
+        requestLifecycle: asList(requestLifecycle),
+        requestEvents: asList(requestEvents),
+        proposalMetrics: asList(proposalMetrics),
         proposalSummary: Array.isArray(proposalSummaryRows) ? proposalSummaryRows[0] || null : proposalSummaryRows,
-        reservations,
-        auditLogs,
-        adminUsers,
-        vehicleListings,
-        workshopOffers,
-        profileChangeRequests,
-        serviceCategories,
-        serviceSubcategories,
-        workshopServices,
-        conversations,
-        messages,
-        vehicles,
-        plateLookups,
+        reservations: asList(reservations),
+        auditLogs: asList(auditLogs),
+        adminUsers: asList(adminUsers),
+        vehicleListings: asList(vehicleListings),
+        workshopOffers: asList(workshopOffers),
+        profileChangeRequests: asList(profileChangeRequests),
+        serviceCategories: asList(serviceCategories),
+        serviceSubcategories: asList(serviceSubcategories),
+        workshopServices: asList(workshopServices),
+        conversations: asList(conversations),
+        messages: asList(messages),
+        vehicles: asList(vehicles),
+        plateLookups: asList(plateLookups),
       },
     });
   } catch (error) {
