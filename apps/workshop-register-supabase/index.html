@@ -32,15 +32,18 @@ html{scroll-behavior:smooth}body{font-family:'Montserrat',sans-serif;background:
 </main>
 <div class="toast" id="toast"></div>
 <script>
-var SERVICE_OPTIONS=["Revisão geral / Manutenção preventiva","Troca de óleo e filtros","Freios e suspensão","Motor e transmissão","Elétrica automotiva","Ar-condicionado","Funilaria e pintura","Lavado e detailing","Pneus e alinhamento","Diagnóstico computadorizado","Vidros e acessórios","Blindagem"];
+var SERVICE_CATALOG=[];
+var SERVICE_CATALOG_STATE="loading";
 var PARTS_OPTIONS=["Pneus e rodas","Freios","Suspensão","Bateria","Óleo e filtros","Elétrica e iluminação","Motor e transmissão","Acessórios","Vidros","Som e multimídia","Peças originais","Peças alternativas"];
 var STATES=["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
-window.addEventListener("DOMContentLoaded",function(){renderBusinessOptions();renderStates();renderTimes();renderCustomSchedule();loadTotalCadastros();});
+window.addEventListener("DOMContentLoaded",function(){renderBusinessOptions();bindBusinessTypeListeners();renderStates();renderTimes();renderCustomSchedule();loadTotalCadastros();loadServiceCatalog();});
 function renderChecks(containerId,items,name){var html="";items.forEach(function(item){html+='<label class="chip"><input type="checkbox" name="'+name+'" value="'+escapeHtml(item)+'"><span>'+escapeHtml(item)+'</span></label>';});document.getElementById(containerId).innerHTML=html;}
+function renderCategoryChecks(items){return items.map(function(item){return '<label class="chip"><input type="checkbox" name="categoryIds" value="'+escapeHtml(item.id)+'" data-name="'+escapeHtml(item.name)+'"><span>'+escapeHtml(item.name)+'</span></label>';}).join("");}
 function currentBusinessType(){return selectedRadio("businessType")||"workshop";}
-function businessOptions(){var type=currentBusinessType();if(type==="parts_store")return PARTS_OPTIONS;if(type==="both")return SERVICE_OPTIONS.concat(PARTS_OPTIONS.filter(function(item){return SERVICE_OPTIONS.indexOf(item)<0;}));return SERVICE_OPTIONS;}
-function renderBusinessOptions(){renderChecks("services",businessOptions(),"services");updateBusinessCopy();Array.prototype.slice.call(document.querySelectorAll('input[name="businessType"]')).forEach(function(el){el.addEventListener("change",function(){renderChecks("services",businessOptions(),"services");updateBusinessCopy();});});}
-function updateBusinessCopy(){var type=currentBusinessType(),title=document.getElementById("servicesTitle"),hint=document.getElementById("servicesHint"),typeHint=document.getElementById("businessTypeHint");if(type==="parts_store"){title.textContent="Categorias de peças";hint.textContent="Marque as categorias de peças que sua empresa vende.";typeHint.textContent="Comércios de peças recebem pedidos de cotação de peças e podem publicar ofertas.";}else if(type==="both"){title.textContent="Serviços e categorias";hint.textContent="Marque os serviços e categorias de peças que sua empresa oferece.";typeHint.textContent="Empresas mistas aparecem tanto para serviços quanto para peças.";}else{title.textContent="Serviços principais";hint.textContent="Marque os serviços que sua empresa realmente oferece.";typeHint.textContent="Oficinas recebem solicitações de serviços, agenda e reservas.";}}
+function bindBusinessTypeListeners(){Array.prototype.slice.call(document.querySelectorAll('input[name="businessType"]')).forEach(function(el){el.addEventListener("change",renderBusinessOptions);});}
+function renderBusinessOptions(){var type=currentBusinessType(),container=document.getElementById("services");updateBusinessCopy();if(type==="parts_store"){renderChecks("services",PARTS_OPTIONS,"partCategories");return;}if(SERVICE_CATALOG_STATE==="loading"){container.innerHTML='<p class="hint" style="grid-column:1/-1">Carregando catálogo oficial...</p>';return;}if(SERVICE_CATALOG_STATE==="error"){container.innerHTML='<p class="hint" style="grid-column:1/-1;color:#d92d20">Não foi possível carregar o catálogo de serviços. Atualize a página para tentar novamente.</p>';return;}var html=renderCategoryChecks(SERVICE_CATALOG);if(type==="both")html+='<p class="hint" style="grid-column:1/-1;margin:12px 0 2px"><strong>Categorias de peças</strong></p>'+PARTS_OPTIONS.map(function(item){return '<label class="chip"><input type="checkbox" name="partCategories" value="'+escapeHtml(item)+'"><span>'+escapeHtml(item)+'</span></label>';}).join("");container.innerHTML=html;}
+async function loadServiceCatalog(){try{var result=await sb.from("service_categories").select("id,name,slug,sort_order").eq("active",true).order("sort_order",{ascending:true}).order("name",{ascending:true});if(result.error)throw result.error;SERVICE_CATALOG=(result.data||[]).filter(function(item){return item&&item.id&&item.name;});if(!SERVICE_CATALOG.length)throw new Error("Catálogo vazio");SERVICE_CATALOG_STATE="ready";}catch(error){console.error("[service-catalog]",error);SERVICE_CATALOG=[];SERVICE_CATALOG_STATE="error";}renderBusinessOptions();}
+function updateBusinessCopy(){var type=currentBusinessType(),title=document.getElementById("servicesTitle"),hint=document.getElementById("servicesHint"),typeHint=document.getElementById("businessTypeHint");if(type==="parts_store"){title.textContent="Categorias de peças";hint.textContent="Marque as categorias de peças que sua empresa vende.";typeHint.textContent="Comércios de peças recebem pedidos de cotação de peças e podem publicar ofertas.";}else if(type==="both"){title.textContent="Categorias e peças";hint.textContent="Escolha as categorias oficiais de serviços e as peças que sua empresa oferece.";typeHint.textContent="Empresas mistas aparecem tanto para serviços quanto para peças.";}else{title.textContent="Categorias principais";hint.textContent="Escolha no catálogo oficial as categorias que sua oficina atende.";typeHint.textContent="Oficinas recebem solicitações de serviços, agenda e reservas.";}}
 function renderStates(){document.getElementById("state").innerHTML='<option value="">UF</option>'+STATES.map(function(uf){return '<option value="'+uf+'">'+uf+'</option>';}).join("");}
 function timeOptions(){var html="";for(var h=6;h<=22;h++){for(var m=0;m<60;m+=30){if(h===22&&m>0)continue;var t=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");html+='<option value="'+t+'">'+t+'</option>';}}return html;}
 function renderTimes(){var open=document.getElementById("openTime"),close=document.getElementById("closeTime");if(!open||!close)return;var html=timeOptions();open.innerHTML=html;close.innerHTML=html;open.value="08:00";close.value="18:00";}
@@ -54,6 +57,8 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 async function loadTotalCadastros(){try{var result=await sb.from("workshops").select("id",{count:"exact",head:true});updateCounter(Number(result.count)||0);}catch(error){updateCounter(0);}}
 function updateCounter(total){var el=document.getElementById("counter");if(el)el.innerHTML='<strong>'+total+'</strong> oficinas já cadastradas em São Paulo';}
 function selected(name){return Array.prototype.slice.call(document.querySelectorAll('input[name="'+name+'"]:checked')).map(function(el){return el.value;}).join(", ");}
+function selectedArray(name){return Array.prototype.slice.call(document.querySelectorAll('input[name="'+name+'"]:checked')).map(function(el){return el.value;});}
+function selectedCategoryNames(){return Array.prototype.slice.call(document.querySelectorAll('input[name="categoryIds"]:checked')).map(function(el){return el.getAttribute("data-name")||"";}).filter(Boolean);}
 function selectedRadio(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:"";}
 function val(id){return document.getElementById(id).value.trim();}
 function onlyDigits(text){return String(text||"").replace(/\D/g,"");}
@@ -70,23 +75,25 @@ async function lookupCep(){var cep=onlyDigits(val("cep")),status=document.getEle
 function closeDoneModal(){document.getElementById("doneCard").classList.remove("open");}
 async function submitForm(event){
   event.preventDefault();
-  var services=selected("services"),businessType=currentBusinessType(),noCnpj=document.getElementById("noCnpj").checked,cnpj=val("cnpj"),phone=val("phone"),email=val("email"),password=document.getElementById("password").value;
+  var businessType=currentBusinessType(),categoryIds=selectedArray("categoryIds"),categoryNames=selectedCategoryNames(),partCategories=selectedArray("partCategories"),noCnpj=document.getElementById("noCnpj").checked,cnpj=val("cnpj"),phone=val("phone"),email=val("email"),password=document.getElementById("password").value;
   if(!noCnpj&&!/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/.test(cnpj)){showToast("Digite um CNPJ válido: 00.000.000/0000-00.",true);return;}
   if(!/^\+55 \d{2} \d{5}-\d{4}$/.test(phone)){showToast("Digite o WhatsApp no formato +55 11 99999-9999.",true);return;}
   if(!email){showToast("Digite seu e-mail.",true);return;}
   if(!document.getElementById("legalConsent").checked){showToast("Aceite os Termos de Uso e a Política de Privacidade para continuar.",true);return;}
   if(password.length<6){showToast("A senha deve ter pelo menos 6 caracteres.",true);return;}
   if(onlyDigits(val("cep")).length!==8||!val("state")||!val("city")||!val("district")||!val("address")||!val("number")){showToast("Complete CEP, endereço, número, bairro, cidade e estado.",true);return;}
-  if(!services){showToast(businessType==="parts_store"?"Selecione pelo menos uma categoria de peças.":"Selecione pelo menos um serviço.",true);return;}
+  if(businessType!=="parts_store"&&SERVICE_CATALOG_STATE!=="ready"){showToast("O catálogo oficial não foi carregado. Atualize a página e tente novamente.",true);return;}
+  if(businessType!=="parts_store"&&!categoryIds.length){showToast("Selecione pelo menos uma categoria oficial de serviço.",true);return;}
+  if(businessType!=="workshop"&&!partCategories.length){showToast("Selecione pelo menos uma categoria de peças.",true);return;}
   var btn=document.getElementById("submitBtn");
-  var servicesArr=String(services).split(",").map(function(service){return service.trim();}).filter(Boolean);
+  var servicesArr=businessType==="parts_store"?partCategories:categoryNames;
   var workshopPayload={
     name:val("businessName"),
     legal_name:val("businessName"),
     responsible_name:val("ownerName"),
     cnpj:noCnpj?"":cnpj,
     business_type:businessType,
-    parts_categories:businessType==="workshop"?[]:servicesArr,
+    parts_categories:businessType==="workshop"?[]:partCategories,
     parts_delivery_enabled:["A domicílio","Ambos"].indexOf(selectedRadio("serviceMode"))>=0,
     parts_pickup_enabled:true,
     description:"Responsável: "+val("ownerName")+(noCnpj?" · Sem CNPJ":" · CNPJ: "+cnpj),
@@ -107,10 +114,12 @@ async function submitForm(event){
   btn.disabled=true;
   btn.textContent="Criando conta...";
   try{
+    var registrationPayload={email:email,password:password,owner_name:val("ownerName"),workshop:workshopPayload};
+    if(businessType!=="parts_store")registrationPayload.category_ids=categoryIds;
     var response=await fetch("/.netlify/functions/register-workshop",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({email:email,password:password,owner_name:val("ownerName"),workshop:workshopPayload})
+      body:JSON.stringify(registrationPayload)
     });
     var result=await response.json().catch(function(){return {};});
     if(!response.ok||!result.success)throw new Error(result.error||"Erro ao cadastrar oficina.");

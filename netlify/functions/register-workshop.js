@@ -63,9 +63,42 @@ function supabaseRequest(path, options = {}) {
   });
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Valida category_ids contra el catálogo administrado.
+// Devuelve las categorías oficiales (id, name, sort_order) o lanza
+// un Error con statusCode 400 si algo no es válido.
+async function validateCategoryIds(categoryIds) {
+  if (!Array.isArray(categoryIds) || !categoryIds.length) {
+    const err = new Error('Selecione pelo menos uma categoria de serviço.');
+    err.statusCode = 400;
+    throw err;
+  }
+  const cleaned = [...new Set(categoryIds.map((id) => cleanText(id, 80).toLowerCase()))];
+  const invalid = cleaned.filter((id) => !UUID_RE.test(id));
+  if (invalid.length) {
+    const err = new Error('IDs de categoria inválidos.');
+    err.statusCode = 400;
+    throw err;
+  }
+  const rows = await supabaseRequest(
+    `/rest/v1/service_categories?id=in.(${cleaned.join(',')})&active=eq.true&select=id,name,sort_order`
+  );
+  const found = Array.isArray(rows) ? rows : [];
+  if (found.length !== cleaned.length) {
+    const foundIds = new Set(found.map((row) => String(row.id).toLowerCase()));
+    const missing = cleaned.filter((id) => !foundIds.has(id));
+    const err = new Error(`Categorias inexistentes ou inativas: ${missing.join(', ')}`);
+    err.statusCode = 400;
+    throw err;
+  }
+  found.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0) || String(a.name).localeCompare(String(b.name)));
+  return found;
+}
+
 async function findProfileByEmail(email) {
   const rows = await supabaseRequest(
-    `/rest/v1/profiles?email=eq.${encodeURIComponent(email)}&select=id,email,name&limit=1`
+    `/rest/v1/profiles?email=eq.${encodeURIComponent(email)}&select=id,email,name,role&limit=1`
   );
   return Array.isArray(rows) ? rows[0] || null : null;
 }
@@ -84,7 +117,14 @@ async function getOrCreateUser(email, password, metadata) {
   } catch (error) {
     if (!/already|registered|exists|duplicate/i.test(error.message)) throw error;
     const existingProfile = await findProfileByEmail(email).catch(() => null);
-    if (existingProfile?.id) return { id: existingProfile.id, email };
+    if (existingProfile?.id) {
+      if (String(existingProfile.role || '').toLowerCase() !== 'workshop') {
+        const identityError = new Error('Este e-mail ja pertence a uma conta de motorista. Use outro e-mail para cadastrar a oficina.');
+        identityError.statusCode = 409;
+        throw identityError;
+      }
+      return { id: existingProfile.id, email };
+    }
     throw new Error('Este e-mail ja existe no Auth, mas nao tem perfil vinculado. Use outro e-mail ou remova o usuario antigo no Supabase Auth.');
   }
 }
@@ -103,6 +143,20 @@ exports.handler = async (event) => {
     if (!email || !email.includes('@')) return json(400, { success: false, error: 'E-mail invalido.' });
     if (password.length < 6) return json(400, { success: false, error: 'A senha deve ter pelo menos 6 caracteres.' });
     if (!cleanText(workshop.name, 160)) return json(400, { success: false, error: 'Nome da oficina obrigatorio.' });
+
+    // Catálogo administrado: el frontend nuevo envía category_ids.
+    // Si vienen, se validan estrictamente y los nombres oficiales
+    // reemplazan a workshop.services (nunca se aceptan nombres
+    // arbitrarios del navegador). Si NO vienen (frontend anterior),
+    // se mantiene el flujo legacy con workshop.services.
+    let officialCategories = null;
+    if (body.category_ids !== undefined) {
+      try {
+        officialCategories = await validateCategoryIds(body.category_ids);
+      } catch (error) {
+        return json(error.statusCode || 500, { success: false, error: error.message });
+      }
+    }
 
     const ownerName = cleanText(body.owner_name || workshop.responsible_name, 160);
     const now = new Date().toISOString();
@@ -151,7 +205,9 @@ exports.handler = async (event) => {
       state: cleanText(workshop.state, 40),
       zip_code: cleanText(workshop.zip_code, 20),
       cep: cleanText(workshop.cep || workshop.zip_code, 20),
-      services: Array.isArray(workshop.services) ? workshop.services : [],
+      services: officialCategories
+        ? officialCategories.map((c) => c.name)
+        : (Array.isArray(workshop.services) ? workshop.services : []),
       category: cleanText(workshop.category, 100),
       schedule: workshop.schedule || {},
       approval_status: 'pending',
@@ -182,9 +238,37 @@ exports.handler = async (event) => {
           body: payload,
         });
 
-    return json(200, { success: true, user_id: user.id, workshop: Array.isArray(saved) ? saved[0] : saved });
+    const savedWorkshop = Array.isArray(saved) ? saved[0] : saved;
+
+    // Relaciones por ID en workshop_categories. Si esto falla, el
+    // registro NO se reporta como exitoso (sin éxito silencioso).
+    if (officialCategories && savedWorkshop?.id) {
+      try {
+        await supabaseRequest(
+          `/rest/v1/workshop_categories?workshop_id=eq.${encodeURIComponent(savedWorkshop.id)}`,
+          { method: 'DELETE', prefer: 'return=minimal' }
+        );
+        await supabaseRequest('/rest/v1/workshop_categories', {
+          method: 'POST',
+          prefer: 'return=minimal',
+          body: officialCategories.map((c) => ({
+            workshop_id: savedWorkshop.id,
+            category_id: c.id,
+          })),
+        });
+      } catch (error) {
+        console.error('[register-workshop categories]', error.message);
+        return json(500, {
+          success: false,
+          error: `Oficina criada, mas houve erro ao salvar as categorias: ${error.message}. Tente novamente ou contate o suporte.`,
+          user_id: user.id,
+        });
+      }
+    }
+
+    return json(200, { success: true, user_id: user.id, workshop: savedWorkshop });
   } catch (error) {
     console.error('[register-workshop]', error.message);
-    return json(500, { success: false, error: error.message || 'Erro ao cadastrar oficina.' });
+    return json(error.statusCode || 500, { success: false, error: error.message || 'Erro ao cadastrar oficina.' });
   }
 };

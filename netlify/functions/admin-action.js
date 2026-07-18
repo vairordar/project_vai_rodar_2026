@@ -23,7 +23,7 @@ const WORKSHOP_TEXT_FIELD_MAX = {
 };
 const VALID_STATUSES = new Set(['pending', 'approved', 'rejected', 'blocked']);
 const VALID_LISTING_STATUSES = new Set(['pending_review', 'active', 'paused', 'sold', 'expired', 'rejected']);
-const VALID_OFFER_STATUSES = new Set(['active', 'inactive']);
+const VALID_OFFER_STATUSES = new Set(['pending', 'active', 'inactive', 'rejected', 'expired']);
 const VALID_PCR_DECISIONS = new Set(['approved', 'rejected']);
 const PERFIL_PUBLICO_FIELDS = ['name', 'whatsapp', 'email', 'city', 'state', 'address', 'description'];
 
@@ -81,12 +81,20 @@ exports.handler = async (event) => {
       if (!payload.workshop_id || !VALID_STATUSES.has(status)) {
         return json(400, { success: false, error: 'workshop_id e approval_status validos sao obrigatorios.' });
       }
+      const statusReason = cleanText(payload.reason || '', 300);
       const update = {
         approval_status: status,
         visible: Boolean(payload.visible),
       };
       if (payload.open !== null && payload.open !== undefined) update.open = Boolean(payload.open);
       if (status === 'approved') update.approved_at = new Date().toISOString();
+      if (status === 'rejected' || status === 'blocked') {
+        update.blocked_reason = statusReason || null;
+        update.blocked_at = new Date().toISOString();
+      } else {
+        update.blocked_reason = null;
+        update.blocked_at = null;
+      }
 
       const result = await supabaseRequest(`/rest/v1/workshops?id=eq.${encodeURIComponent(payload.workshop_id)}`, {
         method: 'PATCH',
@@ -96,7 +104,7 @@ exports.handler = async (event) => {
         `workshop_${status}`,
         'workshops',
         payload.workshop_id,
-        `Oficina marcada como ${status}. Visivel: ${update.visible}. Recebe pedidos: ${update.open === undefined ? 'sem alteracao' : update.open}.`,
+        `Oficina marcada como ${status}. Visivel: ${update.visible}. Recebe pedidos: ${update.open === undefined ? 'sem alteracao' : update.open}.${statusReason ? ` Motivo: ${statusReason}` : ''}`,
         update
       );
       const ownerId = Array.isArray(result) ? result[0]?.owner_id : result?.owner_id;
@@ -195,7 +203,7 @@ exports.handler = async (event) => {
       const offerId = cleanText(payload.offer_id, 80);
       const status = cleanText(payload.status, 20);
       if (!offerId || !VALID_OFFER_STATUSES.has(status)) {
-        return json(400, { success: false, error: 'offer_id e status validos (active/inactive) sao obrigatorios.' });
+        return json(400, { success: false, error: 'offer_id e status validos (pending/active/inactive/rejected/expired) sao obrigatorios.' });
       }
       const result = await supabaseRequest(`/rest/v1/workshop_offers?id=eq.${encodeURIComponent(offerId)}`, {
         method: 'PATCH',
@@ -212,7 +220,14 @@ exports.handler = async (event) => {
         const offerRows = await supabaseRequest(`/rest/v1/workshop_offers?id=eq.${encodeURIComponent(offerId)}&select=workshop_id,workshops(owner_id)`);
         const offerOwnerId = Array.isArray(offerRows) ? offerRows[0]?.workshops?.owner_id : offerRows?.workshops?.owner_id;
         if (offerOwnerId) {
-          const offerMsg = status === 'active' ? 'Sua oferta foi reativada e ja esta visivel.' : 'Sua oferta foi desativada pela equipe Vai Rodar.';
+          const offerMessages = {
+            pending: 'Sua oferta esta aguardando revisao da equipe Vai Rodar.',
+            active: 'Sua oferta foi aprovada e ja esta visivel.',
+            inactive: 'Sua oferta foi desativada pela equipe Vai Rodar.',
+            rejected: 'Sua oferta foi rejeitada pela equipe Vai Rodar.',
+            expired: 'Sua oferta foi marcada como expirada.',
+          };
+          const offerMsg = offerMessages[status] || `Sua oferta foi atualizada para ${status}.`;
           await insertNotification({ userId: offerOwnerId, type: 'system', title: 'Vai Rodar', detail: offerMsg, link: '/' });
           await sendPushToUser(offerOwnerId, { title: 'Vai Rodar', body: offerMsg, url: '/' })
             .catch((error) => console.warn('[admin-action push]', error.message));
@@ -411,6 +426,212 @@ exports.handler = async (event) => {
         workshopId,
         `Informacoes da oficina atualizadas: ${Object.keys(update).join(', ')}.`,
         update
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'upsertServiceCategory') {
+      const categoryId = cleanText(payload.category_id, 80);
+      const name = cleanText(payload.name, 100);
+      if (!categoryId && !name) return json(400, { success: false, error: 'name obrigatorio para criar categoria.' });
+      const update = {};
+      if (name) update.name = name;
+      if (payload.sort_order !== undefined && Number.isFinite(Number(payload.sort_order))) update.sort_order = Number(payload.sort_order);
+      if (payload.active !== undefined) update.active = Boolean(payload.active);
+      if (!Object.keys(update).length) return json(400, { success: false, error: 'Nenhum campo valido para atualizar.' });
+      const result = categoryId
+        ? await supabaseRequest(`/rest/v1/service_categories?id=eq.${encodeURIComponent(categoryId)}`, { method: 'PATCH', body: update })
+        : await supabaseRequest('/rest/v1/service_categories', { method: 'POST', body: { sort_order: 0, active: true, ...update } });
+      await writeAudit(
+        categoryId ? 'service_category_updated' : 'service_category_created',
+        'service_categories',
+        categoryId || (Array.isArray(result) ? result[0]?.id : result?.id) || null,
+        `Categoria ${categoryId ? 'atualizada' : 'criada'}: ${name || categoryId}.`,
+        update
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'deleteServiceCategory') {
+      const categoryId = cleanText(payload.category_id, 80);
+      if (!categoryId) return json(400, { success: false, error: 'category_id obrigatorio.' });
+      const categoryFilter = encodeURIComponent(categoryId);
+      const [servicesInUse, workshopsInUse] = await Promise.all([
+        supabaseRequest(`/rest/v1/workshop_services?select=id&category_id=eq.${categoryFilter}&limit=1`),
+        supabaseRequest(`/rest/v1/workshop_categories?select=workshop_id&category_id=eq.${categoryFilter}&limit=1`),
+      ]);
+      const hasServices = Array.isArray(servicesInUse) && servicesInUse.length;
+      const hasWorkshops = Array.isArray(workshopsInUse) && workshopsInUse.length;
+      if (hasServices || hasWorkshops) {
+        return json(409, {
+          success: false,
+          error: 'Categoria em uso por oficinas ou servicos. Desative-a em vez de excluir, ou remova antes todos os vinculos.',
+        });
+      }
+      const result = await supabaseRequest(`/rest/v1/service_categories?id=eq.${encodeURIComponent(categoryId)}`, { method: 'DELETE' });
+      await writeAudit('service_category_deleted', 'service_categories', categoryId, 'Categoria excluida (subcategorias removidas em cascata).', {});
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'upsertServiceSubcategory') {
+      const subcategoryId = cleanText(payload.subcategory_id, 80);
+      const categoryId = cleanText(payload.category_id, 80);
+      const name = cleanText(payload.name, 100);
+      if (!subcategoryId && (!categoryId || !name)) {
+        return json(400, { success: false, error: 'category_id e name sao obrigatorios para criar subcategoria.' });
+      }
+      const update = {};
+      if (categoryId) update.category_id = categoryId;
+      if (name) update.name = name;
+      if (payload.sort_order !== undefined && Number.isFinite(Number(payload.sort_order))) update.sort_order = Number(payload.sort_order);
+      if (payload.active !== undefined) update.active = Boolean(payload.active);
+      if (!Object.keys(update).length) return json(400, { success: false, error: 'Nenhum campo valido para atualizar.' });
+      const result = subcategoryId
+        ? await supabaseRequest(`/rest/v1/service_subcategories?id=eq.${encodeURIComponent(subcategoryId)}`, { method: 'PATCH', body: update })
+        : await supabaseRequest('/rest/v1/service_subcategories', { method: 'POST', body: { sort_order: 0, active: true, ...update } });
+      await writeAudit(
+        subcategoryId ? 'service_subcategory_updated' : 'service_subcategory_created',
+        'service_subcategories',
+        subcategoryId || (Array.isArray(result) ? result[0]?.id : result?.id) || null,
+        `Subcategoria ${subcategoryId ? 'atualizada' : 'criada'}: ${name || subcategoryId}.`,
+        update
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'deleteServiceSubcategory') {
+      const subcategoryId = cleanText(payload.subcategory_id, 80);
+      if (!subcategoryId) return json(400, { success: false, error: 'subcategory_id obrigatorio.' });
+      const inUse = await supabaseRequest(
+        `/rest/v1/workshop_services?select=id&subcategory_id=eq.${encodeURIComponent(subcategoryId)}&limit=100`
+      );
+      const usageCount = Array.isArray(inUse) ? inUse.length : 0;
+      if (usageCount && !payload.force) {
+        return json(400, { success: false, error: `Subcategoria em uso por ${usageCount} servico(s) de oficinas. Envie force=true para excluir mesmo assim (os servicos existentes mantem o nome, sem vinculo).` });
+      }
+      const result = await supabaseRequest(`/rest/v1/service_subcategories?id=eq.${encodeURIComponent(subcategoryId)}`, { method: 'DELETE' });
+      await writeAudit('service_subcategory_deleted', 'service_subcategories', subcategoryId, `Subcategoria excluida. Servicos vinculados: ${usageCount}.`, { force: Boolean(payload.force), usage: usageCount });
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'setUserBlocked') {
+      const userId = cleanText(payload.user_id, 80);
+      const blocked = payload.blocked === true;
+      const reason = cleanText(payload.reason || '', 300);
+      if (!userId) return json(400, { success: false, error: 'user_id obrigatorio.' });
+      if (blocked && !reason) return json(400, { success: false, error: 'Motivo do bloqueio obrigatorio.' });
+
+      const result = await supabaseRequest(`/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}`, {
+        method: 'PATCH',
+        body: {
+          blocked,
+          blocked_reason: blocked ? reason : null,
+          blocked_at: blocked ? new Date().toISOString() : null,
+          blocked_by: blocked ? 'netlify-admin' : null,
+        },
+      });
+      if (!Array.isArray(result) || !result.length) {
+        return json(404, { success: false, error: 'Usuario nao encontrado.' });
+      }
+
+      // Ban real en Supabase Auth: impide iniciar sesión.
+      try {
+        await supabaseRequest(`/auth/v1/admin/users/${encodeURIComponent(userId)}`, {
+          method: 'PUT',
+          body: { ban_duration: blocked ? '87600h' : 'none' },
+        });
+      } catch (error) {
+        console.warn('[admin-action auth ban]', error.message);
+        return json(200, {
+          success: true,
+          data: result,
+          warning: `Perfil ${blocked ? 'bloqueado' : 'desbloqueado'}, mas o ban de login falhou: ${error.message}`,
+        });
+      }
+
+      await writeAudit(
+        blocked ? 'user_blocked' : 'user_unblocked',
+        'profiles',
+        userId,
+        blocked ? `Usuario bloqueado. Motivo: ${reason}` : 'Usuario desbloqueado.',
+        { blocked, reason }
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'setVehicleBlocked') {
+      const vehicleId = cleanText(payload.vehicle_id, 80);
+      const blocked = payload.blocked === true;
+      const reason = cleanText(payload.reason || '', 300);
+      if (!vehicleId) return json(400, { success: false, error: 'vehicle_id obrigatorio.' });
+      if (blocked && !reason) return json(400, { success: false, error: 'Motivo do bloqueio obrigatorio.' });
+
+      const result = await supabaseRequest(`/rest/v1/vehicles?id=eq.${encodeURIComponent(vehicleId)}`, {
+        method: 'PATCH',
+        body: {
+          blocked,
+          blocked_reason: blocked ? reason : null,
+          blocked_at: blocked ? new Date().toISOString() : null,
+          blocked_by: blocked ? 'netlify-admin' : null,
+        },
+      });
+      if (!Array.isArray(result) || !result.length) {
+        return json(404, { success: false, error: 'Veiculo nao encontrado.' });
+      }
+      await writeAudit(
+        blocked ? 'vehicle_blocked' : 'vehicle_unblocked',
+        'vehicles',
+        vehicleId,
+        blocked ? `Placa bloqueada. Motivo: ${reason}` : 'Placa desbloqueada.',
+        { blocked, reason, plate: result[0]?.plate || null }
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'deleteWorkshop') {
+      const workshopId = cleanText(payload.workshop_id, 80);
+      if (!workshopId) return json(400, { success: false, error: 'workshop_id obrigatorio.' });
+
+      const idFilter = encodeURIComponent(workshopId);
+      const selectedBusinessFilter = encodeURIComponent(`{${workshopId}}`);
+      const [proposals, reservations, conversations, subscriptionsRows, paymentsRows, offers, profileChanges, directedRequests] = await Promise.all([
+        supabaseRequest(`/rest/v1/proposals?select=id&workshop_id=eq.${idFilter}&limit=1000`),
+        supabaseRequest(`/rest/v1/reservations?select=id&workshop_id=eq.${idFilter}&limit=1000`),
+        supabaseRequest(`/rest/v1/conversations?select=id&workshop_id=eq.${idFilter}&limit=1000`),
+        supabaseRequest(`/rest/v1/workshop_subscriptions?select=id&workshop_id=eq.${idFilter}&limit=1000`),
+        supabaseRequest(`/rest/v1/workshop_payments?select=id&workshop_id=eq.${idFilter}&limit=1000`),
+        supabaseRequest(`/rest/v1/workshop_offers?select=id&workshop_id=eq.${idFilter}&limit=1000`),
+        supabaseRequest(`/rest/v1/workshop_profile_change_requests?select=id&workshop_id=eq.${idFilter}&limit=1000`),
+        supabaseRequest(`/rest/v1/service_requests?select=id&selected_business_ids=cs.${selectedBusinessFilter}&limit=1000`),
+      ]);
+      const deps = [
+        ['propostas', proposals],
+        ['reservas', reservations],
+        ['conversas', conversations],
+        ['assinaturas', subscriptionsRows],
+        ['pagamentos', paymentsRows],
+        ['ofertas', offers],
+        ['solicitacoes de alteracao', profileChanges],
+        ['solicitacoes direcionadas', directedRequests],
+      ]
+        .map(([label, rows]) => [label, Array.isArray(rows) ? rows.length : 0])
+        .filter(([, count]) => count > 0);
+
+      if (deps.length) {
+        const detail = deps.map(([label, count]) => `${count} ${label}`).join(', ');
+        return json(409, {
+          success: false,
+          error: `Este comercio tem historico (${detail}) e nao pode ser eliminado definitivamente. Mantenha-o bloqueado.`,
+        });
+      }
+
+      const result = await supabaseRequest(`/rest/v1/workshops?id=eq.${idFilter}`, { method: 'DELETE' });
+      await writeAudit(
+        'workshop_deleted',
+        'workshops',
+        workshopId,
+        'Comercio eliminado definitivamente (sem historico).',
+        {}
       );
       return json(200, { success: true, data: result });
     }

@@ -74,245 +74,111 @@ button,input,select{font:inherit}button{cursor:pointer}
 @media(max-width:980px){  body{background:#fff}.app{padding:0;overflow:visible}.shell{min-height:100dvh;height:auto;border:0;border-radius:0;box-shadow:none;grid-template-columns:1fr}.side{position:fixed;left:0;top:0;bottom:0;width:min(310px,86vw);z-index:40;border-right:1px solid var(--line);box-shadow:24px 0 70px rgba(15,23,42,.22);transform:translateX(-105%);transition:.22s;overflow:auto}.side.open{transform:translateX(0)}.backdrop{display:block;pointer-events:none}.backdrop.open{pointer-events:auto}.menu-btn{display:inline-flex;flex:0 0 auto}.main{min-height:100dvh}.topbar{padding:12px 14px;position:sticky;top:0;z-index:30}.topbar h2{font-size:16px}.topbar p{max-width:48vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.content{padding:16px}.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.export-grid{grid-template-columns:1fr}.top-actions .btn.ghost{display:none}
 }
 @media(max-width:560px){.metrics{gap:6px}.metric{padding:9px;min-height:64px}.metric small{font-size:7.5px}.metric strong{font-size:20px}.logo-clean{width:74px}.panel-head{flex-direction:column}.bar-row{grid-template-columns:92px 1fr 38px}}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}.tab{height:32px;border:1px solid var(--line-strong);border-radius:9px;background:#fff;padding:0 11px;font-size:10px;font-weight:800;color:var(--muted)}.tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}.toolbar .field{margin:0;min-width:210px}.toolbar input,.toolbar select{height:34px;background:#fff}
+.stack{display:grid;gap:10px}.record{border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px}.record-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.record h4{font-size:13px}.record p{font-size:10px;color:var(--muted);line-height:1.45;margin-top:4px}.record-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.record-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}.datum{border-top:1px solid var(--line);padding-top:7px;min-width:0}.datum span{display:block;font-size:8px;text-transform:uppercase;color:var(--muted);font-weight:800}.datum b{display:block;font-size:10px;margin-top:3px;overflow-wrap:anywhere}
+.split{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:12px;align-items:start}.detail-pane{position:sticky;top:78px}.scroll-list{max-height:620px;overflow:auto;display:grid;gap:8px;padding-right:3px}.clickable{cursor:pointer}.clickable:hover{border-color:rgba(7,92,255,.45);background:#fbfdff}
+.catalog-grid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:12px}.catalog-list{display:grid;gap:7px}.catalog-row{border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}.catalog-row.active{border-color:var(--blue);background:#f5f8ff}.catalog-row h4{font-size:11px}.catalog-row small{font-size:9px;color:var(--muted)}
+.chat-layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:12px}.chat-list{max-height:600px;overflow:auto}.chat-box{min-height:420px;max-height:600px;overflow:auto;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}.bubble{max-width:78%;padding:9px 11px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:10px;line-height:1.45}.bubble.mine{margin-left:auto;background:#eaf1ff;border-color:#bdd0ff}.bubble small{display:block;font-size:8px;color:var(--muted);margin-top:5px}.section-title{font-size:16px;margin:0 0 3px}.section-copy{font-size:10px;color:var(--muted);margin-bottom:13px}.code-data{display:grid;grid-template-columns:170px minmax(0,1fr);gap:6px 10px;font-size:10px}.code-data dt{color:var(--muted);font-weight:700}.code-data dd{overflow-wrap:anywhere}.modal-wide{width:min(920px,100%)}.modal-body{display:grid;gap:12px}.modal-footer{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap;margin-top:15px}.badge-count{min-width:20px;height:20px;border-radius:999px;background:#e8f0ff;color:var(--blue);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:900}.hidden-legacy{display:none!important}.loading{opacity:.55;pointer-events:none}.danger-zone{border-color:#fecdd3;background:#fffafa}.notice{border:1px solid #bfdbfe;background:#eff6ff;color:#1e3a8a;border-radius:10px;padding:10px;font-size:10px;line-height:1.45}
+@media(max-width:980px){.split,.catalog-grid,.chat-layout{grid-template-columns:1fr}.detail-pane{position:static}.record-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.record-grid{grid-template-columns:1fr}.toolbar{align-items:stretch}.toolbar .field{min-width:0;width:100%}.tabs{overflow:auto;flex-wrap:nowrap;padding-bottom:3px}.tab{flex:0 0 auto}.bubble{max-width:92%}.code-data{grid-template-columns:1fr}.code-data dt{margin-top:5px}}
 </style>
 </head>
 <body>
-<section class="auth" id="authScreen">
-  <form class="auth-card" id="loginForm">
-    <img src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar">
-    <h1>Admin backoffice</h1>
-    <p>Controle comercial, dados exportaveis e auditoria da operacao Vai Rodar.</p>
-    <div class="field"><label>Senha admin</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Senha privada do admin" required></div>
-    <button class="btn primary" type="submit" style="width:100%">Entrar</button>
-    <button class="btn secondary" id="demoBtn" type="button" style="width:100%;margin-top:8px">Ver demo admin</button>
-    <div class="status" id="authStatus"></div>
-  </form>
-</section>
+<section class="auth" id="authScreen"><form class="auth-card" id="loginForm">
+  <img src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar"><h1>Admin backoffice</h1>
+  <p>Acesso privado ao centro de controle da operacao Vai Rodar.</p>
+  <div class="field"><label>Senha admin</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Senha privada do admin" required></div>
+  <button class="btn primary" type="submit" style="width:100%">Entrar</button><div class="status" id="authStatus"></div>
+</form></section>
 
-<section class="app" id="app">
-  <div class="shell">
-    <div class="backdrop" id="drawerBackdrop"></div>
-    <aside class="side" id="side">
-      <div class="brand"><img src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar"><small>Admin</small></div>
-      <section class="admin-card">
-        <h2>Centro de controle</h2>
-        <p>Talleres, pagamentos, assinaturas, analytics e exportacao para Excel.</p>
-      </section>
-      <nav class="nav">
-        <p class="nav-label">Operacao</p>
-        <button class="active" data-view="overview" type="button">Visao geral</button>
-        <button data-view="workshops" type="button"><span>Oficinas</span><span class="nav-badge" id="navBadgeWorkshops"></span></button>
-        <button data-view="users" type="button"><span>Usuarios</span></button>
+<section class="app" id="app"><div class="shell"><div class="backdrop" id="drawerBackdrop"></div>
+  <aside class="side" id="side">
+    <div class="brand"><img src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar"><small>Admin</small></div>
+    <section class="admin-card"><h2>Centro de controle</h2><p>Operacao, cadastros, moderacao, comunicacao e dados.</p></section>
+    <nav class="nav">
+      <p class="nav-label">Operacao</p>
+      <button class="active" data-view="overview" type="button">Visao geral</button>
+      <button data-view="commerces" type="button"><span>Comercios</span><span class="nav-badge" id="navBadgeCommerces"></span></button>
+      <button data-view="users" type="button">Usuarios e placas</button>
+      <button data-view="catalog" type="button">Catalogo de servicos</button>
+      <button data-view="activity" type="button">Solicitacoes e reservas</button>
+      <p class="nav-label">Relacionamento</p>
+      <button data-view="messages" type="button">Mensagens</button>
+      <button data-view="whatsapp" type="button">CRM WhatsApp</button>
+      <p class="nav-label">Governanca</p>
+      <button data-view="exports" type="button">Exportacoes</button>
+      <button data-view="audit" type="button">Auditoria</button>
+    </nav>
+    <div class="side-bottom"><p class="mini">Somente dados reais recebidos das funcoes administrativas.</p><button class="btn secondary" id="signOutBtn" type="button">Sair</button></div>
+  </aside>
 
-        <p class="nav-label">Comercio</p>
-        <button data-view="listings" type="button"><span>Anuncios</span><span class="nav-badge" id="navBadgeListings"></span></button>
-        <button data-view="offers" type="button"><span>Ofertas</span><span class="nav-badge" id="navBadgeOffers"></span></button>
-        <button data-view="subscriptions" type="button"><span>Assinaturas</span><span class="nav-badge" id="navBadgeSubscriptions"></span></button>
-        <button data-view="payments" type="button"><span>Pagamentos</span></button>
+  <main class="main"><header class="topbar">
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    <div><h2 id="pageTitle">Visao geral</h2><p id="pageSubtitle">Indicadores principais da operacao.</p></div>
+    <div class="top-actions"><button class="btn ghost" id="refreshBtn" type="button">Atualizar</button><img class="logo-clean" src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar"></div>
+  </header><section class="content">
 
-        <p class="nav-label">Mensageria</p>
-        <button data-view="messaging" type="button"><span>Mensagens</span></button>
+    <section class="view active" id="view-overview">
+      <div class="metrics" id="overviewMetrics"></div>
+      <div class="grid"><section class="panel"><div class="panel-head"><div><h3>Saude comercial</h3><p>Assinaturas, vigencias e pagamentos por comercio.</p></div><button class="btn secondary" data-export="subscriptions" type="button">CSV</button></div><div id="overviewCommercial"></div></section>
+      <aside class="panel"><div class="panel-head"><div><h3>Alertas</h3><p>Pontos que exigem acao do admin.</p></div></div><div class="list" id="overviewAlerts"></div></aside></div>
+    </section>
 
-        <p class="nav-label">Dados</p>
-        <button data-view="analytics" type="button"><span>Analytics</span></button>
-        <button data-view="exports" type="button"><span>Exportacoes</span></button>
-        <button data-view="audit" type="button"><span>Auditoria</span></button>
-      </nav>
-      <div class="side-bottom">
-        <p class="mini">Base preparada para Supabase: views admin, CSV exportavel e controle de validade da membresia.</p>
-        <button class="btn secondary" id="signOutBtn" type="button">Sair</button>
+    <section class="view" id="view-commerces">
+      <h3 class="section-title">Comercios</h3><p class="section-copy">Cadastro completo, aprovacao, bloqueios, pagamentos e ofertas.</p>
+      <div class="tabs" data-tabs="commerce"><button class="tab active" data-tab="pending">Pendentes</button><button class="tab" data-tab="approved">Aprovados</button><button class="tab" data-tab="rejected">Rejeitados e bloqueados</button><button class="tab" data-tab="offers">Ofertas</button></div>
+      <div class="toolbar"><div class="field"><label>Buscar</label><input id="commerceSearch" placeholder="Nome, CNPJ, email ou cidade"></div><button class="btn secondary" data-export="workshops" type="button">Exportar comercios</button></div>
+      <div id="commerceContent"></div>
+    </section>
+
+    <section class="view" id="view-users">
+      <h3 class="section-title">Usuarios e placas</h3><p class="section-copy">Motoristas, responsaveis de oficinas e veiculos registrados.</p>
+      <div class="tabs" data-tabs="users"><button class="tab active" data-tab="all">Todos</button><button class="tab" data-tab="plates">Placas</button><button class="tab" data-tab="blocked">Bloqueados</button></div>
+      <div class="toolbar"><div class="field"><label>Buscar</label><input id="userSearch" placeholder="Nome, email, telefone, ID ou placa"></div><button class="btn secondary" data-export="users" type="button">Exportar usuarios</button></div>
+      <div id="usersContent"></div>
+    </section>
+
+    <section class="view" id="view-catalog">
+      <h3 class="section-title">Catalogo de servicos</h3><p class="section-copy">Categorias e subcategorias usadas no cadastro, busca e perfil das oficinas.</p>
+      <div class="catalog-grid"><section class="panel"><div class="panel-head"><div><h3>Categorias</h3><p>Ordem, estado e uso.</p></div><button class="btn primary" data-action="new-category">Nova</button></div><div class="catalog-list" id="categoryList"></div></section>
+      <section class="panel"><div class="panel-head"><div><h3 id="subcategoryTitle">Subcategorias</h3><p>Selecione uma categoria para administrar seus servicos.</p></div><button class="btn primary" data-action="new-subcategory">Nova</button></div><div id="subcategoryList"></div></section></div>
+    </section>
+
+    <section class="view" id="view-activity">
+      <h3 class="section-title">Solicitacoes e reservas</h3><p class="section-copy">Acompanhamento completo do funil operacional.</p>
+      <div class="tabs" data-tabs="activity"><button class="tab active" data-tab="requests">Solicitacoes</button><button class="tab" data-tab="reservations">Reservas</button></div>
+      <div id="proposalMetricsSection">
+        <div class="metrics" id="proposalMetricsCards"></div>
+        <section class="panel" id="proposalCategoryPanel"><div class="panel-head"><div><h3>Desempenho por categoria</h3><p>Precos, conversao e tempo ate a escolha nos ultimos 30 dias.</p></div></div><div id="proposalCategoryMetrics"></div></section>
       </div>
-    </aside>
+      <div class="toolbar"><div class="field"><label>Buscar</label><input id="activitySearch" placeholder="Usuario, oficina, categoria ou status"></div><div class="filters"><select id="activityStatus"><option value="">Todos os status</option></select></div></div>
+      <div id="activityContent"></div>
+    </section>
 
-    <main class="main">
-      <header class="topbar">
-        <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
-        <div><h2 id="pageTitle">Visao geral</h2><p id="pageSubtitle">Indicadores principais da operacao.</p></div>
-        <div class="top-actions">
-          <button class="btn ghost" id="refreshBtn" type="button">Atualizar</button>
-          <img class="logo-clean" src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar">
-        </div>
-      </header>
+    <section class="view" id="view-messages">
+      <h3 class="section-title">Mensagens</h3><p class="section-copy">Leitura administrativa dos chats da plataforma e comunicacao oficial.</p>
+      <div class="toolbar"><div class="field"><label>Buscar oficina</label><input id="messageSearch" placeholder="Nome da oficina"></div><button class="btn primary" data-action="admin-message">Enviar aviso</button></div>
+      <div class="chat-layout"><section class="panel"><div class="panel-head"><div><h3>Oficinas</h3><p>Conversas agrupadas por comercio.</p></div></div><div class="chat-list stack" id="workshopConversationList"></div></section>
+      <section class="panel"><div class="panel-head"><div><h3 id="chatTitle">Selecione uma conversa</h3><p id="chatSubtitle">O historico aparecera aqui em modo somente leitura.</p></div></div><div class="chat-box" id="chatMessages"><div class="empty">Nenhuma conversa selecionada.</div></div></section></div>
+    </section>
 
-      <section class="content">
-        <section class="view active" id="view-overview">
-          <div class="metrics">
-            <div class="metric"><small>Oficinas cadastradas</small><strong id="mWorkshops">0</strong><span id="mWorkshopsHint">0 ativas</span></div>
-            <div class="metric"><small>Pagantes</small><strong id="mPaid">0</strong><span id="mPaidHint">0 vencidas</span></div>
-            <div class="metric"><small>Solicitacoes</small><strong id="mRequests">0</strong><span>ultimos 30 dias</span></div>
-            <div class="metric"><small>Reservas</small><strong id="mReservations">0</strong><span>confirmadas</span></div>
-          </div>
-          <div class="grid">
-            <section class="panel">
-              <div class="panel-head"><div><h3>Saude comercial</h3><p>Quem paga, quem vence e onde existe oportunidade.</p></div><button class="btn secondary" data-export="subscriptions" type="button">Exportar</button></div>
-              <div class="table-wrap"><table class="table"><thead><tr><th>Oficina</th><th>Status</th><th>Plano</th><th>Inicio</th><th>Vence</th><th>Valor</th></tr></thead><tbody id="subscriptionRows"></tbody></table></div>
-            </section>
-            <aside class="panel">
-              <div class="panel-head"><div><h3>Alertas</h3><p>Pontos que exigem acao do admin.</p></div></div>
-              <div class="list" id="alertsList"></div>
-            </aside>
-          </div>
-        </section>
+    <section class="view" id="view-whatsapp">
+      <h3 class="section-title">CRM WhatsApp</h3><p class="section-copy">Base reservada para relacionamento comercial via WhatsApp Cloud API.</p>
+      <div class="panel"><div class="notice"><strong>Integracao pendente.</strong><br>Este modulo sera conectado a Meta WhatsApp Cloud API. Nenhuma mensagem e enviada por enquanto.</div><div class="metrics" style="margin-top:12px"><div class="metric"><small>Contatos</small><strong>0</strong><span>aguardando integracao</span></div><div class="metric"><small>Campanhas</small><strong>0</strong><span>aguardando integracao</span></div><div class="metric"><small>Respostas</small><strong>0</strong><span>aguardando integracao</span></div><div class="metric"><small>Conversao</small><strong>0%</strong><span>aguardando integracao</span></div></div></div>
+    </section>
 
-        <section class="view" id="view-workshops">
-          <div class="panel">
-            <div class="panel-head">
-              <div><h3>Oficinas</h3><p>Ficha completa dos talleres, dados fiscais, contato, status e visibilidade.</p></div>
-              <div class="filters"><button class="active" data-filter-workshop="all" type="button">Todas</button><button data-filter-workshop="active" type="button">Ativas</button><button data-filter-workshop="pending" type="button">Pendentes</button><button data-export="workshops" type="button">CSV</button></div>
-            </div>
-            <div class="table-wrap"><table class="table"><thead><tr><th>Oficina</th><th>Responsavel</th><th>CNPJ</th><th>Cidade</th><th>Categorias</th><th>Status</th><th>Assinatura</th></tr></thead><tbody id="workshopRows"></tbody></table></div>
-          </div>
-        </section>
+    <section class="view" id="view-exports"><h3 class="section-title">Exportacoes</h3><p class="section-copy">Bases CSV prontas para Excel ou Google Sheets.</p><div class="export-grid" id="exportGrid"></div></section>
+    <section class="view" id="view-audit"><h3 class="section-title">Auditoria</h3><p class="section-copy">Historico das acoes administrativas.</p><div class="panel"><div class="panel-head"><div><h3>Registro de atividade</h3><p>Aprovacoes, bloqueios, pagamentos, mensagens e edicoes.</p></div><button class="btn secondary" data-export="audit">CSV</button></div><div id="auditContent"></div></div></section>
 
-
-        <section class="view" id="view-users">
-          <div class="panel">
-            <div class="panel-head">
-              <div><h3>Usuarios</h3><p>Motoristas cadastrados, atividade, veiculos, solicitacoes e anuncios.</p></div>
-              <button class="btn secondary" data-export="users" type="button">Exportar CSV</button>
-            </div>
-            <div class="table-wrap"><table class="table"><thead><tr><th>Usuario</th><th>Contato</th><th>Registro</th><th>Ultimo login</th><th>Veiculos</th><th>Solicitacoes</th><th>Anuncios</th></tr></thead><tbody id="userRows"></tbody></table></div>
-          </div>
-        </section>
-
-        <section class="view" id="view-listings">
-          <div class="panel">
-            <div class="panel-head">
-              <div><h3>Anuncios de veiculos</h3><p>Aprove, rejeite e acompanhe os carros publicados pelos usuarios.</p></div>
-              <div class="filters"><button class="active" data-filter-listing="all" type="button">Todos</button><button data-filter-listing="pending_review" type="button">Em revisao</button><button data-filter-listing="active" type="button">Ativos</button><button data-export="vehicle-listings" type="button">CSV</button></div>
-            </div>
-            <div class="table-wrap"><table class="table"><thead><tr><th>Veiculo</th><th>Usuario</th><th>Preco</th><th>Local</th><th>Status</th><th>Acoes</th></tr></thead><tbody id="listingRows"></tbody></table></div>
-          </div>
-        </section>
-
-        <section class="view" id="view-offers">
-          <div class="panel">
-            <div class="panel-head">
-              <div><h3>Ofertas das oficinas</h3><p>Acompanhe e modere as ofertas publicadas pelas oficinas.</p></div>
-            </div>
-            <div class="table-wrap"><table class="table"><thead><tr><th>Oferta</th><th>Oficina</th><th>Categoria</th><th>Vigencia</th><th>Status</th><th>Acoes</th></tr></thead><tbody id="offerRows"></tbody></table></div>
-          </div>
-          <div class="panel">
-            <div class="panel-head">
-              <div><h3>Solicitacoes de alteracao de perfil</h3><p>Pedidos das oficinas para mudar dados do perfil publico. Aprovar aplica a mudanca direto na oficina.</p></div>
-            </div>
-            <div class="table-wrap"><table class="table"><thead><tr><th>Oficina</th><th>Campo</th><th>Valor solicitado</th><th>Motivo</th><th>Status</th><th>Acoes</th></tr></thead><tbody id="changeRequestRows"></tbody></table></div>
-          </div>
-        </section>
-        <section class="view" id="view-subscriptions">
-          <div class="grid">
-            <section class="panel">
-              <div class="panel-head"><div><h3>Assinaturas</h3><p>Validade da membresia: pagamento hoje, inicio no dia seguinte, duracao de 365 dias.</p></div><button class="btn secondary" data-export="subscriptions" type="button">Exportar CSV</button></div>
-              <div class="table-wrap"><table class="table"><thead><tr><th>Oficina</th><th>Status</th><th>Pago em</th><th>Inicio</th><th>Vencimento</th><th>Dias restantes</th><th>Referencia</th></tr></thead><tbody id="subscriptionDetailRows"></tbody></table></div>
-            </section>
-            <aside class="panel">
-              <div class="panel-head"><div><h3>Resumo</h3><p>Base comercial pronta para follow-up.</p></div></div>
-              <div class="list" id="subscriptionSummary"></div>
-            </aside>
-          </div>
-        </section>
-
-        <section class="view" id="view-payments">
-          <div class="panel">
-            <div class="panel-head"><div><h3>Pagamentos</h3><p>Historico financeiro por oficina, metodo e referencia.</p></div><button class="btn secondary" data-export="payments" type="button">Exportar CSV</button></div>
-            <div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Oficina</th><th>Status</th><th>Metodo</th><th>Valor</th><th>Referencia</th><th>Notas</th></tr></thead><tbody id="paymentRows"></tbody></table></div>
-          </div>
-        </section>
-
-        <section class="view" id="view-messaging">
-          <div class="panel">
-            <div class="panel-head"><div><h3>Mensagens</h3><p>Envie um aviso direto para uma oficina ou usuario. A mensagem cai na campainha de notificacoes dele.</p></div></div>
-            <div class="field" style="max-width:320px;margin-bottom:0"><label>Buscar por nome ou email</label><input id="messagingSearch" type="text" placeholder="Digite para filtrar..."></div>
-          </div>
-          <div class="grid">
-            <section class="panel">
-              <div class="panel-head"><div><h3>Oficinas</h3></div></div>
-              <div class="list" id="messagingWorkshopList"></div>
-            </section>
-            <aside class="panel">
-              <div class="panel-head"><div><h3>Usuarios</h3></div></div>
-              <div class="list" id="messagingUserList"></div>
-            </aside>
-          </div>
-        </section>
-
-        <section class="view" id="view-analytics">
-          <div class="metrics">
-            <div class="metric"><small>Buscas</small><strong id="mSearches">0</strong><span>termos e locais</span></div>
-            <div class="metric"><small>Chats</small><strong id="mChats">0</strong><span>conversas iniciadas</span></div>
-            <div class="metric"><small>Ofertas clicadas</small><strong id="mOfferClicks">0</strong><span>engajamento</span></div>
-            <div class="metric"><small>Conversao</small><strong id="mConversion">0%</strong><span>solicitacao para reserva</span></div>
-          </div>
-          <div class="grid">
-            <section class="panel">
-              <div class="panel-head"><div><h3>Lugares mais buscados</h3><p>Cidades, bairros e regioes com maior demanda.</p></div><button class="btn secondary" data-export="analytics-locations" type="button">CSV</button></div>
-              <div class="chart-bars" id="locationBars"></div>
-            </section>
-            <aside class="panel">
-              <div class="panel-head"><div><h3>Servicos mais usados</h3><p>Categorias que devem guiar vendas e expansao.</p></div></div>
-              <div class="chart-bars" id="serviceBars"></div>
-            </aside>
-          </div>
-        </section>
-
-        <section class="view" id="view-exports">
-          <div class="panel">
-            <div class="panel-head"><div><h3>Exportacoes para Excel</h3><p>Arquivos CSV prontos para abrir no Excel, Google Sheets ou enviar para contador/comercial.</p></div></div>
-            <div class="export-grid" id="exportGrid"></div>
-          </div>
-        </section>
-
-        <section class="view" id="view-audit">
-          <div class="panel">
-            <div class="panel-head"><div><h3>Auditoria</h3><p>Registro de acoes importantes: aprovacao, pagamento, edicao e bloqueio.</p></div><button class="btn secondary" data-export="audit" type="button">Exportar CSV</button></div>
-            <div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Admin</th><th>Acao</th><th>Entidade</th><th>Detalhe</th></tr></thead><tbody id="auditRows"></tbody></table></div>
-          </div>
-        </section>
-      </section>
-    </main>
-  </div>
-</section>
+    <section class="view hidden-legacy" id="view-listings"></section><section class="view hidden-legacy" id="view-analytics"></section>
+  </section></main>
+</div></section>
 <div class="toast" id="toast"></div>
-
-<div class="edit-modal-backdrop" id="workshopEditBackdrop">
-  <div class="edit-modal">
-    <h3>Editar oficina</h3>
-    <p class="hint">Todos os campos abaixo sao salvos direto na tabela da oficina. Se o endereco/CEP for alterado, as coordenadas do mapa sao recalculadas automaticamente.</p>
-    <form id="workshopEditForm">
-      <input type="hidden" id="weId">
-      <div class="field-grid">
-        <div class="field"><label>Nome (publico)</label><input id="weName" type="text" required></div>
-        <div class="field"><label>Razao social</label><input id="weLegalName" type="text"></div>
-        <div class="field"><label>CNPJ</label><input id="weCnpj" type="text"></div>
-        <div class="field"><label>Responsavel</label><input id="weResponsibleName" type="text"></div>
-        <div class="field"><label>Telefone (contato interno)</label><input id="weContactPhone" type="text"></div>
-        <div class="field"><label>Telefone (publico)</label><input id="wePhone" type="text"></div>
-        <div class="field"><label>WhatsApp</label><input id="weWhatsapp" type="text"></div>
-        <div class="field"><label>Email</label><input id="weEmail" type="email"></div>
-        <div class="field"><label>Tipo de negocio</label>
-          <select id="weBusinessType"><option value="workshop">Oficina</option><option value="parts_store">Loja de pecas</option><option value="both">Oficina + pecas</option></select>
-        </div>
-        <div class="field"><label>Categoria principal</label><input id="weCategory" type="text"></div>
-        <div class="field span2"><label>Servicos (separados por virgula)</label><input id="weServices" type="text"></div>
-        <div class="field span2"><label>Categorias de pecas (separadas por virgula)</label><input id="wePartsCategories" type="text"></div>
-        <div class="field"><label>CEP</label><input id="weCep" type="text"></div>
-        <div class="field"><label>Cidade</label><input id="weCity" type="text"></div>
-        <div class="field"><label>Bairro</label><input id="weNeighborhood" type="text"></div>
-        <div class="field"><label>Estado</label><input id="weState" type="text" maxlength="2"></div>
-        <div class="field span2"><label>Endereco completo</label><input id="weAddress" type="text"></div>
-        <div class="field span2"><label>Descricao</label><textarea id="weDescription"></textarea></div>
-        <div class="check-row"><input id="wePartsDelivery" type="checkbox"><label for="wePartsDelivery">Faz entrega de pecas</label></div>
-        <div class="check-row"><input id="wePartsPickup" type="checkbox"><label for="wePartsPickup">Retirada no local</label></div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn secondary" type="button" id="weCancelBtn">Cancelar</button>
-        <button class="btn primary" type="submit">Salvar alteracoes</button>
-      </div>
-    </form>
-  </div>
-</div>
+<div class="edit-modal-backdrop" id="modalBackdrop"><div class="edit-modal modal-wide"><div class="item-row"><div><h3 id="modalTitle">Detalhes</h3><p class="hint" id="modalHint"></p></div><button class="btn secondary" id="modalClose" type="button">Fechar</button></div><div class="modal-body" id="modalBody"></div><div class="modal-footer" id="modalFooter"></div></div></div>
 
 <script>
+if(false){
 const $=(id)=>document.getElementById(id);
 const titles={
   overview:["Visao geral","Indicadores principais da operacao."],
@@ -753,6 +619,249 @@ document.querySelectorAll(".nav button").forEach((btn)=>btn.addEventListener("cl
 document.querySelectorAll("[data-filter-workshop]").forEach((btn)=>btn.addEventListener("click",()=>{document.querySelectorAll("[data-filter-workshop]").forEach((b)=>b.classList.remove("active"));btn.classList.add("active");state.workshopFilter=btn.dataset.filterWorkshop;renderWorkshops()}));
 document.querySelectorAll("[data-filter-listing]").forEach((btn)=>btn.addEventListener("click",()=>{document.querySelectorAll("[data-filter-listing]").forEach((b)=>b.classList.remove("active"));btn.classList.add("active");state.listingFilter=btn.dataset.filterListing;renderVehicleListings()}));
 $("messagingSearch").addEventListener("input",(event)=>{state.messagingSearch=event.target.value;renderMessaging()});
+}
+
+// Admin MVP V2: painel operacional redesenhado. O codigo legado acima fica
+// inativo durante a validacao visual e funcional deste prototipo.
+const byId=(id)=>document.getElementById(id);
+const titlesV2={
+  overview:["Visao geral","Indicadores principais da operacao."],
+  commerces:["Comercios","Cadastro, moderacao, pagamentos e ofertas."],
+  users:["Usuarios e placas","Pessoas, acessos e veiculos registrados."],
+  catalog:["Catalogo de servicos","Categorias e subcategorias da plataforma."],
+  activity:["Solicitacoes e reservas","Acompanhamento do funil operacional."],
+  messages:["Mensagens","Supervisao dos chats da plataforma."],
+  whatsapp:["CRM WhatsApp","Relacionamento comercial e campanhas."],
+  exports:["Exportacoes","Bases completas para Excel."],
+  audit:["Auditoria","Historico das acoes administrativas."]
+};
+const emptyDataV2={workshops:[],dashboardSummary:[],subscriptions:[],payments:[],topLocations:[],topServices:[],chatUsage:[],analyticsEvents:[],serviceRequests:[],requestLifecycle:[],requestEvents:[],proposalMetrics:[],proposalSummary:null,reservations:[],auditLogs:[],adminUsers:[],vehicleListings:[],workshopOffers:[],profileChangeRequests:[],serviceCategories:[],serviceSubcategories:[],workshopServices:[],conversations:[],messages:[],vehicles:[],plateLookups:[]};
+const appState={view:"overview",commerceTab:"pending",usersTab:"all",activityTab:"requests",selectedCategoryId:null,selectedConversationId:null,selectedWorkshopChatId:null,password:sessionStorage.getItem("vr_admin_password")||"",data:{...emptyDataV2},loading:false};
+const escV2=(value)=>String(value??"").replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));
+const asArray=(value)=>Array.isArray(value)?value:(value?[value]:[]);
+const first=(value)=>Array.isArray(value)?(value[0]||{}):(value||{});
+const dateBR=(value,withTime=false)=>{if(!value)return "-";const date=new Date(value);if(Number.isNaN(date.getTime()))return String(value);return new Intl.DateTimeFormat("pt-BR",withTime?{dateStyle:"short",timeStyle:"short"}:{dateStyle:"short"}).format(date)};
+const moneyBR=(value)=>Number.isFinite(Number(value))?new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(value)):"-";
+const boolText=(value)=>value===true?"Sim":value===false?"Nao":"-";
+const textSearch=(...values)=>values.flat(Infinity).filter((value)=>value!==null&&value!==undefined).map((value)=>typeof value==="object"?JSON.stringify(value):String(value)).join(" ").toLowerCase();
+const emptyState=(text)=>`<div class="empty">${escV2(text)}</div>`;
+const statusClass=(status)=>{const value=String(status||"").toLowerCase();if(["approved","active","paid","confirmed","open","accepted"].includes(value))return "active";if(["pending","pending_review","trial","awaiting","with_proposals"].includes(value))return "pending";if(["rejected","blocked","expired","inactive","cancelled","canceled","unpaid","declined"].includes(value))return value==="rejected"?"rejected":"blocked";return "info"};
+const statusPill=(status,label)=>`<span class="pill ${statusClass(status)}">${escV2(label||status||"Sem status")}</span>`;
+function showToast(message,isError=false){const node=byId("toast");node.textContent=message;node.style.borderColor=isError?"#fecdd3":"rgba(22,163,74,.28)";node.style.color=isError?"#b91c1c":"#070b14";node.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>node.classList.remove("show"),3200)}
+function setLoading(value){appState.loading=value;byId("app").classList.toggle("loading",value);byId("refreshBtn").textContent=value?"Atualizando...":"Atualizar"}
+function openDrawerV2(){byId("side").classList.add("open");byId("drawerBackdrop").classList.add("open")}
+function closeDrawerV2(){byId("side").classList.remove("open");byId("drawerBackdrop").classList.remove("open")}
+function setViewV2(view){if(!titlesV2[view])return;appState.view=view;document.querySelectorAll(".view").forEach((node)=>node.classList.remove("active"));byId(`view-${view}`)?.classList.add("active");document.querySelectorAll(".nav button[data-view]").forEach((button)=>button.classList.toggle("active",button.dataset.view===view));byId("pageTitle").textContent=titlesV2[view][0];byId("pageSubtitle").textContent=titlesV2[view][1];closeDrawerV2()}
+function showAdminV2(){byId("authScreen").style.display="none";byId("app").style.display="block";renderAllV2()}
+function openModal(title,hint,body,footer=""){byId("modalTitle").textContent=title;byId("modalHint").textContent=hint||"";byId("modalBody").innerHTML=body;byId("modalFooter").innerHTML=footer;byId("modalBackdrop").classList.add("open")}
+function closeModal(){byId("modalBackdrop").classList.remove("open");byId("modalBody").innerHTML="";byId("modalFooter").innerHTML=""}
+async function adminFetchV2(path,options={}){const response=await fetch(path,{...options,headers:{"Content-Type":"application/json","X-Admin-Password":appState.password,...(options.headers||{})}});const result=await response.json().catch(()=>({success:false,error:`Resposta invalida (${response.status}).`}));if(!response.ok||result.success===false)throw new Error(result.error||`Erro ${response.status}`);return result}
+async function loadAdminDataV2(){if(location.protocol==="file:"){appState.data={...emptyDataV2};renderAllV2();return true}setLoading(true);try{const result=await adminFetchV2("/.netlify/functions/admin-data");appState.data={...emptyDataV2,...(result.data||{})};renderAllV2();return true}catch(error){showToast(error.message||"Nao foi possivel carregar os dados.",true);return false}finally{setLoading(false)}}
+async function runAction(action,payload,successMessage){setLoading(true);try{const result=await adminFetchV2("/.netlify/functions/admin-action",{method:"POST",body:JSON.stringify({action,payload})});await loadAdminDataV2();if(successMessage)showToast(successMessage);return result}catch(error){showToast(error.message||"A acao nao foi concluida.",true);throw error}finally{setLoading(false)}}
+function workshopById(id){return appState.data.workshops.find((item)=>String(item.id)===String(id))||{}}
+function userById(id){return appState.data.adminUsers.find((item)=>String(item.id||item.user_id)===String(id))||{}}
+function workshopName(id){return workshopById(id).name||"Comercio sem nome"}
+function recursiveData(value,depth=0){if(value===null||value===undefined||value==="")return '<span class="mini">-</span>';if(typeof value!=="object")return escV2(value);if(depth>4)return escV2(JSON.stringify(value));const entries=Object.entries(value);if(!entries.length)return '<span class="mini">Sem dados</span>';return `<dl class="code-data">${entries.map(([key,item])=>`<dt>${escV2(key)}</dt><dd>${typeof item==="object"?recursiveData(item,depth+1):escV2(item)}</dd>`).join("")}</dl>`}
+function renderOverview(){
+  const d=appState.data;const summary=first(d.dashboardSummary);const users=d.adminUsers.length;
+  const pending=d.workshops.filter((w)=>!w.approval_status||w.approval_status==="pending").length;
+  const approved=d.workshops.filter((w)=>w.approval_status==="approved").length;
+  const now=new Date();
+  const expiredRequests=d.serviceRequests.filter((r)=>r.expires_at&&new Date(r.expires_at)<now).length;
+  const openRequests=d.serviceRequests.filter((r)=>["open","pending"].includes(String(r.status))&&(!r.expires_at||new Date(r.expires_at)>=now)).length;
+  const proposals=d.serviceRequests.reduce((sum,r)=>sum+asArray(r.proposals).length,0);
+  const confirmed=d.reservations.filter((r)=>r.status==="confirmed").length;
+  const metrics=[
+    ["Usuarios",summary.total_users??users,"contas cadastradas"],["Comercios",approved,`${pending} pendentes`],
+    ["Solicitacoes abertas",openRequests,`${expiredRequests} expirada(s)`],["Propostas",proposals,"enviadas pelas oficinas"],
+    ["Reservas confirmadas",confirmed,`${d.reservations.length} no total`],["Ofertas",d.workshopOffers.length,"publicadas pelos comercios"]
+  ];
+  byId("overviewMetrics").innerHTML=metrics.map(([label,value,hint])=>`<div class="metric"><small>${escV2(label)}</small><strong>${escV2(value)}</strong><span>${escV2(hint)}</span></div>`).join("");
+  const subscriptions=[...d.subscriptions].sort((a,b)=>new Date(b.ends_at||b.end_date||0)-new Date(a.ends_at||a.end_date||0));
+  byId("overviewCommercial").innerHTML=subscriptions.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Comercio</th><th>Status</th><th>Plano</th><th>Inicio</th><th>Vencimento</th><th>Valor</th></tr></thead><tbody>${subscriptions.slice(0,10).map((s)=>`<tr><td><b>${escV2(workshopName(s.workshop_id))}</b></td><td>${statusPill(s.status)}</td><td>${escV2(s.plan_name||"-")}</td><td>${dateBR(s.starts_at||s.start_date)}</td><td>${dateBR(s.ends_at||s.end_date)}</td><td>${moneyBR(s.amount_paid||s.amount)}</td></tr>`).join("")}</tbody></table></div>`:emptyState("Ainda nao existem assinaturas registradas.");
+  const changeCount=d.profileChangeRequests.filter((r)=>r.status==="pending").length;
+  const expired=d.subscriptions.filter((s)=>s.status==="expired"||(s.ends_at&&new Date(s.ends_at)<new Date())).length;
+  const alerts=[
+    [pending,"Comercios pendentes","Revisar cadastro, categorias e dados fiscais.","commerces"],
+    [changeCount,"Alteracoes de perfil","Solicitacoes aguardando revisao.","commerces"],
+    [expired,"Assinaturas vencidas","Contatar ou bloquear visibilidade.","commerces"]
+  ];
+  byId("overviewAlerts").innerHTML=alerts.map(([count,title,copy,view])=>`<button class="item clickable" data-view-jump="${view}" type="button" style="text-align:left;width:100%"><div class="item-row"><div><h4>${escV2(title)}</h4><p>${escV2(copy)}</p></div><span class="badge-count">${count}</span></div></button>`).join("");
+  const badge=byId("navBadgeCommerces");badge.textContent=pending;badge.classList.toggle("show",pending>0)
+}
+function commerceMatches(w,query){return !query||textSearch(w.name,w.legal_name,w.cnpj,w.email,w.city,w.address,w.responsible_name).includes(query)}
+function commerceStatus(w){if(w.approval_status==="approved"&&w.visible!==false&&!w.blocked)return "approved";if(w.approval_status==="blocked"||w.blocked||w.visible===false&&w.approval_status==="approved")return "blocked";if(w.approval_status==="rejected")return "rejected";return "pending"}
+function workshopSummaryCard(w){
+  const latest=appState.data.subscriptions.filter((s)=>String(s.workshop_id)===String(w.id)).sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0))[0];
+  const state=commerceStatus(w);
+  const statusDetail=state==="rejected"?`<div class="datum"><span>Motivo do bloqueio/rejeicao</span><b>${escV2(w.blocked_reason||w.rejection_reason||w.approval_notes||"Nao informado")}</b></div><div class="datum"><span>Data da decisao</span><b>${dateBR(w.blocked_at||w.rejected_at||w.updated_at,true)}</b></div>`:"";
+  const stateLabel=state==="approved"?"Aprovado":state==="pending"?"Pendente":state==="blocked"?"Bloqueado":"Rejeitado";
+  return `<article class="record clickable" data-action="workshop-detail" data-id="${escV2(w.id)}"><div class="record-top"><div><h4>${escV2(w.name||w.legal_name||"Comercio sem nome")}</h4><p>${escV2([w.city,w.state].filter(Boolean).join(", ")||"Endereco nao informado")} · Cadastro ${dateBR(w.created_at)}</p></div>${statusPill(state,stateLabel)}</div><div class="record-grid"><div class="datum"><span>Responsavel</span><b>${escV2(w.responsible_name||w.owner_name||"-")}</b></div><div class="datum"><span>CNPJ</span><b>${escV2(w.cnpj||"-")}</b></div><div class="datum"><span>Categorias</span><b>${escV2(asArray(w.services||w.categories).join(", ")||"-")}</b></div><div class="datum"><span>Assinatura</span><b>${latest?`${escV2(latest.status||"-")} · ${dateBR(latest.ends_at||latest.end_date)}`:"Sem assinatura"}</b></div>${statusDetail}</div></article>`
+}
+function renderOffers(){const offers=appState.data.workshopOffers;byId("commerceContent").innerHTML=offers.length?`<div class="stack">${offers.map((offer)=>`<article class="record"><div class="record-top"><div><h4>${escV2(offer.title||offer.name||"Oferta sem titulo")}</h4><p>${escV2(offer.workshops?.name||workshopName(offer.workshop_id))} · ${dateBR(offer.created_at)}</p></div>${statusPill(offer.status)}</div><div class="record-grid"><div class="datum"><span>Categoria</span><b>${escV2(offer.category||"-")}</b></div><div class="datum"><span>Vigencia</span><b>${dateBR(offer.starts_at||offer.start_date)} a ${dateBR(offer.ends_at||offer.end_date)}</b></div><div class="datum"><span>Preco</span><b>${moneyBR(offer.price||offer.offer_price)}</b></div><div class="datum"><span>Descricao</span><b>${escV2(offer.description||"-")}</b></div></div><div class="record-actions"><button class="btn success" data-action="offer-status" data-id="${escV2(offer.id)}" data-status="active">Aprovar / ativar</button><button class="btn danger" data-action="offer-status" data-id="${escV2(offer.id)}" data-status="inactive">Rejeitar / desativar</button></div></article>`).join("")}</div>`:emptyState("Nenhuma oferta cadastrada.")}
+function profileChangeCard(request){
+  const workshop=workshopById(request.workshop_id);
+  return `<article class="record"><div class="record-top"><div><h4>${escV2(workshop.name||"Comercio nao identificado")}</h4><p>Alteracao de ${escV2(request.field_name||"perfil publico")} · ${dateBR(request.created_at,true)}</p></div>${statusPill(request.status||"pending","Aguardando revisao")}</div><div class="record-grid"><div class="datum"><span>Solicitado por</span><b>${escV2(request.requested_by||workshop.owner_id||"-")}</b></div><div class="datum"><span>Motivo</span><b>${escV2(request.reason||"Nao informado")}</b></div></div><details><summary>Ver dados solicitados</summary><div style="margin-top:10px">${recursiveData(request.new_value||{})}</div></details><div class="record-actions"><button class="btn success" data-action="profile-change-review" data-id="${escV2(request.id)}" data-decision="approved">Aprovar alteracao</button><button class="btn danger" data-action="profile-change-review" data-id="${escV2(request.id)}" data-decision="rejected">Rejeitar</button></div></article>`
+}
+function renderCommerces(){
+  if(appState.commerceTab==="offers"){renderOffers();return}
+  const query=byId("commerceSearch")?.value.trim().toLowerCase()||"";
+  const list=appState.data.workshops.filter((w)=>(appState.commerceTab==="rejected"?["rejected","blocked"].includes(commerceStatus(w)):commerceStatus(w)===appState.commerceTab)&&commerceMatches(w,query));
+  const changes=appState.commerceTab==="pending"?appState.data.profileChangeRequests.filter((request)=>!request.status||request.status==="pending"):[];
+  const sections=[];
+  if(changes.length)sections.push(`<section class="panel"><div class="panel-head"><div><h3>Alteracoes de perfil pendentes</h3><p>Revise os dados antes de publica-los no perfil do comercio.</p></div><span class="badge-count">${changes.length}</span></div><div class="stack">${changes.map(profileChangeCard).join("")}</div></section>`);
+  sections.push(`<section class="panel"><div class="panel-head"><div><h3>${appState.commerceTab==="approved"?"Comercios ativos":appState.commerceTab==="pending"?"Cadastros pendentes":"Rejeitados e bloqueados"}</h3><p>${list.length} registro(s) nesta situacao.</p></div></div>${list.length?`<div class="stack">${list.map(workshopSummaryCard).join("")}</div>`:emptyState("Nenhum comercio nesta situacao.")}</section>`);
+  byId("commerceContent").innerHTML=`<div class="stack">${sections.join("")}</div>`
+}
+function workshopDetail(id){const w=workshopById(id);if(!w.id)return;const subscriptions=appState.data.subscriptions.filter((s)=>String(s.workshop_id)===String(id));const payments=appState.data.payments.filter((p)=>String(p.workshop_id)===String(id));const services=appState.data.workshopServices.filter((s)=>String(s.workshop_id)===String(id));const fields={"ID":w.id,"Nome publico":w.name,"Razao social":w.legal_name,"CNPJ":w.cnpj,"Responsavel":w.responsible_name||w.owner_name,"Email":w.email,"Telefone interno":w.contact_phone,"Telefone publico":w.phone,"Endereco":w.address,"Bairro":w.neighborhood,"Cidade":w.city,"Estado":w.state,"CEP":w.cep||w.zip_code,"Latitude":w.latitude,"Longitude":w.longitude,"Tipo de negocio":w.business_type,"Atendimento a domicilio":w.home_service,"Recebe pedidos":w.open,"Visivel":w.visible,"Data de registro":dateBR(w.created_at,true),"Descricao":w.description,"Logo":w.logo_url,"Horario":w.schedule||w.opening_hours};const footer=`<button class="btn secondary" data-action="workshop-edit" data-id="${escV2(id)}">Modificar</button><button class="btn ghost" data-action="admin-message" data-recipient="workshop" data-id="${escV2(id)}">Enviar mensagem</button>${commerceStatus(w)!=="approved"?`<button class="btn success" data-action="workshop-status" data-id="${escV2(id)}" data-status="approved">Aprovar</button>`:`<button class="btn danger" data-action="workshop-status" data-id="${escV2(id)}" data-status="rejected">Bloquear</button>`}<button class="btn primary" data-action="payment" data-id="${escV2(id)}">Registrar pagamento</button>${commerceStatus(w)==="rejected"?`<button class="btn danger" data-action="workshop-delete" data-id="${escV2(id)}">Eliminar definitivamente</button>`:""}`;openModal(w.name||"Detalhes do comercio","Ficha completa e historico operacional.",`<div class="panel"><h3>Dados do comercio</h3>${recursiveData(fields)}</div><div class="grid"><section class="panel"><h3>Servicos (${services.length})</h3>${services.length?services.map((s)=>`<div class="item"><b>${escV2(s.name||s.service_name||"Servico")}</b><p>${moneyBR(s.reference_price||s.price)} · ${escV2(s.estimated_time||s.duration||"Tempo nao informado")}</p></div>`).join(""):emptyState("Nenhum servico cadastrado.")}</section><section class="panel"><h3>Assinaturas e pagamentos</h3>${subscriptions.length?subscriptions.map((s)=>`<div class="item"><b>${escV2(s.plan_name||"Assinatura")}</b><p>${statusPill(s.status)} · vence ${dateBR(s.ends_at||s.end_date)}</p></div>`).join(""):emptyState("Sem assinatura.")}${payments.length?`<p class="mini" style="margin-top:10px">${payments.length} pagamento(s) registrado(s).</p>`:""}</section></div><details class="panel"><summary>Todos os campos recebidos</summary><div style="margin-top:12px">${recursiveData(w)}</div></details>`,footer)}
+function workshopDetailV2(id){
+  const w=workshopById(id);if(!w.id)return;
+  const state=commerceStatus(w);
+  const subscriptions=appState.data.subscriptions.filter((s)=>String(s.workshop_id)===String(id)).sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+  const payments=appState.data.payments.filter((p)=>String(p.workshop_id)===String(id)).sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+  const services=appState.data.workshopServices.filter((s)=>String(s.workshop_id)===String(id));
+  const currentSubscription=subscriptions.find((s)=>["active","paid"].includes(String(s.status).toLowerCase()))||subscriptions[0];
+  const fields={"ID":w.id,"Nome publico":w.name,"Razao social":w.legal_name,"CNPJ":w.cnpj,"Responsavel":w.responsible_name||w.owner_name,"Email":w.email,"Telefone interno":w.contact_phone,"Telefone publico":w.phone,"Endereco":w.address,"Bairro":w.neighborhood,"Cidade":w.city,"Estado":w.state,"CEP":w.cep||w.zip_code,"Latitude":w.latitude,"Longitude":w.longitude,"Tipo de negocio":w.business_type,"Atendimento a domicilio":w.home_service,"Recebe pedidos":w.open,"Visivel":w.visible,"Status de aprovacao":w.approval_status,"Data de registro":dateBR(w.created_at,true),"Descricao":w.description,"Logo":w.logo_url,"Horario personalizado":w.schedule?.custom||w.schedule||w.opening_hours};
+  let statusActions="";
+  if(state==="pending")statusActions=`<button class="btn success" data-action="workshop-status" data-id="${escV2(id)}" data-status="approved">Aprovar</button><button class="btn danger" data-action="workshop-status" data-id="${escV2(id)}" data-status="rejected">Rejeitar</button>`;
+  else if(state==="approved")statusActions=`<button class="btn danger" data-action="workshop-status" data-id="${escV2(id)}" data-status="blocked">Bloquear</button>`;
+  else statusActions=`<button class="btn success" data-action="workshop-status" data-id="${escV2(id)}" data-status="approved">Aprovar novamente</button><button class="btn danger" data-action="workshop-delete" data-id="${escV2(id)}">Eliminar definitivamente</button>`;
+  const footer=`<button class="btn secondary" data-action="workshop-edit" data-id="${escV2(id)}">Modificar</button><button class="btn ghost" data-action="admin-message" data-recipient="workshop" data-id="${escV2(id)}">Mensagem</button>${statusActions}<button class="btn primary" data-action="payment" data-id="${escV2(id)}">Registrar pagamento</button>`;
+  const subscriptionHtml=currentSubscription?`<div class="record-grid"><div class="datum"><span>Plano vigente</span><b>${escV2(currentSubscription.plan_name||"Assinatura")}</b></div><div class="datum"><span>Status</span><b>${escV2(currentSubscription.status||"-")}</b></div><div class="datum"><span>Inicio</span><b>${dateBR(currentSubscription.starts_at||currentSubscription.start_date)}</b></div><div class="datum"><span>Vencimento</span><b>${dateBR(currentSubscription.ends_at||currentSubscription.end_date)}</b></div></div>`:emptyState("Sem assinatura vigente.");
+  const paymentsHtml=payments.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Valor</th><th>Metodo</th><th>Referencia</th></tr></thead><tbody>${payments.map((p)=>`<tr><td>${dateBR(p.created_at,true)}</td><td>${moneyBR(p.amount||p.amount_paid)}</td><td>${escV2(p.method||"-")}</td><td>${escV2(p.reference||"-")}</td></tr>`).join("")}</tbody></table></div>`:emptyState("Nenhum pagamento registrado.");
+  openModal(w.name||"Detalhes do comercio","Ficha integral, situacao comercial e historico.",`<div class="panel"><h3>Dados do comercio</h3>${recursiveData(fields)}</div><div class="grid"><section class="panel"><h3>Servicos (${services.length})</h3>${services.length?services.map((s)=>`<div class="item"><b>${escV2(s.name||s.service_name||"Servico")}</b><p>${moneyBR(s.reference_price||s.price)} · ${escV2(s.estimated_time||s.duration||"Tempo nao informado")}</p></div>`).join(""):emptyState("Nenhum servico cadastrado.")}</section><section class="panel"><h3>Assinatura vigente</h3>${subscriptionHtml}</section></div><section class="panel"><h3>Historico de pagamentos (${payments.length})</h3>${paymentsHtml}</section><details class="panel"><summary>Todos os campos recebidos</summary><div style="margin-top:12px">${recursiveData(w)}</div></details>`,footer)
+}
+function isBlocked(item){return item.blocked===true||item.is_blocked===true||String(item.status).toLowerCase()==="blocked"}
+function userIdOf(user){return user.id||user.user_id||user.profile_id}
+function userCard(user){const id=userIdOf(user);const vehicles=appState.data.vehicles.filter((v)=>String(v.user_id||v.owner_id)===String(id));const requests=appState.data.serviceRequests.filter((r)=>String(r.user_id)===String(id));return `<article class="record"><div class="record-top"><div><h4>${escV2(user.name||user.full_name||user.email||"Usuario sem nome")}</h4><p>${escV2(user.email||"-")} · ${escV2(user.phone||"Telefone nao informado")}</p></div>${statusPill(isBlocked(user)?"blocked":"active",isBlocked(user)?"Bloqueado":(user.role||"Ativo"))}</div><div class="record-grid"><div class="datum"><span>ID</span><b>${escV2(id||"-")}</b></div><div class="datum"><span>Registro</span><b>${dateBR(user.created_at,true)}</b></div><div class="datum"><span>Ultimo login</span><b>${dateBR(user.last_sign_in_at||user.last_login_at,true)}</b></div><div class="datum"><span>Atividade</span><b>${vehicles.length} veiculo(s) · ${requests.length} solicitacao(oes)</b></div></div><div class="record-actions"><button class="btn secondary" data-action="user-detail" data-id="${escV2(id)}">Ver detalhes</button><button class="btn ghost" data-action="admin-message" data-recipient="user" data-id="${escV2(id)}">Enviar mensagem</button><button class="btn ${isBlocked(user)?"success":"danger"}" data-action="user-block" data-id="${escV2(id)}" data-blocked="${!isBlocked(user)}">${isBlocked(user)?"Desbloquear":"Bloquear"}</button></div></article>`}
+function plateLookupFor(vehicle){return appState.data.plateLookups.find((lookup)=>String(lookup.vehicle_id||"")===String(vehicle.id)||String(lookup.plate||"").replace(/\W/g,"").toUpperCase()===String(vehicle.plate||"").replace(/\W/g,"").toUpperCase())||{}}
+function vehicleCard(vehicle){const owner=userById(vehicle.user_id||vehicle.owner_id);return `<article class="record"><div class="record-top"><div><h4>${escV2(vehicle.plate||"Placa nao informada")}</h4><p>${escV2([vehicle.brand,vehicle.model,vehicle.year].filter(Boolean).join(" ")||"Dados do veiculo indisponiveis")}</p></div>${statusPill(isBlocked(vehicle)?"blocked":"active",isBlocked(vehicle)?"Bloqueada":"Ativa")}</div><div class="record-grid"><div class="datum"><span>Motorista</span><b>${escV2(owner.name||owner.email||vehicle.user_id||"-")}</b></div><div class="datum"><span>ID motorista</span><b>${escV2(vehicle.user_id||vehicle.owner_id||"-")}</b></div><div class="datum"><span>Registro</span><b>${dateBR(vehicle.created_at,true)}</b></div><div class="datum"><span>Cor / combustivel</span><b>${escV2([vehicle.color,vehicle.fuel].filter(Boolean).join(" · ")||"-")}</b></div></div><div class="record-actions"><button class="btn secondary" data-action="vehicle-detail" data-id="${escV2(vehicle.id)}">Dados FIPE completos</button><button class="btn ${isBlocked(vehicle)?"success":"danger"}" data-action="vehicle-block" data-id="${escV2(vehicle.id)}" data-blocked="${!isBlocked(vehicle)}">${isBlocked(vehicle)?"Desbloquear":"Bloquear placa"}</button></div></article>`}
+function blockedMeta(card,item){
+  const note=`<div class="record-grid"><div class="datum"><span>Motivo do bloqueio</span><b>${escV2(item.blocked_reason||item.block_reason||item.reason||"Nao informado")}</b></div><div class="datum"><span>Data do bloqueio</span><b>${dateBR(item.blocked_at||item.updated_at,true)}</b></div></div>`;
+  return card.replace('<div class="record-actions">',`${note}<div class="record-actions">`)
+}
+function renderUsers(){const query=byId("userSearch")?.value.trim().toLowerCase()||"";if(appState.usersTab==="plates"){const list=appState.data.vehicles.filter((v)=>!query||textSearch(v,plateLookupFor(v)).includes(query));byId("usersContent").innerHTML=list.length?`<div class="stack">${list.map(vehicleCard).join("")}</div>`:emptyState("Nenhuma placa registrada.");return}if(appState.usersTab==="blocked"){const blockedUsers=appState.data.adminUsers.filter(isBlocked);const blockedVehicles=appState.data.vehicles.filter(isBlocked);byId("usersContent").innerHTML=`<div class="grid"><section class="panel"><div class="panel-head"><div><h3>Usuarios bloqueados</h3><p>${blockedUsers.length} registro(s).</p></div></div><div class="stack">${blockedUsers.map((item)=>blockedMeta(userCard(item),item)).join("")||emptyState("Nenhum usuario bloqueado.")}</div></section><section class="panel"><div class="panel-head"><div><h3>Placas bloqueadas</h3><p>${blockedVehicles.length} registro(s).</p></div></div><div class="stack">${blockedVehicles.map((item)=>blockedMeta(vehicleCard(item),item)).join("")||emptyState("Nenhuma placa bloqueada.")}</div></section></div>`;return}const users=appState.data.adminUsers.filter((u)=>!query||textSearch(u).includes(query));byId("usersContent").innerHTML=users.length?`<div class="stack">${users.map(userCard).join("")}</div>`:emptyState("Nenhum usuario encontrado.")}
+function userDetail(id){const user=userById(id);const vehicles=appState.data.vehicles.filter((v)=>String(v.user_id||v.owner_id)===String(id));const requests=appState.data.serviceRequests.filter((r)=>String(r.user_id)===String(id));const reservations=appState.data.reservations.filter((r)=>String(r.user_id)===String(id));openModal(user.name||user.email||"Detalhes do usuario","Conta, atividade e dados relacionados.",`<div class="panel">${recursiveData(user)}</div><div class="grid"><section class="panel"><h3>Veiculos (${vehicles.length})</h3>${vehicles.map(vehicleCard).join("")||emptyState("Sem veiculos.")}</section><section class="panel"><h3>Atividade</h3><div class="record-grid"><div class="datum"><span>Solicitacoes</span><b>${requests.length}</b></div><div class="datum"><span>Reservas</span><b>${reservations.length}</b></div></div></section></div>`,`<button class="btn ghost" data-action="admin-message" data-recipient="user" data-id="${escV2(id)}">Enviar mensagem</button><button class="btn ${isBlocked(user)?"success":"danger"}" data-action="user-block" data-id="${escV2(id)}" data-blocked="${!isBlocked(user)}">${isBlocked(user)?"Desbloquear":"Bloquear"}</button>`)}
+function vehicleDetail(id){const vehicle=appState.data.vehicles.find((v)=>String(v.id)===String(id))||{};const lookup=plateLookupFor(vehicle);openModal(vehicle.plate||"Dados do veiculo","Resposta completa armazenada da consulta de placa/FIPE.",`<div class="grid"><section class="panel"><h3>Registro do veiculo</h3>${recursiveData(vehicle)}</section><section class="panel"><h3>Consulta FIPE / API</h3>${recursiveData(lookup.raw||lookup.raw_data||lookup.response_data||lookup.fipe_data||lookup)}</section></div>`,`<button class="btn ${isBlocked(vehicle)?"success":"danger"}" data-action="vehicle-block" data-id="${escV2(id)}" data-blocked="${!isBlocked(vehicle)}">${isBlocked(vehicle)?"Desbloquear":"Bloquear placa"}</button>`)}
+function categoryUsage(id){return appState.data.workshopServices.filter((s)=>String(s.category_id)===String(id)).length}
+function subcategoryUsage(id){return appState.data.workshopServices.filter((s)=>String(s.subcategory_id)===String(id)).length}
+function renderCatalog(){const categories=[...appState.data.serviceCategories].sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));if(!appState.selectedCategoryId&&categories[0])appState.selectedCategoryId=categories[0].id;byId("categoryList").innerHTML=categories.length?categories.map((cat)=>{const subCount=appState.data.serviceSubcategories.filter((sub)=>String(sub.category_id)===String(cat.id)).length;return `<button type="button" class="catalog-row clickable ${String(cat.id)===String(appState.selectedCategoryId)?"active":""}" data-action="select-category" data-id="${escV2(cat.id)}"><div style="text-align:left"><h4>${escV2(cat.name)}</h4><small>Ordem ${escV2(cat.sort_order??0)} · ${subCount} subcategoria(s) · ${categoryUsage(cat.id)} comercio(s)</small></div>${statusPill(cat.active===false?"inactive":"active",cat.active===false?"Inativa":"Ativa")}</button>`}).join(""):emptyState("Nenhuma categoria cadastrada.");const selected=categories.find((cat)=>String(cat.id)===String(appState.selectedCategoryId));byId("subcategoryTitle").textContent=selected?`Subcategorias · ${selected.name}`:"Subcategorias";const subs=appState.data.serviceSubcategories.filter((sub)=>String(sub.category_id)===String(appState.selectedCategoryId)).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));byId("subcategoryList").innerHTML=selected?`<div class="record-actions" style="margin:0 0 10px"><button class="btn secondary" data-action="edit-category" data-id="${escV2(selected.id)}">Editar categoria</button><button class="btn ghost" data-action="toggle-category" data-id="${escV2(selected.id)}">${selected.active===false?"Ativar":"Desativar"}</button><button class="btn danger" data-action="delete-category" data-id="${escV2(selected.id)}">Excluir categoria</button></div><div class="catalog-list">${subs.map((sub)=>`<div class="catalog-row"><div><h4>${escV2(sub.name)}</h4><small>Ordem ${escV2(sub.sort_order??0)} · ${subcategoryUsage(sub.id)} uso(s) · ${sub.active===false?"inativa":"ativa"}</small></div><div class="record-actions" style="margin:0"><button class="btn secondary" data-action="edit-subcategory" data-id="${escV2(sub.id)}">Editar</button><button class="btn ghost" data-action="toggle-subcategory" data-id="${escV2(sub.id)}">${sub.active===false?"Ativar":"Desativar"}</button><button class="btn danger" data-action="delete-subcategory" data-id="${escV2(sub.id)}">Excluir</button></div></div>`).join("")||emptyState("Nenhuma subcategoria nesta categoria.")}</div>`:emptyState("Selecione ou crie uma categoria.")}
+function catalogForm(kind,item={}){const isSub=kind==="subcategory";const title=`${item.id?"Editar":"Nova"} ${isSub?"subcategoria":"categoria"}`;openModal(title,"Defina nome, ordem e disponibilidade.",`<form id="catalogForm"><div class="field-grid"><div class="field span2"><label>Nome</label><input name="name" value="${escV2(item.name||"")}" required></div><div class="field"><label>Ordem</label><input name="sort_order" type="number" value="${escV2(item.sort_order??0)}"></div><label class="check-row"><input name="active" type="checkbox" ${item.active===false?"":"checked"}> Ativa</label></div></form>`,`<button class="btn secondary" data-action="modal-close">Cancelar</button><button class="btn primary" data-action="catalog-save" data-kind="${kind}" data-id="${escV2(item.id||"")}">Salvar</button>`)}
+function lifecycleFor(request){return appState.data.requestLifecycle.find((item)=>String(item.request_id)===String(request.id))||{}}
+function requestEventsFor(request){return appState.data.requestEvents.filter((item)=>String(item.request_id)===String(request.id)).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at))}
+function lifecycleEventLabel(type){return({request_created:"Solicitacao criada",request_closed:"Solicitacao encerrada",request_expired:"Solicitacao expirada",request_status_changed:"Status da solicitacao alterado",proposal_created:"Proposta enviada",proposal_accepted:"Proposta aceita pelo cliente",proposal_declined:"Proposta recusada",proposal_expired:"Proposta vencida",proposal_status_changed:"Status da proposta alterado"})[type]||type||"Evento"}
+function lifecycleTimeline(request){const events=requestEventsFor(request);return events.length?`<div class="stack" style="margin-top:10px">${events.map((event)=>`<div class="item"><div class="item-row"><b>${escV2(lifecycleEventLabel(event.event_type))}</b><small>${dateBR(event.created_at,true)}</small></div><p>${escV2(event.workshop_id?workshopName(event.workshop_id):"Solicitacao")}${event.to_status?` · ${escV2(event.from_status?`${event.from_status} → ${event.to_status}`:event.to_status)}`:""}</p>${event.proposal_id?`<small>Proposta ${escV2(event.proposal_id)}</small>`:""}</div>`).join("")}</div>`:emptyState("Ainda nao ha eventos registrados para esta solicitacao.")}
+function acceptedProposalFor(request){const lifecycle=lifecycleFor(request);const proposals=asArray(request.proposals);return proposals.find((proposal)=>String(proposal.id)===String(request.accepted_proposal_id||lifecycle.accepted_proposal_id))||proposals.find((proposal)=>String(proposal.status).toLowerCase()==="accepted")||null}
+function requestLifecycleStatus(request){const lifecycle=lifecycleFor(request);if(lifecycle.lifecycle_status)return lifecycle.lifecycle_status;if(acceptedProposalFor(request))return "accepted";if(request.expires_at&&new Date(request.expires_at)<new Date())return "expired";if(String(request.status)==="closed")return "closed";if(asArray(request.proposals).length)return "with_proposals";return String(request.status||"open")}
+function lifecycleLabel(status){return({accepted:"Proposta aceita",with_proposals:"Com propostas",open:"Aberta",expired:"Expirada",closed:"Encerrada"})[status]||status}
+function proposalItems(proposals){return proposals.length?`<div class="stack" style="margin-top:10px">${proposals.map((p)=>{const accepted=String(p.status).toLowerCase()==="accepted";return `<div class="item" ${accepted?'style="border-color:var(--blue);background:var(--soft)"':""}><div class="item-row"><b>${escV2(p.workshops?.name||workshopName(p.workshop_id))}</b>${statusPill(p.status,accepted?"Escolhida pelo cliente":undefined)}</div><p>${moneyBR(p.price)} · ${escV2(p.estimated_time||"Prazo nao informado")}</p><p>${escV2(p.message||"Sem mensagem comercial.")}</p><small>Enviada ${dateBR(p.created_at,true)}${p.responded_at?` · Respondida ${dateBR(p.responded_at,true)}`:""}</small></div>`}).join("")}</div>`:emptyState("Nenhuma proposta enviada.")}
+function acceptedProposalBlock(request){const lifecycle=lifecycleFor(request);const proposal=acceptedProposalFor(request)||{};const hasWinner=proposal.id||request.accepted_proposal_id||request.accepted_workshop_id||request.accepted_at||lifecycle.accepted_proposal_id||lifecycle.accepted_workshop_id||lifecycle.accepted_at;if(!hasWinner)return"";const workshop=proposal.workshops?.name||lifecycle.accepted_workshop_name||workshopName(proposal.workshop_id||request.accepted_workshop_id||lifecycle.accepted_workshop_id);return `<section class="panel" style="margin:12px 0;border-color:var(--blue);background:var(--soft)"><div class="panel-head"><div><h3>Proposta escolhida pelo cliente</h3><p>${escV2(workshop)} · aceita em ${dateBR(request.accepted_at||lifecycle.accepted_at||proposal.responded_at,true)}</p></div>${statusPill("accepted","Aceita")}</div><div class="record-grid"><div class="datum"><span>Oficina escolhida</span><b>${escV2(workshop)}</b></div><div class="datum"><span>Preco aceito</span><b>${moneyBR(proposal.price??lifecycle.accepted_price)}</b></div><div class="datum"><span>Prazo informado</span><b>${escV2(proposal.estimated_time||lifecycle.accepted_estimated_time||"Nao informado")}</b></div><div class="datum"><span>ID da proposta</span><b>${escV2(proposal.id||request.accepted_proposal_id||lifecycle.accepted_proposal_id||"-")}</b></div></div><p>${escV2(proposal.message||lifecycle.accepted_message||"Sem mensagem comercial.")}</p></section>`}
+function requestCard(request){
+  const user=first(request.profiles)||userById(request.user_id);const vehicle=first(request.vehicles)||appState.data.vehicles.find((v)=>String(v.id)===String(request.vehicle_id))||{};const proposals=asArray(request.proposals);const lifecycle=requestLifecycleStatus(request);const directed=asArray(request.selected_business_ids).length>0;const accepted=acceptedProposalFor(request);
+  const badges=[directed?statusPill("info","Dirigida"):"",statusPill(lifecycle,lifecycleLabel(lifecycle))].join("");
+  const winner=accepted?`<div class="datum" style="border-color:var(--blue);background:var(--soft)"><span>Oficina escolhida</span><b>${escV2(accepted.workshops?.name||workshopName(accepted.workshop_id))}</b><small>${moneyBR(accepted.price)} · ${dateBR(request.accepted_at||accepted.responded_at,true)}</small></div>`:"";
+  return `<article class="record"><div class="record-top"><div><h4>${escV2(request.category||request.request_type||"Solicitacao")}</h4><p>${escV2(user.name||user.email||"Usuario nao identificado")} · ${dateBR(request.created_at,true)}</p></div><div class="record-actions" style="margin:0">${badges}</div></div><div class="record-grid"><div class="datum"><span>Veiculo</span><b>${escV2([vehicle.plate,vehicle.brand,vehicle.model,vehicle.year].filter(Boolean).join(" · ")||"-")}</b></div><div class="datum"><span>Urgencia</span><b>${escV2(request.urgency||"normal")}</b></div><div class="datum"><span>Atendimento</span><b>${request.home_service?"A domicilio":"Na oficina"}</b></div><div class="datum"><span>Propostas</span><b>${proposals.length}</b></div>${winner}</div><p>${escV2(request.description||request.technical_summary||request.initial_request||"Sem descricao.")}</p><details><summary>Propostas recebidas (${proposals.length})</summary>${proposalItems(proposals)}</details><div class="record-actions"><button class="btn secondary" data-action="request-detail" data-id="${escV2(request.id)}">Ver solicitacao completa</button></div></article>`
+}
+function reservationRows(list){return `<div class="table-wrap"><table class="table"><thead><tr><th>Agendamento</th><th>Usuario</th><th>Comercio</th><th>Servico</th><th>Origem</th><th>Preco</th><th>Status</th><th>Registro</th></tr></thead><tbody>${list.map((r)=>`<tr><td><b>${dateBR(r.scheduled_at||r.start_at,true)}</b></td><td>${escV2(r.profiles?.name||r.customer_name||r.user_id||"-")}<small>${escV2(r.profiles?.email||r.customer_email||"")}</small></td><td>${escV2(r.workshops?.name||workshopName(r.workshop_id))}</td><td>${escV2(r.service_name||r.category||r.description||"-")}</td><td>${escV2(r.source||r.booking_source||"-")}</td><td>${moneyBR(r.price||r.estimated_price)}</td><td>${statusPill(r.status)}</td><td>${dateBR(r.created_at,true)}</td></tr>`).join("")}</tbody></table></div>`}
+function proposalSummaryData(){
+  if(appState.data.proposalSummary)return appState.data.proposalSummary;
+  const cutoff=Date.now()-30*24*60*60*1000;const requests=appState.data.serviceRequests.filter((request)=>new Date(request.created_at).getTime()>=cutoff);const proposals=requests.flatMap((request)=>asArray(request.proposals));const acceptedRequests=requests.filter((request)=>acceptedProposalFor(request));const priced=proposals.filter((proposal)=>proposal.price!==null&&proposal.price!==undefined&&Number.isFinite(Number(proposal.price)));const acceptedPrices=acceptedRequests.map((request)=>acceptedProposalFor(request)?.price).filter((price)=>price!==null&&price!==undefined&&Number.isFinite(Number(price)));
+  return {total_requests:requests.length,requests_with_proposals:requests.filter((request)=>asArray(request.proposals).length).length,accepted_requests:acceptedRequests.length,total_proposals:proposals.length,request_conversion_rate_pct:requests.length?acceptedRequests.length*100/requests.length:0,avg_proposed_price:priced.length?priced.reduce((sum,item)=>sum+Number(item.price),0)/priced.length:null,avg_accepted_price:acceptedPrices.length?acceptedPrices.reduce((sum,value)=>sum+Number(value),0)/acceptedPrices.length:null}
+}
+function proposalMetricsData(){
+  if(appState.data.proposalMetrics.length)return appState.data.proposalMetrics;
+  const cutoff=Date.now()-30*24*60*60*1000;const groups=new Map();appState.data.serviceRequests.filter((request)=>new Date(request.created_at).getTime()>=cutoff).forEach((request)=>{const category=request.category||"Sem categoria";if(!groups.has(category))groups.set(category,{category,total_requests:0,requests_with_proposals:0,accepted_requests:0,total_proposals:0,accepted_proposals:0,declined_proposals:0,prices:[],acceptedPrices:[],acceptanceHours:[]});const group=groups.get(category);const proposals=asArray(request.proposals);const accepted=acceptedProposalFor(request);group.total_requests++;if(proposals.length)group.requests_with_proposals++;if(accepted){group.accepted_requests++;if(accepted.price!==null&&accepted.price!==undefined)group.acceptedPrices.push(Number(accepted.price));const acceptedAt=new Date(request.accepted_at||accepted.responded_at).getTime();const createdAt=new Date(request.created_at).getTime();if(Number.isFinite(acceptedAt)&&Number.isFinite(createdAt))group.acceptanceHours.push((acceptedAt-createdAt)/3600000)}group.total_proposals+=proposals.length;group.accepted_proposals+=proposals.filter((proposal)=>proposal.status==="accepted").length;group.declined_proposals+=proposals.filter((proposal)=>proposal.status==="declined").length;proposals.forEach((proposal)=>{if(proposal.price!==null&&proposal.price!==undefined&&Number.isFinite(Number(proposal.price)))group.prices.push(Number(proposal.price))})});return [...groups.values()].map((group)=>({...group,request_conversion_rate_pct:group.total_requests?group.accepted_requests*100/group.total_requests:0,proposal_acceptance_rate_pct:group.total_proposals?group.accepted_proposals*100/group.total_proposals:0,avg_proposed_price:group.prices.length?group.prices.reduce((a,b)=>a+b,0)/group.prices.length:null,avg_accepted_price:group.acceptedPrices.length?group.acceptedPrices.reduce((a,b)=>a+b,0)/group.acceptedPrices.length:null,avg_hours_to_acceptance:group.acceptanceHours.length?group.acceptanceHours.reduce((a,b)=>a+b,0)/group.acceptanceHours.length:null})).sort((a,b)=>b.total_requests-a.total_requests)
+}
+function renderProposalMetrics(){
+  const section=byId("proposalMetricsSection");const visible=appState.activityTab==="requests";section.style.display=visible?"block":"none";if(!visible)return;const summary=proposalSummaryData();const acceptedPrice=summary.avg_accepted_price===null||summary.avg_accepted_price===undefined?"-":moneyBR(summary.avg_accepted_price);byId("proposalMetricsCards").innerHTML=`<article class="metric"><small>Solicitacoes · 30 dias</small><strong>${Number(summary.total_requests||0)}</strong><span>volume recebido</span></article><article class="metric"><small>Com propostas</small><strong>${Number(summary.requests_with_proposals||0)}</strong><span>${Number(summary.total_proposals||0)} proposta(s) enviada(s)</span></article><article class="metric"><small>Escolhas do cliente</small><strong>${Number(summary.accepted_requests||0)}</strong><span>${Number(summary.request_conversion_rate_pct||0).toFixed(1)}% de conversao</span></article><article class="metric"><small>Preco medio aceito</small><strong style="font-size:20px">${acceptedPrice}</strong><span>somente propostas escolhidas</span></article>`;const rows=proposalMetricsData();byId("proposalCategoryMetrics").innerHTML=rows.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Categoria</th><th>Solicitacoes</th><th>Propostas</th><th>Aceitas</th><th>Conversao</th><th>Preco medio</th><th>Preco aceito</th><th>Tempo ate aceite</th></tr></thead><tbody>${rows.map((row)=>`<tr><td><b>${escV2(row.category)}</b></td><td>${Number(row.total_requests||0)}</td><td>${Number(row.total_proposals||0)}</td><td>${Number(row.accepted_requests||0)}</td><td>${Number(row.request_conversion_rate_pct||0).toFixed(1)}%</td><td>${row.avg_proposed_price===null||row.avg_proposed_price===undefined?"-":moneyBR(row.avg_proposed_price)}</td><td>${row.avg_accepted_price===null||row.avg_accepted_price===undefined?"-":moneyBR(row.avg_accepted_price)}</td><td>${row.avg_hours_to_acceptance===null||row.avg_hours_to_acceptance===undefined?"-":`${Number(row.avg_hours_to_acceptance).toFixed(1)} h`}</td></tr>`).join("")}</tbody></table></div>`:emptyState("Ainda nao ha dados suficientes nos ultimos 30 dias.")
+}
+function renderActivity(){
+  const query=byId("activitySearch")?.value.trim().toLowerCase()||"";const select=byId("activityStatus");const previous=select.value;
+  const isRequests=appState.activityTab==="requests";const source=isRequests?appState.data.serviceRequests:appState.data.reservations;
+  const options=isRequests?[["","Todas"],["open","Abertas sem proposta"],["with_proposals","Com propostas"],["accepted","Proposta aceita"],["expired","Expiradas"],["closed","Encerradas sem aceite"]]:[["","Todos os status"],...[...new Set(source.map((item)=>item.status).filter(Boolean))].map((status)=>[status,status])];
+  select.innerHTML=options.map(([value,label])=>`<option value="${escV2(value)}">${escV2(label)}</option>`).join("");select.value=options.some(([value])=>value===previous)?previous:"";const filter=select.value;
+  const list=source.filter((item)=>{const lifecycle=isRequests?requestLifecycleStatus(item):String(item.status);const matches=!filter||lifecycle===filter;return matches&&(!query||textSearch(item,isRequests?lifecycleFor(item):{}).includes(query))});
+  renderProposalMetrics();
+  byId("activityContent").innerHTML=list.length?(isRequests?`<div class="stack">${list.map(requestCard).join("")}</div>`:reservationRows(list)):emptyState(isRequests?"Nenhuma solicitacao encontrada.":"Nenhuma reserva encontrada.")
+}
+function requestDetail(id){const r=appState.data.serviceRequests.find((item)=>String(item.id)===String(id))||{};const proposals=asArray(r.proposals);const lifecycle=lifecycleFor(r);openModal("Solicitacao","Historico completo, proposta escolhida e respostas das oficinas.",`${acceptedProposalBlock(r)}<div class="panel"><div class="panel-head"><div><h3>Dados e ciclo da solicitacao</h3><p>Status atual: ${escV2(lifecycleLabel(requestLifecycleStatus(r)))}</p></div>${statusPill(requestLifecycleStatus(r),lifecycleLabel(requestLifecycleStatus(r)))}</div>${recursiveData({...r,proposals:undefined,...lifecycle})}</div><section class="panel"><h3>Todas as propostas (${proposals.length})</h3>${proposalItems(proposals)}</section><section class="panel"><div class="panel-head"><div><h3>Linha do tempo</h3><p>Registro cronologico das propostas e decisoes.</p></div></div>${lifecycleTimeline(r)}</section>`)}
+function groupedConversations(){const groups=new Map();appState.data.conversations.forEach((conv)=>{const key=conv.workshop_id||"sem-oficina";if(!groups.has(key))groups.set(key,[]);groups.get(key).push(conv)});return [...groups.entries()]}
+function renderMessages(){
+  const query=byId("messageSearch")?.value.trim().toLowerCase()||"";const groups=groupedConversations().filter(([workshopId,convs])=>!query||textSearch(workshopName(workshopId),convs).includes(query));
+  if(!appState.selectedWorkshopChatId){byId("workshopConversationList").innerHTML=groups.length?groups.map(([workshopId,convs])=>`<div class="record"><div class="record-top"><div><h4>${escV2(workshopName(workshopId))}</h4><p>${convs.length} conversa(s) supervisionada(s)</p></div><button class="btn secondary" data-action="select-workshop-chat" data-id="${escV2(workshopId)}">Ver conversas</button></div></div>`).join(""):emptyState("Nenhuma conversa encontrada.");renderChat();return}
+  const selected=groups.find(([workshopId])=>String(workshopId)===String(appState.selectedWorkshopChatId));if(!selected){appState.selectedWorkshopChatId=null;renderMessages();return}const [workshopId,convs]=selected;
+  byId("workshopConversationList").innerHTML=`<div class="record-actions" style="margin:0 0 12px"><button class="btn ghost" data-action="clear-workshop-chat">Voltar aos comercios</button><button class="btn secondary" data-action="admin-message" data-recipient="workshop" data-id="${escV2(workshopId)}">Mensagem ao comercio</button></div><div class="record"><div class="record-top"><div><h4>${escV2(workshopName(workshopId))}</h4><p>${convs.length} conversa(s)</p></div></div><div class="stack" style="margin-top:8px">${convs.map((conv)=>{const messageCount=appState.data.messages.filter((msg)=>String(msg.conversation_id)===String(conv.id)).length;return `<button class="item clickable" data-action="select-conversation" data-id="${escV2(conv.id)}" style="text-align:left"><b>${escV2(conv.profiles?.name||conv.profiles?.email||conv.user_id||"Motorista")}</b><p>${dateBR(conv.updated_at||conv.created_at,true)} · ${messageCount} mensagem(ns)</p></button>`}).join("")}</div></div>`;renderChat()
+}
+function renderChat(){const conv=appState.data.conversations.find((item)=>String(item.id)===String(appState.selectedConversationId));if(!conv){byId("chatTitle").textContent="Selecione uma conversa";byId("chatSubtitle").textContent="O historico aparecera aqui em modo somente leitura.";byId("chatMessages").innerHTML=emptyState("Nenhuma conversa selecionada.");return}const messages=appState.data.messages.filter((msg)=>String(msg.conversation_id)===String(conv.id)).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));const motoristId=conv.user_id||conv.motorist_id||conv.profile_id;byId("chatTitle").textContent=`${workshopName(conv.workshop_id)} · ${conv.profiles?.name||conv.profiles?.email||"Motorista"}`;byId("chatSubtitle").textContent=`Conversa ${conv.id}`;const intervention=`<div class="record-actions" style="margin:0 0 12px"><button class="btn secondary" data-action="admin-message" data-recipient="user" data-id="${escV2(motoristId||"")}">Intervir com motorista</button><button class="btn secondary" data-action="admin-message" data-recipient="workshop" data-id="${escV2(conv.workshop_id||"")}">Intervir com comercio</button></div>`;const history=messages.length?messages.map((msg)=>{const fromWorkshop=String(msg.sender_id||msg.user_id)===String(workshopById(conv.workshop_id).owner_id)||msg.sender_type==="workshop";return `<div class="bubble ${fromWorkshop?"mine":""}"><b>${fromWorkshop?escV2(workshopName(conv.workshop_id)):escV2(conv.profiles?.name||"Motorista")}</b><br>${escV2(msg.content||msg.message||msg.text||"")}<small>${dateBR(msg.created_at,true)}</small></div>`}).join(""):emptyState("Esta conversa ainda nao tem mensagens.");byId("chatMessages").innerHTML=intervention+history;byId("chatMessages").scrollTop=byId("chatMessages").scrollHeight}
+const exportSets={
+  workshops:["Comercios","Ficha cadastral, status e dados fiscais","workshops"],users:["Usuarios","Motoristas e responsaveis","adminUsers"],vehicles:["Placas e veiculos","Veiculos registrados e vinculo ao motorista","vehicles"],requests:["Solicitacoes","Pedidos enviados pelos usuarios","serviceRequests"],proposals:["Propostas","Respostas comerciais vinculadas as solicitacoes","proposals"],requestEvents:["Historico de solicitacoes","Linha do tempo de solicitacoes e propostas","requestEvents"],proposalMetrics:["Metricas de propostas","Indicadores por categoria dos ultimos 30 dias","proposalMetrics"],reservations:["Reservas","Agenda e historico de reservas","reservations"],offers:["Ofertas","Ofertas criadas pelos comercios","workshopOffers"],subscriptions:["Assinaturas","Vigencia e situacao comercial","subscriptions"],payments:["Pagamentos","Historico financeiro","payments"],categories:["Categorias","Catalogo principal","serviceCategories"],subcategories:["Subcategorias","Catalogo detalhado","serviceSubcategories"],services:["Servicos dos comercios","Catalogo, preco e prazo informado por cada comercio","workshopServices"],conversations:["Conversas","Metadados das conversas","conversations"],messages:["Mensagens","Conteudo dos chats","messages"],audit:["Auditoria","Acoes administrativas","auditLogs"]
+};
+function renderExports(){byId("exportGrid").innerHTML=Object.entries(exportSets).map(([key,[title,copy]])=>`<article class="export-card"><h4>${escV2(title)}</h4><p>${escV2(copy)} · ${rowsForExport(key).length} registro(s).</p><button class="btn secondary" data-export="${key}">Baixar CSV</button></article>`).join("")}
+function renderAudit(){const list=appState.data.auditLogs;byId("auditContent").innerHTML=list.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Admin</th><th>Acao</th><th>Entidade</th><th>Detalhe</th></tr></thead><tbody>${list.map((log)=>`<tr><td>${dateBR(log.created_at,true)}</td><td>${escV2(log.admin_email||log.admin_id||"Admin")}</td><td><b>${escV2(log.action)}</b></td><td>${escV2(log.entity_type||log.entity_table||"-")}<small>${escV2(log.entity_id||"")}</small></td><td>${escV2(log.detail||log.description||"")}</td></tr>`).join("")}</tbody></table></div>`:emptyState("Nenhuma acao registrada.")}
+function flattenRow(value,prefix="",out={}){Object.entries(value||{}).forEach(([key,item])=>{const name=prefix?`${prefix}.${key}`:key;if(item&&typeof item==="object"&&!Array.isArray(item))flattenRow(item,name,out);else out[name]=Array.isArray(item)?item.map((entry)=>typeof entry==="object"?JSON.stringify(entry):entry).join(" | "):item});return out}
+function rowsForExport(key){if(key==="proposals")return appState.data.serviceRequests.flatMap((request)=>asArray(request.proposals).map((proposal)=>flattenRow({...proposal,service_request_id:request.id,request_category:request.category,request_created_at:request.created_at})));const dataKey=exportSets[key]?.[2];if(!dataKey)return[];return asArray(appState.data[dataKey]).map((row)=>flattenRow(row))}
+function downloadCSV(key){const rows=rowsForExport(key);if(!rows.length){showToast("Nao ha dados para exportar.",true);return}const headers=[...new Set(rows.flatMap((row)=>Object.keys(row)))];const cell=(value)=>`"${String(value??"").replace(/"/g,'""')}"`;const csv=[headers.map(cell).join(","),...rows.map((row)=>headers.map((header)=>cell(row[header])).join(","))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=`vai-rodar-${key}-${new Date().toISOString().slice(0,10)}.csv`;link.click();URL.revokeObjectURL(link.href)}
+function renderAllV2(){renderOverview();renderCommerces();renderUsers();renderCatalog();renderActivity();renderMessages();renderExports();renderAudit()}
+async function workshopStatus(id,status){const approved=status==="approved";const verb=status==="rejected"?"Rejeitar":status==="blocked"?"Bloquear":"Aprovar";if(!confirm(`${verb} este comercio?`))return;const reason=approved?"":(prompt(`Motivo para ${verb.toLowerCase()} (opcional):`,"")||"");await runAction("setWorkshopVisibility",{workshop_id:id,approval_status:status,visible:approved,open:approved,reason},approved?"Comercio aprovado.":status==="rejected"?"Comercio rejeitado.":"Comercio bloqueado.");closeModal()}
+function workshopEdit(id){const w=workshopById(id);openModal("Modificar comercio","Edite os dados principais. Alteracoes de endereco recalculam as coordenadas quando possivel.",`<form id="workshopForm"><div class="field-grid"><div class="field"><label>Nome publico</label><input name="name" value="${escV2(w.name||"")}" required></div><div class="field"><label>Razao social</label><input name="legal_name" value="${escV2(w.legal_name||"")}"></div><div class="field"><label>CNPJ</label><input name="cnpj" value="${escV2(w.cnpj||"")}"></div><div class="field"><label>Responsavel</label><input name="responsible_name" value="${escV2(w.responsible_name||"")}"></div><div class="field"><label>Email</label><input name="email" value="${escV2(w.email||"")}"></div><div class="field"><label>Telefone</label><input name="phone" value="${escV2(w.phone||"")}"></div><div class="field"><label>CEP</label><input name="cep" value="${escV2(w.cep||w.zip_code||"")}"></div><div class="field"><label>Cidade</label><input name="city" value="${escV2(w.city||"")}"></div><div class="field"><label>Bairro</label><input name="neighborhood" value="${escV2(w.neighborhood||"")}"></div><div class="field"><label>Estado</label><input name="state" value="${escV2(w.state||"")}" maxlength="2"></div><div class="field span2"><label>Endereco</label><input name="address" value="${escV2(w.address||"")}"></div><div class="field span2"><label>Descricao</label><textarea name="description">${escV2(w.description||"")}</textarea></div></div></form>`,`<button class="btn secondary" data-action="modal-close">Cancelar</button><button class="btn primary" data-action="workshop-save" data-id="${escV2(id)}">Salvar</button>`)}
+async function saveWorkshop(id){const form=byId("workshopForm");if(!form.reportValidity())return;const payload={workshop_id:id};new FormData(form).forEach((value,key)=>payload[key]=value);await runAction("updateWorkshopInfo",payload,"Dados do comercio atualizados.");await runAction("geocodeWorkshop",{workshop_id:id},"Endereco e coordenadas revisados.");closeModal()}
+async function registerPayment(id){const amount=prompt("Valor pago em BRL:","1190");if(!amount)return;const method=prompt("Metodo de pagamento:","Manual")||"Manual";const reference=prompt("Referencia:",`ADMIN-${Date.now()}`)||`ADMIN-${Date.now()}`;await runAction("createSubscriptionPayment",{workshop_id:id,amount:Number(String(amount).replace(",",".")),method,reference,duration_days:365},"Pagamento e assinatura registrados.");closeModal()}
+async function adminMessage(id,type){const title=prompt("Titulo da mensagem:","Vai Rodar");if(title===null)return;const message=prompt("Mensagem:");if(!message)return;await runAction("sendAdminMessage",{recipient_type:type,recipient_id:id,title:title||"Vai Rodar",message},"Mensagem administrativa enviada.")}
+async function blockEntity(type,id,blocked){const reason=blocked?(prompt("Motivo do bloqueio:")||""):"";if(blocked&&!reason)return;const action=type==="user"?"setUserBlocked":"setVehicleBlocked";const key=type==="user"?"user_id":"vehicle_id";await runAction(action,{[key]:id,blocked,reason},blocked?"Bloqueio aplicado.":"Registro desbloqueado.");closeModal()}
+async function deleteWorkshop(id){if(!confirm("Eliminar este comercio de forma definitiva? Esta acao nao pode ser desfeita."))return;const typed=prompt('Segunda confirmacao: digite ELIMINAR para continuar:');if(typed!=="ELIMINAR")return;try{await runAction("deleteWorkshop",{workshop_id:id},"Comercio eliminado definitivamente.");closeModal()}catch(error){if(confirm(`${error.message}\n\nNao foi possivel excluir. Deseja manter o comercio bloqueado?`)){await runAction("setWorkshopVisibility",{workshop_id:id,approval_status:"blocked",visible:false,open:false,reason:"Historico impede eliminacao definitiva"},"Comercio mantido bloqueado.");closeModal()}}}
+async function reviewProfileChange(id,decision){const approved=decision==="approved";if(!confirm(approved?"Aprovar e publicar esta alteracao no perfil do comercio?":"Rejeitar esta solicitacao de alteracao?"))return;const notes=prompt("Observacao administrativa (opcional):","");await runAction("reviewProfileChangeRequest",{request_id:id,decision,admin_notes:notes||""},approved?"Alteracao aprovada e publicada.":"Alteracao rejeitada.")}
+async function saveCatalog(button){const form=byId("catalogForm");if(!form.reportValidity())return;const values=Object.fromEntries(new FormData(form));values.active=form.elements.active.checked;values.sort_order=Number(values.sort_order||0);const kind=button.dataset.kind;const id=button.dataset.id;if(kind==="category"){if(id)values.category_id=id;await runAction("upsertServiceCategory",values,"Categoria salva.")}else{values.category_id=appState.selectedCategoryId;if(id)values.subcategory_id=id;await runAction("upsertServiceSubcategory",values,"Subcategoria salva.")}closeModal()}
+async function toggleCatalog(kind,id){const list=kind==="category"?appState.data.serviceCategories:appState.data.serviceSubcategories;const item=list.find((entry)=>String(entry.id)===String(id));if(!item)return;const payload={name:item.name,sort_order:item.sort_order||0,active:item.active===false};if(kind==="category"){payload.category_id=id;await runAction("upsertServiceCategory",payload,"Categoria atualizada.")}else{payload.subcategory_id=id;payload.category_id=item.category_id;await runAction("upsertServiceSubcategory",payload,"Subcategoria atualizada.")}}
+async function deleteCatalog(kind,id,force=false){if(!confirm(`Excluir esta ${kind==="category"?"categoria":"subcategoria"}?`))return;try{await runAction(kind==="category"?"deleteServiceCategory":"deleteServiceSubcategory",kind==="category"?{category_id:id}:{subcategory_id:id,force},"Registro excluido.");if(kind==="category")appState.selectedCategoryId=null}catch(error){if(kind==="subcategory"&&!force&&/force=true|em uso/i.test(error.message)&&confirm(`${error.message}\n\nDeseja forcar a exclusao?`))await deleteCatalog(kind,id,true);else if(kind==="category"&&/uso|vinculad/i.test(error.message)&&confirm(`${error.message}\n\nDeseja desativar a categoria sem exclui-la?`)){const item=appState.data.serviceCategories.find((entry)=>String(entry.id)===String(id))||{};await runAction("upsertServiceCategory",{category_id:id,name:item.name,sort_order:item.sort_order||0,active:false},"Categoria desativada.")}}}
+function handleTab(button){const group=button.closest("[data-tabs]").dataset.tabs;button.parentElement.querySelectorAll(".tab").forEach((item)=>item.classList.toggle("active",item===button));if(group==="commerce"){appState.commerceTab=button.dataset.tab;renderCommerces()}if(group==="users"){appState.usersTab=button.dataset.tab;renderUsers()}if(group==="activity"){appState.activityTab=button.dataset.tab;renderActivity()}}
+document.addEventListener("click",async(event)=>{
+  const tab=event.target.closest(".tab");if(tab){handleTab(tab);return}
+  const jump=event.target.closest("[data-view-jump]");if(jump){setViewV2(jump.dataset.viewJump);return}
+  const exportButton=event.target.closest("[data-export]");if(exportButton){downloadCSV(exportButton.dataset.export);return}
+  const button=event.target.closest("[data-action]");if(!button)return;const action=button.dataset.action;const id=button.dataset.id;
+  try{
+    if(action==="modal-close")closeModal();
+    else if(action==="workshop-detail")workshopDetailV2(id);
+    else if(action==="workshop-status")await workshopStatus(id,button.dataset.status);
+    else if(action==="workshop-edit")workshopEdit(id);
+    else if(action==="workshop-save")await saveWorkshop(id);
+    else if(action==="workshop-delete")await deleteWorkshop(id);
+    else if(action==="payment")await registerPayment(id);
+    else if(action==="offer-status")await runAction("setWorkshopOfferStatus",{offer_id:id,status:button.dataset.status},"Oferta atualizada.");
+    else if(action==="profile-change-review")await reviewProfileChange(id,button.dataset.decision);
+    else if(action==="admin-message")await adminMessage(id||prompt("ID do destinatario:"),button.dataset.recipient||"user");
+    else if(action==="user-detail")userDetail(id);
+    else if(action==="vehicle-detail")vehicleDetail(id);
+    else if(action==="user-block")await blockEntity("user",id,button.dataset.blocked==="true");
+    else if(action==="vehicle-block")await blockEntity("vehicle",id,button.dataset.blocked==="true");
+    else if(action==="select-category"){appState.selectedCategoryId=id;renderCatalog()}
+    else if(action==="toggle-category")await toggleCatalog("category",id);
+    else if(action==="toggle-subcategory")await toggleCatalog("subcategory",id);
+    else if(action==="new-category")catalogForm("category");
+    else if(action==="edit-category")catalogForm("category",appState.data.serviceCategories.find((item)=>String(item.id)===String(id))||{});
+    else if(action==="delete-category")await deleteCatalog("category",id);
+    else if(action==="new-subcategory"){if(!appState.selectedCategoryId)showToast("Selecione uma categoria primeiro.",true);else catalogForm("subcategory")}
+    else if(action==="edit-subcategory")catalogForm("subcategory",appState.data.serviceSubcategories.find((item)=>String(item.id)===String(id))||{});
+    else if(action==="delete-subcategory")await deleteCatalog("subcategory",id);
+    else if(action==="catalog-save")await saveCatalog(button);
+    else if(action==="request-detail")requestDetail(id);
+    else if(action==="select-workshop-chat"){appState.selectedWorkshopChatId=id;appState.selectedConversationId=null;renderMessages()}
+    else if(action==="clear-workshop-chat"){appState.selectedWorkshopChatId=null;appState.selectedConversationId=null;renderMessages()}
+    else if(action==="select-conversation"){appState.selectedConversationId=id;renderChat()}
+  }catch(error){console.warn("[admin-v2]",error.message)}
+});
+document.querySelectorAll(".nav button[data-view]").forEach((button)=>button.addEventListener("click",()=>setViewV2(button.dataset.view)));
+byId("commerceSearch").addEventListener("input",renderCommerces);byId("userSearch").addEventListener("input",renderUsers);byId("activitySearch").addEventListener("input",renderActivity);byId("activityStatus").addEventListener("change",renderActivity);byId("messageSearch").addEventListener("input",renderMessages);
+byId("modalClose").addEventListener("click",closeModal);byId("modalBackdrop").addEventListener("click",(event)=>{if(event.target===byId("modalBackdrop"))closeModal()});
+byId("menuBtn").addEventListener("click",openDrawerV2);byId("drawerBackdrop").addEventListener("click",closeDrawerV2);
+byId("refreshBtn").addEventListener("click",async()=>{await loadAdminDataV2();showToast("Dados atualizados.")});
+byId("signOutBtn").addEventListener("click",()=>{appState.password="";sessionStorage.removeItem("vr_admin_password");byId("app").style.display="none";byId("authScreen").style.display="grid";byId("authPassword").value=""});
+byId("loginForm").addEventListener("submit",async(event)=>{event.preventDefault();byId("authStatus").textContent="";appState.password=byId("authPassword").value;sessionStorage.setItem("vr_admin_password",appState.password);const ok=await loadAdminDataV2();if(!ok){byId("authStatus").textContent="Senha invalida ou admin indisponivel.";return}showAdminV2()});
+if(location.protocol==="file:"||location.hostname==="127.0.0.1"||location.hostname==="localhost"){
+  showAdminV2();
+  appState.data={...emptyDataV2};
+  renderAllV2();
+}else if(appState.password){loadAdminDataV2().then((ok)=>{if(ok)showAdminV2()})}
 </script>
 </body>
 </html>
