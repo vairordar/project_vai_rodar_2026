@@ -38,6 +38,7 @@ exports.handler = async (event) => {
       chatUsage,
       analyticsEvents,
       serviceRequests,
+      proposals,
       requestLifecycle,
       requestEvents,
       proposalMetrics,
@@ -64,12 +65,13 @@ exports.handler = async (event) => {
       readMaybe('/rest/v1/admin_top_services_30d?select=*&limit=50', []),
       readMaybe('/rest/v1/admin_chat_usage_30d?select=*&limit=50', []),
       readMaybe('/rest/v1/analytics_events?select=*&order=created_at.desc&limit=5000', []),
-      readMaybe('/rest/v1/service_requests?select=*,profiles(id,name,email,phone),vehicles(brand,model,year,plate),proposals(*,workshops(id,name,address,city,state))&order=created_at.desc&limit=1000', []),
+      readRequired('/rest/v1/service_requests?select=*&order=created_at.desc&limit=1000', 'Solicitacoes'),
+      readMaybe('/rest/v1/proposals?select=*&order=created_at.desc&limit=5000', []),
       readMaybe('/rest/v1/admin_request_lifecycle?select=*&order=created_at.desc&limit=1000', []),
       readMaybe('/rest/v1/request_lifecycle_events?select=*&order=created_at.desc&limit=5000', []),
       readMaybe('/rest/v1/admin_proposal_metrics_30d?select=*&order=total_requests.desc&limit=200', []),
       readMaybe('/rest/v1/admin_proposal_summary_30d?select=*&limit=1', []),
-      readMaybe('/rest/v1/reservations?select=*,profiles(name,email),workshops(name)&order=scheduled_at.desc&limit=1000', []),
+      readRequired('/rest/v1/reservations?select=*&order=scheduled_at.desc&limit=1000', 'Reservas'),
       readMaybe('/rest/v1/admin_audit_logs?select=*&order=created_at.desc&limit=500', []),
       readRequired('/rest/v1/admin_users_overview?select=*&limit=5000', 'Usuarios'),
       readMaybe('/rest/v1/vehicle_listings?select=*&order=created_at.desc&limit=1000', []),
@@ -84,10 +86,31 @@ exports.handler = async (event) => {
       readMaybe('/rest/v1/plate_lookups?select=*&limit=5000', []),
     ]);
 
+    const workshopRows = asList(workshops);
+    const userRows = asList(adminUsers);
+    const vehicleRows = asList(vehicles);
+    const proposalRows = asList(proposals);
+    const userFor = (id) => userRows.find((item) => String(item.id || item.user_id) === String(id)) || null;
+    const workshopFor = (id) => workshopRows.find((item) => String(item.id) === String(id)) || null;
+    const vehicleFor = (id) => vehicleRows.find((item) => String(item.id) === String(id)) || null;
+    const hydratedRequests = asList(serviceRequests).map((request) => ({
+      ...request,
+      profiles: userFor(request.user_id),
+      vehicles: vehicleFor(request.vehicle_id),
+      proposals: proposalRows
+        .filter((proposal) => String(proposal.request_id) === String(request.id))
+        .map((proposal) => ({ ...proposal, workshops: workshopFor(proposal.workshop_id) })),
+    }));
+    const hydratedReservations = asList(reservations).map((reservation) => ({
+      ...reservation,
+      profiles: userFor(reservation.user_id),
+      workshops: workshopFor(reservation.workshop_id),
+    }));
+
     return json(200, {
       success: true,
       data: {
-        workshops: asList(workshops),
+        workshops: workshopRows,
         dashboard: Array.isArray(dashboardRows) ? dashboardRows[0] || null : dashboardRows,
         dashboardSummary: asList(dashboardRows),
         subscriptions: asList(subscriptions),
@@ -96,14 +119,14 @@ exports.handler = async (event) => {
         topServices: asList(topServices),
         chatUsage: asList(chatUsage),
         analyticsEvents: asList(analyticsEvents),
-        serviceRequests: asList(serviceRequests),
+        serviceRequests: hydratedRequests,
         requestLifecycle: asList(requestLifecycle),
         requestEvents: asList(requestEvents),
         proposalMetrics: asList(proposalMetrics),
         proposalSummary: Array.isArray(proposalSummaryRows) ? proposalSummaryRows[0] || null : proposalSummaryRows,
-        reservations: asList(reservations),
+        reservations: hydratedReservations,
         auditLogs: asList(auditLogs),
-        adminUsers: asList(adminUsers),
+        adminUsers: userRows,
         vehicleListings: asList(vehicleListings),
         workshopOffers: asList(workshopOffers),
         profileChangeRequests: asList(profileChangeRequests),
@@ -112,7 +135,7 @@ exports.handler = async (event) => {
         workshopServices: asList(workshopServices),
         conversations: asList(conversations),
         messages: asList(messages),
-        vehicles: asList(vehicles),
+        vehicles: vehicleRows,
         plateLookups: asList(plateLookups),
       },
     });
