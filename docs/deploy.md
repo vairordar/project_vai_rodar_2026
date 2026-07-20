@@ -27,7 +27,20 @@ El repo se publica como un solo sitio Netlify con rutas limpias.
 - `netlify/functions/consulta-placa.js`: compatibilidad GET para placa, delega en FIPE.
 - `netlify/functions/admin-data.js`: lectura admin con service role.
 - `netlify/functions/admin-action.js`: acciones admin con service role.
+- `netlify/functions/notify-event.js`: push de mensajes, propuestas y ciclo de reservas.
+- `netlify/functions/whatsapp-send.js`: envio de mensajes del CRM WhatsApp Cloud.
+- `netlify/functions/whatsapp-webhook.js`: verificacion y recepcion del webhook de Meta.
 - `supabase/migrations/`: SQL ejecutado o pendiente de ejecutar en Supabase.
+
+## Migraciones del paquete 20/07/2026
+
+- `20260720_flujo_propuesta_reserva.sql`: modalidades, validez, aceptacion,
+  agenda, confirmacion, cancelacion y cierre de reservas.
+- `20260720_crm_whatsapp_y_onboarding.sql`: CRM WhatsApp y estado del
+  onboarding del backoffice de oficina.
+
+Netlify no ejecuta migraciones SQL. Deben aplicarse en Supabase antes de
+probar las funciones que dependen de ellas.
 
 ## Variables Netlify necesarias
 
@@ -37,10 +50,19 @@ El repo se publica como un solo sitio Netlify con rutas limpias.
 - `OPENAI_API_KEY_VR`
 - `APIBRASIL_BEARER_TOKEN`
 - `APIBRASIL_HOMOLOG`
+- `VAPID_PUBLIC_KEY`
+- `VAPID_PRIVATE_KEY`
+- `WHATSAPP_TOKEN`
+- `WHATSAPP_PHONE_NUMBER_ID`
+- `WHATSAPP_VERIFY_TOKEN`
 
 Opcional:
 
 - `OPENAI_MODEL`
+- `WHATSAPP_GRAPH_VERSION` (default `v20.0`)
+
+Los valores secretos solo se configuran en Netlify. Nunca se escriben en
+HTML, documentos, commits ni funciones.
 
 ## Carpetas no productivas
 

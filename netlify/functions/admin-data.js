@@ -56,6 +56,9 @@ exports.handler = async (event) => {
       messages,
       vehicles,
       plateLookups,
+      crmContacts,
+      crmMessages,
+      crmTemplates,
     ] = await Promise.all([
       readRequired('/rest/v1/admin_workshops_overview?select=*&limit=1000', 'Oficinas'),
       readMaybe('/rest/v1/admin_dashboard_summary?select=*&limit=1', []),
@@ -84,6 +87,9 @@ exports.handler = async (event) => {
       readMaybe('/rest/v1/messages?select=*&order=created_at.desc&limit=3000', []),
       readMaybe('/rest/v1/vehicles?select=*&order=created_at.desc&limit=5000', []),
       readMaybe('/rest/v1/plate_lookups?select=*&limit=5000', []),
+      readMaybe('/rest/v1/crm_contacts?select=*,workshops(name)&order=last_message_at.desc.nullslast&limit=2000', []),
+      readMaybe('/rest/v1/crm_messages?select=*&order=created_at.desc&limit=3000', []),
+      readMaybe('/rest/v1/crm_templates?select=*&order=created_at.desc&limit=200', []),
     ]);
 
     const workshopRows = asList(workshops);
@@ -137,6 +143,9 @@ exports.handler = async (event) => {
         messages: asList(messages),
         vehicles: vehicleRows,
         plateLookups: asList(plateLookups),
+        crmContacts: asList(crmContacts),
+        crmMessages: asList(crmMessages),
+        crmTemplates: asList(crmTemplates),
       },
     });
   } catch (error) {

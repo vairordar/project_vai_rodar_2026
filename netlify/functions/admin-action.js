@@ -636,6 +636,123 @@ exports.handler = async (event) => {
       return json(200, { success: true, data: result });
     }
 
+    if (action === 'upsertCrmContact') {
+      const contactId = cleanText(payload.contact_id, 80);
+      const phoneDigits = String(payload.phone || '').replace(/\D/g, '');
+      const phone = phoneDigits ? `+${phoneDigits}` : '';
+      if (!contactId && !phone) return json(400, { success: false, error: 'phone obrigatorio para criar contato (formato +5511999999999).' });
+      const update = {};
+      if (phone) update.phone = phone;
+      ['name', 'business_name', 'city', 'state', 'notes'].forEach((field) => {
+        if (payload[field] !== undefined) update[field] = cleanText(payload[field], field === 'notes' ? 2000 : 160) || null;
+      });
+      if (payload.status !== undefined) {
+        const status = cleanText(payload.status, 30);
+        if (!['new', 'contacted', 'interested', 'negotiating', 'registered', 'not_interested', 'invalid'].includes(status)) {
+          return json(400, { success: false, error: 'status de contato invalido.' });
+        }
+        update.status = status;
+      }
+      if (payload.tags !== undefined) {
+        update.tags = Array.isArray(payload.tags) ? payload.tags.map((t) => cleanText(t, 40)).filter(Boolean) : [];
+      }
+      if (payload.workshop_id !== undefined) update.workshop_id = cleanText(payload.workshop_id, 80) || null;
+      if (!Object.keys(update).length) return json(400, { success: false, error: 'Nenhum campo valido para atualizar.' });
+
+      const result = contactId
+        ? await supabaseRequest(`/rest/v1/crm_contacts?id=eq.${encodeURIComponent(contactId)}`, { method: 'PATCH', body: update })
+        : await supabaseRequest('/rest/v1/crm_contacts', { method: 'POST', body: { source: 'manual', status: 'new', ...update } });
+      await writeAudit(
+        contactId ? 'crm_contact_updated' : 'crm_contact_created',
+        'crm_contacts',
+        contactId || (Array.isArray(result) ? result[0]?.id : result?.id) || null,
+        `Contato CRM ${contactId ? 'atualizado' : 'criado'}: ${update.business_name || update.name || phone || contactId}.`,
+        update
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'deleteCrmContact') {
+      const contactId = cleanText(payload.contact_id, 80);
+      if (!contactId) return json(400, { success: false, error: 'contact_id obrigatorio.' });
+      const result = await supabaseRequest(`/rest/v1/crm_contacts?id=eq.${encodeURIComponent(contactId)}`, { method: 'DELETE' });
+      await writeAudit('crm_contact_deleted', 'crm_contacts', contactId, 'Contato CRM excluido (mensagens removidas em cascata).', {});
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'importCrmContacts') {
+      // payload.contacts: [{phone, name?, business_name?, city?, state?, notes?}]
+      const list = Array.isArray(payload.contacts) ? payload.contacts.slice(0, 500) : [];
+      if (!list.length) return json(400, { success: false, error: 'contacts (array) obrigatorio.' });
+      const rows = [];
+      const invalid = [];
+      for (const item of list) {
+        const digits = String(item.phone || '').replace(/\D/g, '');
+        if (digits.length < 10) { invalid.push(item.phone || '(vazio)'); continue; }
+        rows.push({
+          phone: `+${digits}`,
+          name: cleanText(item.name, 160) || null,
+          business_name: cleanText(item.business_name, 160) || null,
+          city: cleanText(item.city, 120) || null,
+          state: cleanText(item.state, 40) || null,
+          notes: cleanText(item.notes, 2000) || null,
+          source: 'import',
+          status: 'new',
+        });
+      }
+      if (!rows.length) return json(400, { success: false, error: `Nenhum telefone valido. Invalidos: ${invalid.join(', ')}` });
+      const result = await supabaseRequest('/rest/v1/crm_contacts?on_conflict=phone', {
+        method: 'POST',
+        prefer: 'resolution=ignore-duplicates,return=representation',
+        body: rows,
+      });
+      const inserted = Array.isArray(result) ? result.length : 0;
+      await writeAudit('crm_contacts_imported', 'crm_contacts', null,
+        `Importacao CRM: ${inserted} novos, ${rows.length - inserted} duplicados, ${invalid.length} invalidos.`,
+        { total: list.length, inserted, invalid: invalid.length });
+      return json(200, { success: true, data: { inserted, duplicated: rows.length - inserted, invalid } });
+    }
+
+    if (action === 'upsertCrmTemplate') {
+      const templateId = cleanText(payload.template_id, 80);
+      const name = cleanText(payload.name, 120);
+      const templateBody = cleanText(payload.body, 2000);
+      if (!templateId && (!name || !templateBody)) {
+        return json(400, { success: false, error: 'name e body sao obrigatorios para criar template.' });
+      }
+      const update = {};
+      if (name) update.name = name;
+      if (templateBody) update.body = templateBody;
+      if (payload.language !== undefined) update.language = cleanText(payload.language, 10) || 'pt_BR';
+      if (payload.meta_status !== undefined) {
+        const metaStatus = cleanText(payload.meta_status, 20);
+        if (!['draft', 'pending', 'approved', 'rejected'].includes(metaStatus)) {
+          return json(400, { success: false, error: 'meta_status invalido.' });
+        }
+        update.meta_status = metaStatus;
+      }
+      if (payload.active !== undefined) update.active = Boolean(payload.active);
+      const result = templateId
+        ? await supabaseRequest(`/rest/v1/crm_templates?id=eq.${encodeURIComponent(templateId)}`, { method: 'PATCH', body: update })
+        : await supabaseRequest('/rest/v1/crm_templates', { method: 'POST', body: update });
+      await writeAudit(
+        templateId ? 'crm_template_updated' : 'crm_template_created',
+        'crm_templates',
+        templateId || (Array.isArray(result) ? result[0]?.id : result?.id) || null,
+        `Template CRM ${templateId ? 'atualizado' : 'criado'}: ${name || templateId}.`,
+        update
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'deleteCrmTemplate') {
+      const templateId = cleanText(payload.template_id, 80);
+      if (!templateId) return json(400, { success: false, error: 'template_id obrigatorio.' });
+      const result = await supabaseRequest(`/rest/v1/crm_templates?id=eq.${encodeURIComponent(templateId)}`, { method: 'DELETE' });
+      await writeAudit('crm_template_deleted', 'crm_templates', templateId, 'Template CRM excluido.', {});
+      return json(200, { success: true, data: result });
+    }
+
     return json(400, { success: false, error: 'Acao admin desconhecida.' });
   } catch (error) {
     console.error('[admin-action]', error.message);

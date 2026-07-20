@@ -148,7 +148,36 @@ user app e deve permanecer como o ultimo redirect de `netlify.toml`.
 - `request-photos`
 - `vehicle-listing-photos`
 
-## 6. Contratos pendentes para o backend
+## 6. Fluxo proposta -> reserva integrado (20/07/2026)
+
+O fluxo novo esta implementado no user app, no painel da oficina e no
+Supabase. O contrato detalhado esta em
+`docs/contrato-flujo-propuesta-reserva-20260720.md`.
+
+### Oficina envia a proposta
+
+- Define preco, mensagem e prazo estimado.
+- Escolhe a modalidade: `scheduled`, `dropoff` ou `walkin`.
+- Pode informar duracao, instrucoes e validade da proposta.
+- Propostas vencidas permanecem visiveis, mas nao podem ser aceitas.
+
+### Motorista aceita e agenda
+
+1. `accept_proposal` aceita uma unica proposta e cria uma reserva sem
+   duplicar registros.
+2. `scheduled` e `dropoff` pedem data/hora ao motorista por
+   `request_reservation_slot`.
+3. `walkin` permite combinar a chegada sem selecionar um horario.
+4. A oficina confirma por `confirm_reservation`.
+5. A oficina conclui por `complete_reservation`; qualquer parte autorizada
+   pode cancelar por `cancel_reservation`.
+6. Cada transicao cria notificacao interna via RPC e push via
+   `notify-event` com evento `reservation_flow`.
+
+Estados reais: `pending`, `confirmed`, `completed` e `cancelled`. Reservas
+manuais e o agendamento direto de uma oficina continuam compativeis.
+
+## 7. Contratos pendentes para o backend
 
 Nao executar migrations por suposicao. Primeiro comparar o banco real com
 os arquivos em `supabase/migrations/`.
@@ -219,7 +248,7 @@ O novo backoffice permite logo, mas o user app so deve trocar o fallback
 quando `photo_url` estiver presente na vista publica e no SELECT. Manter o
 logo Vai Rodar como fallback.
 
-## 7. Regras para Claude
+## 8. Regras para Claude
 
 1. Trabalhar sobre `origin/main` atualizado.
 2. Nao renomear `apps/`, `netlify/functions/`, `supabase/migrations/` ou
@@ -234,7 +263,7 @@ logo Vai Rodar como fallback.
    outra oficina, admin e anon.
 9. Rodar `npm run build` antes do push e validar as cinco rotas.
 
-## 8. Criterios de aceite do backend
+## 9. Criterios de aceite do backend
 
 - Solicitacao broadcast chega a oficinas compativeis.
 - Solicitacao dirigida chega somente as oficinas selecionadas.

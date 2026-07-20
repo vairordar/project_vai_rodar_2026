@@ -249,6 +249,25 @@ button{cursor:pointer}
 .modal-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px}
 .modal-head h3{font-size:17px}.modal-head p{font-size:10px;color:var(--muted);line-height:1.45;margin-top:4px}
 .modal-close{width:30px;height:30px;border:1px solid var(--line);border-radius:50%;background:#fff;font-size:17px}
+.proposal-modal-card{width:min(620px,100%);padding:20px}
+.proposal-section{border-top:1px solid var(--line);padding-top:15px;margin-top:15px}
+.proposal-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:11px}
+.proposal-section-head h4{font-size:13px;line-height:1.3}
+.proposal-section-head p{font-size:10px;color:var(--muted);line-height:1.45;margin-top:3px}
+.booking-mode-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.booking-mode{position:relative;display:grid;align-content:start;gap:5px;min-height:118px;border:1px solid var(--line-strong);border-radius:13px;background:#fff;padding:12px;cursor:pointer;transition:.18s}
+.booking-mode:hover{border-color:var(--blue);background:var(--soft)}
+.booking-mode:has(input:checked){border:2px solid var(--blue);background:rgba(7,92,255,.055);padding:11px}
+.booking-mode input{position:absolute;opacity:0;pointer-events:none}
+.booking-mode-icon{width:32px;height:32px;border-radius:9px;background:rgba(7,92,255,.1);color:var(--blue);display:grid;place-items:center;font-size:16px;font-weight:900}
+.booking-mode b{font-size:11px;line-height:1.25}
+.booking-mode span:last-child{font-size:9px;color:var(--muted);line-height:1.35}
+.booking-fields{display:none;margin-top:11px;border:1px solid var(--line);border-radius:13px;background:var(--soft);padding:12px}
+.booking-fields.show{display:block}
+.proposal-summary{display:grid;gap:7px;border:1px solid rgba(7,92,255,.25);border-radius:13px;background:rgba(7,92,255,.045);padding:12px;margin-top:14px}
+.proposal-summary small{font-size:8px;color:var(--muted);font-weight:850;text-transform:uppercase}
+.proposal-summary strong{font-size:11px;line-height:1.45}
+.proposal-submit-note{font-size:9px;color:var(--muted);text-align:center;line-height:1.4;margin-top:8px}
 .day-checks{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:11px}
 .day-checks label{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:10px;padding:8px;font-size:11px;font-weight:750;color:var(--text)}
 .day-checks input{accent-color:var(--blue)}
@@ -268,7 +287,7 @@ button{cursor:pointer}
   .content{padding:16px}.metrics{grid-template-columns:repeat(2,1fr);max-width:none}.grid,.message-layout{grid-template-columns:1fr}
   .chat{height:470px}.calendar-shell{min-height:520px}.agenda-grid.week{grid-template-columns:72px repeat(7,150px)}.agenda-grid.month{grid-template-columns:repeat(7,145px)}.two-col,.vehicle-grid{grid-template-columns:1fr}
 }
-@media(max-width:560px){.metrics{grid-template-columns:repeat(2,1fr);gap:6px}.metric{padding:8px;min-height:54px}.metric small{font-size:7.5px}.metric strong{font-size:18px}.top-actions{justify-content:flex-end}.avatar{width:74px;height:32px}.avatar img{max-width:74px;max-height:26px}.calendar-toolbar{align-items:flex-start}.panel-head{flex-direction:column}.logo-upload{grid-template-columns:54px 1fr}.logo-upload-preview{width:54px;height:54px;border-radius:12px}.logo-upload label{grid-column:1/-1;width:100%}.day-checks{grid-template-columns:1fr}.subcategory-row,.service-row,.add-subcategory{grid-template-columns:1fr}.schedule-head{display:none}.day-schedule{grid-template-columns:1fr 1fr;gap:8px}.day-name{grid-column:1/-1}.closed-toggle{grid-column:1/-1}.schedule-card .sel,.closed-toggle span{height:40px;min-height:40px}.subcategory-row input,.service-row input{text-align:left}.remove-mini,.add-subcategory .btn{width:100%}.office-public-head{align-items:flex-start}.office-public-logo{width:54px;height:54px;border-radius:11px}}
+@media(max-width:560px){.metrics{grid-template-columns:repeat(2,1fr);gap:6px}.metric{padding:8px;min-height:54px}.metric small{font-size:7.5px}.metric strong{font-size:18px}.top-actions{justify-content:flex-end}.avatar{width:74px;height:32px}.avatar img{max-width:74px;max-height:26px}.calendar-toolbar{align-items:flex-start}.panel-head{flex-direction:column}.logo-upload{grid-template-columns:54px 1fr}.logo-upload-preview{width:54px;height:54px;border-radius:12px}.logo-upload label{grid-column:1/-1;width:100%}.day-checks{grid-template-columns:1fr}.subcategory-row,.service-row,.add-subcategory{grid-template-columns:1fr}.schedule-head{display:none}.day-schedule{grid-template-columns:1fr 1fr;gap:8px}.day-name{grid-column:1/-1}.closed-toggle{grid-column:1/-1}.schedule-card .sel,.closed-toggle span{height:40px;min-height:40px}.subcategory-row input,.service-row input{text-align:left}.remove-mini,.add-subcategory .btn{width:100%}.office-public-head{align-items:flex-start}.office-public-logo{width:54px;height:54px;border-radius:11px}.proposal-modal-card{padding:15px}.booking-mode-grid{grid-template-columns:1fr}.booking-mode{min-height:0;grid-template-columns:36px 1fr;column-gap:9px}.booking-mode-icon{grid-row:1/3}.booking-mode b,.booking-mode span{grid-column:2}.proposal-section-head{display:block}}
 </style>
 </head>
 <body>
@@ -522,13 +541,33 @@ button{cursor:pointer}
 </section>
 
 <section class="modal" id="proposalModal">
-  <form class="modal-card" id="proposalForm">
-    <div class="modal-head"><div><h3>Enviar proposta</h3><p>Confira o caso antes de responder.</p></div><button class="modal-close" id="proposalCloseBtn" type="button">x</button></div>
+  <form class="modal-card proposal-modal-card" id="proposalForm">
+    <div class="modal-head"><div><h3>Enviar proposta</h3><p>Defina o servico, o valor e como o motorista deve levar o veiculo.</p></div><button class="modal-close" id="proposalCloseBtn" type="button">x</button></div>
     <div class="compact-detail" id="proposalContextBox" style="margin-bottom:12px"></div>
-    <div class="field"><label>Descricao do servico que sera feito *</label><textarea id="proposalMessage" placeholder="Descreva o que vai ser avaliado/feito, podendo chamar o cliente pelo nome. Ex.: Ola {nome}, vamos verificar..."></textarea></div>
-    <div class="field"><label>Preco (opcional - se ainda nao tiver, deixe em branco)</label><input id="proposalPrice" type="number" min="0" step="0.01" placeholder="Ex.: 420.00"></div>
-    <div class="field"><label>Disponibilidade (opcional)</label><input id="proposalTime" placeholder="Ex.: Hoje 15h ou amanha de manha"></div>
+    <div class="proposal-section">
+      <div class="proposal-section-head"><div><h4>1. Condicoes da proposta</h4><p>Explique objetivamente o trabalho e informe o valor combinado.</p></div></div>
+      <div class="field"><label>Descricao do servico *</label><textarea id="proposalMessage" placeholder="Ex.: Vamos avaliar o sistema de freios e substituir as pecas somente apos sua autorizacao."></textarea></div>
+      <div class="two-col">
+        <div class="field"><label>Preco (opcional)</label><input id="proposalPrice" type="number" min="0" step="0.01" placeholder="Ex.: 420,00"></div>
+        <div class="field"><label>Prazo estimado</label><input id="proposalDuration" placeholder="Ex.: 2 horas ou 3 dias uteis"></div>
+      </div>
+      <div class="field"><label>Validade da proposta</label><select id="proposalValidity"><option value="3">3 dias</option><option value="5" selected>5 dias</option><option value="7">7 dias</option><option value="15">15 dias</option></select></div>
+    </div>
+    <div class="proposal-section">
+      <div class="proposal-section-head"><div><h4>2. Como o cliente deve levar o veiculo?</h4><p>Escolha a modalidade adequada para este atendimento.</p></div></div>
+      <div class="booking-mode-grid" id="proposalBookingModes">
+        <label class="booking-mode"><input type="radio" name="proposalBookingMode" value="scheduled" checked><span class="booking-mode-icon">1</span><b>Escolher um horario</b><span>Para servicos rapidos com duracao definida.</span></label>
+        <label class="booking-mode"><input type="radio" name="proposalBookingMode" value="dropoff"><span class="booking-mode-icon">2</span><b>Agendar somente a entrega</b><span>Para trabalhos longos; reserva apenas a chegada.</span></label>
+        <label class="booking-mode"><input type="radio" name="proposalBookingMode" value="walkin"><span class="booking-mode-icon">3</span><b>Nao precisa agendar</b><span>O motorista pode comparecer no horario informado.</span></label>
+      </div>
+      <div class="booking-fields show" id="scheduledBookingFields"><div class="field"><label>Orientacao para o agendamento</label><input id="proposalScheduledNote" placeholder="Ex.: Escolha um horario disponivel de segunda a sexta"></div></div>
+      <div class="booking-fields" id="dropoffBookingFields"><div class="field"><label>Orientacao para entrega do veiculo</label><input id="proposalDropoffNote" placeholder="Ex.: Entregue o veiculo pela manha; previsao de 3 dias uteis"></div></div>
+      <div class="booking-fields" id="walkinBookingFields"><div class="field"><label>Orientacao para chegada</label><input id="proposalWalkinNote" placeholder="Ex.: Atendimento por ordem de chegada; prefira chegar antes das 10h"></div></div>
+    </div>
+    <input id="proposalTime" type="hidden">
+    <div class="proposal-summary"><small>O motorista recebera</small><strong id="proposalBookingSummary">Aceite a proposta e escolha um horario disponivel.</strong></div>
     <button class="btn primary" id="proposalSubmitBtn" type="submit" style="width:100%">Enviar proposta</button>
+    <p class="proposal-submit-note">A modalidade escolhida sera exibida junto da proposta para o motorista.</p>
     <div class="status-text" id="proposalStatus"></div>
   </form>
 </section>
@@ -742,7 +781,7 @@ async function loadRequests(){
 }
 async function loadProposals(){
   if(!state.workshop?.id){state.proposals=[];return;}
-  try{const {data,error}=await sb.from("proposals").select("id,request_id,workshop_id,price,estimated_time,message,status,created_at,service_requests(title,location,user_id)").eq("workshop_id",state.workshop.id).order("created_at",{ascending:false});if(error)throw error;state.proposals=data||[];}catch(error){console.warn("[proposals]",error.message);state.proposals=[];}
+  try{const {data,error}=await sb.from("proposals").select("id,request_id,workshop_id,price,estimated_time,estimated_duration_text,booking_mode,booking_instructions,validity_days,valid_until,message,status,created_at,service_requests(title,location,user_id)").eq("workshop_id",state.workshop.id).order("created_at",{ascending:false});if(error)throw error;state.proposals=data||[];}catch(error){console.warn("[proposals]",error.message);state.proposals=[];}
 }
 async function loadConversations(){
   if(!state.workshop?.id){state.conversations=[];return;}
@@ -751,7 +790,7 @@ async function loadConversations(){
 async function loadReservations(){
   if(!state.workshop?.id){state.reservations=[];return;}
   try{
-    const {data,error}=await sb.from("reservations").select("id,user_id,workshop_id,source,service_type,scheduled_at,notes,status,created_at,estimated_price,external_client_name,external_client_phone,external_client_email,external_vehicle_plate,external_vehicle_description,profiles(id,name,email)").eq("workshop_id",state.workshop.id).order("scheduled_at",{ascending:true});
+    const {data,error}=await sb.from("reservations").select("id,user_id,workshop_id,request_id,proposal_id,source,service_type,booking_mode,estimated_duration_text,booking_instructions,scheduled_at,notes,status,created_at,confirmed_at,cancelled_at,completed_at,cancel_reason,estimated_price,external_client_name,external_client_phone,external_client_email,external_vehicle_plate,external_vehicle_description,profiles(id,name,email)").eq("workshop_id",state.workshop.id).order("created_at",{ascending:false});
     if(error)throw error;
     const rows=(data||[]).map(normalizeReservation);
     state.reservations=rows.filter((item)=>!item.manual);
@@ -849,6 +888,14 @@ function urgencyBadge(request){
   const value=URGENCY_RANK.hasOwnProperty(request.urgency)?request.urgency:"normal";
   return `<span class="pill urgency-${esc(value)}">${esc(URGENCY_LABELS[value])}</span>`;
 }
+function proposalValidityBadge(requestId){
+  const proposal=state.proposals.find((item)=>item.request_id===requestId&&item.status!=="declined");
+  if(!proposal?.valid_until)return "";
+  const validUntil=new Date(proposal.valid_until);
+  if(Number.isNaN(validUntil.getTime()))return "";
+  const expired=validUntil.getTime()<=Date.now();
+  return `<span class="pill ${expired?"cancelled":"confirmed"}">${expired?"Vencida":`Valida ate ${validUntil.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}`}</span>`;
+}
 function renderRequests(){
   const list=$("requestsList");
   const declinedIds=new Set(state.proposals.filter((item)=>item.status==="declined").map((item)=>item.request_id));
@@ -865,7 +912,7 @@ function renderRequests(){
     <div class="request-card-title"><div><h4>${esc(request.title||request.description||"Solicitacao")}</h4><small>Diagnostico IA</small></div>${urgencyBadge(request)}</div>
     <div class="request-meta-line"><span>${esc(request.category||"Categoria IA")}</span><span>${esc(requestVehicle(request))}</span><span>${new Date(request.created_at).toLocaleDateString("pt-BR")}</span></div>
     <div class="request-client">Cliente: ${esc(request.profiles?.name||"Motorista")} · ${request.request_type==="part_quote"?"Pedido de peca":"Servico"}</div>
-    <div class="actions"><span class="btn ghost">Ver detalhe</span></div>
+    <div class="actions">${proposalValidityBadge(request.id)}<span class="btn ghost">Ver detalhe</span></div>
   </button>`).join("");
   list.querySelectorAll("[data-request-id]").forEach((button)=>button.addEventListener("click",()=>{state.activeRequest=button.dataset.requestId;renderRequestDetail();}));
   renderRequestDetail();
@@ -918,6 +965,17 @@ function isHomeServiceRequest(request){
   return values.some((value)=>value==="true"||value.includes("domic")||value.includes("home")||value.includes("cliente"));
 }
 function renderProposalsCount(){renderMetrics();}
+function updateProposalBookingUI(){
+  const mode=document.querySelector('input[name="proposalBookingMode"]:checked')?.value||"scheduled";
+  ["scheduled","dropoff","walkin"].forEach((item)=>$(item+"BookingFields")?.classList.toggle("show",item===mode));
+  const duration=$("proposalDuration")?.value.trim();
+  const summaries={
+    scheduled:`Aceite a proposta e escolha um horario disponivel${duration?` para um servico de aproximadamente ${duration}`:""}.`,
+    dropoff:`Aceite a proposta e agende somente a entrega do veiculo${duration?`. Prazo estimado: ${duration}`:""}.`,
+    walkin:`Aceite a proposta e compareca durante o horario de atendimento${duration?`. Prazo estimado: ${duration}`:""}.`
+  };
+  $("proposalBookingSummary").textContent=summaries[mode];
+}
 function openProposal(requestId,force){
   if(!force&&window.innerWidth>960)return;
   state.activeRequest=requestId;
@@ -935,21 +993,36 @@ function openProposal(requestId,force){
     </div>`:"";
   $("proposalPrice").value="";
   $("proposalTime").value="";
+  $("proposalDuration").value="";
+  $("proposalValidity").value="5";
+  $("proposalScheduledNote").value="";
+  $("proposalDropoffNote").value="";
+  $("proposalWalkinNote").value="";
+  const defaultMode=document.querySelector('input[name="proposalBookingMode"][value="scheduled"]');
+  if(defaultMode)defaultMode.checked=true;
   $("proposalMessage").value="";
   $("proposalStatus").textContent="";
+  updateProposalBookingUI();
   $("proposalModal").classList.add("open");
 }
 async function submitProposal(event){
   event.preventDefault();
-  const requestId=state.activeRequest;const message=$("proposalMessage").value.trim();const priceRaw=$("proposalPrice").value.trim();const time=$("proposalTime").value.trim();
+  const requestId=state.activeRequest;const message=$("proposalMessage").value.trim();const priceRaw=$("proposalPrice").value.trim();
+  const bookingMode=document.querySelector('input[name="proposalBookingMode"]:checked')?.value||"scheduled";
+  const duration=$("proposalDuration").value.trim();
+  const validity=$("proposalValidity").value;
+  const notes={scheduled:$("proposalScheduledNote").value.trim(),dropoff:$("proposalDropoffNote").value.trim(),walkin:$("proposalWalkinNote").value.trim()};
+  const labels={scheduled:"Escolher horario",dropoff:"Agendar entrega",walkin:"Sem agendamento"};
+  const time=[labels[bookingMode],duration?`Prazo: ${duration}`:"",notes[bookingMode],`Valida por ${validity} dias`].filter(Boolean).join(" | ");
+  $("proposalTime").value=time;
   const price=priceRaw?Number(priceRaw):null;
   if(!state.workshop?.id){$("proposalStatus").textContent="Perfil da oficina nao encontrado.";return;}
   if(!requestId||message.length<10){$("proposalStatus").textContent="Descreva o servico que sera feito (resposta muito curta).";return;}
   if(priceRaw&&(Number.isNaN(price)||price<0)){$("proposalStatus").textContent="Preco invalido.";return;}
-  if(state.demoMode){demoStore.proposals.unshift({id:"demo-proposal-"+Date.now(),request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time||null,status:"pending",created_at:new Date().toISOString(),service_requests:{title:state.requests.find((item)=>item.id===requestId)?.title||"Solicitacao",location:state.requests.find((item)=>item.id===requestId)?.location||""}});$("proposalModal").classList.remove("open");toast("Proposta demo enviada.");await loadAll();return;}
+  if(state.demoMode){demoStore.proposals.unshift({id:"demo-proposal-"+Date.now(),request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time||null,estimated_duration_text:duration||null,booking_mode:bookingMode,booking_instructions:notes[bookingMode]||null,validity_days:Number(validity),valid_until:new Date(Date.now()+Number(validity)*86400000).toISOString(),status:"pending",created_at:new Date().toISOString(),service_requests:{title:state.requests.find((item)=>item.id===requestId)?.title||"Solicitacao",location:state.requests.find((item)=>item.id===requestId)?.location||""}});$("proposalModal").classList.remove("open");toast("Proposta demo enviada.");await loadAll();return;}
   $("proposalSubmitBtn").disabled=true;
   try{
-    const {data,error}=await sb.from("proposals").insert({request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time||null,status:"pending"}).select("id").single();
+    const {data,error}=await sb.from("proposals").insert({request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time||null,estimated_duration_text:duration||null,booking_mode:bookingMode,booking_instructions:notes[bookingMode]||null,validity_days:Number(validity),status:"pending"}).select("id").single();
     if(error)throw error;
     $("proposalModal").classList.remove("open");toast("Proposta enviada.");await loadProposals();renderMetrics();
     if(data?.id) notifyProposalEvent("proposal_created",data.id);
@@ -1143,11 +1216,17 @@ function renderAgenda(){
   grid.querySelectorAll("[data-unblock-id]").forEach((button)=>button.addEventListener("click",()=>unblockSlot(button.dataset.unblockId)));
 }
 const RESERVATION_STATUS_LABEL={pending:"Pendente",confirmed:"Confirmada",completed:"Finalizada",cancelled:"Cancelada"};
+const BOOKING_MODE_LABEL={scheduled:"Agendado",dropoff:"Entrega",walkin:"Sem agendamento"};
+function reservationDateLabel(res){
+  if(!res?.scheduled_at) return res?.booking_mode==="walkin"?"Comparecimento livre":"Horario ainda nao escolhido";
+  const date=new Date(res.scheduled_at);
+  return Number.isNaN(date.getTime())?"Horario invalido":date.toLocaleString("pt-BR");
+}
 function renderReservations(){
   const list=$("reservationList");
   const reservations=allReservations();
   if(!reservations.length){list.innerHTML='<div class="empty">Nenhuma reserva ainda.</div>';$("reservationDetail").innerHTML='<div class="empty">Sem reserva selecionada.</div>';return;}
-  list.innerHTML=reservations.map((res)=>{const status=res.status||"pending";const label=RESERVATION_STATUS_LABEL[status]||status;return `<button class="item" data-reservation-id="${esc(res.id)}" type="button"><div class="item-head"><div><h4>${esc(res.profiles?.name||res.client_name||"Motorista")}</h4><small>${new Date(res.scheduled_at).toLocaleString("pt-BR")} Â· ${res.manual?"Reserva manual":"Reserva do app"}</small></div><span class="pill ${esc(status)}">${esc(label)}</span></div><p>${esc(res.service_type||"Servico")} - ${esc(res.notes||"Sem observacoes")}</p></button>`;}).join("");
+  list.innerHTML=reservations.map((res)=>{const status=res.status||"pending";const label=RESERVATION_STATUS_LABEL[status]||status;const origin=res.proposal_id?"Reserva de proposta":res.manual?"Reserva manual":"Reserva do app";return `<button class="item" data-reservation-id="${esc(res.id)}" type="button"><div class="item-head"><div><h4>${esc(res.profiles?.name||res.client_name||"Motorista")}</h4><small>${esc(reservationDateLabel(res))} · ${esc(origin)}</small></div><span class="pill ${esc(status)}">${esc(label)}</span></div><p>${esc(res.service_type||"Servico")} - ${esc(res.notes||"Sem observacoes")}</p></button>`;}).join("");
   list.querySelectorAll("[data-reservation-id]").forEach((button)=>button.addEventListener("click",()=>renderReservationDetail(button.dataset.reservationId)));
   renderReservationDetail(reservations[0].id);
 }
@@ -1155,6 +1234,7 @@ function renderReservationDetail(id){
   const res=allReservations().find((item)=>item.id===id);
   if(!res)return;
   const isManual=!!res.manual;
+  const isProposalFlow=!!res.proposal_id;
   const status=res.status||"pending";
   const statusLabel=RESERVATION_STATUS_LABEL[status]||status;
   let actions;
@@ -1162,6 +1242,12 @@ function renderReservationDetail(id){
     actions=status==="cancelled"
       ?`<span class="pill cancelled">Reserva cancelada</span>`
       :`<button class="btn secondary" type="button" onclick="editManualReservation('${esc(res.id)}')">Modificar</button><button class="btn danger" type="button" onclick="cancelManualReservation('${esc(res.id)}')">Cancelar</button>`;
+  }else if(isProposalFlow&&status==="pending"){
+    if(res.booking_mode==="walkin") actions=`<button class="btn danger" type="button" onclick="cancelProposalReservation('${esc(res.id)}')">Cancelar</button><button class="btn success" type="button" onclick="completeProposalReservation('${esc(res.id)}')">Concluir servico</button>`;
+    else if(!res.scheduled_at) actions=`<span class="pill pending">Aguardando horario do motorista</span><button class="btn danger" type="button" onclick="cancelProposalReservation('${esc(res.id)}')">Cancelar</button>`;
+    else actions=`<button class="btn success" type="button" onclick="confirmProposalReservation('${esc(res.id)}')">Confirmar</button><button class="btn danger" type="button" onclick="cancelProposalReservation('${esc(res.id)}')">Cancelar</button>`;
+  }else if(isProposalFlow&&status==="confirmed"){
+    actions=`<button class="btn danger" type="button" onclick="cancelProposalReservation('${esc(res.id)}')">Cancelar</button><button class="btn success" type="button" onclick="completeProposalReservation('${esc(res.id)}')">Concluir servico</button>`;
   }else if(status==="pending"){
     actions=`<button class="btn success" type="button" onclick="setReservationStatus('${esc(res.id)}','confirmed')">Aprovar</button><button class="btn danger" type="button" onclick="setReservationStatus('${esc(res.id)}','cancelled')">Rejeitar</button>`;
   }else if(status==="confirmed"){
@@ -1170,7 +1256,32 @@ function renderReservationDetail(id){
     actions=`<span class="pill ${esc(status)}">${esc(statusLabel)}</span>`;
   }
   const contactActions=`<button class="btn secondary" type="button" onclick="messageReservationClient('${esc(res.id)}')">Mensagem</button><button class="btn secondary" type="button" onclick="callReservationClient('${esc(res.id)}')">Ligar</button>`;
-  $("reservationDetail").innerHTML=`<div class="detail-row"><small>Origem</small><b>${isManual?"Reserva manual externa":"Reserva criada pelo app"}</b><span>${isManual?"Cliente fora do Vai Rodar: chamada por telefone.":"Cliente pode conversar pelo app."}</span></div><div class="detail-row"><small>Cliente</small><b>${esc(res.profiles?.name||res.client_name||"Motorista")}</b><span>${esc(res.profiles?.email||res.client_email||"")}</span></div><div class="detail-row"><small>Status</small><b>${esc(statusLabel)}</b></div><div class="detail-row"><small>Horario</small><b>${new Date(res.scheduled_at).toLocaleString("pt-BR")}</b></div><div class="detail-row"><small>Veiculo</small><span>${esc(res.vehicle||res.plate||"-")}</span></div><div class="detail-row"><small>Servico</small><span>${esc(res.service_type||"-")}</span></div><div class="detail-row"><small>Observacoes</small><span>${esc(res.notes||"-")}</span></div>${res.estimated_price?`<div class="detail-row"><small>Preco estimado</small><b>${money(res.estimated_price)}</b></div>`:""}<div class="actions">${contactActions}${actions}</div>`;
+  $("reservationDetail").innerHTML=`<div class="detail-row"><small>Origem</small><b>${isProposalFlow?"Proposta aceita":isManual?"Reserva manual externa":"Reserva criada pelo app"}</b><span>${isManual?"Cliente fora do Vai Rodar: chamada por telefone.":"Cliente pode conversar pelo app."}</span></div>${res.request_id?`<div class="detail-row"><small>Solicitacao vinculada</small><b>${esc(res.request_id)}</b></div>`:""}<div class="detail-row"><small>Cliente</small><b>${esc(res.profiles?.name||res.client_name||"Motorista")}</b><span>${esc(res.profiles?.email||res.client_email||"")}</span></div><div class="detail-row"><small>Status</small><b>${esc(statusLabel)}</b>${status==="pending"&&!res.scheduled_at&&res.booking_mode!=="walkin"?"<span>Aguardando horario do motorista</span>":""}</div><div class="detail-row"><small>Modalidade</small><b>${esc(BOOKING_MODE_LABEL[res.booking_mode]||"Agendado")}</b></div><div class="detail-row"><small>Horario</small><b>${esc(reservationDateLabel(res))}</b></div>${res.estimated_duration_text?`<div class="detail-row"><small>Duracao estimada</small><span>${esc(res.estimated_duration_text)}</span></div>`:""}${res.booking_instructions?`<div class="detail-row"><small>Instrucoes ao motorista</small><span>${esc(res.booking_instructions)}</span></div>`:""}<div class="detail-row"><small>Veiculo</small><span>${esc(res.vehicle||res.plate||"-")}</span></div><div class="detail-row"><small>Servico</small><span>${esc(res.service_type||"-")}</span></div><div class="detail-row"><small>Observacoes</small><span>${esc(res.notes||"-")}</span></div>${res.cancel_reason?`<div class="detail-row"><small>Motivo do cancelamento</small><span>${esc(res.cancel_reason)}</span></div>`:""}${res.estimated_price?`<div class="detail-row"><small>Preco estimado</small><b>${money(res.estimated_price)}</b></div>`:""}<div class="actions">${contactActions}${actions}</div>`;
+}
+
+async function runProposalReservationRpc(name,id,params,flowEvent,successMessage){
+  try{
+    const {data,error}=await sb.rpc(name,{p_reservation_id:id,...params});
+    if(error)throw error;
+    const reservation=data?.reservation||data;
+    await loadReservations();renderAgenda();renderReservations();renderMetrics();
+    toast(successMessage);
+    await notifyReservationFlow(reservation?.id||id,flowEvent);
+  }catch(error){toast(error.message||"Nao foi possivel atualizar a reserva.");}
+}
+function confirmProposalReservation(id){return runProposalReservationRpc("confirm_reservation",id,{},"reservation_confirmed","Reserva confirmada.");}
+function completeProposalReservation(id){return runProposalReservationRpc("complete_reservation",id,{},"reservation_completed","Servico concluido.");}
+function cancelProposalReservation(id){
+  const reason=prompt("Motivo do cancelamento:","");
+  if(reason===null)return;
+  return runProposalReservationRpc("cancel_reservation",id,{p_reason:reason.trim()||"Cancelada pela oficina"},"reservation_cancelled","Reserva cancelada.");
+}
+async function notifyReservationFlow(reservationId,flowEvent){
+  try{
+    const {data}=await sb.auth.getSession();const token=data?.session?.access_token;if(!token)return;
+    const response=await fetch("/.netlify/functions/notify-event",{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},body:JSON.stringify({event:"reservation_flow",reservationId,flowEvent})});
+    if(!response.ok)console.warn("[reservation_flow]",response.status,await response.text());
+  }catch(error){console.warn("[reservation_flow]",error.message);}
 }
 function callReservationClient(id){
   const res=allReservations().find((item)=>item.id===id);
@@ -1743,6 +1854,8 @@ $("capacityPlus").addEventListener("click",()=>saveCapacity(Number($("capacityIn
 $("capacityInput").addEventListener("change",()=>saveCapacity($("capacityInput").value));
 $("proposalCloseBtn").addEventListener("click",()=>$("proposalModal").classList.remove("open"));
 $("proposalForm").addEventListener("submit",submitProposal);
+document.querySelectorAll('input[name="proposalBookingMode"]').forEach((input)=>input.addEventListener("change",updateProposalBookingUI));
+$("proposalDuration").addEventListener("input",updateProposalBookingUI);
 $("blockCloseBtn").addEventListener("click",()=>$("blockModal").classList.remove("open"));
 $("manualReservationCloseBtn").addEventListener("click",()=>$("manualReservationModal").classList.remove("open"));
 $("blockForm").addEventListener("submit",submitBlock);

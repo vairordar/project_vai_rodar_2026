@@ -3575,6 +3575,19 @@ body.theme-dark .account-listing-actions button.danger{
       <p>Sua reserva foi enviada e será avaliada e confirmada pela oficina.</p>
       <button id="reservationSuccessClose" type="button">Entendido</button>
     </section>
+    <section class="proposal-popup" id="proposalSlotPopup" aria-label="Escolher horario da proposta">
+      <button class="popup-close" id="proposalSlotClose" type="button" aria-label="Fechar">×</button>
+      <h3 id="proposalSlotTitle">Escolher dia e horario</h3>
+      <p id="proposalSlotText">Selecione uma opcao para a oficina confirmar.</p>
+      <div class="reservation-form">
+        <div class="reservation-date-time">
+          <div><label>Data</label><input id="proposalSlotDate" type="date"></div>
+          <div><label>Horario</label><select id="proposalSlotTime"></select></div>
+        </div>
+      </div>
+      <button id="proposalSlotSubmit" type="button">Solicitar horario</button>
+      <div class="form-error" id="proposalSlotError">Escolha uma data e um horario futuros.</div>
+    </section>
     <aside class="side-menu" id="sideMenu">
       <button class="close" id="closeMenu" aria-label="Fechar">×</button>
       <h4>Vai Rodar</h4>
@@ -3825,6 +3838,14 @@ const sendReservation=document.getElementById("sendReservation");
 const reservationError=document.getElementById("reservationError");
 const reservationSuccessPopup=document.getElementById("reservationSuccessPopup");
 const reservationSuccessClose=document.getElementById("reservationSuccessClose");
+const proposalSlotPopup=document.getElementById("proposalSlotPopup");
+const proposalSlotClose=document.getElementById("proposalSlotClose");
+const proposalSlotTitle=document.getElementById("proposalSlotTitle");
+const proposalSlotText=document.getElementById("proposalSlotText");
+const proposalSlotDate=document.getElementById("proposalSlotDate");
+const proposalSlotTime=document.getElementById("proposalSlotTime");
+const proposalSlotSubmit=document.getElementById("proposalSlotSubmit");
+const proposalSlotError=document.getElementById("proposalSlotError");
 const verifiedCarsCard=document.getElementById("verifiedCarsCard");
 const assistedSaleCard=document.getElementById("assistedSaleCard");
 const quickEvaluationCard=document.getElementById("quickEvaluationCard");
@@ -3966,7 +3987,7 @@ async function loadMyServiceRequests(){
   if(!sb||!currentUser) return;
   try{
     const {data,error}=await sb.from("service_requests")
-      .select("id,title,description,category,location,status,created_at,latitude,longitude,vehicles(brand,model,year,plate),proposals(id,price,estimated_time,message,status,created_at,workshops(name,address,latitude,longitude))")
+      .select("id,title,description,category,location,status,created_at,latitude,longitude,vehicles(brand,model,year,plate),proposals(id,workshop_id,price,estimated_time,estimated_duration_text,booking_mode,booking_instructions,validity_days,valid_until,message,status,created_at,workshops(name,address,latitude,longitude))")
       .eq("user_id",currentUser.id)
       .order("created_at",{ascending:false})
       .limit(50);
@@ -3979,7 +4000,12 @@ async function loadMyServiceRequests(){
         address:p.workshops?.address||"",
         distanceKm:haversineKm(req.latitude,req.longitude,p.workshops?.latitude,p.workshops?.longitude),
         price:p.price!=null&&p.price!==""?`R$ ${p.price}`:"A combinar",
-        estimatedTime:p.estimated_time||"",
+         estimatedTime:p.estimated_time||"",
+         estimatedDurationText:p.estimated_duration_text||p.estimated_time||"",
+         bookingMode:p.booking_mode||"scheduled",
+         bookingInstructions:p.booking_instructions||"",
+         validityDays:Number(p.validity_days)||null,
+         validUntil:p.valid_until||null,
         message:p.message||"",
         time:p.created_at?new Date(p.created_at).toLocaleDateString("pt-BR"):"",
         status:p.status||"pending",
@@ -4013,14 +4039,49 @@ async function loadMyServiceRequests(){
 async function respondProposal(proposalId,status,quoteIndex){
   if(!sb||!proposalId) return;
   try{
+    if(status==="accepted"){
+      const {data,error}=await sb.rpc("accept_proposal",{p_proposal_id:proposalId});
+      if(error) throw error;
+      const payload=Array.isArray(data)?data[0]:data;
+      const reservation=payload?.reservation||payload;
+      if(!reservation?.id) throw new Error("A reserva nao foi criada pela base de dados.");
+      await notifyReservationFlow(reservation.id,"proposal_accepted");
+      await notifyReservationFlow(reservation.id,"reservation_created");
+      await Promise.all([loadMyServiceRequests(),loadUserReservations()]);
+      if(reservation.booking_mode==="walkin"){
+        alert(reservation.booking_instructions||"Proposta aceita. A oficina informou atendimento por ordem de chegada.");
+        openReservations();
+      }else{
+        openProposalSlotPicker(reservation);
+      }
+      return;
+    }
     const {error}=await sb.from("proposals").update({status}).eq("id",proposalId);
     if(error) throw error;
     await loadMyServiceRequests();
     if(sentQuotes[quoteIndex]) openQuoteDetail(quoteIndex);
-    notifyProposalEvent(status==="accepted"?"proposal_accepted":"proposal_declined",proposalId);
+    notifyProposalEvent("proposal_declined",proposalId);
   }catch(error){
     console.warn("[proposal-response]",error.message);
-    alert("Não foi possível atualizar a proposta agora. Tente novamente.");
+    alert(error.message||"Nao foi possivel atualizar a proposta agora. Tente novamente.");
+  }
+}
+async function notifyReservationFlow(reservationId,flowEvent){
+  try{
+    const {data}=await sb.auth.getSession();
+    const token=data?.session?.access_token;
+    if(!token) return;
+    const response=await fetch("/.netlify/functions/notify-event",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body:JSON.stringify({event:"reservation_flow",reservationId,flowEvent}),
+    });
+    if(!response.ok){
+      const result=await response.json().catch(()=>null);
+      console.warn("[reservation-flow-push]",response.status,result);
+    }
+  }catch(error){
+    console.warn("[reservation-flow-push]",error.message);
   }
 }
 async function notifyProposalEvent(eventName,proposalId){
@@ -4139,6 +4200,50 @@ function handleNotificationClick(item){
   else if(link.startsWith("quote:")) openQuoteByRequestId(link.slice(6));
 }
 const reservations=[];
+const BOOKING_MODE_LABEL={scheduled:"Dia e horario",dropoff:"Dia de chegada",walkin:"Ordem de chegada"};
+let activeProposalReservation=null;
+function isProposalExpired(proposal){
+  return Boolean(proposal?.validUntil&&new Date(proposal.validUntil).getTime()<=Date.now());
+}
+function reservationStatusLabel(status){
+  return ({pending:"Pendente",confirmed:"Confirmada",completed:"Concluida",cancelled:"Cancelada"})[status]||status||"Pendente";
+}
+function reservationDateLabel(value){
+  if(!value) return "Horario ainda nao escolhido";
+  return new Date(value).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"});
+}
+async function loadUserReservations(){
+  if(!sb||!currentUser) return;
+  try{
+    const {data,error}=await sb.from("reservations")
+      .select("id,user_id,workshop_id,request_id,proposal_id,service_type,booking_mode,estimated_duration_text,booking_instructions,scheduled_at,notes,status,created_at,cancel_reason,estimated_price,workshops(name,address)")
+      .eq("user_id",currentUser.id)
+      .order("created_at",{ascending:false})
+      .limit(100);
+    if(error) throw error;
+    reservations.length=0;
+    (data||[]).forEach((row)=>reservations.push({
+      id:row.id,
+      proposalId:row.proposal_id||null,
+      requestId:row.request_id||null,
+      office:row.workshops?.name||"Oficina parceira",
+      address:row.workshops?.address||"",
+      service:row.service_type||row.notes||"Servico automotivo",
+      bookingMode:row.booking_mode||"scheduled",
+      estimatedDurationText:row.estimated_duration_text||"",
+      bookingInstructions:row.booking_instructions||"",
+      scheduledAt:row.scheduled_at||null,
+      date:reservationDateLabel(row.scheduled_at),
+      status:reservationStatusLabel(row.status),
+      className:row.status||"pending",
+      cancelReason:row.cancel_reason||"",
+      estimatedPrice:row.estimated_price,
+    }));
+    renderReservations();
+  }catch(error){
+    console.warn("[user-reservations]",error.message);
+  }
+}
 const verifiedCars=[];
 const benefitCatalog={
   promotions:{
@@ -5694,6 +5799,7 @@ function setLoggedIn(user){
     refreshUnreadNotifCount();
     subscribeNotificationsChannel();
     loadMyServiceRequests();
+    loadUserReservations();
     return;
   }
   topAccountLabel.textContent="Criar conta";
@@ -5701,6 +5807,7 @@ function setLoggedIn(user){
   userVehicles=[];
   userVehicleListings=[];
   chats=[];
+  reservations.length=0;
   unsubscribeChatChannel();
   unsubscribeNotificationsChannel();
   updateNotifBadge(false);
@@ -6129,17 +6236,35 @@ function closeNotifications(){
   if(!sideMenu.classList.contains("open")&&!emergencyPanel.classList.contains("open")&&!accountPanel.classList.contains("open")&&!messagesPanel.classList.contains("open")&&!quotesPanel.classList.contains("open")) overlay.classList.remove("open");
 }
 function renderReservations(){
-  reservationsList.innerHTML=reservations.map((item)=>`
+  reservationsList.innerHTML=reservations.length?reservations.map((item)=>{
+    const canChoose=Boolean(item.proposalId&&item.className==="pending"&&item.bookingMode!=="walkin");
+    const canCancel=Boolean(item.proposalId&&(item.className==="pending"||item.className==="confirmed"));
+    const stateDetail=item.className==="pending"&&item.scheduledAt
+      ?"Aguardando confirmacao da oficina"
+      :item.className==="pending"&&item.bookingMode==="walkin"
+        ?(item.bookingInstructions||"Atendimento por ordem de chegada")
+        :item.date;
+    return `
     <article class="reservation-item">
       <div class="reservation-item-head"><b>${item.office}</b><span class="status-pill ${item.className}">${item.status}</span></div>
-      <p>${item.service}<br>${item.date}</p>
+      <p>${item.service}<br>${BOOKING_MODE_LABEL[item.bookingMode]||"Atendimento"} · ${stateDetail}</p>
+      ${item.estimatedDurationText?`<small>Duracao estimada: ${escapeHTML(item.estimatedDurationText)}</small>`:""}
+      ${item.bookingInstructions&&item.bookingMode!=="walkin"?`<small>${escapeHTML(item.bookingInstructions)}</small>`:""}
+      ${item.cancelReason?`<small>Motivo: ${escapeHTML(item.cancelReason)}</small>`:""}
+      ${canChoose||canCancel?`<div class="proposal-card-actions">${canChoose?`<button class="choose-reservation-slot" data-id="${item.id}">${item.scheduledAt?"Alterar horario":"Escolher horario"}</button>`:""}${canCancel?`<button class="cancel-proposal-reservation" data-id="${item.id}">Cancelar</button>`:""}</div>`:""}
     </article>
-  `).join("");
+  `;}).join(""):'<div class="account-empty">Voce ainda nao tem reservas.</div>';
+  reservationsList.querySelectorAll(".choose-reservation-slot").forEach((button)=>button.addEventListener("click",()=>{
+    const reservation=reservations.find((item)=>String(item.id)===button.dataset.id);
+    if(reservation) openProposalSlotPicker(reservation);
+  }));
+  reservationsList.querySelectorAll(".cancel-proposal-reservation").forEach((button)=>button.addEventListener("click",()=>cancelUserReservation(button.dataset.id)));
 }
-function openReservations(){
+async function openReservations(){
   if(!requireUserAccount("Entre para acompanhar e modificar suas reservas.")) return;
   closeMenu();closeEmergency();closeAccount();closeMessages();closeQuotes();closeNotifications();
-  reservationManagement.classList.remove("show");renderReservations();overlay.classList.add("open");reservationsPanel.classList.add("open");
+  reservationManagement.classList.remove("show");overlay.classList.add("open");reservationsPanel.classList.add("open");
+  await loadUserReservations();
 }
 function closeReservations(){
   reservationsPanel.classList.remove("open");reservationManagement.classList.remove("show");
@@ -6169,6 +6294,71 @@ function openReservationPopup(index,reservation=null,selectedService=""){
 function closeReservationPopup(){
   reservationPopup.classList.remove("open");
   if(!sideMenu.classList.contains("open")&&!emergencyPanel.classList.contains("open")&&!accountPanel.classList.contains("open")&&!messagesPanel.classList.contains("open")&&!quotesPanel.classList.contains("open")&&!notificationsPanel.classList.contains("open")&&!reservationsPanel.classList.contains("open")) overlay.classList.remove("open");
+}
+function proposalTimeOptions(){
+  let html="";
+  for(let hour=6;hour<=22;hour++){
+    for(let minute=0;minute<60;minute+=30){
+      if(hour===22&&minute>0) continue;
+      const time=`${String(hour).padStart(2,"0")}:${String(minute).padStart(2,"0")}`;
+      html+=`<option value="${time}">${time}</option>`;
+    }
+  }
+  return html;
+}
+function openProposalSlotPicker(reservation){
+  if(!reservation) return;
+  activeProposalReservation=reservation;
+  const mode=reservation.bookingMode||reservation.booking_mode||"scheduled";
+  proposalSlotTitle.textContent=mode==="dropoff"?"Escolher chegada do veiculo":"Escolher dia e horario";
+  proposalSlotText.textContent=reservation.bookingInstructions||"Selecione uma opcao para a oficina confirmar.";
+  proposalSlotTime.innerHTML=proposalTimeOptions();
+  const current=reservation.scheduledAt||reservation.scheduled_at;
+  if(current){
+    const date=new Date(current);
+    proposalSlotDate.value=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+    proposalSlotTime.value=`${String(date.getHours()).padStart(2,"0")}:${String(date.getMinutes()).padStart(2,"0")}`;
+  }else proposalSlotDate.value="";
+  proposalSlotDate.min=new Date().toISOString().slice(0,10);
+  proposalSlotError.classList.remove("show");
+  overlay.classList.add("open");
+  proposalSlotPopup.classList.add("open");
+}
+function closeProposalSlotPicker(){
+  proposalSlotPopup.classList.remove("open");
+  activeProposalReservation=null;
+  if(!reservationsPanel.classList.contains("open")&&!quotesPanel.classList.contains("open")) overlay.classList.remove("open");
+}
+async function submitProposalSlot(){
+  if(!activeProposalReservation||!proposalSlotDate.value||!proposalSlotTime.value) return proposalSlotError.classList.add("show");
+  const scheduledAt=new Date(`${proposalSlotDate.value}T${proposalSlotTime.value}:00`);
+  if(!Number.isFinite(scheduledAt.getTime())||scheduledAt.getTime()<=Date.now()) return proposalSlotError.classList.add("show");
+  proposalSlotSubmit.disabled=true;
+  try{
+    const {error}=await sb.rpc("request_reservation_slot",{p_reservation_id:activeProposalReservation.id,p_scheduled_at:scheduledAt.toISOString()});
+    if(error) throw error;
+    await notifyReservationFlow(activeProposalReservation.id,"reservation_time_requested");
+    closeProposalSlotPicker();
+    await loadUserReservations();
+    openReservations();
+  }catch(error){
+    proposalSlotError.textContent=error.message||"Nao foi possivel solicitar esse horario.";
+    proposalSlotError.classList.add("show");
+  }finally{
+    proposalSlotSubmit.disabled=false;
+  }
+}
+async function cancelUserReservation(reservationId){
+  const reason=prompt("Informe o motivo do cancelamento:","");
+  if(reason===null) return;
+  try{
+    const {error}=await sb.rpc("cancel_reservation",{p_reservation_id:reservationId,p_reason:reason.trim()||"Cancelada pelo motorista"});
+    if(error) throw error;
+    await notifyReservationFlow(reservationId,"reservation_cancelled");
+    await loadUserReservations();
+  }catch(error){
+    alert(error.message||"Nao foi possivel cancelar a reserva.");
+  }
 }
 function closeReservationPicker(){reservationPickerPopup.classList.remove("open");overlay.classList.remove("open");}
 function openReservationPicker(){
@@ -6540,19 +6730,27 @@ function openQuoteDetail(index){
       <span>${escapeHTML(quote.vehicle||"Veículo não informado")}${quote.category?`<br>${escapeHTML(quote.category)}`:""}</span>
     </div>
     <div class="flow-label">Propostas de oficinas <small>${proposals.length}</small></div>
-    ${proposals.length?proposals.map((proposal)=>`
+    ${proposals.length?proposals.map((proposal)=>{
+      const expired=isProposalExpired(proposal);
+      const validLabel=proposal.validUntil?new Date(proposal.validUntil).toLocaleDateString("pt-BR"):"";
+      return `
       <article class="workshop-proposal">
         <div class="workshop-proposal-head"><div><h4>${escapeHTML(proposal.name)}</h4><small>Resposta recebida · ${escapeHTML(proposal.time||"")}${proposal.distanceKm!=null?` · ${proposal.distanceKm.toFixed(1)} km`:""}</small></div><strong>${escapeHTML(proposal.price)}</strong></div>
         ${proposal.address?`<small class="workshop-proposal-address">${escapeHTML(proposal.address)}</small>`:""}
         <p>${escapeHTML(proposal.message||"Oficina ainda não enviou uma mensagem detalhada.")}</p>
+        <p><strong>${BOOKING_MODE_LABEL[proposal.bookingMode]||"Atendimento"}</strong>${proposal.estimatedDurationText?` · ${escapeHTML(proposal.estimatedDurationText)}`:""}</p>
+        ${proposal.bookingInstructions?`<p>${escapeHTML(proposal.bookingInstructions)}</p>`:""}
+        ${validLabel?`<small>${expired?"Proposta vencida em":"Valida ate"} ${validLabel}</small>`:""}
         <div class="proposal-card-actions">
-          ${proposal.status==="pending"
+          ${proposal.status==="pending"&&!expired
             ?`<button class="accept-quote" data-id="${proposal.id}">Aceitar proposta</button><button class="reject-quote" data-id="${proposal.id}">Recusar</button>`
+            :proposal.status==="pending"&&expired
+              ?'<span class="status-pill closed">Vencida</span>'
             :`<span class="status-pill ${proposal.status}">${proposal.status==="accepted"?"Aceita":proposal.status==="declined"?"Recusada":proposal.status}</span>`}
           <button class="message-quote">Enviar mensagem</button>
         </div>
       </article>
-    `).join(""):'<div class="account-empty">Ainda não há propostas recebidas para esta solicitação.</div>'}
+    `;}).join(""):'<div class="account-empty">Ainda não há propostas recebidas para esta solicitação.</div>'}
   `;
   document.getElementById("quoteBack").addEventListener("click",()=>{quoteDetail.classList.remove("show");quotesOverview.style.display="block";});
   quoteDetail.querySelectorAll(".accept-quote").forEach((button)=>button.addEventListener("click",()=>respondProposal(button.dataset.id,"accepted",index)));
@@ -7268,7 +7466,10 @@ changeReservation.addEventListener("click",()=>{
 });
 cancelReservation.addEventListener("click",()=>{
   const current=reservations.find((item)=>item.className==="confirmed"||item.className==="pending");
-  if(current){current.status="Cancelada";current.className="cancelled";renderReservations();reservationManagement.classList.remove("show");}
+  if(!current) return;
+  if(current.proposalId) cancelUserReservation(current.id);
+  else{current.status="Cancelada";current.className="cancelled";renderReservations();}
+  reservationManagement.classList.remove("show");
 });
 sendReservation.addEventListener("click",async()=>{
   const valid=reservationService.value&&reservationDetails.value.trim()&&reservationDate.value&&reservationTime.value;
@@ -7285,10 +7486,13 @@ sendReservation.addEventListener("click",async()=>{
   const date=reservationDate.value.split("-").reverse().join("/");
   reservations.unshift({id:remoteId,office:activeReservationOffice.name,service:reservationService.value,date:`${date} às ${reservationTime.value}`,status:"Pendente",className:"pending"});
   reservationPopup.classList.remove("open");reservationSuccessPopup.classList.add("open");
+  loadUserReservations();
 });
 reservationSuccessClose.addEventListener("click",closeReservationSuccess);
 reservationPopupClose.addEventListener("click",closeReservationPopup);
 reservationPickerClose.addEventListener("click",closeReservationPicker);
+proposalSlotClose.addEventListener("click",closeProposalSlotPicker);
+proposalSlotSubmit.addEventListener("click",submitProposalSlot);
 verifiedCarsCard.addEventListener("click",openCarsView);
 assistedSaleCard.addEventListener("click",openSellCarView);
 quickEvaluationCard.addEventListener("click",openQuickEvaluation);

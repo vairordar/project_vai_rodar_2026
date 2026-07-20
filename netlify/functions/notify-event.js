@@ -121,6 +121,51 @@ exports.handler = async (event) => {
       return json(200, { ok: true, push });
     }
 
+    // Flujo propuesta→reserva (RPCs de 20260720): la notificación
+    // interna YA fue creada por la RPC en Supabase. Este evento
+    // dispara SOLO el push al destinatario correcto.
+    if (eventType === 'reservation_flow') {
+      const reservationId = String(payload.reservationId || '').trim();
+      const flowEvent = String(payload.flowEvent || '').trim();
+      const FLOW_EVENTS = {
+        proposal_accepted:          { to: 'workshop', title: 'Proposta aceita', body: 'O motorista aceitou sua proposta. Uma reserva foi criada.' },
+        reservation_created:        { to: 'both',     title: 'Reserva criada', body: 'Uma nova reserva foi criada no Vai Rodar.' },
+        reservation_time_requested: { to: 'workshop', title: 'Horario solicitado', body: 'O motorista escolheu um horario. Confirme a reserva.' },
+        reservation_confirmed:      { to: 'driver',   title: 'Reserva confirmada', body: 'A oficina confirmou sua reserva.' },
+        reservation_cancelled:      { to: 'counterpart', title: 'Reserva cancelada', body: 'A reserva foi cancelada.' },
+        reservation_completed:      { to: 'driver',   title: 'Servico concluido', body: 'A oficina marcou seu servico como concluido.' },
+      };
+      const flow = FLOW_EVENTS[flowEvent];
+      if (!reservationId || !flow) return json(400, { error: 'reservationId e flowEvent validos sao obrigatorios.' });
+
+      const reservationRows = await supabaseRequest(
+        `/rest/v1/reservations?id=eq.${encodeURIComponent(reservationId)}&select=id,user_id,workshop_id,service_type,workshops(id,name,owner_id)`
+      );
+      const reservation = Array.isArray(reservationRows) ? reservationRows[0] : null;
+      if (!reservation || !reservation.workshops) return json(404, { error: 'Reserva nao encontrada.' });
+
+      const driverId = reservation.user_id;
+      const ownerId = reservation.workshops.owner_id;
+      if (callerUser.id !== driverId && callerUser.id !== ownerId) {
+        return json(403, { error: 'Voce nao participa desta reserva.' });
+      }
+
+      const targets = [];
+      if (flow.to === 'workshop') targets.push(ownerId);
+      else if (flow.to === 'driver') targets.push(driverId);
+      else if (flow.to === 'both') { targets.push(driverId, ownerId); }
+      else if (flow.to === 'counterpart') targets.push(callerUser.id === driverId ? ownerId : driverId);
+
+      const pushes = [];
+      for (const targetId of [...new Set(targets.filter(Boolean))]) {
+        if (targetId === callerUser.id) continue;
+        const push = await sendPushToUser(targetId, { title: flow.title, body: flow.body, url: '/' })
+          .catch((error) => { console.warn('[notify-event reservation_flow]', error.message); return null; });
+        pushes.push(push);
+      }
+      return json(200, { ok: true, pushes });
+    }
+
     if (eventType === 'reservation_status_changed') {
       const reservationId = String(payload.reservationId || '').trim();
       const status = String(payload.status || '').trim();
