@@ -288,6 +288,18 @@ button{cursor:pointer}
   .chat{height:470px}.calendar-shell{min-height:520px}.agenda-grid.week{grid-template-columns:72px repeat(7,150px)}.agenda-grid.month{grid-template-columns:repeat(7,145px)}.two-col,.vehicle-grid{grid-template-columns:1fr}
 }
 @media(max-width:560px){.metrics{grid-template-columns:repeat(2,1fr);gap:6px}.metric{padding:8px;min-height:54px}.metric small{font-size:7.5px}.metric strong{font-size:18px}.top-actions{justify-content:flex-end}.avatar{width:74px;height:32px}.avatar img{max-width:74px;max-height:26px}.calendar-toolbar{align-items:flex-start}.panel-head{flex-direction:column}.logo-upload{grid-template-columns:54px 1fr}.logo-upload-preview{width:54px;height:54px;border-radius:12px}.logo-upload label{grid-column:1/-1;width:100%}.day-checks{grid-template-columns:1fr}.subcategory-row,.service-row,.add-subcategory{grid-template-columns:1fr}.schedule-head{display:none}.day-schedule{grid-template-columns:1fr 1fr;gap:8px}.day-name{grid-column:1/-1}.closed-toggle{grid-column:1/-1}.schedule-card .sel,.closed-toggle span{height:40px;min-height:40px}.subcategory-row input,.service-row input{text-align:left}.remove-mini,.add-subcategory .btn{width:100%}.office-public-head{align-items:flex-start}.office-public-logo{width:54px;height:54px;border-radius:11px}.proposal-modal-card{padding:15px}.booking-mode-grid{grid-template-columns:1fr}.booking-mode{min-height:0;grid-template-columns:36px 1fr;column-gap:9px}.booking-mode-icon{grid-row:1/3}.booking-mode b,.booking-mode span{grid-column:2}.proposal-section-head{display:block}}
+.onboarding-checklist{display:none;border:1px solid #b9d0ff;border-radius:14px;background:#f7faff;padding:14px;margin-bottom:14px}.onboarding-checklist.show{display:block}.onboarding-checklist.complete{border-color:#f4c430;background:#fffdf3}.onboarding-checklist-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}.onboarding-checklist-head h3{font-size:16px}.onboarding-checklist-head p{font-size:11px;color:var(--muted);margin-top:3px}.onboarding-progress{height:8px;background:#dce8ff;border-radius:999px;overflow:hidden;margin-bottom:10px}.onboarding-progress span{display:block;height:100%;background:var(--blue);border-radius:inherit;transition:width .25s}.onboarding-items{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.onboarding-item{border:1px solid var(--line);border-radius:11px;background:#fff;padding:9px;text-align:left;font-size:10px;font-weight:850;color:var(--text);cursor:pointer}.onboarding-item.done{color:var(--blue);border-color:#b9d0ff;background:#f7faff}.onboarding-item small{display:block;color:var(--muted);font-size:8px;margin-top:4px;font-weight:650}.onboarding-tour{display:none;position:fixed;inset:0;z-index:300}.onboarding-tour.open{display:block}.onboarding-tour-shade{position:absolute;inset:0;background:rgba(3,8,20,.72)}.tour-spotlight{position:relative!important;z-index:302!important;box-shadow:0 0 0 5px rgba(7,92,255,.28),0 0 0 9999px rgba(3,8,20,.52)!important;border-radius:12px}.onboarding-tour-card{position:fixed;z-index:303;width:min(390px,calc(100vw - 28px));border:1px solid #b9d0ff;border-radius:16px;background:#fff;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.3)}.onboarding-tour-card small{color:var(--blue);font-size:10px;font-weight:900;text-transform:uppercase}.onboarding-tour-card h3{font-size:19px;margin-top:6px}.onboarding-tour-card p{font-size:13px;color:var(--muted);line-height:1.5;margin-top:7px}.onboarding-tour-actions{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:14px}.onboarding-tour-actions .tour-right{display:flex;gap:7px}.onboarding-tour-actions button{height:38px}.tour-skip{border:0;background:transparent;color:var(--muted);font-weight:800}.tour-badge{display:inline-flex;border-radius:999px;background:#e8f0ff;color:var(--blue);padding:5px 8px;font-size:9px;font-weight:900}.replay-tour{width:100%;margin-top:9px}
+.tutorial-help-btn{width:42px;height:42px;padding:0;border-radius:50%;font-size:20px;font-weight:950;line-height:1;color:var(--blue);background:#fff}
+.tutorial-picker-card{width:min(520px,100%)}
+.tutorial-picker-copy{margin:-4px 0 14px;color:var(--muted);font-size:13px;line-height:1.5}
+.tutorial-module-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tutorial-module-btn{min-height:58px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:11px 12px;text-align:left;color:var(--text);cursor:pointer;font:inherit;font-size:13px;font-weight:850;transition:border-color .15s,background .15s,color .15s}
+.tutorial-module-btn:hover,.tutorial-module-btn:focus-visible{border-color:var(--blue);background:#f4f8ff;color:var(--blue);outline:0}
+.tutorial-all-btn{width:100%;margin-top:14px}
+.onboarding-tour{isolation:isolate}.onboarding-tour-shade{z-index:0;background:rgba(9,15,28,.68)}
+.onboarding-tour-card{z-index:304!important;background:#fff!important;color:#080d18!important;opacity:1!important;filter:none!important}
+.onboarding-tour-card h3{color:#080d18!important}.onboarding-tour-card p{color:#667085!important}
+@media(max-width:900px){.onboarding-items{grid-template-columns:repeat(2,minmax(0,1fr))}.onboarding-tour-card{left:14px!important;right:14px!important;bottom:16px!important;top:auto!important;width:auto}.tutorial-module-list{grid-template-columns:1fr}.tutorial-help-btn{width:40px;height:40px}}
 </style>
 </head>
 <body>
@@ -351,6 +363,7 @@ button{cursor:pointer}
         <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
         <div><h2 id="pageTitle">Solicitacoes</h2><p id="pageSubtitle">Pedidos formais enviados pelos motoristas.</p></div>
         <div class="top-actions">
+          <button class="btn ghost tutorial-help-btn" id="tutorialHelpBtn" type="button" aria-label="Abrir tutoriais" title="Tutoriais">?</button>
           <button class="btn ghost" id="refreshBtn" type="button">Atualizar</button>
           <div class="avatar" id="avatarBtn" aria-label="Vai Rodar"><img src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar"></div>
         </div>
@@ -358,6 +371,12 @@ button{cursor:pointer}
 
       <section class="content">
         <section class="view active" id="view-requests">
+          <section class="onboarding-checklist" id="onboardingChecklist">
+            <div class="onboarding-checklist-head"><div><h3 id="onboardingChecklistTitle">Complete seu perfil</h3><p id="onboardingChecklistCopy">Quanto mais completo, melhor sua oficina aparece para os motoristas.</p></div><span class="tour-badge" id="onboardingChecklistCount">0/5</span></div>
+            <div class="onboarding-progress"><span id="onboardingProgressBar" style="width:0%"></span></div>
+            <div class="onboarding-items" id="onboardingItems"></div>
+            <button class="btn secondary" id="dismissChecklistBtn" type="button" style="display:none;margin-top:10px">Ocultar checklist</button>
+          </section>
           <div class="metrics">
             <div class="metric"><small>Solicitacoes abertas</small><strong id="metricRequests">0</strong></div>
             <div class="metric"><small>Propostas enviadas</small><strong id="metricProposals">0</strong></div>
@@ -531,7 +550,7 @@ button{cursor:pointer}
 
         <section class="view" id="view-account">
           <div class="grid">
-            <section class="panel"><div class="panel-head"><div><h3>Dados da empresa</h3><p>Informacoes privadas, acesso, fiscal, responsavel e relacao com Vai Rodar.</p></div></div><div class="detail-block" id="accountDetail"></div><div class="actions"><button class="btn secondary" id="enablePushBtn" type="button">Ativar notificacoes no celular</button><button class="btn secondary" id="resetPasswordBtn" type="button">Enviar reset de senha</button><button class="btn danger" id="signOutBtn" type="button">Sair</button></div></section>
+            <section class="panel"><div class="panel-head"><div><h3>Dados da empresa</h3><p>Informacoes privadas, acesso, fiscal, responsavel e relacao com Vai Rodar.</p></div></div><div class="detail-block" id="accountDetail"></div><div class="actions"><button class="btn secondary" id="enablePushBtn" type="button">Ativar notificacoes</button><small id="pushStatus" aria-live="polite">Receba novos pedidos, mensagens, propostas e reservas neste dispositivo.</small><button class="btn secondary" id="resetPasswordBtn" type="button">Enviar reset de senha</button><button class="btn danger" id="signOutBtn" type="button">Sair</button></div></section>
             <aside class="panel"><div class="panel-head"><div><h3>Checklist</h3><p>Separacao entre vitrine publica e dados privados.</p></div></div><div class="list"><div class="item"><h4>Perfil publico</h4><small>Logo, descricao, endereco visivel, categorias e subcategorias.</small></div><div class="item"><h4>Dados privados</h4><small>CNPJ, responsavel, telefone interno, e-mail de acesso e assinatura.</small></div><div class="item"><h4>Operacao</h4><small>Agenda, reservas, propostas e capacidade por horario.</small></div></div></aside>
           </div>
         </section>
@@ -605,6 +624,15 @@ button{cursor:pointer}
 </section>
 
 <div class="toast" id="toast"></div>
+<section class="modal" id="tutorialPickerModal" aria-hidden="true">
+  <div class="modal-card tutorial-picker-card" role="dialog" aria-modal="true" aria-labelledby="tutorialPickerTitle">
+    <div class="modal-head"><div><h3 id="tutorialPickerTitle">O que voce quer conhecer?</h3><p>Escolha um modulo para ver uma explicacao rapida ou percorra todo o painel.</p></div><button class="modal-close" id="tutorialPickerCloseBtn" type="button" aria-label="Fechar">x</button></div>
+    <p class="tutorial-picker-copy">Voce pode voltar a estes tutoriais quando quiser usando o botao <strong>?</strong> ao lado de Atualizar.</p>
+    <div class="tutorial-module-list" id="tutorialModuleList"></div>
+    <button class="btn primary tutorial-all-btn" id="tutorialAllBtn" type="button">Quero conhecer todos</button>
+  </div>
+</section>
+<section class="onboarding-tour" id="onboardingTour" aria-hidden="true"><div class="onboarding-tour-shade"></div><article class="onboarding-tour-card" id="onboardingTourCard"><small id="onboardingTourCount">Passo 1 de 8</small><h3 id="onboardingTourTitle">Central de ajuda</h3><p id="onboardingTourText"></p><div class="onboarding-tour-actions"><button class="tour-skip" id="onboardingSkipBtn" type="button">Pular tutorial</button><div class="tour-right"><button class="btn secondary" id="onboardingPrevBtn" type="button">Anterior</button><button class="btn primary" id="onboardingNextBtn" type="button">Proximo</button></div></div></article></section>
 
 <script>
 const SUPABASE_URL="https://glyooliyoclxkkzffdiw.supabase.co";
@@ -640,7 +668,7 @@ const DEMO_EMAIL="oficina.demo@vairodar.com.br";
 const DEMO_PASSWORD="VaiRodar2026!";
 const $=(id)=>document.getElementById(id);
 const $$=(selector)=>document.querySelectorAll(selector);
-const state={user:null,workshop:null,requests:[],proposals:[],conversations:[],messages:[],reservations:[],serviceCategories:[],serviceSubcategories:[],workshopServices:[],serviceCatalogError:"",activeRequest:null,activeConversation:null,requestFilter:"open",calendarMode:"week",calendarDate:new Date(),channel:null,realtimeChannel:null,demoMode:false,backendReady:{blocks:false,offers:false,owner:false,manualReservations:false},localOffers:JSON.parse(localStorage.getItem("vr_workshop_offers")||"[]"),manualReservations:JSON.parse(localStorage.getItem("vr_manual_reservations")||"[]"),blockedSlots:JSON.parse(localStorage.getItem("vr_blocked_slots")||"[]"),ownerDetails:null};
+const state={user:null,workshop:null,requests:[],proposals:[],conversations:[],messages:[],reservations:[],serviceCategories:[],serviceSubcategories:[],workshopServices:[],serviceCatalogError:"",activeRequest:null,activeConversation:null,requestFilter:"open",calendarMode:"week",calendarDate:new Date(),channel:null,realtimeChannel:null,demoMode:false,onboardingRunning:false,onboardingStep:0,onboardingSingleStep:false,onboardingRepeat:false,pushActive:false,backendReady:{blocks:false,offers:false,owner:false,manualReservations:false},localOffers:JSON.parse(localStorage.getItem("vr_workshop_offers")||"[]"),manualReservations:JSON.parse(localStorage.getItem("vr_manual_reservations")||"[]"),blockedSlots:JSON.parse(localStorage.getItem("vr_blocked_slots")||"[]"),ownerDetails:null};
 const demoStore={
   user:{id:"demo-workshop-user",email:DEMO_EMAIL},
   workshop:{id:"demo-workshop",owner_id:"demo-workshop-user",name:"Auto Center Vital Brasil",category:"Freios e suspensao",city:"Sao Paulo",state:"SP",address:"Rua Camargo, 221 - Butanta",whatsapp:"+55 11 99999-9999",email:DEMO_EMAIL,description:"Oficina especializada em freios, suspensao, pneus e revisao preventiva.",services:["Freios","Suspensao","Pneus","Revisao"],open:true,max_bookings_per_slot:3,slot_minutes:60},
@@ -674,18 +702,31 @@ async function getPushPublicKey(){
   if(!data.enabled||!data.publicKey) throw new Error("VAPID_PUBLIC_KEY nao configurada");
   return data.publicKey;
 }
+function updateWorkshopPushState(message){
+  const button=$("enablePushBtn"),status=$("pushStatus");
+  if(!button||!status)return;
+  const granted=("Notification" in window)&&Notification.permission==="granted";
+  const denied=("Notification" in window)&&Notification.permission==="denied";
+  button.textContent=state.pushActive?"Notificacoes ativadas":(denied?"Notificacoes bloqueadas":(granted?"Concluir ativacao":"Ativar notificacoes"));
+  button.disabled=state.pushActive||denied;
+  status.textContent=message||(state.pushActive?"Este dispositivo recebera novos pedidos, mensagens, propostas e reservas.":(denied?"Permita notificacoes nas configuracoes do navegador para ativar novamente.":"Receba novos pedidos, mensagens, propostas e reservas neste dispositivo."));
+}
 async function enablePushNotifications({silent=false}={}){
   if(!state.user||!sb||!("serviceWorker" in navigator)||!("PushManager" in window)||!("Notification" in window)||window.location.protocol==="file:"){
+    updateWorkshopPushState("As notificacoes funcionam no site HTTPS depois do login.");
     if(!silent) toast("Notificacoes push funcionam apenas no site HTTPS depois do login.");
     return false;
   }
   if(Notification.permission==="denied"){
+    state.pushActive=true;
+    updateWorkshopPushState();
     if(!silent) toast("As notificacoes estao bloqueadas no navegador. Ative nas configuracoes do site.");
     return false;
   }
   if(Notification.permission!=="granted"){
     const permission=await Notification.requestPermission();
     if(permission!=="granted"){
+      updateWorkshopPushState();
       if(!silent) toast("Permissao de notificacao nao ativada.");
       return false;
     }
@@ -704,9 +745,12 @@ async function enablePushNotifications({silent=false}={}){
       body:JSON.stringify({subscription:subscription.toJSON(),userAgent:navigator.userAgent,platform:/Android/i.test(navigator.userAgent)?"android":(/iPhone|iPad|iPod/i.test(navigator.userAgent)?"ios":"web")})
     });
     if(!response.ok) throw new Error("push-subscribe "+response.status);
+    updateWorkshopPushState();
     if(!silent) toast("Notificacoes ativadas neste dispositivo.");
     return true;
   }catch(error){
+    state.pushActive=false;
+    updateWorkshopPushState(error.message||"Nao foi possivel ativar notificacoes.");
     if(!silent) toast(error.message||"Nao foi possivel ativar notificacoes.");
     return false;
   }
@@ -715,7 +759,7 @@ function openMobileMenu(){document.querySelector(".side")?.classList.add("open")
 function closeMobileMenu(){document.querySelector(".side")?.classList.remove("open");$("mobileDrawerBackdrop")?.classList.remove("open");}
 function initials(name){return (name||"Oficina").split(/\s+/).slice(0,2).map((part)=>part[0]||"").join("").toUpperCase()||"VR";}
 function showAuth(){state.user=null;state.workshop=null;$("authScreen").style.display="grid";$("app").style.display="none";}
-function showApp(){ $("authScreen").style.display="none";$("app").style.display="block";renderShell();loadAll();if(("Notification" in window)&&Notification.permission==="granted"){enablePushNotifications({silent:true}).catch((error)=>console.warn("[Push]",error.message));}}
+async function showApp(){ $("authScreen").style.display="none";$("app").style.display="block";renderShell();updateWorkshopPushState();await loadAll();maybeStartOnboarding();if(("Notification" in window)&&Notification.permission==="granted"){enablePushNotifications({silent:true}).catch((error)=>console.warn("[Push]",error.message));}}
 async function login(email,password,useDemoFallback){
   $("authStatus").textContent="";
   $("loginBtn").disabled=true;
@@ -764,10 +808,58 @@ function renderShell(){
   renderProfileForm();
   renderAccount();
 }
+const ONBOARDING_STEPS=[
+  {title:"Tutoriais sempre disponiveis",text:"O botao ? ao lado de Atualizar abre esta central de ajuda. Use-o quando quiser rever todos os tutoriais ou aprender apenas um modulo.",view:"requests",target:"#tutorialHelpBtn"},
+  {title:"Solicitacoes",text:"Aqui chegam os pedidos de motoristas da sua regiao. Responda rapido para ganhar mais clientes.",view:"requests",target:'[data-view="requests"]'},
+  {title:"Propostas",text:"Envie preco, prazo e como o cliente agenda. Propostas valem por ate 15 dias.",view:"requests",target:"#requestsList"},
+  {title:"Mensagens",text:"Converse com os motoristas e envie o botao de criar reserva.",view:"messages",target:'[data-view="messages"]'},
+  {title:"Agenda e Reservas",text:"Confirme horarios, bloqueie dias e gerencie sua capacidade.",view:"agenda",target:'[data-view="agenda"]'},
+  {title:"Perfil publico",text:"Logo, horarios e servicos aparecem no app do motorista. Complete tudo para se destacar.",view:"profile",target:'[data-view="profile"]'},
+  {title:"Ofertas",text:"Publique promocoes. Elas passam por aprovacao da Vai Rodar antes de ir ao ar.",view:"offers",target:'[data-view="offers"]'},
+  {title:"Receber pedidos",text:"Use este botao para pausar novos pedidos quando a oficina estiver lotada.",view:"requests",target:"#receivingToggle",openMenu:true}
+];
+function onboardingState(){const value=state.workshop?.onboarding_state;return value&&typeof value==="object"&&!Array.isArray(value)?value:{}}
+async function persistOnboarding(patch,completed=false){
+  if(!state.workshop?.id)return;
+  const next={...onboardingState(),...patch};state.workshop.onboarding_state=next;
+  if(completed)state.workshop.onboarding_completed_at=new Date().toISOString();
+  if(state.demoMode)return;
+  try{const payload={onboarding_state:next};if(completed)payload.onboarding_completed_at=state.workshop.onboarding_completed_at;const{error}=await sb.from("workshops").update(payload).eq("id",state.workshop.id);if(error)throw error}catch(error){console.warn("[onboarding]",error.message);toast("Nao foi possivel salvar o progresso do tutorial.")}
+}
+function clearTourSpotlight(){document.querySelectorAll(".tour-spotlight").forEach((node)=>node.classList.remove("tour-spotlight"))}
+function positionTourCard(target){
+  const card=$("onboardingTourCard");if(window.innerWidth<=900||!target){card.style.left="14px";card.style.right="14px";card.style.bottom="16px";card.style.top="auto";return}
+  const rect=target.getBoundingClientRect();const cardWidth=Math.min(390,window.innerWidth-28);let left=Math.min(window.innerWidth-cardWidth-18,Math.max(18,rect.right+18));if(left<rect.right&&rect.left>cardWidth+30)left=rect.left-cardWidth-18;let top=Math.min(window.innerHeight-300,Math.max(18,rect.top));card.style.left=`${left}px`;card.style.right="auto";card.style.top=`${top}px`;card.style.bottom="auto";
+}
+function renderOnboardingStep(){
+  if(!state.onboardingRunning)return;const step=ONBOARDING_STEPS[state.onboardingStep];if(!step)return;
+  clearTourSpotlight();setView(step.view);if(step.openMenu&&window.innerWidth<=980)openMobileMenu();
+  requestAnimationFrame(()=>{const target=document.querySelector(step.target);target?.classList.add("tour-spotlight");target?.scrollIntoView({behavior:"smooth",block:"center"});$("onboardingTourCount").textContent=state.onboardingSingleStep?"Tutorial do modulo":`Passo ${state.onboardingStep+1} de ${ONBOARDING_STEPS.length}`;$("onboardingTourTitle").textContent=step.title;$("onboardingTourText").textContent=step.text;$("onboardingPrevBtn").style.visibility=state.onboardingSingleStep||!state.onboardingStep?"hidden":"visible";$("onboardingNextBtn").textContent=state.onboardingSingleStep||state.onboardingStep===ONBOARDING_STEPS.length-1?"Concluir":"Proximo";positionTourCard(target);if(!state.onboardingRepeat)persistOnboarding({tour_step:state.onboardingStep})});
+}
+function closeTutorialPicker(){$("tutorialPickerModal").classList.remove("open");$("tutorialPickerModal").setAttribute("aria-hidden","true")}
+function openTutorialPicker(){renderTutorialModules();$("tutorialPickerModal").classList.add("open");$("tutorialPickerModal").setAttribute("aria-hidden","false")}
+function renderTutorialModules(){$("tutorialModuleList").innerHTML=ONBOARDING_STEPS.slice(1).map((step,index)=>`<button class="tutorial-module-btn" type="button" data-tutorial-step="${index+1}">${esc(step.title)}</button>`).join("")}
+function startOnboarding(fromStart=false,options={}){closeTutorialPicker();state.onboardingRunning=true;state.onboardingSingleStep=Boolean(options.single);state.onboardingRepeat=Boolean(options.repeat);state.onboardingStep=Number.isInteger(options.step)?options.step:(fromStart?0:Math.max(0,Math.min(ONBOARDING_STEPS.length-1,Number(onboardingState().tour_step||0))));$("onboardingTour").classList.add("open");$("onboardingTour").setAttribute("aria-hidden","false");renderOnboardingStep()}
+async function finishOnboarding(){const shouldPersist=!state.onboardingRepeat;state.onboardingRunning=false;state.onboardingSingleStep=false;state.onboardingRepeat=false;clearTourSpotlight();closeMobileMenu();$("onboardingTour").classList.remove("open");$("onboardingTour").setAttribute("aria-hidden","true");if(shouldPersist){await persistOnboarding({tour_done:true,tour_step:ONBOARDING_STEPS.length-1},true);renderOnboardingChecklist()}toast("Tutorial concluido. Use o botao ? para reve-lo quando quiser.")}
+function maybeStartOnboarding(){renderOnboardingChecklist();if(!state.workshop?.onboarding_completed_at&&!state.onboardingRunning)setTimeout(()=>startOnboarding(true),350)}
+function checklistData(){
+  const schedule=state.workshop?.schedule?.custom;const categories=asWorkshopCategories();
+  return [
+    {label:"Suba seu logo",done:Boolean(String(state.workshop?.photo_url||"").trim()),view:"profile",hint:"Perfil publico"},
+    {label:"Configure seus horarios",done:Boolean(typeof schedule==="string"?schedule.trim():schedule&&Object.keys(schedule).length),view:"profile",hint:"Perfil publico"},
+    {label:"Escolha suas categorias",done:categories.length>0,view:"profile",hint:"Perfil publico"},
+    {label:"Cadastre servicos com preco",done:state.workshopServices.length>0,view:"profile",hint:"Catalogo"},
+    {label:"Publique sua primeira oferta",done:state.localOffers.length>0,view:"offers",hint:"Ofertas"}
+  ]
+}
+function asWorkshopCategories(){const value=state.workshop?.categories||state.workshop?.services||state.workshop?.category;return Array.isArray(value)?value.filter(Boolean):(value?[value]:[])}
+function renderOnboardingChecklist(){
+  const root=$("onboardingChecklist");if(!root||!state.workshop)return;const items=checklistData();const complete=items.filter((item)=>item.done).length;const allDone=complete===items.length;const dismissed=onboardingState().checklist_dismissed===true;if(dismissed&&allDone){root.classList.remove("show");return}root.classList.add("show");root.classList.toggle("complete",allDone);$("onboardingChecklistTitle").textContent=allDone?"Perfil completo!":"Complete seu perfil";$("onboardingChecklistCopy").textContent=allDone?"Sua oficina esta pronta para aparecer completa aos motoristas.":"Quanto mais completo, melhor sua oficina aparece para os motoristas.";$("onboardingChecklistCount").textContent=`${complete}/${items.length}`;$("onboardingProgressBar").style.width=`${complete/items.length*100}%`;$("onboardingItems").innerHTML=items.map((item,index)=>`<button class="onboarding-item ${item.done?"done":""}" data-checklist-index="${index}" type="button">${item.done?"Concluido":"Pendente"}<small>${esc(item.label)} · ${esc(item.hint)}</small></button>`).join("");$("dismissChecklistBtn").style.display=allDone?"inline-flex":"none";
+}
 async function loadAll(){
-  if(state.demoMode){state.requests=[...demoStore.requests];state.proposals=[...demoStore.proposals];state.conversations=[...demoStore.conversations];state.reservations=[...demoStore.reservations];renderMetrics();renderRequests();renderThreads();renderAgenda();renderReservations();renderOffers();return;}
+  if(state.demoMode){state.requests=[...demoStore.requests];state.proposals=[...demoStore.proposals];state.conversations=[...demoStore.conversations];state.reservations=[...demoStore.reservations];renderMetrics();renderRequests();renderThreads();renderAgenda();renderReservations();renderOffers();renderOnboardingChecklist();return;}
   await Promise.all([loadRequests(),loadProposals(),loadConversations(),loadReservations(),loadBlocks(),loadOffers(),loadOwnerDetails(),loadServiceCatalog()]);
-  renderMetrics();renderRequests();renderProposalsCount();renderThreads();renderAgenda();renderReservations();renderOffers();renderAccount();subscribeRealtime();
+  renderMetrics();renderRequests();renderProposalsCount();renderThreads();renderAgenda();renderReservations();renderOffers();renderAccount();renderOnboardingChecklist();subscribeRealtime();
 }
 async function loadRequests(){
   try{
@@ -1400,7 +1492,7 @@ function buildWorkshopScheduleText(){
 async function saveWorkshopSchedule(){
   if(!state.workshop?.id){toast("Perfil da oficina não encontrado.");return;}
   const schedule={...(state.workshop.schedule||{}),custom:buildWorkshopScheduleText()};
-  if(state.demoMode){state.workshop.schedule=schedule;renderProfilePreview();toast("Horários atualizados no modo demo.");return;}
+  if(state.demoMode){state.workshop.schedule=schedule;renderProfilePreview();renderOnboardingChecklist();toast("Horários atualizados no modo demo.");return;}
   const button=$("saveScheduleBtn");
   button.disabled=true;
   try{
@@ -1408,6 +1500,7 @@ async function saveWorkshopSchedule(){
     if(error)throw error;
     state.workshop.schedule=schedule;
     renderProfilePreview();
+    renderOnboardingChecklist();
     toast("Horários atualizados com sucesso.");
   }catch(error){
     console.error("[schedule]",error.message);
@@ -1485,7 +1578,7 @@ async function uploadProfileLogo(file){
     return;
   }
   previewProfileLogo(file);
-  if(state.demoMode){toast("Logo atualizado no modo demo.");return;}
+  if(state.demoMode){state.workshop.photo_url=URL.createObjectURL(file);renderOnboardingChecklist();toast("Logo atualizado no modo demo.");return;}
   if(!state.user?.id||!state.workshop?.id){
     setProfileLogo(state.workshop?.photo_url);
     toast("Não foi possível identificar a oficina.");
@@ -1503,6 +1596,7 @@ async function uploadProfileLogo(file){
     if(updateError)throw updateError;
     state.workshop.photo_url=photoUrl;
     setProfileLogo(photoUrl);
+    renderOnboardingChecklist();
     toast("Logo atualizado com sucesso.");
   }catch(error){
     console.error("[profile logo]",error.message);
@@ -1590,6 +1684,7 @@ async function addWorkshopService(form){
     }
     renderServiceCatalog();
     renderProfilePreview();
+    renderOnboardingChecklist();
     toast("Serviço adicionado.");
   }catch(error){console.error("[workshop service insert]",error.message);toast("Erro ao adicionar serviço: "+error.message);}
 }
@@ -1601,6 +1696,7 @@ async function deleteWorkshopService(row){
     state.workshopServices=state.workshopServices.filter((item)=>item.id!==id);
     renderServiceCatalog();
     renderProfilePreview();
+    renderOnboardingChecklist();
     toast("Serviço apagado.");
   }catch(error){console.error("[workshop service delete]",error.message);toast("Erro ao apagar serviço: "+error.message);}
 }
@@ -1613,6 +1709,7 @@ async function updateWorkshopService(row){
     if(!state.demoMode){const{error}=await sb.from("workshop_services").update(payload).eq("id",id);if(error)throw error;}
     const service=state.workshopServices.find((item)=>item.id===id);if(service)Object.assign(service,payload);
     renderProfilePreview();
+    renderOnboardingChecklist();
     toast("Serviço atualizado.");
   }catch(error){console.error("[workshop service update]",error.message);toast("Erro ao atualizar serviço: "+error.message);}
 }
@@ -1660,7 +1757,7 @@ async function createOffer(event){
       const {error:insertError}=await sb.from("workshop_offers").insert({workshop_id:state.workshop.id,category:offer.category,title:offer.title,description:offer.description||null,image_url:publicUrl,starts_at:offer.start,ends_at:offer.end,status:"active"});
       if(insertError)throw insertError;
       await loadOffers();
-      event.target.reset();renderOffers();toast("Oferta publicada.");
+      event.target.reset();renderOffers();renderOnboardingChecklist();toast("Oferta publicada.");
       submit.disabled=false;submit.textContent="Criar oferta";
       return;
     }catch(error){
@@ -1668,7 +1765,7 @@ async function createOffer(event){
       state.backendReady.offers=false;
     }
   }
-  state.localOffers.unshift(offer);localStorage.setItem("vr_workshop_offers",JSON.stringify(state.localOffers));event.target.reset();renderOffers();toast("Oferta salva como rascunho local.");
+  state.localOffers.unshift(offer);localStorage.setItem("vr_workshop_offers",JSON.stringify(state.localOffers));event.target.reset();renderOffers();renderOnboardingChecklist();toast("Oferta salva como rascunho local.");
   submit.disabled=false;submit.textContent="Criar oferta";
 }
 function ownerFromDescription(){const desc=state.workshop?.description||"";const match=desc.match(/Respons[aÃ¡]vel:\s*([^Â·]+)/i);return match?match[1].trim():"Nao informado";}
@@ -1848,6 +1945,11 @@ $("demoBtn").addEventListener("click",()=>{$("authEmail").value=DEMO_EMAIL;$("au
 $("mobileMenuBtn").addEventListener("click",openMobileMenu);
 $("mobileDrawerBackdrop").addEventListener("click",closeMobileMenu);
 $("refreshBtn").addEventListener("click",loadAll);
+$("tutorialHelpBtn").addEventListener("click",openTutorialPicker);
+$("tutorialPickerCloseBtn").addEventListener("click",closeTutorialPicker);
+$("tutorialPickerModal").addEventListener("click",(event)=>{if(event.target===$("tutorialPickerModal"))closeTutorialPicker()});
+$("tutorialModuleList").addEventListener("click",(event)=>{const button=event.target.closest("[data-tutorial-step]");if(button)startOnboarding(false,{step:Number(button.dataset.tutorialStep),single:true,repeat:true})});
+$("tutorialAllBtn").addEventListener("click",()=>startOnboarding(true,{repeat:true}));
 $("receivingToggle").addEventListener("click",toggleReceiving);
 $("capacityMinus").addEventListener("click",()=>saveCapacity(Number($("capacityInput").value)-1));
 $("capacityPlus").addEventListener("click",()=>saveCapacity(Number($("capacityInput").value)+1));
@@ -1891,6 +1993,24 @@ $$(".preview-toggle").forEach((button)=>button.addEventListener("click",()=>{
   target?.classList.toggle("show");
 }));
 bindPreviewCategoryToggles();
+$("onboardingNextBtn").addEventListener("click",()=>{
+  if(state.onboardingSingleStep||state.onboardingStep>=ONBOARDING_STEPS.length-1){finishOnboarding();return;}
+  state.onboardingStep+=1;renderOnboardingStep();
+});
+$("onboardingPrevBtn").addEventListener("click",()=>{
+  state.onboardingStep=Math.max(0,state.onboardingStep-1);renderOnboardingStep();
+});
+$("onboardingSkipBtn").addEventListener("click",finishOnboarding);
+$("onboardingItems").addEventListener("click",(event)=>{
+  const button=event.target.closest("[data-checklist-index]");if(!button)return;
+  const item=checklistData()[Number(button.dataset.checklistIndex)];if(item)setView(item.view);
+});
+$("dismissChecklistBtn").addEventListener("click",async()=>{
+  await persistOnboarding({checklist_dismissed:true});renderOnboardingChecklist();
+});
+window.addEventListener("resize",()=>{
+  if(!state.onboardingRunning)return;const step=ONBOARDING_STEPS[state.onboardingStep];positionTourCard(document.querySelector(step?.target||""));
+});
 sb.auth.onAuthStateChange(async(_event,session)=>{if(session?.user){state.user=session.user;const result=await loadWorkshop();if(!result.ok){showAuth();$("authStatus").textContent="Conta autenticada, mas nenhuma oficina foi encontrada para este e-mail. Verifique se o cadastro foi aprovado e se o owner_id esta vinculado ao usuario.";return;}showApp();}else showAuth();});
 (async()=>{const {data:{session}}=await sb.auth.getSession();if(session?.user){state.user=session.user;const result=await loadWorkshop();if(!result.ok){showAuth();$("authStatus").textContent="Conta autenticada, mas nenhuma oficina foi encontrada para este e-mail. Verifique se o cadastro foi aprovado e se o owner_id esta vinculado ao usuario.";return;}showApp();}else showAuth();})();
 if('serviceWorker' in navigator && window.location.protocol !== 'file:'){

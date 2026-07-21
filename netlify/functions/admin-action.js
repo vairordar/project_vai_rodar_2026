@@ -753,6 +753,81 @@ exports.handler = async (event) => {
       return json(200, { success: true, data: result });
     }
 
+    if (action === 'setWorkshopPlan') {
+      const workshopId = cleanText(payload.workshop_id, 80);
+      const plan = cleanText(payload.plan, 20).toLowerCase();
+      if (!workshopId || !['free', 'pro'].includes(plan)) {
+        return json(400, { success: false, error: 'workshop_id e plan (free/pro) sao obrigatorios.' });
+      }
+      const update = {
+        plan,
+        plan_selected_at: new Date().toISOString(),
+      };
+      // Precio particular para este cliente (override del oficial).
+      // null/vacío = vuelve al precio de la tabla plans.
+      if (payload.custom_price !== undefined) {
+        const price = payload.custom_price === null || payload.custom_price === ''
+          ? null : Number(payload.custom_price);
+        if (price !== null && (!Number.isFinite(price) || price < 0)) {
+          return json(400, { success: false, error: 'custom_price invalido.' });
+        }
+        update.plan_price = price;
+      }
+      const result = await supabaseRequest(`/rest/v1/workshops?id=eq.${encodeURIComponent(workshopId)}`, {
+        method: 'PATCH',
+        body: update,
+      });
+      if (!Array.isArray(result) || !result.length) {
+        return json(404, { success: false, error: 'Oficina nao encontrada.' });
+      }
+      await writeAudit(
+        'workshop_plan_changed',
+        'workshops',
+        workshopId,
+        `Plano alterado para ${plan}.${update.plan_price !== undefined ? ` Preco particular: ${update.plan_price === null ? 'precio oficial' : update.plan_price}.` : ''}`,
+        update
+      );
+      return json(200, { success: true, data: result });
+    }
+
+    if (action === 'updatePlanCatalog') {
+      const code = cleanText(payload.code, 20).toLowerCase();
+      if (!['free', 'pro'].includes(code)) {
+        return json(400, { success: false, error: 'code (free/pro) obrigatorio.' });
+      }
+      const update = {};
+      if (payload.name !== undefined) update.name = cleanText(payload.name, 80);
+      if (payload.description !== undefined) update.description = cleanText(payload.description, 300) || null;
+      if (payload.price_monthly !== undefined) {
+        const price = payload.price_monthly === null || payload.price_monthly === ''
+          ? null : Number(payload.price_monthly);
+        if (price !== null && (!Number.isFinite(price) || price < 0)) {
+          return json(400, { success: false, error: 'price_monthly invalido.' });
+        }
+        update.price_monthly = price;
+      }
+      if (payload.benefits !== undefined) {
+        update.benefits = Array.isArray(payload.benefits)
+          ? payload.benefits.map((b) => cleanText(b, 120)).filter(Boolean)
+          : [];
+      }
+      if (payload.active !== undefined) update.active = Boolean(payload.active);
+      if (!Object.keys(update).length) return json(400, { success: false, error: 'Nenhum campo valido para atualizar.' });
+
+      const result = await supabaseRequest(`/rest/v1/plans?code=eq.${encodeURIComponent(code)}`, {
+        method: 'PATCH',
+        body: update,
+      });
+      await writeAudit(
+        'plan_catalog_updated',
+        'plans',
+        null,
+        `Plano ${code} atualizado: ${Object.keys(update).join(', ')}.`,
+        { code, ...update }
+      );
+      return json(200, { success: true, data: result });
+    }
+
     return json(400, { success: false, error: 'Acao admin desconhecida.' });
   } catch (error) {
     console.error('[admin-action]', error.message);

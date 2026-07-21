@@ -1,6 +1,6 @@
 const https = require('https');
 const { json, supabaseRequest } = require('./admin-common');
-const { sendPushToUser } = require('./push-core');
+const { sendPushToUser, sendPushToAdmins } = require('./push-core');
 
 // Notifica eventos reais de proposta (criada / aceita / recusada) e de mensagens de chat:
 // 1. Insere uma linha real em public.notifications (a campainha do user-app le essa tabela).
@@ -80,6 +80,18 @@ async function insertNotification({ userId, type, title, detail, link }) {
   });
 }
 
+async function notifyAdmins(title, body) {
+  return sendPushToAdmins({ title, body, url: '/admin/' })
+    .catch((error) => {
+      console.warn('[notify-event admin]', error.message);
+      return { sent: 0, failed: 0 };
+    });
+}
+
+function postgresIn(values) {
+  return values.map((value) => `"${String(value).replace(/"/g, '')}"`).join(',');
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return json(200, {});
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method Not Allowed' });
@@ -118,7 +130,50 @@ exports.handler = async (event) => {
         body: text,
         url: '/',
       });
-      return json(200, { ok: true, push });
+      const adminPush = await notifyAdmins('Nova mensagem na plataforma', `${senderName}: ${text}`);
+      return json(200, { ok: true, push, adminPush });
+    }
+
+    if (eventType === 'service_request_created') {
+      const requestId = String(payload.requestId || '').trim();
+      if (!requestId) return json(400, { error: 'requestId obrigatorio.' });
+      const requestRows = await supabaseRequest(
+        `/rest/v1/service_requests?id=eq.${encodeURIComponent(requestId)}&select=id,user_id,title,category,target_business_type,selected_business_ids,status`
+      );
+      const request = Array.isArray(requestRows) ? requestRows[0] : null;
+      if (!request) return json(404, { error: 'Solicitacao nao encontrada.' });
+      if (callerUser.id !== request.user_id) return json(403, { error: 'Apenas o motorista pode notificar esta solicitacao.' });
+
+      const selectedIds = Array.isArray(request.selected_business_ids)
+        ? request.selected_business_ids.filter(Boolean)
+        : [];
+      let path = '/rest/v1/workshops?approval_status=eq.approved&visible=eq.true&open=eq.true&select=id,name,owner_id,business_type,services';
+      if (selectedIds.length) path += `&id=in.(${postgresIn(selectedIds)})`;
+      const workshopRows = await supabaseRequest(path);
+      const category = String(request.category || '').trim().toLocaleLowerCase('pt-BR');
+      const targetType = String(request.target_business_type || 'workshop').trim();
+      const eligible = (Array.isArray(workshopRows) ? workshopRows : []).filter((workshop) => {
+        if (!workshop.owner_id) return false;
+        if (targetType && String(workshop.business_type || 'workshop') !== targetType) return false;
+        if (selectedIds.length || !category) return true;
+        return (Array.isArray(workshop.services) ? workshop.services : [])
+          .some((service) => String(service || '').trim().toLocaleLowerCase('pt-BR') === category);
+      });
+      const title = 'Nova solicitacao recebida';
+      const detail = `${request.category || 'Servico'}: ${request.title || 'Novo pedido de motorista'}.`;
+      const pushes = [];
+      for (const workshop of eligible) {
+        await insertNotification({
+          userId: workshop.owner_id,
+          type: 'quote',
+          title,
+          detail,
+          link: '/',
+        });
+        pushes.push(await sendPushToUser(workshop.owner_id, { title, body: detail, url: '/oficinas/painel/' }));
+      }
+      const adminPush = await notifyAdmins('Nova solicitacao de motorista', detail);
+      return json(200, { ok: true, recipients: eligible.length, pushes, adminPush });
     }
 
     // Flujo propuesta→reserva (RPCs de 20260720): la notificación
@@ -163,7 +218,8 @@ exports.handler = async (event) => {
           .catch((error) => { console.warn('[notify-event reservation_flow]', error.message); return null; });
         pushes.push(push);
       }
-      return json(200, { ok: true, pushes });
+      const adminPush = await notifyAdmins(flow.title, `${reservation.workshops.name || 'Oficina'}: ${flow.body}`);
+      return json(200, { ok: true, pushes, adminPush });
     }
 
     if (eventType === 'reservation_status_changed') {
@@ -191,7 +247,8 @@ exports.handler = async (event) => {
       const detail = `${workshopName} ${verb} sua reserva (${reservation.service_type || 'servico'}).`;
       await insertNotification({ userId: reservation.user_id, type: 'quote', title, detail, link: '/' });
       const push = await sendPushToUser(reservation.user_id, { title, body: detail, url: '/' });
-      return json(200, { ok: true, push });
+      const adminPush = await notifyAdmins(title, detail);
+      return json(200, { ok: true, push, adminPush });
     }
 
     const proposalId = String(payload.proposalId || '').trim();
@@ -218,7 +275,8 @@ exports.handler = async (event) => {
         body: `${workshopName} respondeu sua solicitacao: ${requestTitle}.`,
         url: '/',
       });
-      return json(200, { ok: true, push });
+      const adminPush = await notifyAdmins('Nova proposta enviada', `${workshopName} respondeu: ${requestTitle} (${priceText}).`);
+      return json(200, { ok: true, push, adminPush });
     }
 
     if (eventType === 'proposal_accepted' || eventType === 'proposal_declined') {
@@ -236,7 +294,11 @@ exports.handler = async (event) => {
         body: `O motorista ${accepted ? 'aceitou' : 'recusou'} sua proposta: ${requestTitle}.`,
         url: '/',
       });
-      return json(200, { ok: true, push });
+      const adminPush = await notifyAdmins(
+        accepted ? 'Proposta aceita' : 'Proposta recusada',
+        `${workshopName}: ${requestTitle}.`
+      );
+      return json(200, { ok: true, push, adminPush });
     }
 
     return json(400, { error: 'Evento desconhecido.' });

@@ -84,6 +84,9 @@ console.log("\n6. admin-backoffice → dist/admin/");
 copyFile(path.join(APPS, "admin-backoffice", "index.html"), path.join(DIST, "admin", "index.html"));
 copyDir( path.join(APPS, "admin-backoffice", "assets"),     path.join(DIST, "admin", "assets"));
 
+// Guia operacional enlazada desde el CRM WhatsApp.
+copyFile(path.join(ROOT, "docs", "guia-configuracion-whatsapp-cloud.md"), path.join(DIST, "docs", "guia-configuracion-whatsapp-cloud.md"));
+
 // ─── Resumen ───────────────────────────────────────────────────
 console.log("\n✅ dist/ generado:\n");
 console.log("  /                   → user-app");

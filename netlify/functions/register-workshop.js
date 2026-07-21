@@ -1,5 +1,6 @@
 const https = require('https');
 const { geocodeAddress } = require('./geocode-helper');
+const { sendPushToAdmins } = require('./push-core');
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
@@ -158,6 +159,19 @@ exports.handler = async (event) => {
       }
     }
 
+    // Plan elegido en el cadastro (free | pro). Debe existir y estar
+    // activo en la tabla plans. Sin plan enviado (frontend viejo) = free.
+    let selectedPlan = 'free';
+    if (body.plan !== undefined) {
+      selectedPlan = cleanText(body.plan, 20).toLowerCase();
+      const planRows = await supabaseRequest(
+        `/rest/v1/plans?code=eq.${encodeURIComponent(selectedPlan)}&active=eq.true&select=code&limit=1`
+      ).catch(() => []);
+      if (!Array.isArray(planRows) || !planRows.length) {
+        return json(400, { success: false, error: 'Plano invalido ou indisponivel.' });
+      }
+    }
+
     const ownerName = cleanText(body.owner_name || workshop.responsible_name, 160);
     const now = new Date().toISOString();
     const user = await getOrCreateUser(email, password, {
@@ -214,6 +228,8 @@ exports.handler = async (event) => {
       visible: false,
       open: false,
       subscription_status: 'pending_payment',
+      plan: selectedPlan,
+      plan_selected_at: now,
     };
 
     const geocoded = await geocodeAddress({
@@ -265,6 +281,12 @@ exports.handler = async (event) => {
         });
       }
     }
+
+    await sendPushToAdmins({
+      title: 'Novo comercio pendente',
+      body: `${savedWorkshop?.name || payload.name} concluiu o cadastro e aguarda aprovacao.`,
+      url: '/admin/',
+    }).catch((error) => console.warn('[register-workshop admin push]', error.message));
 
     return json(200, { success: true, user_id: user.id, workshop: savedWorkshop });
   } catch (error) {

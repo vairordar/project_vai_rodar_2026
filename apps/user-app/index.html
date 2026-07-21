@@ -6433,10 +6433,30 @@ async function createServiceRequestRecord({isPart,vehicle,description,address,or
     }).select("id").single();
     if(error) throw error;
     await loadUserVehicleListings();
+    await notifyServiceRequestCreated(data?.id);
     return data?.id||null;
   }catch(error){
     console.error("[Service request]",error.message);
     throw error;
+  }
+}
+async function notifyServiceRequestCreated(requestId){
+  try{
+    if(!requestId||!sb) return;
+    const {data}=await sb.auth.getSession();
+    const token=data?.session?.access_token;
+    if(!token) return;
+    const response=await fetch("/.netlify/functions/notify-event",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body:JSON.stringify({event:"service_request_created",requestId}),
+    });
+    if(!response.ok){
+      const result=await response.json().catch(()=>null);
+      console.warn("[service-request-push]",response.status,result);
+    }
+  }catch(error){
+    console.warn("[service-request-push]",error.message);
   }
 }
 async function uploadRequestPhotos(requestId,files){

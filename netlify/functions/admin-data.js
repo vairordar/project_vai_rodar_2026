@@ -59,6 +59,7 @@ exports.handler = async (event) => {
       crmContacts,
       crmMessages,
       crmTemplates,
+      plansCatalog,
     ] = await Promise.all([
       readRequired('/rest/v1/admin_workshops_overview?select=*&limit=1000', 'Oficinas'),
       readMaybe('/rest/v1/admin_dashboard_summary?select=*&limit=1', []),
@@ -90,6 +91,7 @@ exports.handler = async (event) => {
       readMaybe('/rest/v1/crm_contacts?select=*,workshops(name)&order=last_message_at.desc.nullslast&limit=2000', []),
       readMaybe('/rest/v1/crm_messages?select=*&order=created_at.desc&limit=3000', []),
       readMaybe('/rest/v1/crm_templates?select=*&order=created_at.desc&limit=200', []),
+      readMaybe('/rest/v1/plans?select=*&order=sort_order.asc&limit=20', []),
     ]);
 
     const workshopRows = asList(workshops);
@@ -146,6 +148,7 @@ exports.handler = async (event) => {
         crmContacts: asList(crmContacts),
         crmMessages: asList(crmMessages),
         crmTemplates: asList(crmTemplates),
+        plansCatalog: asList(plansCatalog),
       },
     });
   } catch (error) {

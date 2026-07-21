@@ -12,15 +12,40 @@ function assertPushConfig() {
   );
 }
 
-async function markInactive(id) {
+async function markInactive(id, table = 'push_subscriptions') {
   if (!id) return;
-  await supabaseRequest(`/rest/v1/push_subscriptions?id=eq.${encodeURIComponent(id)}`, {
+  await supabaseRequest(`/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, {
     method: 'PATCH',
     body: { active: false, updated_at: new Date().toISOString() },
   }).catch(() => null);
 }
 
-async function sendPushToUser(userId, { title, body, url } = {}) {
+async function sendRows(subscriptions, notification, table) {
+  if (!Array.isArray(subscriptions) || !subscriptions.length) return { sent: 0, failed: 0 };
+  const results = await Promise.allSettled(subscriptions.map(async (row) => {
+    try {
+      await webpush.sendNotification(row.subscription, JSON.stringify(notification));
+      return { id: row.id, ok: true };
+    } catch (error) {
+      if (error.statusCode === 404 || error.statusCode === 410) await markInactive(row.id, table);
+      throw error;
+    }
+  }));
+  return {
+    sent: results.filter((item) => item.status === 'fulfilled').length,
+    failed: results.filter((item) => item.status === 'rejected').length,
+  };
+}
+
+function notificationPayload({ title, body, url } = {}) {
+  return {
+    title: String(title || 'Vai Rodar').slice(0, 80),
+    body: String(body || '').slice(0, 180),
+    url: String(url || '/').slice(0, 300),
+  };
+}
+
+async function sendPushToUser(userId, notification = {}) {
   if (!userId) return { sent: 0, failed: 0 };
   try {
     assertPushConfig();
@@ -39,28 +64,20 @@ async function sendPushToUser(userId, { title, body, url } = {}) {
     return { sent: 0, failed: 0 };
   }
 
-  if (!Array.isArray(subscriptions) || !subscriptions.length) return { sent: 0, failed: 0 };
-
-  const notification = {
-    title: String(title || 'Vai Rodar').slice(0, 80),
-    body: String(body || '').slice(0, 180),
-    url: String(url || '/').slice(0, 300),
-  };
-
-  const results = await Promise.allSettled(subscriptions.map(async (row) => {
-    try {
-      await webpush.sendNotification(row.subscription, JSON.stringify(notification));
-      return { id: row.id, ok: true };
-    } catch (error) {
-      if (error.statusCode === 404 || error.statusCode === 410) await markInactive(row.id);
-      throw error;
-    }
-  }));
-
-  return {
-    sent: results.filter((item) => item.status === 'fulfilled').length,
-    failed: results.filter((item) => item.status === 'rejected').length,
-  };
+  return sendRows(subscriptions, notificationPayload(notification), 'push_subscriptions');
 }
 
-module.exports = { sendPushToUser };
+async function sendPushToAdmins(notification = {}) {
+  try {
+    assertPushConfig();
+    const subscriptions = await supabaseRequest(
+      '/rest/v1/admin_push_subscriptions?active=eq.true&select=id,subscription'
+    );
+    return sendRows(subscriptions, notificationPayload({ ...notification, url: notification.url || '/admin/' }), 'admin_push_subscriptions');
+  } catch (error) {
+    console.warn('[push-core] admin:', error.message);
+    return { sent: 0, failed: 0 };
+  }
+}
+
+module.exports = { sendPushToUser, sendPushToAdmins };
