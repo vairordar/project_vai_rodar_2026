@@ -3,6 +3,8 @@
 El CRM ya está construido y desplegable SIN esta configuración (modo
 preparación: contactos, notas, plantillas e importación funcionan).
 El envío y la recepción de mensajes se activan al completar esta guía.
+Se puede comenzar con el número de prueba de Meta y cambiar después al
+número brasileño sin modificar el código.
 
 ## 1. Requisitos en Meta
 
@@ -19,6 +21,8 @@ El envío y la recepción de mensajes se activan al completar esta guía.
 2. En el panel de la app → **Add product** → **WhatsApp** → Set up.
 3. En **WhatsApp → API Setup** vas a ver:
    - **Phone number ID** → esta es `WHATSAPP_PHONE_NUMBER_ID`
+   - **WhatsApp Business Account ID** → esta es
+     `WHATSAPP_BUSINESS_ACCOUNT_ID`
    - Un token temporal de prueba (dura 24h). Para producción:
 4. Token permanente: **Business Settings → Users → System users** →
    crear system user (rol Admin) → **Generate token** → seleccionar la
@@ -27,6 +31,8 @@ El envío y la recepción de mensajes se activan al completar esta guía.
    → este es `WHATSAPP_TOKEN`.
 5. Registrar el número real: **WhatsApp → API Setup → Add phone
    number**, seguir la verificación por SMS/llamada.
+6. En **Configuración de la app → Básica**, copiar la clave secreta de
+   la app → esta es `WHATSAPP_APP_SECRET`.
 
 ## 3. Configurar el webhook
 
@@ -46,8 +52,10 @@ El envío y la recepción de mensajes se activan al completar esta guía.
 | --- | --- |
 | `WHATSAPP_TOKEN` | token permanente del system user |
 | `WHATSAPP_PHONE_NUMBER_ID` | Phone number ID del paso 2.3 |
+| `WHATSAPP_BUSINESS_ACCOUNT_ID` | WhatsApp Business Account ID |
 | `WHATSAPP_VERIFY_TOKEN` | la clave secreta que inventaste |
-| `WHATSAPP_GRAPH_VERSION` | (opcional) default `v20.0` |
+| `WHATSAPP_GRAPH_VERSION` | versión de Graph API, actualmente `v25.0` |
+| `WHATSAPP_APP_SECRET` | clave secreta de la app de Meta |
 
 Después de agregarlas: **redeploy** del sitio para que las funciones
 las tomen. Nunca poner estos valores en el HTML ni en el repo.
@@ -73,11 +81,24 @@ aprobada por Meta**.
 
 ## 6. Prueba de humo
 
-1. Con todo configurado, agregá tu propio número como contacto en el
-   CRM y enviate la plantilla → debe llegar al WhatsApp.
-2. Respondé desde tu WhatsApp → el mensaje debe aparecer en el hilo
+1. En **WhatsApp → API Setup**, agregá y verificá tu teléfono personal
+   como destinatario permitido del número de prueba.
+2. Agregá ese mismo teléfono como contacto en el CRM y enviate la
+   plantilla de prueba `hello_world` → debe llegar al WhatsApp.
+3. Respondé desde tu WhatsApp → el mensaje debe aparecer en el hilo
    del contacto en el CRM (webhook funcionando) y el estado del
    enviado debe pasar a `delivered`/`read`.
+
+## Cambio al número brasileño
+
+Cuando esté disponible el número definitivo:
+
+1. Registrarlo y verificarlo en WhatsApp Manager.
+2. Sustituir `WHATSAPP_PHONE_NUMBER_ID` en Netlify.
+3. Sustituir `WHATSAPP_BUSINESS_ACCOUNT_ID` si Meta creó otra cuenta.
+4. Sustituir el token temporal por un token permanente.
+5. Mantener la misma URL del webhook y el mismo
+   `WHATSAPP_VERIFY_TOKEN`.
 
 ## Límites a tener en cuenta
 

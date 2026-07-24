@@ -3,9 +3,27 @@
 // - POST: mensajes entrantes y actualizaciones de estado (sent/delivered/read).
 // Usa service role para escribir en crm_contacts / crm_messages.
 // Si las variables de entorno no están configuradas, responde 503 sin romper.
+const crypto = require('crypto');
 const { supabaseRequest, json, corsHeaders } = require('./admin-common');
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || '';
+const APP_SECRET = process.env.WHATSAPP_APP_SECRET || '';
+
+function webhookSignatureIsValid(event) {
+  if (!APP_SECRET) return false;
+  const headers = event.headers || {};
+  const supplied = String(
+    headers['x-hub-signature-256']
+    || headers['X-Hub-Signature-256']
+    || ''
+  );
+  const expected = `sha256=${crypto
+    .createHmac('sha256', APP_SECRET)
+    .update(event.body || '', 'utf8')
+    .digest('hex')}`;
+  if (supplied.length !== expected.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(expected));
+}
 
 function normalizePhone(value) {
   const digits = String(value || '').replace(/\D/g, '');
@@ -42,6 +60,8 @@ exports.handler = async (event) => {
   }
 
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
+  if (!APP_SECRET) return json(503, { error: 'WHATSAPP_APP_SECRET nao configurado no Netlify.' });
+  if (!webhookSignatureIsValid(event)) return json(401, { error: 'Assinatura do webhook invalida.' });
 
   try {
     const payload = JSON.parse(event.body || '{}');
