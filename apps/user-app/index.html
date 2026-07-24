@@ -4619,7 +4619,18 @@ async function loadPublicOffices(){
 function officeCoordinates(office){
   const lat=Number(office.latitude??office.lat);
   const lng=Number(office.longitude??office.lng);
-  if(Number.isFinite(lat)&&Number.isFinite(lng)) return [lat,lng];
+  const inBrazil=(latitude,longitude)=>Number.isFinite(latitude)
+    &&Number.isFinite(longitude)
+    &&latitude>=-35&&latitude<=6
+    &&longitude>=-75&&longitude<=-28;
+  if(inBrazil(lat,lng)) return [lat,lng];
+  if(inBrazil(lng,lat)){
+    console.warn(`[Oficinas] Coordenadas invertidas corrigidas no mapa para "${office.name}".`);
+    return [lng,lat];
+  }
+  if(Number.isFinite(lat)||Number.isFinite(lng)){
+    console.warn(`[Oficinas] Coordenadas fora do Brasil ignoradas para "${office.name}":`,lat,lng);
+  }
   return null;
 }
 function ensureOfficeMap(){

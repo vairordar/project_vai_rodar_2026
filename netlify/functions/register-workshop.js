@@ -227,6 +227,8 @@ exports.handler = async (event) => {
       approval_status: 'pending',
       visible: false,
       open: false,
+      latitude: null,
+      longitude: null,
       subscription_status: 'pending_payment',
       plan: selectedPlan,
       plan_selected_at: now,
@@ -255,6 +257,21 @@ exports.handler = async (event) => {
         });
 
     const savedWorkshop = Array.isArray(saved) ? saved[0] : saved;
+
+    if (savedWorkshop?.id) {
+      await supabaseRequest('/rest/v1/workshop_owner_details?on_conflict=workshop_id', {
+        method: 'POST',
+        prefer: 'resolution=merge-duplicates,return=minimal',
+        body: {
+          workshop_id: savedWorkshop.id,
+          responsible_name: ownerName,
+          cnpj: payload.cnpj,
+          no_cnpj: !payload.cnpj,
+          contact_phone: payload.contact_phone,
+          contact_email: email,
+        },
+      });
+    }
 
     // Relaciones por ID en workshop_categories. Si esto falla, el
     // registro NO se reporta como exitoso (sin éxito silencioso).

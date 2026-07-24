@@ -413,6 +413,9 @@ exports.handler = async (event) => {
         if (geocoded) {
           update.latitude = geocoded.latitude;
           update.longitude = geocoded.longitude;
+        } else {
+          update.latitude = null;
+          update.longitude = null;
         }
       }
 

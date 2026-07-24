@@ -193,6 +193,20 @@ button{cursor:pointer}
 .detail-row{border:1px solid var(--line);border-radius:10px;background:var(--soft);padding:9px}
 .detail-row small{font-size:8px;text-transform:uppercase;font-weight:850;color:var(--muted)}
 .detail-row b,.detail-row span{display:block;font-size:11px;line-height:1.35;margin-top:3px}
+.account-settings{display:grid;gap:8px;margin-top:10px}
+.notification-setting{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:11px}
+.notification-setting-copy{min-width:0}
+.notification-setting-copy b{display:block;font-size:11px}
+.notification-setting-copy small{display:block;color:var(--muted);font-size:9px;line-height:1.4;margin-top:3px}
+.account-buttons{display:flex;gap:7px;flex-wrap:wrap}
+.account-buttons .btn{min-height:38px}
+.password-mask{letter-spacing:3px}
+@media(max-width:560px){
+  .notification-setting{align-items:stretch;flex-direction:column}
+  .notification-setting .btn{width:100%}
+  .account-buttons{display:grid}
+  .account-buttons .btn{width:100%}
+}
 .vehicle-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
 .compact-detail{display:grid;gap:10px}
 .compact-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -551,7 +565,7 @@ button{cursor:pointer}
 
         <section class="view" id="view-account">
           <div class="grid">
-            <section class="panel"><div class="panel-head"><div><h3>Dados da empresa</h3><p>Informacoes privadas, acesso, fiscal, responsavel e relacao com Vai Rodar.</p></div></div><div class="detail-block" id="accountDetail"></div><div class="actions"><button class="btn secondary" id="enablePushBtn" type="button">Ativar notificacoes</button><small id="pushStatus" aria-live="polite">Receba novos pedidos, mensagens, propostas e reservas neste dispositivo.</small><button class="btn secondary" id="resetPasswordBtn" type="button">Enviar reset de senha</button><button class="btn danger" id="signOutBtn" type="button">Sair</button></div></section>
+            <section class="panel"><div class="panel-head"><div><h3>Dados da empresa</h3><p>Informacoes privadas, acesso, fiscal, responsavel e relacao com Vai Rodar.</p></div></div><div class="detail-block" id="accountDetail"></div><div class="account-settings"><div class="notification-setting"><div class="notification-setting-copy"><b>Notificacoes neste dispositivo</b><small id="pushStatus" aria-live="polite">Receba novos pedidos, mensagens, propostas e reservas.</small></div><button class="btn secondary" id="enablePushBtn" type="button">Ativar notificacoes</button></div><div class="account-buttons"><button class="btn secondary" id="resetPasswordBtn" type="button">Enviar reset de senha</button><button class="btn danger" id="signOutBtn" type="button">Sair</button></div></div></section>
             <aside class="panel"><div class="panel-head"><div><h3>Checklist</h3><p>Separacao entre vitrine publica e dados privados.</p></div></div><div class="list"><div class="item"><h4>Perfil publico</h4><small>Logo, descricao, endereco visivel, categorias e subcategorias.</small></div><div class="item"><h4>Dados privados</h4><small>CNPJ, responsavel, telefone interno, e-mail de acesso e assinatura.</small></div><div class="item"><h4>Operacao</h4><small>Agenda, reservas, propostas e capacidade por horario.</small></div></div></aside>
           </div>
         </section>
@@ -1148,16 +1162,33 @@ async function createConversationFromRequest(requestId){
 }
 function renderThreads(){
   const list=$("threadList");
-  if(!state.conversations.length){list.innerHTML='<div class="empty">Nenhuma conversa ainda.</div>';$("chatLog").innerHTML='<div class="empty">Selecione uma conversa.</div>';return;}
-  if(!state.activeConversation)state.activeConversation=state.conversations[0].id;
+  const reservationActions=$("createReservationFromChatBtn")?.closest(".chat-reservation-actions");
+  const composer=$("chatInput")?.closest(".compose");
+  if(!state.conversations.length){
+    state.activeConversation=null;
+    state.messages=[];
+    if(state.channel){sb.removeChannel(state.channel);state.channel=null;}
+    list.innerHTML='<div class="empty">Nenhuma conversa ainda.</div>';
+    $("chatTitle").textContent="Nenhuma conversa selecionada";
+    $("chatMeta").textContent="As conversas com motoristas aparecerao aqui.";
+    $("chatLog").innerHTML='<div class="empty">Selecione uma conversa para ver as mensagens.</div>';
+    if(reservationActions)reservationActions.style.display="none";
+    if(composer)composer.style.display="none";
+    return;
+  }
+  if(!state.conversations.some((item)=>item.id===state.activeConversation))state.activeConversation=state.conversations[0].id;
+  if(reservationActions)reservationActions.style.display="";
+  if(composer)composer.style.display="";
   list.innerHTML=state.conversations.map((conversation)=>{const name=conversation.profiles?.name||conversation.profiles?.email?.split("@")[0]||"Motorista";return `<button class="thread ${conversation.id===state.activeConversation?"active":""}" data-conversation-id="${esc(conversation.id)}" type="button"><h4>${esc(name)}</h4><small>${new Date(conversation.updated_at).toLocaleDateString("pt-BR")} - Toque para abrir</small></button>`;}).join("");
   list.querySelectorAll("[data-conversation-id]").forEach((button)=>button.addEventListener("click",()=>openConversation(button.dataset.conversationId)));
   if(state.activeConversation)openConversation(state.activeConversation,true);
 }
 async function openConversation(conversationId,silent){
+  const conversation=state.conversations.find((item)=>item.id===conversationId);
+  if(!conversation){state.activeConversation=null;renderThreads();return;}
   state.activeConversation=conversationId;
   if(state.channel){sb.removeChannel(state.channel);state.channel=null;}
-  const conversation=state.conversations.find((item)=>item.id===conversationId);const name=conversation?.profiles?.name||conversation?.profiles?.email?.split("@")[0]||"Motorista";
+  const name=conversation.profiles?.name||conversation.profiles?.email?.split("@")[0]||"Motorista";
   $("chatTitle").textContent=name;$("chatMeta").textContent=conversation?.profiles?.email||"Conversa";
   if(!silent)renderThreads();
   $("chatLog").innerHTML='<div class="empty">Carregando mensagens...</div>';
@@ -1769,9 +1800,23 @@ async function createOffer(event){
   state.localOffers.unshift(offer);localStorage.setItem("vr_workshop_offers",JSON.stringify(state.localOffers));event.target.reset();renderOffers();renderOnboardingChecklist();toast("Oferta salva como rascunho local.");
   submit.disabled=false;submit.textContent="Criar oferta";
 }
-function ownerFromDescription(){const desc=state.workshop?.description||"";const match=desc.match(/Respons[aÃ¡]vel:\s*([^Â·]+)/i);return match?match[1].trim():"Nao informado";}
-function cnpjFromDescription(){const desc=state.workshop?.description||"";const match=desc.match(/CNPJ:\s*([^Â·]+)/i);return match?match[1].trim():(desc.includes("Sem CNPJ")?"Sem CNPJ":"Nao informado");}
-function renderAccount(){const owner=state.ownerDetails||{};$("accountDetail").innerHTML=`<div class="detail-row"><small>E-mail de acesso</small><b>${esc(state.user?.email||"-")}</b></div><div class="detail-row"><small>Senha</small><b>â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢</b><span>Use o botao de reset para trocar a senha com seguranca.</span></div><div class="detail-row"><small>Empresa</small><b>${esc(state.workshop?.name||"Nao vinculada")}</b><span>CNPJ: ${esc(owner.cnpj||cnpjFromDescription())}</span></div><div class="detail-row"><small>Responsavel</small><b>${esc(owner.responsible_name||ownerFromDescription())}</b><span>Contato: ${esc(owner.contact_phone||state.workshop?.whatsapp||state.workshop?.phone||"-")}</span></div>${owner.no_cnpj?'<div class="detail-row"><small>CNPJ</small><span>Oficina registrada sem CNPJ.</span></div>':""}<div class="detail-row"><small>ID da oficina</small><span>${esc(state.workshop?.id||"Crie/corrija a linha em workshops.owner_id")}</span></div><button class="btn secondary" type="button" onclick="openChangeRequest()" style="width:100%;margin-top:10px">Solicitar alteracao de dados</button>`;}
+function ownerFromDescription(){
+  const desc=state.workshop?.description||"";
+  const match=desc.match(/Respons(?:a|á)vel:\s*([^·|]+)/i);
+  return match?match[1].trim():"Nao informado";
+}
+function cnpjFromDescription(){
+  const desc=state.workshop?.description||"";
+  const match=desc.match(/CNPJ:\s*([^·|]+)/i);
+  return match?match[1].trim():(desc.includes("Sem CNPJ")?"Sem CNPJ":"Nao informado");
+}
+function renderAccount(){
+  const owner=state.ownerDetails||{};
+  const responsibleName=owner.responsible_name||state.workshop?.responsible_name||ownerFromDescription();
+  const contactPhone=owner.contact_phone||state.workshop?.contact_phone||state.workshop?.whatsapp||state.workshop?.phone||"-";
+  const cnpj=owner.cnpj||state.workshop?.cnpj||cnpjFromDescription();
+  $("accountDetail").innerHTML=`<div class="detail-row"><small>E-mail de acesso</small><b>${esc(state.user?.email||"-")}</b></div><div class="detail-row"><small>Senha</small><b class="password-mask">********</b><span>Use o botao de reset para trocar a senha com seguranca.</span></div><div class="detail-row"><small>Empresa</small><b>${esc(state.workshop?.name||"Nao vinculada")}</b><span>CNPJ: ${esc(cnpj)}</span></div><div class="detail-row"><small>Responsavel</small><b>${esc(responsibleName)}</b><span>Contato: ${esc(contactPhone)}</span></div>${owner.no_cnpj?'<div class="detail-row"><small>CNPJ</small><span>Oficina registrada sem CNPJ.</span></div>':""}<div class="detail-row"><small>ID da oficina</small><span>${esc(state.workshop?.id||"Crie/corrija a linha em workshops.owner_id")}</span></div><button class="btn secondary" type="button" onclick="openChangeRequest()" style="width:100%;margin-top:10px">Solicitar alteracao de dados</button>`;
+}
 async function requestProfileChange(fieldName,newValue,successMessage){
   if(!state.workshop?.id){toast("Perfil da oficina nao encontrado.");return;}
   if(state.demoMode){toast(successMessage||"Solicitacao enviada ao admin Vai Rodar.");return;}
