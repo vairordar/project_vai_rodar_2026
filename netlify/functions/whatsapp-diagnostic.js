@@ -50,6 +50,14 @@ function graphRequest(method, path) {
   });
 }
 
+function subscribedAppSummary(app) {
+  const details = app.whatsapp_business_api_data || app;
+  return {
+    id: details.id || null,
+    name: details.name || null,
+  };
+}
+
 exports.handler = async (event) => {
   if (!['GET', 'POST'].includes(event.httpMethod)) return json(405, { error: 'Method not allowed' });
   const headers = event.headers || {};
@@ -66,7 +74,7 @@ exports.handler = async (event) => {
       const subscribedApps = await graphRequest('GET', `${WABA_ID}/subscribed_apps`);
       return json(200, {
         subscription,
-        subscribed_app_ids: (subscribedApps.data || []).map((app) => app.id),
+        subscribed_apps: (subscribedApps.data || []).map(subscribedAppSummary),
       });
     }
 
@@ -88,7 +96,7 @@ exports.handler = async (event) => {
       meta: await graphRequest('GET', `${WABA_ID}/subscribed_apps`)
         .then((result) => ({
           waba_id: WABA_ID,
-          subscribed_app_ids: (result.data || []).map((app) => app.id),
+          subscribed_apps: (result.data || []).map(subscribedAppSummary),
         }))
         .catch((error) => ({ waba_id: WABA_ID, error: error.message })),
     });
