@@ -92,6 +92,28 @@ function postgresIn(values) {
   return values.map((value) => `"${String(value).replace(/"/g, '')}"`).join(',');
 }
 
+const CATEGORY_ALIASES = new Map([
+  ['revisao geral / manutencao preventiva', 'mecanica geral'],
+  ['troca de oleo e filtros', 'oleo e filtros'],
+  ['freios e suspensao', 'freios'],
+  ['motor e transmissao', 'mecanica geral'],
+  ['eletrica automotiva', 'bateria e eletrica'],
+  ['pneus e alinhamento', 'pneus'],
+  ['diagnostico computadorizado', 'mecanica geral'],
+  ['vidros e acessorios', 'vidros e para-brisas'],
+  ['blindagem', 'acessorios'],
+  ['lavagem e estetica', 'estetica automotiva'],
+]);
+
+function normalizeCategory(value) {
+  const normalized = String(value || '')
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+  return CATEGORY_ALIASES.get(normalized) || normalized;
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return json(200, {});
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method Not Allowed' });
@@ -150,14 +172,14 @@ exports.handler = async (event) => {
       let path = '/rest/v1/workshops?approval_status=eq.approved&visible=eq.true&open=eq.true&select=id,name,owner_id,business_type,services';
       if (selectedIds.length) path += `&id=in.(${postgresIn(selectedIds)})`;
       const workshopRows = await supabaseRequest(path);
-      const category = String(request.category || '').trim().toLocaleLowerCase('pt-BR');
+      const category = normalizeCategory(request.category);
       const targetType = String(request.target_business_type || 'workshop').trim();
       const eligible = (Array.isArray(workshopRows) ? workshopRows : []).filter((workshop) => {
         if (!workshop.owner_id) return false;
         if (targetType && String(workshop.business_type || 'workshop') !== targetType) return false;
         if (selectedIds.length || !category) return true;
         return (Array.isArray(workshop.services) ? workshop.services : [])
-          .some((service) => String(service || '').trim().toLocaleLowerCase('pt-BR') === category);
+          .some((service) => normalizeCategory(service) === category);
       });
       const title = 'Nova solicitacao recebida';
       const detail = `${request.category || 'Servico'}: ${request.title || 'Novo pedido de motorista'}.`;

@@ -10,27 +10,43 @@
 const https = require('https');
 
 const CATEGORIES = [
-  'Revisao geral / Manutencao preventiva',
-  'Troca de oleo e filtros',
-  'Freios e suspensao',
-  'Motor e transmissao',
-  'Eletrica automotiva',
+  'Mecanica geral',
+  'Oleo e filtros',
+  'Freios',
+  'Pneus',
+  'Bateria e eletrica',
   'Ar-condicionado',
   'Funilaria e pintura',
-  'Pneus e alinhamento',
-  'Diagnostico computadorizado',
-  'Vidros e acessorios',
-  'Blindagem',
+  'Estetica automotiva',
+  'Vidros e para-brisas',
+  'Acessorios',
+  'Chaveiro automotivo',
 ];
 
 const CATEGORY_ALIASES = {
-  'Revisão geral / Manutenção preventiva': 'Revisao geral / Manutencao preventiva',
-  'Troca de óleo e filtros': 'Troca de oleo e filtros',
-  'Freios e suspensão': 'Freios e suspensao',
-  'Motor e transmissão': 'Motor e transmissao',
-  'Elétrica automotiva': 'Eletrica automotiva',
-  'Diagnóstico computadorizado': 'Diagnostico computadorizado',
-  'Vidros e acessórios': 'Vidros e acessorios',
+  'Mecânica geral': 'Mecanica geral',
+  'Óleo e filtros': 'Oleo e filtros',
+  'Bateria e elétrica': 'Bateria e eletrica',
+  'Estética automotiva': 'Estetica automotiva',
+  'Acessórios': 'Acessorios',
+  'Revisao geral / Manutencao preventiva': 'Mecanica geral',
+  'Revisão geral / Manutenção preventiva': 'Mecanica geral',
+  'Troca de oleo e filtros': 'Oleo e filtros',
+  'Troca de óleo e filtros': 'Oleo e filtros',
+  'Freios e suspensao': 'Freios',
+  'Freios e suspensão': 'Freios',
+  'Pneus e alinhamento': 'Pneus',
+  'Motor e transmissao': 'Mecanica geral',
+  'Motor e transmissão': 'Mecanica geral',
+  'Eletrica automotiva': 'Bateria e eletrica',
+  'Elétrica automotiva': 'Bateria e eletrica',
+  'Diagnostico computadorizado': 'Mecanica geral',
+  'Diagnóstico computadorizado': 'Mecanica geral',
+  'Vidros e acessorios': 'Vidros e para-brisas',
+  'Vidros e acessórios': 'Vidros e para-brisas',
+  'Lavagem e estetica': 'Estetica automotiva',
+  'Lavagem e estética': 'Estetica automotiva',
+  'Blindagem': 'Acessorios',
 };
 
 const INTENTS = new Set(['serviceQuote', 'partQuote', 'buy', 'sell', 'value', 'offers']);
@@ -70,24 +86,24 @@ Regras anti-repeticao (muito importante, leia o historico "conversation" com ate
 - Se o historico mostrar 2 ou mais respostas do motorista, prefira fechar com "missingQuestions" vazio em vez de insistir em mais uma pergunta, a menos que falte um dado claramente essencial sobre o proprio problema (sintoma, frequencia, intensidade) ainda nao mencionado. Placa e localizacao nunca contam como "dado essencial" aqui, pois nao sao perguntadas no chat.
 
 Categorias permitidas (use exatamente esses nomes):
-- "Revisao geral / Manutencao preventiva"
-- "Troca de oleo e filtros"
-- "Freios e suspensao"
-- "Motor e transmissao"
-- "Eletrica automotiva"
+- "Mecanica geral"
+- "Oleo e filtros"
+- "Freios"
+- "Pneus"
+- "Bateria e eletrica"
 - "Ar-condicionado"
 - "Funilaria e pintura"
-- "Pneus e alinhamento"
-- "Diagnostico computadorizado"
-- "Vidros e acessorios"
-- "Blindagem"
+- "Estetica automotiva"
+- "Vidros e para-brisas"
+- "Acessorios"
+- "Chaveiro automotivo"
 
 Formato obrigatorio:
 {
   "intent": "serviceQuote",
   "title": "Entendi seu problema.",
   "text": "Resposta simples para o motorista.",
-  "categories": ["Freios e suspensao", "Pneus e alinhamento"],
+  "categories": ["Freios", "Pneus"],
   "missingQuestions": ["Acontece ao frear, virar ou passar em buracos?"],
   "technicalSummary": "Cliente relata barulho ao virar a direita. Possiveis areas: suspensao, direcao, roda/rolamento. Solicita diagnostico com preco, prazo e disponibilidade.",
   "urgency": "normal",

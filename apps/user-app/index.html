@@ -2869,15 +2869,15 @@ body.theme-dark .account-listing-actions button.danger{
       <section class="home-services" id="homeOtherServices" aria-label="Serviços mais solicitados">
         <h3>Serviços mais solicitados</h3>
         <div class="home-service-grid">
-          <button class="home-service-btn" type="button" data-office-category="Troca de óleo e filtros">
+          <button class="home-service-btn" type="button" data-office-category="Óleo e filtros">
             <img class="home-service-icon" src="assets/service-icons/troca-oleo-filtros.png" alt="">
             <span>Óleo e filtros</span>
           </button>
-          <button class="home-service-btn" type="button" data-office-category="Freios e suspensão">
+          <button class="home-service-btn" type="button" data-office-category="Freios">
             <img class="home-service-icon" src="assets/service-icons/freios.png" alt="">
             <span>Freios</span>
           </button>
-          <button class="home-service-btn" type="button" data-office-category="Pneus e alinhamento">
+          <button class="home-service-btn" type="button" data-office-category="Pneus">
             <img class="home-service-icon" src="assets/service-icons/pneus.png" alt="">
             <span>Pneus</span>
           </button>
@@ -2885,11 +2885,11 @@ body.theme-dark .account-listing-actions button.danger{
             <img class="home-service-icon" src="assets/service-icons/ar-condicionado.png" alt="">
             <span>Ar-condicionado</span>
           </button>
-          <button class="home-service-btn" type="button" data-office-category="Lavagem e estética">
+          <button class="home-service-btn" type="button" data-office-category="Estética automotiva">
             <img class="home-service-icon" src="assets/service-icons/estetica-automotiva.png" alt="">
             <span>Estética automotiva</span>
           </button>
-          <button class="home-service-btn" type="button" data-office-category="Elétrica automotiva">
+          <button class="home-service-btn" type="button" data-office-category="Bateria e elétrica">
             <img class="home-service-icon" src="assets/service-icons/bateria-eletrica.png" alt="">
             <span>Bateria e elétrica</span>
           </button>
@@ -2995,16 +2995,17 @@ body.theme-dark .account-listing-actions button.danger{
             </div>
             <div class="office-map-controls">
               <div class="office-quick-cats" id="officeQuickCards">
-                <button class="office-quick-cat" type="button" data-category="Revisão geral / Manutenção preventiva"><img src="assets/service-icons/mechanica-geral.png" alt=""><span>Mecânica geral</span></button>
-                <button class="office-quick-cat" type="button" data-category="Troca de óleo e filtros"><img src="assets/service-icons/troca-oleo-filtros.png" alt=""><span>Óleo e filtros</span></button>
-                <button class="office-quick-cat" type="button" data-category="Freios e suspensão"><img src="assets/service-icons/freios.png" alt=""><span>Freios</span></button>
-                <button class="office-quick-cat" type="button" data-category="Pneus e alinhamento"><img src="assets/service-icons/pneus.png" alt=""><span>Pneus</span></button>
-                <button class="office-quick-cat" type="button" data-category="Elétrica automotiva"><img src="assets/service-icons/bateria-eletrica.png" alt=""><span>Bateria e elétrica</span></button>
+                <button class="office-quick-cat" type="button" data-category="Mecânica geral"><img src="assets/service-icons/mechanica-geral.png" alt=""><span>Mecânica geral</span></button>
+                <button class="office-quick-cat" type="button" data-category="Óleo e filtros"><img src="assets/service-icons/troca-oleo-filtros.png" alt=""><span>Óleo e filtros</span></button>
+                <button class="office-quick-cat" type="button" data-category="Freios"><img src="assets/service-icons/freios.png" alt=""><span>Freios</span></button>
+                <button class="office-quick-cat" type="button" data-category="Pneus"><img src="assets/service-icons/pneus.png" alt=""><span>Pneus</span></button>
+                <button class="office-quick-cat" type="button" data-category="Bateria e elétrica"><img src="assets/service-icons/bateria-eletrica.png" alt=""><span>Bateria e elétrica</span></button>
                 <button class="office-quick-cat" type="button" data-category="Ar-condicionado"><img src="assets/service-icons/ar-condicionado.png" alt=""><span>Ar-condicionado</span></button>
                 <button class="office-quick-cat" type="button" data-category="Funilaria e pintura"><img src="assets/service-icons/funilaria-pintura.png" alt=""><span>Funilaria e pintura</span></button>
-                <button class="office-quick-cat" type="button" data-category="Lavagem e estética"><img src="assets/service-icons/estetica-automotiva.png" alt=""><span>Estética automotiva</span></button>
-                <button class="office-quick-cat" type="button" data-category="Vidros e acessórios"><img src="assets/service-icons/vidros-parabrisas.png" alt=""><span>Vidros e para-brisas</span></button>
-                <button class="office-quick-cat" type="button" data-category="Vidros e acessórios"><img src="assets/service-icons/acessorios.png" alt=""><span>Acessórios</span></button>
+                <button class="office-quick-cat" type="button" data-category="Estética automotiva"><img src="assets/service-icons/estetica-automotiva.png" alt=""><span>Estética automotiva</span></button>
+                <button class="office-quick-cat" type="button" data-category="Vidros e para-brisas"><img src="assets/service-icons/vidros-parabrisas.png" alt=""><span>Vidros e para-brisas</span></button>
+                <button class="office-quick-cat" type="button" data-category="Acessórios"><img src="assets/service-icons/acessorios.png" alt=""><span>Acessórios</span></button>
+                <button class="office-quick-cat" type="button" data-category="Chaveiro automotivo"><img src="assets/service-icons/chaveiro-automotivo.svg" alt=""><span>Chaveiro automotivo</span></button>
               </div>
               <div class="office-filter-row">
                 <div class="office-category-select-row">
@@ -4299,36 +4300,55 @@ let activeBenefitType="promotions";
 let activeCar=null;
 const categoryIcons={
   "default":'<svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5 5L4 17v3h3l5.7-5.7a4 4 0 0 0 5-5l-2.4 2.4-2.8-2.8 2.2-2.6Z"/></svg>',
-  "Freios e suspensão":'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 4v4"/><path d="M12 16v4"/><path d="M4 12h4"/><path d="M16 12h4"/></svg>',
-  "Pneus e alinhamento":'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/><path d="M12 4v3"/><path d="M12 17v3"/><path d="M4 12h3"/><path d="M17 12h3"/></svg>',
-  "Elétrica automotiva":'<svg viewBox="0 0 24 24"><path d="m13 2-8 12h7l-1 8 8-12h-7l1-8Z"/></svg>',
+  "Mecânica geral":'<svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5 5L4 17v3h3l5.7-5.7a4 4 0 0 0 5-5l-2.4 2.4-2.8-2.8 2.2-2.6Z"/></svg>',
+  "Óleo e filtros":'<svg viewBox="0 0 24 24"><path d="M4 9h11l3 3v5H6a2 2 0 0 1-2-2V9Z"/><path d="M7 9V6h5v3"/><path d="M18 8h2"/><path d="M19 12c1.3 1.5 2 2.6 2 3.5a2 2 0 0 1-4 0c0-.9.7-2 2-3.5Z"/></svg>',
+  "Freios":'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 4v4"/><path d="M12 16v4"/><path d="M4 12h4"/><path d="M16 12h4"/></svg>',
+  "Pneus":'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/><path d="M12 4v3"/><path d="M12 17v3"/><path d="M4 12h3"/><path d="M17 12h3"/></svg>',
+  "Bateria e elétrica":'<svg viewBox="0 0 24 24"><path d="m13 2-8 12h7l-1 8 8-12h-7l1-8Z"/></svg>',
   "Ar-condicionado":'<svg viewBox="0 0 24 24"><path d="M12 2v20"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg>',
-  "Diagnóstico computadorizado":'<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="12" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>',
-  "Blindagem":'<svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z"/></svg>'
+  "Funilaria e pintura":'<svg viewBox="0 0 24 24"><path d="M4 15h11l3-5h2v7H4Z"/><path d="M6 15l2-5h6l1 5"/><path d="M8 19h.01M17 19h.01"/><path d="m19 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2Z"/></svg>',
+  "Estética automotiva":'<svg viewBox="0 0 24 24"><path d="M5 14h14l-1.5-5h-11L5 14Z"/><path d="M4 14v4h16v-4"/><circle cx="7" cy="18" r="1"/><circle cx="17" cy="18" r="1"/><path d="m18 3 .7 1.3L20 5l-1.3.7L18 7l-.7-1.3L16 5l1.3-.7L18 3Z"/></svg>',
+  "Vidros e para-brisas":'<svg viewBox="0 0 24 24"><path d="M5 5h14l-2 12H7L5 5Z"/><path d="M8 20h8"/></svg>',
+  "Acessórios":'<svg viewBox="0 0 24 24"><path d="M4 8h16v11H4z"/><path d="M8 8V5h8v3"/><path d="M9 13h6"/></svg>',
+  "Chaveiro automotivo":'<svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8"/><path d="m16 7 2 2"/><path d="m14 9 2 2"/></svg>'
 };
-const allowedCategories=[
-  "Revisão geral / Manutenção preventiva",
-  "Troca de óleo e filtros",
-  "Freios e suspensão",
-  "Motor e transmissão",
-  "Elétrica automotiva",
+const defaultServiceCategories=[
+  "Mecânica geral",
+  "Óleo e filtros",
+  "Freios",
+  "Pneus",
+  "Bateria e elétrica",
   "Ar-condicionado",
   "Funilaria e pintura",
-  "Pneus e alinhamento",
-  "Diagnóstico computadorizado",
-  "Vidros e acessórios",
-  "Blindagem",
-  "Lavagem e estética",
+  "Estética automotiva",
+  "Vidros e para-brisas",
+  "Acessórios",
   "Chaveiro automotivo"
 ];
+let allowedCategories=[...defaultServiceCategories];
 const aiCategoryAliases={
-  "Revisao geral / Manutencao preventiva":"Revisão geral / Manutenção preventiva",
-  "Troca de oleo e filtros":"Troca de óleo e filtros",
-  "Freios e suspensao":"Freios e suspensão",
-  "Motor e transmissao":"Motor e transmissão",
-  "Eletrica automotiva":"Elétrica automotiva",
-  "Diagnostico computadorizado":"Diagnóstico computadorizado",
-  "Vidros e acessorios":"Vidros e acessórios"
+  "Mecanica geral":"Mecânica geral",
+  "Oleo e filtros":"Óleo e filtros",
+  "Bateria e eletrica":"Bateria e elétrica",
+  "Estetica automotiva":"Estética automotiva",
+  "Acessorios":"Acessórios",
+  "Revisao geral / Manutencao preventiva":"Mecânica geral",
+  "Revisão geral / Manutenção preventiva":"Mecânica geral",
+  "Troca de oleo e filtros":"Óleo e filtros",
+  "Troca de óleo e filtros":"Óleo e filtros",
+  "Freios e suspensao":"Freios",
+  "Freios e suspensão":"Freios",
+  "Pneus e alinhamento":"Pneus",
+  "Eletrica automotiva":"Bateria e elétrica",
+  "Elétrica automotiva":"Bateria e elétrica",
+  "Motor e transmissao":"Mecânica geral",
+  "Motor e transmissão":"Mecânica geral",
+  "Diagnostico computadorizado":"Mecânica geral",
+  "Diagnóstico computadorizado":"Mecânica geral",
+  "Vidros e acessorios":"Vidros e para-brisas",
+  "Vidros e acessórios":"Vidros e para-brisas",
+  "Lavagem e estética":"Estética automotiva",
+  "Blindagem":"Acessórios"
 };
 function normalizeAICategory(name){
   return aiCategoryAliases[name]||name;
@@ -4340,40 +4360,66 @@ function populateOfficeCategoryFilter(){
   if(allowedCategories.includes(current)) officeCategoryFilter.value=current;
 }
 populateOfficeCategoryFilter();
+async function loadPublicServiceCategories(){
+  if(!sb) return;
+  try{
+    const {data,error}=await sb.from("service_categories")
+      .select("name,sort_order")
+      .eq("active",true)
+      .order("sort_order")
+      .order("name");
+    if(error) throw error;
+    const names=(data||[]).map((item)=>String(item.name||"").trim()).filter(Boolean);
+    if(names.length) allowedCategories=names;
+  }catch(error){
+    console.warn("[Service categories]",error.message);
+    allowedCategories=[...defaultServiceCategories];
+  }
+  populateOfficeCategoryFilter();
+  renderOfficeCategoryQuick();
+  document.querySelectorAll("[data-office-category]").forEach((button)=>{
+    button.hidden=!allowedCategories.includes(button.dataset.officeCategory);
+  });
+  document.querySelectorAll(".office-quick-cat").forEach((button)=>{
+    button.hidden=!allowedCategories.includes(button.dataset.category);
+  });
+}
 const officeQuickCategories=[
-  {label:"Revisão",value:"Revisão geral / Manutenção preventiva"},
-  {label:"Óleo",value:"Troca de óleo e filtros"},
-  {label:"Freios",value:"Freios e suspensão"},
-  {label:"Pneus",value:"Pneus e alinhamento"},
-  {label:"Elétrica",value:"Elétrica automotiva"},
+  {label:"Mecânica",value:"Mecânica geral"},
+  {label:"Óleo",value:"Óleo e filtros"},
+  {label:"Freios",value:"Freios"},
+  {label:"Pneus",value:"Pneus"},
+  {label:"Bateria",value:"Bateria e elétrica"},
   {label:"Ar-condicionado",value:"Ar-condicionado"},
   {label:"Funilaria",value:"Funilaria e pintura"},
-  {label:"Lavagem",value:"Lavagem e estética"},
+  {label:"Estética",value:"Estética automotiva"},
+  {label:"Vidros",value:"Vidros e para-brisas"},
+  {label:"Acessórios",value:"Acessórios"},
   {label:"Chaveiro",value:"Chaveiro automotivo"}
 ];
 const officeServiceCatalog={
-  "Lavagem e estética":[
+  "Estética automotiva":[
     {name:"Lavagem externa",price:"R$ 50",desc:"Carroceria, rodas e acabamento externo"},
     {name:"Lavagem interna",price:"R$ 120",desc:"Aspiração, painel, vidros e detalhes internos"},
     {name:"Lavagem completa",price:"R$ 200",desc:"Pacote externo + interno"},
     {name:"Higienização",price:"R$ 280",desc:"Limpeza profunda de bancos e tecidos"}
   ],
-  "Freios e suspensão":[
+  "Freios":[
     {name:"Diagnóstico de freios",price:"R$ 80",desc:"Inspeção de pastilhas, discos e fluido"},
     {name:"Troca de pastilhas",price:"Sob consulta",desc:"Mão de obra e peça conforme veículo"},
     {name:"Revisão de suspensão",price:"R$ 120",desc:"Buchas, amortecedores, bandejas e ruídos"}
   ],
-  "Pneus e alinhamento":[
+  "Pneus":[
     {name:"Alinhamento",price:"R$ 90",desc:"Ajuste de direção e geometria"},
     {name:"Balanceamento",price:"R$ 80",desc:"Jogo de rodas"},
     {name:"Rodízio de pneus",price:"R$ 60",desc:"Troca de posição dos pneus"}
   ],
-  "Troca de óleo e filtros":[
+  "Óleo e filtros":[
     {name:"Troca de óleo",price:"Sob consulta",desc:"Óleo conforme especificação do veículo"},
     {name:"Filtro de óleo",price:"Sob consulta",desc:"Peça e troca"},
     {name:"Pacote óleo + filtros",price:"Sob consulta",desc:"Óleo, filtro de óleo, ar e cabine"}
   ],
-  "Elétrica automotiva":[
+  "Bateria e elétrica":[
     {name:"Teste de bateria",price:"R$ 40",desc:"Carga, alternador e partida"},
     {name:"Diagnóstico elétrico",price:"R$ 120",desc:"Scanner e inspeção de falhas"},
     {name:"Troca de bateria",price:"Sob consulta",desc:"Bateria conforme amperagem"}
@@ -4383,7 +4429,7 @@ const officeServiceCatalog={
     {name:"Carga de gás",price:"Sob consulta",desc:"Conforme capacidade do sistema"},
     {name:"Higienização do ar",price:"R$ 120",desc:"Limpeza e odor interno"}
   ],
-  "Revisão geral / Manutenção preventiva":[
+  "Mecânica geral":[
     {name:"Check-up preventivo",price:"R$ 120",desc:"Itens básicos de segurança"},
     {name:"Revisão antes de viagem",price:"R$ 180",desc:"Freios, pneus, fluídos e bateria"},
     {name:"Scanner automotivo",price:"R$ 100",desc:"Leitura de falhas eletrônicas"}
@@ -4418,16 +4464,18 @@ function renderOfficeCategoryQuick(){
 renderOfficeCategoryQuick();
 function inferCategories(text){
   const value=text.toLowerCase();
-  if(value.includes("óleo")||value.includes("oleo")||value.includes("filtro")) return ["Troca de óleo e filtros","Revisão geral / Manutenção preventiva"];
-  if(value.includes("freio")||value.includes("freno")||value.includes("suspens")||value.includes("girar")||value.includes("volante")||value.includes("direção")||value.includes("direccion")||value.includes("barulho")||value.includes("ruido")||value.includes("suena")||value.includes("raro")) return ["Freios e suspensão","Pneus e alinhamento","Revisão geral / Manutenção preventiva"];
-  if(value.includes("motor")||value.includes("câmbio")||value.includes("cambio")||value.includes("transmiss")) return ["Motor e transmissão","Diagnóstico computadorizado"];
-  if(value.includes("bateria")||value.includes("luz")||value.includes("elétr")||value.includes("eletr")||value.includes("partida")) return ["Elétrica automotiva","Diagnóstico computadorizado"];
-  if(value.includes("ar")||value.includes("clima")||value.includes("quente")||value.includes("frio")) return ["Ar-condicionado","Elétrica automotiva"];
-  if(value.includes("pneu")||value.includes("pneus")||value.includes("neumatico")||value.includes("neumático")||value.includes("neumaticos")||value.includes("neumáticos")||value.includes("llanta")||value.includes("llantas")||value.includes("roda")||value.includes("alinh")) return ["Pneus e alinhamento","Freios e suspensão"];
+  if(value.includes("óleo")||value.includes("oleo")||value.includes("filtro")) return ["Óleo e filtros","Mecânica geral"];
+  if(value.includes("freio")||value.includes("freno")||value.includes("suspens")||value.includes("girar")||value.includes("volante")||value.includes("direção")||value.includes("direccion")||value.includes("barulho")||value.includes("ruido")||value.includes("suena")||value.includes("raro")) return ["Freios","Pneus","Mecânica geral"];
+  if(value.includes("motor")||value.includes("câmbio")||value.includes("cambio")||value.includes("transmiss")||value.includes("scanner")||value.includes("diagnóst")||value.includes("diagnost")) return ["Mecânica geral"];
+  if(value.includes("bateria")||value.includes("luz")||value.includes("elétr")||value.includes("eletr")||value.includes("partida")) return ["Bateria e elétrica","Mecânica geral"];
+  if(value.includes("ar")||value.includes("clima")||value.includes("quente")||value.includes("frio")) return ["Ar-condicionado","Bateria e elétrica"];
+  if(value.includes("pneu")||value.includes("pneus")||value.includes("neumatico")||value.includes("neumático")||value.includes("neumaticos")||value.includes("neumáticos")||value.includes("llanta")||value.includes("llantas")||value.includes("roda")||value.includes("alinh")) return ["Pneus","Freios"];
   if(value.includes("pintura")||value.includes("batida")||value.includes("amass")||value.includes("funilar")) return ["Funilaria e pintura"];
-  if(value.includes("vidro")||value.includes("acess")) return ["Vidros e acessórios"];
-  if(value.includes("blind")) return ["Blindagem"];
-  return ["Revisão geral / Manutenção preventiva","Diagnóstico computadorizado"];
+  if(value.includes("vidro")||value.includes("para-brisa")||value.includes("parabrisa")) return ["Vidros e para-brisas"];
+  if(value.includes("acess")||value.includes("som")||value.includes("alarme")||value.includes("blind")) return ["Acessórios"];
+  if(value.includes("lav")||value.includes("estét")||value.includes("estet")||value.includes("higien")||value.includes("polimento")) return ["Estética automotiva"];
+  if(value.includes("chave")||value.includes("tranc")||value.includes("fechadura")) return ["Chaveiro automotivo"];
+  return ["Mecânica geral"];
 }
 function isWorkshopSearch(text){
   const value=text.toLowerCase();
@@ -4877,7 +4925,7 @@ async function openOfficesView(){
   screenShell.classList.add("offices-open");
   visibleOfficeCount=7;
   setOfficeSelectionMode(false);
-  await loadPublicOffices();
+  await Promise.all([loadPublicServiceCategories(),loadPublicOffices()]);
   renderOffices(true);
   appScroller.scrollTo({top:0,behavior:"smooth"});
   setTimeout(()=>officeSearchInput.focus(),160);
@@ -6885,14 +6933,14 @@ function localCategoriesFor(text){
   const value=normalizeText(text);
   const categories=[];
   const add=(name)=>{if(!categories.includes(name)) categories.push(name);};
-  if(value.includes("freio")||value.includes("freno")||value.includes("pastilha")||value.includes("pastilla")||value.includes("disco")) add("Freios e suspensao");
-  if(value.includes("suspensao")||value.includes("suspensão")||value.includes("direcao")||value.includes("direção")||value.includes("rolamento")||value.includes("barulho")||value.includes("ruido")) add("Freios e suspensao");
-  if(value.includes("pneu")||value.includes("neumatico")||value.includes("alinhamento")||value.includes("balanceamento")) add("Pneus e alinhamento");
-  if(value.includes("bateria")||value.includes("eletrica")||value.includes("elétrica")||value.includes("farol")||value.includes("luz")) add("Eletrica automotiva");
-  if(value.includes("motor")||value.includes("oleo")||value.includes("óleo")||value.includes("fumaca")||value.includes("fumaça")||value.includes("vazamento")) add("Motor e transmissao");
-  if(value.includes("scanner")||value.includes("diagnostico")||value.includes("diagnóstico")||value.includes("painel")||value.includes("check")) add("Diagnostico computadorizado");
+  if(value.includes("freio")||value.includes("freno")||value.includes("pastilha")||value.includes("pastilla")||value.includes("disco")) add("Freios");
+  if(value.includes("suspensao")||value.includes("suspensão")||value.includes("direcao")||value.includes("direção")||value.includes("rolamento")||value.includes("barulho")||value.includes("ruido")) add("Freios");
+  if(value.includes("pneu")||value.includes("neumatico")||value.includes("alinhamento")||value.includes("balanceamento")) add("Pneus");
+  if(value.includes("bateria")||value.includes("eletrica")||value.includes("elétrica")||value.includes("farol")||value.includes("luz")) add("Bateria e eletrica");
+  if(value.includes("motor")||value.includes("oleo")||value.includes("óleo")||value.includes("fumaca")||value.includes("fumaça")||value.includes("vazamento")) add("Mecanica geral");
+  if(value.includes("scanner")||value.includes("diagnostico")||value.includes("diagnóstico")||value.includes("painel")||value.includes("check")) add("Mecanica geral");
   if(value.includes("ar condicionado")||value.includes("ar-condicionado")) add("Ar-condicionado");
-  if(!categories.length) add("Revisao geral / Manutencao preventiva");
+  if(!categories.length) add("Mecanica geral");
   return categories.slice(0,3);
 }
 function localMissingQuestions(type,text){
