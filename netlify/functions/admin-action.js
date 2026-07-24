@@ -640,7 +640,10 @@ exports.handler = async (event) => {
       const contactId = cleanText(payload.contact_id, 80);
       const phoneDigits = String(payload.phone || '').replace(/\D/g, '');
       const phone = phoneDigits ? `+${phoneDigits}` : '';
-      if (!contactId && !phone) return json(400, { success: false, error: 'phone obrigatorio para criar contato (formato +5511999999999).' });
+      if (phone && (!/^[1-9]\d{7,14}$/.test(phoneDigits))) {
+        return json(400, { success: false, error: 'Telefone invalido. Use o formato internacional E.164, por exemplo +56985626119.' });
+      }
+      if (!contactId && !phone) return json(400, { success: false, error: 'phone obrigatorio para criar contato (formato internacional E.164).' });
       const update = {};
       if (phone) update.phone = phone;
       ['name', 'business_name', 'city', 'state', 'notes'].forEach((field) => {
@@ -688,7 +691,7 @@ exports.handler = async (event) => {
       const invalid = [];
       for (const item of list) {
         const digits = String(item.phone || '').replace(/\D/g, '');
-        if (digits.length < 10) { invalid.push(item.phone || '(vazio)'); continue; }
+        if (!/^[1-9]\d{7,14}$/.test(digits)) { invalid.push(item.phone || '(vazio)'); continue; }
         rows.push({
           phone: `+${digits}`,
           name: cleanText(item.name, 160) || null,
