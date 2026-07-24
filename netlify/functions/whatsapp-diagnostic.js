@@ -4,7 +4,7 @@ const { supabaseRequest, json } = require('./admin-common');
 
 const DIAGNOSTIC_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || '';
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || '';
-const WABA_ID = process.env.WHATSAPP_BUSINESS_ACCOUNT_ID || '';
+const WABA_ID = process.env.WHATSAPP_BUSINESS_ACCOUNT_ID || '1304610424819827';
 const GRAPH_VERSION = process.env.WHATSAPP_GRAPH_VERSION || 'v25.0';
 
 function tokenIsValid(value) {
