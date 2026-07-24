@@ -25,6 +25,41 @@ function webhookSignatureIsValid(event) {
   return crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(expected));
 }
 
+function decodeBase64Url(value) {
+  const normalized = String(value || '').replace(/-/g, '+').replace(/_/g, '/');
+  const padding = '='.repeat((4 - (normalized.length % 4)) % 4);
+  return Buffer.from(`${normalized}${padding}`, 'base64');
+}
+
+function parseDeletionSignedRequest(signedRequest) {
+  if (!APP_SECRET || !signedRequest) return null;
+  const parts = String(signedRequest).split('.');
+  if (parts.length !== 2) return null;
+
+  const [encodedSignature, encodedPayload] = parts;
+  const suppliedSignature = decodeBase64Url(encodedSignature);
+  const expectedSignature = crypto
+    .createHmac('sha256', APP_SECRET)
+    .update(encodedPayload, 'utf8')
+    .digest();
+  if (
+    suppliedSignature.length !== expectedSignature.length
+    || !crypto.timingSafeEqual(suppliedSignature, expectedSignature)
+  ) return null;
+
+  const payload = JSON.parse(decodeBase64Url(encodedPayload).toString('utf8'));
+  if (String(payload.algorithm || '').toUpperCase() !== 'HMAC-SHA256') return null;
+  return payload;
+}
+
+function deletionConfirmationCode(userId) {
+  return crypto
+    .createHmac('sha256', APP_SECRET)
+    .update(`vairodar-data-deletion:${userId || 'unknown'}`, 'utf8')
+    .digest('hex')
+    .slice(0, 24);
+}
+
 function normalizePhone(value) {
   const digits = String(value || '').replace(/\D/g, '');
   return digits ? `+${digits}` : '';
@@ -61,6 +96,25 @@ exports.handler = async (event) => {
 
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
   if (!APP_SECRET) return json(503, { error: 'WHATSAPP_APP_SECRET nao configurado no Netlify.' });
+
+  // Meta envia pedidos de eliminacao como form-urlencoded com signed_request.
+  // A app nao usa Facebook Login nem armazena dados indexados por Facebook user_id.
+  const contentType = String(event.headers?.['content-type'] || event.headers?.['Content-Type'] || '');
+  if (contentType.includes('application/x-www-form-urlencoded')) {
+    const signedRequest = new URLSearchParams(event.body || '').get('signed_request');
+    try {
+      const deletionPayload = parseDeletionSignedRequest(signedRequest);
+      if (!deletionPayload) return json(401, { error: 'signed_request invalido.' });
+      const confirmationCode = deletionConfirmationCode(deletionPayload.user_id);
+      return json(200, {
+        url: `https://vairodar.com.br/legal/eliminacao-de-dados.html?code=${confirmationCode}`,
+        confirmation_code: confirmationCode,
+      });
+    } catch (error) {
+      return json(400, { error: 'signed_request malformado.' });
+    }
+  }
+
   if (!webhookSignatureIsValid(event)) return json(401, { error: 'Assinatura do webhook invalida.' });
 
   try {
