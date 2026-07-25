@@ -2693,6 +2693,115 @@ body.theme-dark .account-listing-actions button.danger{
   z-index:2;
   background:rgba(255,255,255,.92);
 }
+
+/* Footer institucional */
+.site-footer{
+  margin:38px -24px -124px;
+  padding:32px 24px calc(116px + env(safe-area-inset-bottom));
+  color:#fff;
+  background:#10141b;
+  border-top:4px solid var(--blue);
+}
+.site-footer-inner{display:grid;gap:28px;max-width:1180px;margin:0 auto}
+.site-footer-brand{display:grid;gap:16px}
+.site-footer-logo{display:flex;align-items:center;gap:12px}
+.site-footer-logo img{width:52px;height:52px;object-fit:contain}
+.site-footer-logo strong{font-size:24px;line-height:1}
+.site-footer-logo strong span{color:#4c8cff}
+.site-footer-copy{max-width:520px;margin:0;color:#c7ced9;font-size:15px;line-height:1.55}
+.site-footer-contact{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.site-footer-contact a{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  min-height:46px;padding:0 18px;border:1px solid #4c8cff;border-radius:8px;
+  color:#fff;background:#075cff;font-size:14px;font-weight:800;text-decoration:none;
+}
+.site-footer-contact a svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2}
+.site-footer-contact a svg.whatsapp-mark,
+.site-footer-socials svg.whatsapp-mark{
+  fill:currentColor;
+  stroke:none;
+}
+.site-footer-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 24px;
+  padding-top:20px;
+  border-top:1px solid #2b313b;
+}
+.site-footer-nav a{
+  color:#c7ced9;
+  font-size:14px;
+  font-weight:700;
+  text-decoration:none;
+}
+.site-footer-nav a:hover{color:#fff;text-decoration:underline}
+.site-footer-ending{
+  display:grid;
+  justify-items:center;
+  gap:18px;
+  padding-top:22px;
+  border-top:1px solid #2b313b;
+}
+.site-footer-socials{display:flex;align-items:center;justify-content:center;gap:14px}
+.site-footer-socials a{
+  display:grid;
+  place-items:center;
+  width:46px;
+  height:46px;
+  border:1px solid #3a4350;
+  border-radius:50%;
+  color:#fff;
+  background:#20262f;
+  cursor:pointer;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.site-footer-socials a:hover{
+  border-color:#4c8cff;
+  background:#075cff;
+  transform:translateY(-2px);
+}
+.site-footer-socials svg{
+  width:22px;
+  height:22px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.site-footer-bottom{color:#7f8998;font-size:12px;text-align:center}
+.site-footer-bottom p{margin:0}
+@media(min-width:800px){
+  .site-footer{margin:52px -40px -126px;padding:42px 40px 48px}
+  .site-footer-inner{grid-template-columns:minmax(280px,1.2fr) minmax(460px,1fr);column-gap:64px}
+  .site-footer-nav{align-content:start;padding-top:4px;border-top:0}
+  .site-footer-ending{grid-column:1/-1}
+}
+@media(max-width:560px){
+  .site-footer{
+    margin-top:30px;
+    margin-bottom:calc(-138px - env(safe-area-inset-bottom));
+  }
+  .site-footer-logo img{width:46px;height:46px}
+  .site-footer-logo strong{font-size:22px}
+  .site-footer-contact{align-items:flex-start;flex-direction:column}
+  .site-footer-contact a{width:100%}
+}
+
+/* Mantém o mapa, os cards e o menu dentro do shell ao abrir uma oficina. */
+.app-shell.offices-open .offices-view,
+.app-shell.offices-open .office-map-shell,
+.app-shell.offices-open .office-results-sheet,
+.app-shell.offices-open .office-list,
+.app-shell.offices-open .office-card,
+.app-shell.offices-open .office-card>div{
+  min-width:0;
+  max-width:100%;
+}
+.app-shell.offices-open .office-list{overscroll-behavior-inline:contain}
+.app-shell.offices-open .office-card{overflow-x:hidden}
+.app-shell.offices-open .office-card h3,
+.app-shell.offices-open .office-address{overflow-wrap:anywhere}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -2978,6 +3087,49 @@ body.theme-dark .account-listing-actions button.danger{
           </article>
         </div>
       </section>
+
+      <footer class="site-footer" aria-label="Rodapé Vai Rodar">
+        <div class="site-footer-inner">
+          <div class="site-footer-brand">
+            <div class="site-footer-logo">
+              <img src="assets/vai_rodar_logo_transparent.png" alt="Vai Rodar">
+              <strong>Vai <span>Rodar</span></strong>
+            </div>
+            <p class="site-footer-copy">Conectamos motoristas a oficinas próximas para comparar propostas, conversar e reservar serviços com mais clareza.</p>
+            <div class="site-footer-contact">
+              <a href="https://wa.me/5511991536477" target="_blank" rel="noopener">
+                <svg class="whatsapp-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.149-.173.198-.297.298-.495.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.009-.372-.011-.571-.011-.198 0-.52.074-.792.372-.273.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.436-9.884 9.892-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.895 6.993c-.003 5.45-4.437 9.886-9.891 9.886m8.413-18.297A11.815 11.815 0 0 0 12.055 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.9 11.9 0 0 0 5.688 1.448h.005c6.56 0 11.894-5.336 11.897-11.893a11.82 11.82 0 0 0-3.488-8.413Z"/></svg>
+                Falar com a Vai Rodar
+              </a>
+            </div>
+          </div>
+
+          <nav class="site-footer-nav" aria-label="Links do rodapé">
+            <a href="legal/termos.html" target="_blank" rel="noopener">Termos de Uso</a>
+            <a href="legal/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>
+          </nav>
+
+          <div class="site-footer-ending">
+            <div class="site-footer-socials" aria-label="Redes sociais Vai Rodar">
+              <a href="https://wa.me/5511991536477" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">
+                <svg class="whatsapp-mark" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.149-.173.198-.297.298-.495.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.009-.372-.011-.571-.011-.198 0-.52.074-.792.372-.273.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.436-9.884 9.892-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.895 6.993c-.003 5.45-4.437 9.886-9.891 9.886m8.413-18.297A11.815 11.815 0 0 0 12.055 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.9 11.9 0 0 0 5.688 1.448h.005c6.56 0 11.894-5.336 11.897-11.893a11.82 11.82 0 0 0-3.488-8.413Z"/>
+                </svg>
+              </a>
+              <a href="https://www.instagram.com/vairodarbr/" target="_blank" rel="noopener" aria-label="Instagram @vairodarbr" title="Instagram @vairodarbr">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.5" cy="6.5" r=".7" fill="currentColor" stroke="none"/>
+                </svg>
+              </a>
+            </div>
+            <div class="site-footer-bottom">
+              <p>© 2026 Vai Rodar. Todos os direitos reservados.</p>
+            </div>
+          </div>
+        </div>
+      </footer>
       </div>
 
       <section class="offices-view" aria-label="Todas as oficinas">
@@ -4672,7 +4824,8 @@ function focusOfficeCard(index){
   card.classList.add("map-active");
   officeDetailsFollowSwipe=true;
   showOfficeDetail(index);
-  card.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});
+  const left=Math.max(0,card.offsetLeft-officeList.offsetLeft);
+  officeList.scrollTo({left,behavior:"smooth"});
   renderOfficeSheetDots(index);
 }
 function updateOfficeMap(filtered){
