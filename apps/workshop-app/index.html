@@ -878,7 +878,7 @@ async function loadAll(){
 }
 async function loadRequests(){
   try{
-    let query=sb.from("service_requests").select("id,user_id,vehicle_id,title,description,location,status,category,request_type,target_business_type,part_name,part_specs,selected_business_ids,urgency,home_service,created_at,vehicles(brand,model,year,plate,color),profiles(id,name,email),request_photos(image_url,sort_order)").order("created_at",{ascending:false}).limit(80);
+    let query=sb.from("service_requests").select("id,user_id,vehicle_id,title,description,location,status,category,request_type,target_business_type,part_name,part_specs,selected_business_ids,urgency,home_service,created_at,expires_at,vehicles(brand,model,year,plate,color),profiles(id,name,email),request_photos(image_url,sort_order)").order("created_at",{ascending:false}).limit(80);
     if(acceptsServiceRequests()&&!acceptsPartsRequests())query=query.in("request_type",["service",null]);
     if(acceptsPartsRequests()&&!acceptsServiceRequests())query=query.eq("request_type","part_quote");
     if(acceptsServiceRequests()&&acceptsPartsRequests())query=query.in("request_type",["service","part_quote",null]);
@@ -983,7 +983,10 @@ async function loadServiceCatalog(){
   renderProfilePreview();
 }
 function renderMetrics(){
-  $("metricRequests").textContent=state.requests.filter((item)=>item.status==="open").length;
+  const proposalIds=new Set(state.proposals.map((item)=>item.request_id));
+  $("metricRequests").textContent=state.requests.filter((item)=>
+    item.status==="open"&&!proposalIds.has(item.id)&&!requestEligibilityError(item)
+  ).length;
   $("metricProposals").textContent=state.proposals.length;
   $("metricMessages").textContent=state.conversations.length;
   $("metricReservations").textContent=allReservations().length;
@@ -1003,10 +1006,35 @@ function proposalValidityBadge(requestId){
   const expired=validUntil.getTime()<=Date.now();
   return `<span class="pill ${expired?"cancelled":"confirmed"}">${expired?"Vencida":`Valida ate ${validUntil.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}`}</span>`;
 }
+function requestEligibilityError(request){
+  if(!request)return "Solicitacao nao encontrada.";
+  if(request.status!=="open")return "Esta solicitacao nao esta mais aberta.";
+  const createdAt=new Date(request.created_at);
+  const explicitExpiry=request.expires_at?new Date(request.expires_at):null;
+  const expiresAt=explicitExpiry&&!Number.isNaN(explicitExpiry.getTime())
+    ? explicitExpiry
+    : new Date(createdAt.getTime()+3*86400000);
+  if(Number.isNaN(createdAt.getTime())||expiresAt.getTime()<=Date.now())return "Esta solicitacao ja venceu.";
+  const workshopCreatedAt=state.workshop?.created_at?new Date(state.workshop.created_at):null;
+  if(workshopCreatedAt&&!Number.isNaN(workshopCreatedAt.getTime())&&createdAt<workshopCreatedAt)return "A solicitacao e anterior ao cadastro desta oficina.";
+  const selected=Array.isArray(request.selected_business_ids)?request.selected_business_ids.filter(Boolean):[];
+  if(selected.length&&!selected.includes(state.workshop?.id))return "Esta solicitacao foi enviada para outras oficinas.";
+  const workshopType=state.workshop?.business_type||"workshop";
+  const targetType=request.target_business_type||(request.request_type==="part_quote"?"parts_store":"workshop");
+  const compatible=targetType==="both"
+    ||(targetType==="workshop"&&(workshopType==="workshop"||workshopType==="both"))
+    ||(targetType==="parts_store"&&(workshopType==="parts_store"||workshopType==="both"));
+  return compatible?"":"Esta solicitacao nao corresponde ao tipo deste estabelecimento.";
+}
 function renderRequests(){
   const list=$("requestsList");
   const declinedIds=new Set(state.proposals.filter((item)=>item.status==="declined").map((item)=>item.request_id));
-  const visibleRequests=state.requests.filter((item)=>!declinedIds.has(item.id)).slice().sort((a,b)=>{
+  const proposalIds=new Set(state.proposals.map((item)=>item.request_id));
+  const visibleRequests=state.requests.filter((item)=>{
+    if(declinedIds.has(item.id))return false;
+    if(state.requestFilter==="open")return !proposalIds.has(item.id)&&!requestEligibilityError(item);
+    return proposalIds.has(item.id)||!requestEligibilityError(item);
+  }).slice().sort((a,b)=>{
     const rankA=URGENCY_RANK.hasOwnProperty(a.urgency)?URGENCY_RANK[a.urgency]:1;
     const rankB=URGENCY_RANK.hasOwnProperty(b.urgency)?URGENCY_RANK[b.urgency]:1;
     if(rankA!==rankB) return rankA-rankB;
@@ -1123,16 +1151,31 @@ async function submitProposal(event){
   const time=[labels[bookingMode],duration?`Prazo: ${duration}`:"",notes[bookingMode],`Valida por ${validity} dias`].filter(Boolean).join(" | ");
   $("proposalTime").value=time;
   const price=priceRaw?Number(priceRaw):null;
+  const request=state.requests.find((item)=>item.id===requestId);
   if(!state.workshop?.id){$("proposalStatus").textContent="Perfil da oficina nao encontrado.";return;}
   if(!requestId||message.length<10){$("proposalStatus").textContent="Descreva o servico que sera feito (resposta muito curta).";return;}
   if(priceRaw&&(Number.isNaN(price)||price<0)){$("proposalStatus").textContent="Preco invalido.";return;}
+  const eligibilityError=requestEligibilityError(request);
+  if(eligibilityError){$("proposalStatus").textContent=eligibilityError+" Atualize a lista para ver os pedidos disponiveis.";return;}
   if(state.demoMode){demoStore.proposals.unshift({id:"demo-proposal-"+Date.now(),request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time||null,estimated_duration_text:duration||null,booking_mode:bookingMode,booking_instructions:notes[bookingMode]||null,validity_days:Number(validity),valid_until:new Date(Date.now()+Number(validity)*86400000).toISOString(),status:"pending",created_at:new Date().toISOString(),service_requests:{title:state.requests.find((item)=>item.id===requestId)?.title||"Solicitacao",location:state.requests.find((item)=>item.id===requestId)?.location||""}});$("proposalModal").classList.remove("open");toast("Proposta demo enviada.");await loadAll();return;}
   $("proposalSubmitBtn").disabled=true;
   try{
-    const {data,error}=await sb.from("proposals").insert({request_id:requestId,workshop_id:state.workshop.id,message,price,estimated_time:time||null,estimated_duration_text:duration||null,booking_mode:bookingMode,booking_instructions:notes[bookingMode]||null,validity_days:Number(validity),status:"pending"}).select("id").single();
+    const {data,error}=await sb.rpc("submit_workshop_proposal",{
+      p_request_id:requestId,
+      p_workshop_id:state.workshop.id,
+      p_message:message,
+      p_price:price,
+      p_estimated_time:time||null,
+      p_estimated_duration_text:duration||null,
+      p_booking_mode:bookingMode,
+      p_booking_instructions:notes[bookingMode]||null,
+      p_validity_days:Number(validity)
+    });
     if(error)throw error;
-    $("proposalModal").classList.remove("open");toast("Proposta enviada.");await loadProposals();renderMetrics();
-    if(data?.id) notifyProposalEvent("proposal_created",data.id);
+    $("proposalModal").classList.remove("open");toast("Proposta enviada.");
+    await Promise.all([loadProposals(),loadRequests()]);
+    renderMetrics();renderRequests();renderProposalsCount();
+    if(data) notifyProposalEvent("proposal_created",data);
   }catch(error){$("proposalStatus").textContent=error.message||"Erro ao enviar proposta.";}finally{$("proposalSubmitBtn").disabled=false;}
 }
 async function notifyProposalEvent(eventName,proposalId){
