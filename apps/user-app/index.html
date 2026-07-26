@@ -4166,14 +4166,29 @@ function quoteBriefSummary(text,maxLen=58){
 async function loadMyServiceRequests(){
   if(!sb||!currentUser) return;
   try{
-    const {data,error}=await sb.from("service_requests")
-      .select("id,title,description,category,location,status,created_at,latitude,longitude,vehicles(brand,model,year,plate),proposals(id,workshop_id,price,estimated_time,estimated_duration_text,booking_mode,booking_instructions,validity_days,valid_until,message,status,created_at)")
+    const {data:requestRows,error}=await sb.from("service_requests")
+      .select("id,title,description,category,location,status,created_at,latitude,longitude,vehicles(brand,model,year,plate)")
       .eq("user_id",currentUser.id)
       .order("created_at",{ascending:false})
       .limit(50);
     if(error) throw error;
-    const workshopIds=[...new Set((data||[])
-      .flatMap((request)=>request.proposals||[])
+    const requestIds=(requestRows||[]).map((request)=>request.id).filter(Boolean);
+    let proposalRows=[];
+    if(requestIds.length){
+      const {data:proposalData,error:proposalError}=await sb.from("proposals")
+        .select("id,request_id,workshop_id,price,estimated_time,estimated_duration_text,booking_mode,booking_instructions,validity_days,valid_until,message,status,created_at")
+        .in("request_id",requestIds)
+        .order("created_at",{ascending:false});
+      if(proposalError) throw proposalError;
+      proposalRows=proposalData||[];
+    }
+    const proposalsByRequest=new Map();
+    proposalRows.forEach((proposal)=>{
+      const key=String(proposal.request_id);
+      if(!proposalsByRequest.has(key)) proposalsByRequest.set(key,[]);
+      proposalsByRequest.get(key).push(proposal);
+    });
+    const workshopIds=[...new Set(proposalRows
       .map((proposal)=>proposal.workshop_id)
       .filter(Boolean))];
     const workshopById=new Map();
@@ -4185,8 +4200,8 @@ async function loadMyServiceRequests(){
       (workshopRows||[]).forEach((workshop)=>workshopById.set(String(workshop.id),workshop));
     }
     sentQuotes.length=0;
-    (data||[]).forEach((req)=>{
-      const proposals=(req.proposals||[]).map((p)=>{
+    (requestRows||[]).forEach((req)=>{
+      const proposals=(proposalsByRequest.get(String(req.id))||[]).map((p)=>{
         const workshop=workshopById.get(String(p.workshop_id))||{};
         return {
           id:p.id,
@@ -4400,8 +4415,7 @@ async function openChatByConversationId(conversationId){
   if(index>=0) await openChat(index);
 }
 async function openQuoteByRequestId(requestId){
-  openQuotes();
-  await loadMyServiceRequests();
+  await openQuotes();
   const index=sentQuotes.findIndex((quote)=>quote.id===requestId);
   if(index>=0) openQuoteDetail(index);
 }
@@ -6389,19 +6403,19 @@ function renderHomeQuotesPreview(){
     card.addEventListener("keydown",(event)=>{if(event.key==="Enter"){event.preventDefault();open();}});
   });
 }
-function openQuotes(){
+async function openQuotes(){
   if(!requireUserAccount("Entre para acompanhar suas propostas.")) return;
   closeMenu();
   closeEmergency();
   closeAccount();
   closeMessages();
   closeNotifications();
-  renderQuotes();
   quotesOverview.style.display="block";
   quoteDetail.classList.remove("show");
   overlay.classList.add("open");
   quotesPanel.classList.add("open");
-  loadMyServiceRequests();
+  quotesList.innerHTML='<div class="account-empty">Carregando suas solicitações e propostas...</div>';
+  await loadMyServiceRequests();
 }
 function closeQuotes(){
   quotesPanel.classList.remove("open");
