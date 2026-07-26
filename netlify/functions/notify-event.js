@@ -80,6 +80,15 @@ async function insertNotification({ userId, type, title, detail, link }) {
   });
 }
 
+async function ensureNotification({ userId, type, title, detail, link }) {
+  const rows = await supabaseRequest(
+    `/rest/v1/notifications?user_id=eq.${encodeURIComponent(userId)}&title=eq.${encodeURIComponent(title)}&detail=eq.${encodeURIComponent(detail)}&link=eq.${encodeURIComponent(link || '/')}&select=id&limit=1`
+  );
+  if (Array.isArray(rows) && rows.length) return rows[0];
+  await insertNotification({ userId, type, title, detail, link });
+  return null;
+}
+
 async function notifyAdmins(title, body) {
   return sendPushToAdmins({ title, body, url: '/admin/' })
     .catch((error) => {
@@ -285,15 +294,14 @@ exports.handler = async (event) => {
 
     if (eventType === 'proposal_created') {
       if (callerUser.id !== workshopOwnerId) return json(403, { error: 'Apenas a oficina pode notificar este evento.' });
-      await insertNotification({
-        userId: driverId,
-        type: 'quote',
-        title: 'Nova proposta recebida',
-        detail: `${workshopName} respondeu: ${requestTitle} (${priceText}).`,
-        link: `quote:${proposal.request_id}`,
-      });
+      const title = 'Nova proposta recebida';
+      const detail = `${workshopName} respondeu: ${requestTitle} (${priceText}).`;
+      const link = `quote:${proposal.request_id}`;
+      // O trigger do banco cria este aviso junto com a proposta. Este fallback
+      // mantem o fluxo funcional antes da migration e evita duplicar depois dela.
+      await ensureNotification({ userId: driverId, type: 'quote', title, detail, link });
       const push = await sendPushToUser(driverId, {
-        title: 'Nova proposta recebida',
+        title,
         body: `${workshopName} respondeu sua solicitacao: ${requestTitle}.`,
         url: '/',
       });

@@ -50,7 +50,13 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--blue:#075cff;--blue2:#1482ff;--app-w:390px;--app-h:844px}
-html,body{min-height:100%}
+html,body{
+  width:100%;
+  height:100%;
+  max-width:100%;
+  overflow:hidden;
+  overscroll-behavior:none;
+}
 body{
   font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
   background:#eef1f5;
@@ -114,6 +120,8 @@ button,input{font:inherit}
 .app{
   height:100%;
   overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior-y:contain;
   padding:88px 22px 124px;
   scrollbar-width:none;
 }
@@ -863,6 +871,7 @@ body.theme-dark .office-quick-cat img{
 body.theme-dark .office-category-prompt,
 body.theme-dark .office-quick-cat,
 body.theme-dark .office-clear-quick,
+body.theme-dark .clear-notifications,
 body.theme-dark .office-category-toggle,
 body.theme-dark .office-category-strip,
 body.theme-dark .office-open-subtle,
@@ -1833,7 +1842,7 @@ body.theme-dark .app-shell.offices-open .leaflet-control-attribution{
 .reject-quote{border:1px solid #dc2626;background:transparent;color:#dc2626}
 .message-quote{border:1px solid var(--blue);background:transparent;color:var(--blue)}
 .notifications-toolbar{display:flex;justify-content:flex-end;margin-bottom:8px}
-.clear-notifications{height:30px;border:1px solid var(--input-border);border-radius:999px;background:var(--button-bg);color:var(--blue);padding:0 12px;font-size:10px;font-weight:850;cursor:pointer}
+.clear-notifications{height:34px;border:1.2px solid var(--blue);border-radius:999px;background:rgba(255,255,255,.94);color:var(--blue);padding:0 13px;font-size:10.5px;font-weight:850;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.08)}
 .notification-list{display:grid;gap:8px}
 .notification-item{position:relative;display:grid;grid-template-columns:34px 1fr;gap:9px;border:1px solid var(--line);border-radius:13px;background:var(--bottom);padding:10px 34px 10px 10px}
 .notification-icon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:800}
@@ -3625,7 +3634,7 @@ body.theme-dark .account-listing-actions button.danger{
         <div><h3>Notificações</h3><p>Novidades sobre propostas, mensagens e seus veículos.</p></div>
         <button class="drawer-close" id="notificationsClose" aria-label="Fechar">×</button>
       </div>
-      <div class="notifications-toolbar"><button class="clear-notifications" id="clearNotifications" type="button">Limpar tudo</button></div>
+      <div class="notifications-toolbar"><button class="clear-notifications" id="clearNotifications" type="button">Limpar</button></div>
       <div class="notification-list" id="notificationList"></div>
     </section>
     <section class="drawer-panel" id="reservationsPanel" aria-label="Reservas">
@@ -4158,29 +4167,44 @@ async function loadMyServiceRequests(){
   if(!sb||!currentUser) return;
   try{
     const {data,error}=await sb.from("service_requests")
-      .select("id,title,description,category,location,status,created_at,latitude,longitude,vehicles(brand,model,year,plate),proposals(id,workshop_id,price,estimated_time,estimated_duration_text,booking_mode,booking_instructions,validity_days,valid_until,message,status,created_at,workshops(name,address,latitude,longitude))")
+      .select("id,title,description,category,location,status,created_at,latitude,longitude,vehicles(brand,model,year,plate),proposals(id,workshop_id,price,estimated_time,estimated_duration_text,booking_mode,booking_instructions,validity_days,valid_until,message,status,created_at)")
       .eq("user_id",currentUser.id)
       .order("created_at",{ascending:false})
       .limit(50);
     if(error) throw error;
+    const workshopIds=[...new Set((data||[])
+      .flatMap((request)=>request.proposals||[])
+      .map((proposal)=>proposal.workshop_id)
+      .filter(Boolean))];
+    const workshopById=new Map();
+    if(workshopIds.length){
+      const {data:workshopRows,error:workshopError}=await sb.from("public_workshops_search")
+        .select("id,name,address,latitude,longitude")
+        .in("id",workshopIds);
+      if(workshopError) console.warn("[quotes-workshops]",workshopError.message);
+      (workshopRows||[]).forEach((workshop)=>workshopById.set(String(workshop.id),workshop));
+    }
     sentQuotes.length=0;
     (data||[]).forEach((req)=>{
-      const proposals=(req.proposals||[]).map((p)=>({
-        id:p.id,
-        name:p.workshops?.name||"Oficina parceira",
-        address:p.workshops?.address||"",
-        distanceKm:haversineKm(req.latitude,req.longitude,p.workshops?.latitude,p.workshops?.longitude),
-        price:p.price!=null&&p.price!==""?`R$ ${p.price}`:"A combinar",
-         estimatedTime:p.estimated_time||"",
-         estimatedDurationText:p.estimated_duration_text||p.estimated_time||"",
-         bookingMode:p.booking_mode||"scheduled",
+      const proposals=(req.proposals||[]).map((p)=>{
+        const workshop=workshopById.get(String(p.workshop_id))||{};
+        return {
+          id:p.id,
+          name:workshop.name||"Oficina parceira",
+          address:workshop.address||"",
+          distanceKm:haversineKm(req.latitude,req.longitude,workshop.latitude,workshop.longitude),
+          price:p.price!=null&&p.price!==""?`R$ ${p.price}`:"A combinar",
+          estimatedTime:p.estimated_time||"",
+          estimatedDurationText:p.estimated_duration_text||p.estimated_time||"",
+          bookingMode:p.booking_mode||"scheduled",
          bookingInstructions:p.booking_instructions||"",
          validityDays:Number(p.validity_days)||null,
          validUntil:p.valid_until||null,
-        message:p.message||"",
-        time:p.created_at?new Date(p.created_at).toLocaleDateString("pt-BR"):"",
-        status:p.status||"pending",
-      })).sort((a,b)=>(a.time<b.time?1:-1));
+          message:p.message||"",
+          time:p.created_at?new Date(p.created_at).toLocaleDateString("pt-BR"):"",
+          status:p.status||"pending",
+        };
+      }).sort((a,b)=>(a.time<b.time?1:-1));
       const accepted=proposals.find((p)=>p.status==="accepted");
       const pending=proposals.filter((p)=>p.status==="pending");
       let status="Aguardando",className="waiting";
@@ -4289,6 +4313,7 @@ function notificationTimeAgo(iso){
   return new Date(iso).toLocaleDateString("pt-BR");
 }
 let notificationsChannel=null;
+let proposalsChannel=null;
 function updateNotifBadge(hasUnread){
   if(topNotifBadge) topNotifBadge.style.display=hasUnread?"block":"none";
   if(mobileNotifBadge) mobileNotifBadge.style.display=hasUnread?"block":"none";
@@ -4320,6 +4345,21 @@ function unsubscribeNotificationsChannel(){
   if(notificationsChannel){
     sb.removeChannel(notificationsChannel);
     notificationsChannel=null;
+  }
+}
+function subscribeProposalsChannel(){
+  if(!sb||!currentUser) return;
+  unsubscribeProposalsChannel();
+  proposalsChannel=sb.channel("user-proposals:"+currentUser.id)
+    .on("postgres_changes",{event:"*",schema:"public",table:"proposals"},()=>{
+      loadMyServiceRequests();
+    })
+    .subscribe();
+}
+function unsubscribeProposalsChannel(){
+  if(proposalsChannel){
+    sb.removeChannel(proposalsChannel);
+    proposalsChannel=null;
   }
 }
 async function loadNotifications(){
@@ -6034,6 +6074,7 @@ function setLoggedIn(user){
     }
     refreshUnreadNotifCount();
     subscribeNotificationsChannel();
+    subscribeProposalsChannel();
     loadMyServiceRequests();
     loadUserReservations();
     return;
@@ -6046,6 +6087,7 @@ function setLoggedIn(user){
   reservations.length=0;
   unsubscribeChatChannel();
   unsubscribeNotificationsChannel();
+  unsubscribeProposalsChannel();
   updateNotifBadge(false);
   resetAccountModules();
   renderAccountPlates();
@@ -6386,23 +6428,34 @@ function renderNotifications(){
 async function deleteNotification(index){
   const item=notifications[Number(index)];
   if(!item) return;
+  if(sb&&currentUser&&item.id){
+    try{
+      const {error}=await sb.from("notifications").delete().eq("id",item.id).eq("user_id",currentUser.id);
+      if(error) throw error;
+    }catch(error){
+      console.warn("[notification-delete]",error.message);
+      alert("Não foi possível remover a notificação. Tente novamente.");
+      return;
+    }
+  }
   notifications.splice(Number(index),1);
   renderNotifications();
   updateNotifBadge(notifications.some((notification)=>!notification.read));
-  if(sb&&currentUser&&item.id){
-    try{await sb.from("notifications").delete().eq("id",item.id).eq("user_id",currentUser.id);}
-    catch(error){console.warn("[notification-delete]",error.message);}
-  }
 }
 async function clearAllNotifications(){
-  const ids=notifications.map((item)=>item.id).filter(Boolean);
+  if(sb&&currentUser){
+    try{
+      const {error}=await sb.from("notifications").delete().eq("user_id",currentUser.id);
+      if(error) throw error;
+    }catch(error){
+      console.warn("[notifications-clear]",error.message);
+      alert("Não foi possível limpar as notificações. Tente novamente.");
+      return;
+    }
+  }
   notifications.length=0;
   renderNotifications();
   updateNotifBadge(false);
-  if(sb&&currentUser&&ids.length){
-    try{await sb.from("notifications").delete().in("id",ids).eq("user_id",currentUser.id);}
-    catch(error){console.warn("[notifications-clear]",error.message);}
-  }
 }
 function urlBase64ToUint8Array(base64String){
   const padding="=".repeat((4-base64String.length%4)%4);
