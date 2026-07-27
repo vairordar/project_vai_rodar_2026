@@ -1751,6 +1751,10 @@ function hydrateScheduleSelects(){
 function categoryMatchesWorkshop(category){
   return workshopCategoryKeys().has(categoryCatalogKey(category.name||category.slug))||state.workshopServices.some((service)=>service.category_id===category.id);
 }
+function approvedOfferCategories(){
+  const approvedIds=new Set(state.workshopCategoryIds.filter(Boolean));
+  return state.serviceCategories.filter((category)=>approvedIds.has(category.id));
+}
 function formatServicePrice(value){
   if(value==null||value==="")return "";
   return `R$ ${Number(value).toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:2})}`;
@@ -1865,11 +1869,11 @@ async function saveProfile(event){event.preventDefault();await requestProfileCha
 function renderOfferCategoryOptions(){
   const select=$("offerCategory");if(!select)return;
   const current=select.value;
-  const eligible=state.serviceCategories.filter((category)=>categoryMatchesWorkshop(category));
-  const categories=eligible.length?eligible:state.serviceCategories;
+  const categories=approvedOfferCategories();
   select.innerHTML=categories.length
-    ? categories.map((category)=>`<option value="${esc(category.name)}">${esc(category.name)}</option>`).join("")
-    : '<option value="">Nenhuma categoria ativa</option>';
+    ? `<option value="">Selecione uma categoria</option>${categories.map((category)=>`<option value="${esc(category.name)}">${esc(category.name)}</option>`).join("")}`
+    : '<option value="">Nenhuma categoria aprovada para esta oficina</option>';
+  select.disabled=!categories.length;
   if(categories.some((category)=>category.name===current))select.value=current;
 }
 function renderOffers(){const list=$("offersList");if(!state.localOffers.length){list.innerHTML='<div class="empty">Nenhuma oferta criada ainda.</div>';return;}list.innerHTML=state.localOffers.map((offer)=>`<div class="item offer-card">${offer.image_url?`<img src="${esc(offer.image_url)}" alt="${esc(offer.title)}" style="width:54px;height:46px;border-radius:10px;object-fit:cover">`:`<div class="offer-thumb">${esc((offer.category||"OF").slice(0,2).toUpperCase())}</div>`}<div><h4>${esc(offer.title)}</h4><small>${esc(offer.category)} - ${esc(offer.start||offer.starts_at||"")} ate ${esc(offer.end||offer.ends_at||"")}</small><p>${esc(offer.description||"")}</p><div class="tags"><span>${offer.remote?"Publicada":"Rascunho local"}</span><span>${Number(offer.clicks||0)} clicks</span><span>${Number(offer.sales||0)} vendas</span><span>${esc(offer.status||"pendente")}</span></div></div></div>`).join("");}
@@ -1877,7 +1881,9 @@ async function createOffer(event){
   event.preventDefault();
   const photo=$("offerPhoto").files[0];
   const offer={category:$("offerCategory").value,title:$("offerTitle").value.trim(),start:$("offerStart").value,end:$("offerEnd").value,description:$("offerDescription").value.trim(),photoName:photo?.name||"",status:"active",clicks:0,sales:0};
-  if(!offer.category){toast("Selecione uma categoria ativa da oficina.");return;}
+  const approvedCategory=approvedOfferCategories().find((category)=>categoryCatalogKey(category.name)===categoryCatalogKey(offer.category));
+  if(!approvedCategory){toast("Selecione uma categoria aprovada para esta oficina.");return;}
+  offer.category=approvedCategory.name;
   if(!offer.title){toast("Informe o titulo da oferta.");return;}
   if(!photo){toast("Adicione uma foto para criar a oferta.");return;}
   const submit=$("offerForm").querySelector('button[type="submit"]');
