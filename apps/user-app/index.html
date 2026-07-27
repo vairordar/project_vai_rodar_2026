@@ -713,6 +713,7 @@ h1{
 .office-photo{width:88px;height:68px;border-radius:10px;object-fit:cover;border:1px solid var(--deal-border);filter:saturate(.95) contrast(1.08)}
 .office-card h3{display:flex;align-items:center;gap:7px;color:var(--text);font-size:12px;line-height:1.2;font-weight:750;margin-bottom:4px}
 .open-dot{width:9px;height:9px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.12);flex:0 0 auto}
+.open-dot.closed{background:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.12)}
 .office-address{color:var(--muted);font-size:9px;line-height:1.35;margin-bottom:7px}
 .office-links{display:flex;gap:7px;flex-wrap:wrap}
 .office-links button{height:28px;border-radius:999px;padding:0 10px;font-size:9px;font-weight:700;cursor:pointer}
@@ -4772,6 +4773,46 @@ function officeMatchesSearch(haystack,rawQuery){
     });
   });
 }
+function getSaoPauloClock(date=new Date()){
+  const parts=new Intl.DateTimeFormat("pt-BR",{
+    timeZone:"America/Sao_Paulo",
+    weekday:"long",
+    hour:"2-digit",
+    minute:"2-digit",
+    hourCycle:"h23"
+  }).formatToParts(date);
+  const value=(type)=>parts.find((part)=>part.type===type)?.value||"";
+  const hour=Number(value("hour"))%24;
+  return {
+    day:normalizeText(value("weekday")).replace("-feira","").trim(),
+    minutes:(hour*60)+Number(value("minute"))
+  };
+}
+function isOfficeOpenNow(office,date=new Date()){
+  const custom=office?.schedule&&typeof office.schedule.custom==="string"
+    ?office.schedule.custom.trim()
+    :"";
+  if(!custom) return false;
+  const clock=getSaoPauloClock(date);
+  const entry=custom.split("|").map((item)=>item.trim()).find((item)=>{
+    const splitAt=item.indexOf(":");
+    if(splitAt===-1) return false;
+    const day=normalizeText(item.slice(0,splitAt)).replace("-feira","").trim();
+    return day===clock.day;
+  });
+  if(!entry) return false;
+  const value=entry.slice(entry.indexOf(":")+1).trim();
+  const normalizedValue=normalizeText(value);
+  if(normalizedValue.includes("fechado")) return false;
+  const hours=normalizedValue.match(/(\d{1,2}):(\d{2})\s*(?:as|a|-)\s*(\d{1,2}):(\d{2})/i);
+  if(!hours) return false;
+  const opens=(Number(hours[1])*60)+Number(hours[2]);
+  const closes=(Number(hours[3])*60)+Number(hours[4]);
+  if(opens===closes) return false;
+  return closes>opens
+    ?clock.minutes>=opens&&clock.minutes<closes
+    :clock.minutes>=opens||clock.minutes<closes;
+}
 function getFilteredOffices(){
   const query=officeAISearchCategory?"":officeSearchInput.value.trim();
   const category=officeCategoryFilter.value;
@@ -4784,7 +4825,7 @@ function getFilteredOffices(){
       const haystack=normalizeText(`${office.name} ${office.address} ${office.category} ${serviceText} ${catalogText}`);
       return officeMatchesSearch(haystack,query)
         &&(!category||office.category===category||(Array.isArray(office.services)&&office.services.includes(category))||office.category==="Serviços automotivos")
-        &&(!onlyOpen||office.open)
+        &&(!onlyOpen||isOfficeOpenNow(office))
         &&(!onlyHome||office.homeService||office.atHome||office.mobileService||normalizeText(office.serviceMode||"").includes("domicilio"));
     })
     .sort((a,b)=>String(a.name).localeCompare(String(b.name),"pt-BR"));
@@ -4900,7 +4941,8 @@ function updateOfficeMap(filtered){
       return;
     }
     bounds.push(coords);
-    const marker=L.circleMarker(coords,{radius:8,color:office.open?"#16a34a":"#075cff",weight:3,fillColor:"#fff",fillOpacity:1});
+    const openNow=isOfficeOpenNow(office);
+    const marker=L.circleMarker(coords,{radius:8,color:openNow?"#16a34a":"#dc2626",weight:3,fillColor:"#fff",fillOpacity:1});
     marker.bindPopup(`<b>${office.name}</b>${office.category}<br>${office.address||"Endereço em cadastro"}`);
     marker.officeIndex=index;
     marker.on("click",()=>focusOfficeCard(index));
@@ -5069,6 +5111,7 @@ function renderOffices(reset=false){
   const visible=officeListSelectionMode?filtered:filtered.slice(0,visibleOfficeCount);
   officeList.innerHTML=visible.map((office)=>{
     const index=offices.indexOf(office);
+    const openNow=isOfficeOpenNow(office);
     const services=getOfficeServices(office);
     const filteredService=officeCategoryFilter.value||services[0]||office.category;
     const serviceItems=getOfficeRealServiceItems(office,filteredService);
@@ -5079,7 +5122,7 @@ function renderOffices(reset=false){
     <article class="office-card" data-office-index="${index}">
       <img class="office-photo" src="${office.img}" alt="">
       <div>
-        <h3>${office.name}<span class="open-dot" title="${office.open?"Aberto":"Fechado"}"></span><span class="office-score"><span>★</span> ${office.rating.toFixed(1)}</span></h3>
+        <h3>${office.name}<span class="open-dot${openNow?"":" closed"}" title="${openNow?"Aberto agora":"Fechado agora"}"></span><span class="office-score"><span>★</span> ${office.rating.toFixed(1)}</span></h3>
         <div class="office-address">${office.address}</div>
         <div class="office-links">
           <button class="message-btn" type="button">Mensagem</button>
