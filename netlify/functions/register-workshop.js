@@ -198,6 +198,24 @@ exports.handler = async (event) => {
       `/rest/v1/workshops?owner_id=eq.${encodeURIComponent(user.id)}&select=id&limit=1`
     );
 
+    const requestedServiceMode = cleanText(workshop?.schedule?.mode || workshop.service_mode, 40);
+    const normalizedServiceMode = requestedServiceMode
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+    const supportsHomeService = Boolean(
+      workshop.home_service ||
+      workshop.parts_delivery_enabled ||
+      normalizedServiceMode.includes('domicilio') ||
+      normalizedServiceMode.includes('ambos') ||
+      normalizedServiceMode === 'home' ||
+      normalizedServiceMode === 'both'
+    );
+    const persistedSchedule = {
+      ...(workshop.schedule && typeof workshop.schedule === 'object' ? workshop.schedule : {}),
+      mode: requestedServiceMode || (supportsHomeService ? 'Ambos' : 'Na oficina'),
+    };
+
     const payload = {
       owner_id: user.id,
       name: cleanText(workshop.name, 160),
@@ -207,7 +225,8 @@ exports.handler = async (event) => {
       contact_phone: cleanText(workshop.contact_phone || workshop.phone || workshop.whatsapp, 60),
       business_type: cleanText(workshop.business_type, 30) || 'workshop',
       parts_categories: Array.isArray(workshop.parts_categories) ? workshop.parts_categories : [],
-      parts_delivery_enabled: Boolean(workshop.parts_delivery_enabled),
+      home_service: supportsHomeService,
+      parts_delivery_enabled: supportsHomeService,
       parts_pickup_enabled: workshop.parts_pickup_enabled !== false,
       description: cleanText(workshop.description, 700),
       email,
@@ -223,7 +242,7 @@ exports.handler = async (event) => {
         ? officialCategories.map((c) => c.name)
         : (Array.isArray(workshop.services) ? workshop.services : []),
       category: cleanText(workshop.category, 100),
-      schedule: workshop.schedule || {},
+      schedule: persistedSchedule,
       approval_status: 'pending',
       visible: false,
       open: false,

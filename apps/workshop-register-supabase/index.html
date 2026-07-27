@@ -85,7 +85,7 @@ async function submitForm(event){
     if(catalogRefresh.state!=="ready"){showToast("O catálogo oficial não foi carregado. Tente novamente.",true);return;}
     if(catalogRefresh.removed.length){showToast("Uma categoria foi desativada. Revise sua seleção antes de continuar.",true);return;}
   }
-  var categoryIds=selectedArray("categoryIds"),categoryNames=selectedCategoryNames(),partCategories=selectedArray("partCategories"),noCnpj=document.getElementById("noCnpj").checked,cnpj=val("cnpj"),phone=val("phone"),email=val("email"),password=document.getElementById("password").value;
+  var categoryIds=selectedArray("categoryIds"),categoryNames=selectedCategoryNames(),partCategories=selectedArray("partCategories"),noCnpj=document.getElementById("noCnpj").checked,cnpj=val("cnpj"),phone=val("phone"),email=val("email"),password=document.getElementById("password").value,serviceMode=selectedRadio("serviceMode"),supportsHomeService=["A domicílio","Ambos"].indexOf(serviceMode)>=0;
   if(!noCnpj&&!/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/.test(cnpj)){showToast("Digite um CNPJ válido: 00.000.000/0000-00.",true);return;}
   if(!/^\+55 \d{2} \d{5}-\d{4}$/.test(phone)){showToast("Digite o WhatsApp no formato +55 11 99999-9999.",true);return;}
   if(!email){showToast("Digite seu e-mail.",true);return;}
@@ -104,7 +104,8 @@ async function submitForm(event){
     cnpj:noCnpj?"":cnpj,
     business_type:businessType,
     parts_categories:businessType==="workshop"?[]:partCategories,
-    parts_delivery_enabled:["A domicílio","Ambos"].indexOf(selectedRadio("serviceMode"))>=0,
+    home_service:supportsHomeService,
+    parts_delivery_enabled:supportsHomeService,
     parts_pickup_enabled:true,
     description:"Responsável: "+val("ownerName")+(noCnpj?" · Sem CNPJ":" · CNPJ: "+cnpj),
     email:email,
@@ -119,7 +120,7 @@ async function submitForm(event){
     cep:onlyDigits(val("cep")),
     services:servicesArr,
     category:servicesArr[0]||"",
-    schedule:{custom:customScheduleText(),mode:selectedRadio("serviceMode"),district:val("district")}
+    schedule:{custom:customScheduleText(),mode:serviceMode,district:val("district")}
   };
   btn.disabled=true;
   btn.textContent="Criando conta...";
