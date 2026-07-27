@@ -402,7 +402,7 @@ button{cursor:pointer}
             <section class="panel">
               <div class="panel-head">
                 <div><h3>Solicitacoes recebidas</h3><p>Envie uma proposta formal com preco, prazo e resposta ao problema do usuario.</p></div>
-                <div class="filters"><button class="active" data-request-filter="open" type="button">Pendentes</button><button data-request-filter="all" type="button">Todas</button></div>
+                <div class="filters"><button class="active" data-request-filter="new" type="button">Novas</button><button data-request-filter="sent" type="button">Enviadas</button><button data-request-filter="expired" type="button">Vencidas</button></div>
               </div>
               <div class="list" id="requestsList"></div>
             </section>
@@ -548,7 +548,7 @@ button{cursor:pointer}
             <form class="panel" id="offerForm">
               <div class="panel-head"><div><h3>Criar oferta</h3><p>Modulo preparado para tabela de ofertas. Por enquanto fica em rascunho local.</p></div><button class="btn primary" type="submit">Criar oferta</button></div>
               <div class="two-col">
-                <div class="field"><label>Categoria</label><select id="offerCategory"><option>Pneus</option><option>Freios</option><option>Revisao</option><option>Eletrica</option><option>Funilaria</option></select></div>
+                <div class="field"><label>Categoria</label><select id="offerCategory"><option value="">Carregando categorias...</option></select></div>
                 <div class="field"><label>Titulo</label><input id="offerTitle" placeholder="Ex.: Revisao de freios"></div>
                 <div class="field"><label>Desde</label><input id="offerStart" type="date"></div>
                 <div class="field"><label>Ate</label><input id="offerEnd" type="date"></div>
@@ -683,7 +683,7 @@ const DEMO_EMAIL="oficina.demo@vairodar.com.br";
 const DEMO_PASSWORD="VaiRodar2026!";
 const $=(id)=>document.getElementById(id);
 const $$=(selector)=>document.querySelectorAll(selector);
-const state={user:null,workshop:null,requests:[],proposals:[],conversations:[],messages:[],reservations:[],serviceCategories:[],serviceSubcategories:[],workshopServices:[],serviceCatalogError:"",activeRequest:null,activeConversation:null,requestFilter:"open",calendarMode:"week",calendarDate:new Date(),channel:null,realtimeChannel:null,demoMode:false,onboardingRunning:false,onboardingStep:0,onboardingSingleStep:false,onboardingRepeat:false,pushActive:false,backendReady:{blocks:false,offers:false,owner:false,manualReservations:false},localOffers:JSON.parse(localStorage.getItem("vr_workshop_offers")||"[]"),manualReservations:JSON.parse(localStorage.getItem("vr_manual_reservations")||"[]"),blockedSlots:JSON.parse(localStorage.getItem("vr_blocked_slots")||"[]"),ownerDetails:null};
+const state={user:null,workshop:null,requests:[],proposals:[],conversations:[],messages:[],reservations:[],serviceCategories:[],serviceSubcategories:[],workshopServices:[],workshopCategoryIds:[],serviceCatalogError:"",activeRequest:null,activeConversation:null,requestFilter:"new",calendarMode:"week",calendarDate:new Date(),channel:null,realtimeChannel:null,demoMode:false,onboardingRunning:false,onboardingStep:0,onboardingSingleStep:false,onboardingRepeat:false,pushActive:false,backendReady:{blocks:false,offers:false,owner:false,manualReservations:false},localOffers:JSON.parse(localStorage.getItem("vr_workshop_offers")||"[]"),manualReservations:JSON.parse(localStorage.getItem("vr_manual_reservations")||"[]"),blockedSlots:JSON.parse(localStorage.getItem("vr_blocked_slots")||"[]"),ownerDetails:null};
 const demoStore={
   user:{id:"demo-workshop-user",email:DEMO_EMAIL},
   workshop:{id:"demo-workshop",owner_id:"demo-workshop-user",name:"Auto Center Vital Brasil",category:"Freios e suspensao",city:"Sao Paulo",state:"SP",address:"Rua Camargo, 221 - Butanta",whatsapp:"+55 11 99999-9999",email:DEMO_EMAIL,description:"Oficina especializada em freios, suspensao, pneus e revisao preventiva.",services:["Freios","Suspensao","Pneus","Revisao"],open:true,max_bookings_per_slot:3,slot_minutes:60},
@@ -872,17 +872,17 @@ function renderOnboardingChecklist(){
   const root=$("onboardingChecklist");if(!root||!state.workshop)return;const items=checklistData();const complete=items.filter((item)=>item.done).length;const allDone=complete===items.length;const dismissed=onboardingState().checklist_dismissed===true;if(dismissed&&allDone){root.classList.remove("show");return}root.classList.add("show");root.classList.toggle("complete",allDone);$("onboardingChecklistTitle").textContent=allDone?"Perfil completo!":"Complete seu perfil";$("onboardingChecklistCopy").textContent=allDone?"Sua oficina esta pronta para aparecer completa aos motoristas.":"Quanto mais completo, melhor sua oficina aparece para os motoristas.";$("onboardingChecklistCount").textContent=`${complete}/${items.length}`;$("onboardingProgressBar").style.width=`${complete/items.length*100}%`;$("onboardingItems").innerHTML=items.map((item,index)=>`<button class="onboarding-item ${item.done?"done":""}" data-checklist-index="${index}" type="button">${item.done?"Concluido":"Pendente"}<small>${esc(item.label)} · ${esc(item.hint)}</small></button>`).join("");$("dismissChecklistBtn").style.display=allDone?"inline-flex":"none";
 }
 async function loadAll(){
-  if(state.demoMode){state.requests=[...demoStore.requests];state.proposals=[...demoStore.proposals];state.conversations=[...demoStore.conversations];state.reservations=[...demoStore.reservations];renderMetrics();renderRequests();renderThreads();renderAgenda();renderReservations();renderOffers();renderOnboardingChecklist();return;}
-  await Promise.all([loadRequests(),loadProposals(),loadConversations(),loadReservations(),loadBlocks(),loadOffers(),loadOwnerDetails(),loadServiceCatalog()]);
+  if(state.demoMode){state.requests=[...demoStore.requests];state.proposals=[...demoStore.proposals];state.conversations=[...demoStore.conversations];state.reservations=[...demoStore.reservations];state.serviceCategories=[{id:"demo-freios",name:"Freios"},{id:"demo-pneus",name:"Pneus"}];state.workshopCategoryIds=["demo-freios","demo-pneus"];renderMetrics();renderRequests();renderThreads();renderAgenda();renderReservations();renderOfferCategoryOptions();renderOffers();renderOnboardingChecklist();return;}
+  await loadServiceCatalog();
+  await Promise.all([loadRequests(),loadProposals(),loadConversations(),loadReservations(),loadBlocks(),loadOffers(),loadOwnerDetails()]);
   renderMetrics();renderRequests();renderProposalsCount();renderThreads();renderAgenda();renderReservations();renderOffers();renderAccount();renderOnboardingChecklist();subscribeRealtime();
 }
 async function loadRequests(){
   try{
-    let query=sb.from("service_requests").select("id,user_id,vehicle_id,title,description,location,status,category,request_type,target_business_type,part_name,part_specs,selected_business_ids,urgency,home_service,created_at,expires_at,vehicles(brand,model,year,plate,color),profiles(id,name,email),request_photos(image_url,sort_order)").order("created_at",{ascending:false}).limit(80);
+    let query=sb.from("service_requests").select("id,user_id,vehicle_id,title,description,location,status,category,request_type,target_business_type,part_name,part_specs,selected_business_ids,urgency,home_service,created_at,expires_at,vehicles(brand,model,year,plate,color),profiles(id,name,email),request_photos(image_url,sort_order)").order("created_at",{ascending:false}).limit(120);
     if(acceptsServiceRequests()&&!acceptsPartsRequests())query=query.in("request_type",["service",null]);
     if(acceptsPartsRequests()&&!acceptsServiceRequests())query=query.eq("request_type","part_quote");
     if(acceptsServiceRequests()&&acceptsPartsRequests())query=query.in("request_type",["service","part_quote",null]);
-    if(state.requestFilter==="open")query=query.eq("status","open");
     const {data,error}=await query;if(error)throw error;state.requests=data||[];
   }catch(error){console.warn("[requests]",error.message);state.requests=[];}
 }
@@ -961,32 +961,34 @@ async function loadServiceCatalog(){
   if(!state.workshop?.id)return;
   state.serviceCatalogError="";
   try{
-    const [categoriesResult,subcategoriesResult,servicesResult]=await Promise.all([
-      sb.from("service_categories").select("id,name,sort_order").eq("active",true).order("sort_order"),
+    const [categoriesResult,subcategoriesResult,servicesResult,linksResult]=await Promise.all([
+      sb.from("service_categories").select("id,name,slug,sort_order").eq("active",true).order("sort_order"),
       sb.from("service_subcategories").select("id,category_id,name,sort_order").eq("active",true).order("sort_order"),
-      sb.from("workshop_services").select("id,category_id,subcategory_id,name,reference_price,duration,duration_unit,active").eq("workshop_id",state.workshop.id).order("created_at")
+      sb.from("workshop_services").select("id,category_id,subcategory_id,name,reference_price,duration,duration_unit,active").eq("workshop_id",state.workshop.id).order("created_at"),
+      sb.from("workshop_categories").select("category_id").eq("workshop_id",state.workshop.id)
     ]);
     if(categoriesResult.error)throw categoriesResult.error;
     if(subcategoriesResult.error)throw subcategoriesResult.error;
     if(servicesResult.error)throw servicesResult.error;
+    if(linksResult.error)throw linksResult.error;
     state.serviceCategories=categoriesResult.data||[];
     state.serviceSubcategories=subcategoriesResult.data||[];
     state.workshopServices=(servicesResult.data||[]).filter((item)=>item.active!==false);
+    state.workshopCategoryIds=[...new Set((linksResult.data||[]).map((item)=>item.category_id).filter(Boolean))];
   }catch(error){
     console.warn("[service catalog]",error.message);
     state.serviceCategories=[];
     state.serviceSubcategories=[];
     state.workshopServices=[];
+    state.workshopCategoryIds=[];
     state.serviceCatalogError=error.message||"Não foi possível carregar o catálogo.";
   }
+  renderOfferCategoryOptions();
   renderServiceCatalog();
   renderProfilePreview();
 }
 function renderMetrics(){
-  const proposalIds=new Set(state.proposals.map((item)=>item.request_id));
-  $("metricRequests").textContent=state.requests.filter((item)=>
-    item.status==="open"&&!proposalIds.has(item.id)&&!requestEligibilityError(item)
-  ).length;
+  $("metricRequests").textContent=requestsForFilter("new").length;
   $("metricProposals").textContent=state.proposals.length;
   $("metricMessages").textContent=state.conversations.length;
   $("metricReservations").textContent=allReservations().length;
@@ -1008,6 +1010,8 @@ function proposalValidityBadge(requestId){
 }
 function requestEligibilityError(request){
   if(!request)return "Solicitacao nao encontrada.";
+  const routingError=requestRoutingError(request);
+  if(routingError)return routingError;
   if(request.status!=="open")return "Esta solicitacao nao esta mais aberta.";
   const createdAt=new Date(request.created_at);
   const explicitExpiry=request.expires_at?new Date(request.expires_at):null;
@@ -1015,6 +1019,12 @@ function requestEligibilityError(request){
     ? explicitExpiry
     : new Date(createdAt.getTime()+3*86400000);
   if(Number.isNaN(createdAt.getTime())||expiresAt.getTime()<=Date.now())return "Esta solicitacao ja venceu.";
+  return "";
+}
+function requestRoutingError(request){
+  if(!request)return "Solicitacao nao encontrada.";
+  if(!requestCategoryMatchesWorkshop(request.category))return "Esta solicitacao pertence a uma categoria que a oficina nao oferece.";
+  const createdAt=new Date(request.created_at);
   const workshopCreatedAt=state.workshop?.created_at?new Date(state.workshop.created_at):null;
   if(workshopCreatedAt&&!Number.isNaN(workshopCreatedAt.getTime())&&createdAt<workshopCreatedAt)return "A solicitacao e anterior ao cadastro desta oficina.";
   const selected=Array.isArray(request.selected_business_ids)?request.selected_business_ids.filter(Boolean):[];
@@ -1026,22 +1036,32 @@ function requestEligibilityError(request){
     ||(targetType==="parts_store"&&(workshopType==="parts_store"||workshopType==="both"));
   return compatible?"":"Esta solicitacao nao corresponde ao tipo deste estabelecimento.";
 }
+function requestExpired(request){
+  const createdAt=new Date(request?.created_at);
+  const explicitExpiry=request?.expires_at?new Date(request.expires_at):null;
+  const expiresAt=explicitExpiry&&!Number.isNaN(explicitExpiry.getTime())?explicitExpiry:new Date(createdAt.getTime()+3*86400000);
+  return request?.status==="expired"||(!Number.isNaN(createdAt.getTime())&&expiresAt.getTime()<=Date.now());
+}
+function proposalForRequest(requestId){
+  return state.proposals.find((item)=>item.request_id===requestId&&item.status!=="declined");
+}
+function requestsForFilter(filter=state.requestFilter){
+  return state.requests.filter((request)=>{
+    if(requestRoutingError(request))return false;
+    if(state.proposals.some((item)=>item.request_id===request.id&&item.status==="declined"))return false;
+    const proposal=proposalForRequest(request.id);
+    if(filter==="sent")return Boolean(proposal);
+    if(proposal)return false;
+    if(filter==="expired")return requestExpired(request);
+    return request.status==="open"&&!requestExpired(request);
+  }).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+}
 function renderRequests(){
   const list=$("requestsList");
-  const declinedIds=new Set(state.proposals.filter((item)=>item.status==="declined").map((item)=>item.request_id));
-  const proposalIds=new Set(state.proposals.map((item)=>item.request_id));
-  const visibleRequests=state.requests.filter((item)=>{
-    if(declinedIds.has(item.id))return false;
-    if(state.requestFilter==="open")return !proposalIds.has(item.id)&&!requestEligibilityError(item);
-    return proposalIds.has(item.id)||!requestEligibilityError(item);
-  }).slice().sort((a,b)=>{
-    const rankA=URGENCY_RANK.hasOwnProperty(a.urgency)?URGENCY_RANK[a.urgency]:1;
-    const rankB=URGENCY_RANK.hasOwnProperty(b.urgency)?URGENCY_RANK[b.urgency]:1;
-    if(rankA!==rankB) return rankA-rankB;
-    return new Date(b.created_at)-new Date(a.created_at);
-  });
+  const visibleRequests=requestsForFilter();
   const pausedNotice=state.workshop?.open===false?'<div class="empty">Recebimento pausado para novas solicitacoes. As solicitacoes ja recebidas seguem disponiveis para responder, conversar e reservar.</div>':"";
-  if(!visibleRequests.length){list.innerHTML=pausedNotice||'<div class="empty">Nenhuma solicitacao encontrada. Quando o usuario enviar uma cotacao, ela aparece aqui.</div>';$("requestDetail").innerHTML='<div class="empty">Sem solicitacao selecionada.</div>';return;}
+  const emptyMessages={new:"Nenhuma solicitacao nova para as categorias desta oficina.",sent:"Nenhuma proposta enviada ainda.",expired:"Nenhuma solicitacao vencida sem resposta."};
+  if(!visibleRequests.length){list.innerHTML=pausedNotice||`<div class="empty">${emptyMessages[state.requestFilter]||emptyMessages.new}</div>`;$("requestDetail").innerHTML='<div class="empty">Sem solicitacao selecionada.</div>';return;}
   if(!state.activeRequest||!visibleRequests.some((item)=>item.id===state.activeRequest))state.activeRequest=visibleRequests[0].id;
   list.innerHTML=pausedNotice+visibleRequests.map((request)=>`<button class="item request-card" data-request-id="${esc(request.id)}" type="button">
     <div class="request-card-title"><div><h4>${esc(request.title||request.description||"Solicitacao")}</h4><small>Diagnostico IA</small></div>${urgencyBadge(request)}</div>
@@ -1077,6 +1097,12 @@ function renderRequestDetail(){
   const photosHTML=photos.length
     ? `<div class="compact-section"><small>Fotos</small><div class="request-photos">${photos.map((p)=>`<a href="${esc(p.image_url)}" target="_blank" rel="noopener"><img src="${esc(p.image_url)}" alt="Foto da solicitacao"></a>`).join("")}</div></div>`
     : "";
+  const proposal=proposalForRequest(request.id);
+  const detailActions=state.requestFilter==="new"
+    ? `<div class="actions"><button class="btn primary" type="button" onclick="openProposal('${esc(request.id)}',true)">Enviar proposta</button><button class="btn secondary" type="button" onclick="createConversationFromRequest('${esc(request.id)}')">Pedir mais detalhes</button><button class="btn secondary" type="button" onclick="declineRequest('${esc(request.id)}')">Recusar</button></div>`
+    : state.requestFilter==="sent"&&proposal
+      ? `<div class="compact-section"><small>Proposta enviada</small><p>${esc(proposal.message||"Proposta enviada.")}${proposal.price!=null?` · ${money(proposal.price)}`:""}</p></div>`
+      : `<div class="empty">O prazo desta solicitacao terminou sem resposta da oficina.</div>`;
   $("requestDetail").innerHTML=`
   <div class="compact-detail">
     <div class="compact-header">
@@ -1092,7 +1118,7 @@ function renderRequestDetail(){
       <div class="compact-section"><small>${homeService?"Endereco do cliente":"Atendimento"}</small><p>${homeService?esc(request.location||"Nao informada"):"Cliente vem ate a oficina. Endereco do cliente oculto."}</p></div>
     </div>
     ${photosHTML}
-    <div class="actions"><button class="btn primary" type="button" onclick="openProposal('${esc(request.id)}',true)">Enviar proposta</button><button class="btn secondary" type="button" onclick="createConversationFromRequest('${esc(request.id)}')">Pedir mais detalhes</button><button class="btn secondary" type="button" onclick="declineRequest('${esc(request.id)}')">Recusar</button></div>
+    ${detailActions}
   </div>`;
 }
 function isHomeServiceRequest(request){
@@ -1524,10 +1550,35 @@ function renderProfileForm(){
 }
 function approvedWorkshopCategoryNames(){
   const w=state.workshop||{};
-  return [...new Set([w.category,...(Array.isArray(w.services)?w.services:[])].filter(Boolean))];
+  const linkedIds=new Set([...state.workshopCategoryIds,...state.workshopServices.map((item)=>item.category_id)].filter(Boolean));
+  const catalogNames=state.serviceCategories.filter((category)=>linkedIds.has(category.id)).map((category)=>category.name);
+  return [...new Set([...catalogNames,w.category,...(Array.isArray(w.services)?w.services:[])].filter(Boolean))];
 }
 function normalizeCatalogName(value){
   return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+}
+function categoryCatalogKey(value){
+  const text=normalizeCatalogName(value);
+  if(!text)return "";
+  if(text.includes("chave"))return "chaveiro-automotivo";
+  if(text.includes("oleo")||text.includes("filtro"))return "oleo-e-filtros";
+  if(text.includes("freio")||text.includes("suspens"))return "freios";
+  if(text.includes("pneu")||text.includes("alinh"))return "pneus";
+  if(text.includes("bateria")||text.includes("eletric"))return "bateria-e-eletrica";
+  if(text.includes("ar-condicionado")||text.includes("ar condicionado"))return "ar-condicionado";
+  if(text.includes("funilar")||text.includes("pintura"))return "funilaria-e-pintura";
+  if(text.includes("estetic")||text.includes("lavagem")||text.includes("detailing"))return "estetica-automotiva";
+  if(text.includes("vidro")||text.includes("para-brisa"))return "vidros-e-para-brisas";
+  if(text.includes("acessor")||text.includes("blindagem"))return "acessorios";
+  if(text.includes("mecan")||text.includes("revis")||text.includes("manutenc")||text.includes("motor")||text.includes("transmiss"))return "mecanica-geral";
+  return text.replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+function workshopCategoryKeys(){
+  return new Set(approvedWorkshopCategoryNames().map(categoryCatalogKey).filter(Boolean));
+}
+function requestCategoryMatchesWorkshop(category){
+  const requestKey=categoryCatalogKey(category);
+  return Boolean(requestKey&&workshopCategoryKeys().has(requestKey));
 }
 const WORKSHOP_SCHEDULE_DAYS=["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"];
 function parseWorkshopSchedule(custom){
@@ -1698,9 +1749,7 @@ function hydrateScheduleSelects(){
   });
 }
 function categoryMatchesWorkshop(category){
-  const normalized=normalizeCatalogName(category.name);
-  const approved=approvedWorkshopCategoryNames().map(normalizeCatalogName);
-  return approved.some((name)=>normalized===name||normalized.includes(name)||name.includes(normalized))||state.workshopServices.some((service)=>service.category_id===category.id);
+  return workshopCategoryKeys().has(categoryCatalogKey(category.name||category.slug))||state.workshopServices.some((service)=>service.category_id===category.id);
 }
 function formatServicePrice(value){
   if(value==null||value==="")return "";
@@ -1813,11 +1862,22 @@ function bindSubcategoryControls(){
   });
 }
 async function saveProfile(event){event.preventDefault();await requestProfileChange("perfil_publico",{name:$("profileName").value,city:$("profileCity").value,state:$("profileState").value,address:$("profileAddress").value,description:$("profileDescription").value},"Solicitacao de alteracao enviada ao admin Vai Rodar.");}
+function renderOfferCategoryOptions(){
+  const select=$("offerCategory");if(!select)return;
+  const current=select.value;
+  const eligible=state.serviceCategories.filter((category)=>categoryMatchesWorkshop(category));
+  const categories=eligible.length?eligible:state.serviceCategories;
+  select.innerHTML=categories.length
+    ? categories.map((category)=>`<option value="${esc(category.name)}">${esc(category.name)}</option>`).join("")
+    : '<option value="">Nenhuma categoria ativa</option>';
+  if(categories.some((category)=>category.name===current))select.value=current;
+}
 function renderOffers(){const list=$("offersList");if(!state.localOffers.length){list.innerHTML='<div class="empty">Nenhuma oferta criada ainda.</div>';return;}list.innerHTML=state.localOffers.map((offer)=>`<div class="item offer-card">${offer.image_url?`<img src="${esc(offer.image_url)}" alt="${esc(offer.title)}" style="width:54px;height:46px;border-radius:10px;object-fit:cover">`:`<div class="offer-thumb">${esc((offer.category||"OF").slice(0,2).toUpperCase())}</div>`}<div><h4>${esc(offer.title)}</h4><small>${esc(offer.category)} - ${esc(offer.start||offer.starts_at||"")} ate ${esc(offer.end||offer.ends_at||"")}</small><p>${esc(offer.description||"")}</p><div class="tags"><span>${offer.remote?"Publicada":"Rascunho local"}</span><span>${Number(offer.clicks||0)} clicks</span><span>${Number(offer.sales||0)} vendas</span><span>${esc(offer.status||"pendente")}</span></div></div></div>`).join("");}
 async function createOffer(event){
   event.preventDefault();
   const photo=$("offerPhoto").files[0];
   const offer={category:$("offerCategory").value,title:$("offerTitle").value.trim(),start:$("offerStart").value,end:$("offerEnd").value,description:$("offerDescription").value.trim(),photoName:photo?.name||"",status:"active",clicks:0,sales:0};
+  if(!offer.category){toast("Selecione uma categoria ativa da oficina.");return;}
   if(!offer.title){toast("Informe o titulo da oferta.");return;}
   if(!photo){toast("Adicione uma foto para criar a oferta.");return;}
   const submit=$("offerForm").querySelector('button[type="submit"]');
@@ -2022,13 +2082,13 @@ function subscribeRealtime(){
   if(state.demoMode||!state.workshop?.id||state.realtimeChannel)return;
   state.realtimeChannel=sb.channel("ws-realtime")
     .on("postgres_changes",{event:"INSERT",schema:"public",table:"service_requests"},()=>{loadRequests().then(()=>{renderMetrics();renderRequests();});})
-    .on("postgres_changes",{event:"*",schema:"public",table:"proposals",filter:`workshop_id=eq.${state.workshop.id}`},()=>{loadProposals().then(()=>{renderMetrics();renderProposalsCount();});})
+    .on("postgres_changes",{event:"*",schema:"public",table:"proposals",filter:`workshop_id=eq.${state.workshop.id}`},()=>{loadProposals().then(()=>{renderMetrics();renderProposalsCount();renderRequests();});})
     .on("postgres_changes",{event:"*",schema:"public",table:"reservations",filter:`workshop_id=eq.${state.workshop.id}`},()=>{loadReservations().then(()=>{renderMetrics();renderAgenda();renderReservations();});})
     .subscribe();
 }
 function setView(view){document.querySelectorAll(".view").forEach((el)=>el.classList.remove("active"));$("view-"+view).classList.add("active");document.querySelectorAll(".nav button").forEach((btn)=>btn.classList.toggle("active",btn.dataset.view===view));$("pageTitle").textContent=titles[view][0];$("pageSubtitle").textContent=titles[view][1];if(view==="messages")renderThreads();if(view==="agenda")renderAgenda();if(view==="reservations")renderReservations();if(view==="profile")renderProfilePreview();if(view==="offers")renderOffers();if(view==="account")renderAccount();closeMobileMenu();}
 document.querySelectorAll(".nav button").forEach((btn)=>btn.addEventListener("click",()=>setView(btn.dataset.view)));
-document.querySelectorAll("[data-request-filter]").forEach((btn)=>btn.addEventListener("click",async()=>{document.querySelectorAll("[data-request-filter]").forEach((b)=>b.classList.remove("active"));btn.classList.add("active");state.requestFilter=btn.dataset.requestFilter;await loadRequests();renderMetrics();renderRequests();}));
+document.querySelectorAll("[data-request-filter]").forEach((btn)=>btn.addEventListener("click",()=>{document.querySelectorAll("[data-request-filter]").forEach((b)=>b.classList.remove("active"));btn.classList.add("active");state.requestFilter=btn.dataset.requestFilter;state.activeRequest=null;renderMetrics();renderRequests();}));
 $("loginForm").addEventListener("submit",(event)=>{event.preventDefault();login($("authEmail").value.trim(),$("authPassword").value);});
 $("demoBtn").addEventListener("click",()=>{$("authEmail").value=DEMO_EMAIL;$("authPassword").value=DEMO_PASSWORD;startDemoMode();});
 $("mobileMenuBtn").addEventListener("click",openMobileMenu);
